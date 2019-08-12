@@ -5,12 +5,6 @@ Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingenier
 ## Contenidos del curso
 
 * [Introducción](https://docs.google.com/presentation/d/1gEb5sLCnzbIypZ-_O4A_d9vsVgYbpxo3E62I9krsjjM/edit?usp=sharing)
-    * Organización
-    * Bibliografía
-    * Introducción al curso
-    
-
-
 
 ## Contactos
 
