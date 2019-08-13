@@ -46,7 +46,7 @@ Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingenier
     * Menejo de errores.
     * Estructura de datos avanzada.
     * uiControl.
-* [Estructuras y sistemas - II](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2003%20-%20%20Estructuras%20y%20sistemas/html/clase_03_b.html)
+* [Estructuras y sistemas - II](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2003%20-%20%20Estructuras%20y%20sistemas/html/clase_03_a.html)
     * Funciones (II).
     * Funciones anónimas.
     * Funciones principales y subfunciones.

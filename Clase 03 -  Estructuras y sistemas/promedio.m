@@ -5,7 +5,7 @@ function avg = promedio(varargin)
 
     avg = 0; %
     if (length(varargin)~=1)
-        error ('promedio (vector)');
+        error ('promedio2213 (vector)');
     else
         v = varargin{1};
     end
