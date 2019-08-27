@@ -1,25 +1,25 @@
-% Declaración e inicialización de variables que intervienen
+% Declaraciï¿½n e inicializaciï¿½n de variables que intervienen
     M_mol = 28.8*10^-3;
     k = 1.4;
     R = 8.314;
     
-% Ingresar un intervalo de temperaturas (en grados centígrados)
+% Ingresar un intervalo de temperaturas (en grados centï¿½grados)
     t = 0:1:25;
     
-% Convertir temperatura de grados centígrados [C] a grados Kelvin [K]
+% Convertir temperatura de grados centï¿½grados [C] a grados Kelvin [K]
     T = t + 273.5;
     
 % Obtener los valores de velocidad correspondientes a la temperatura
     c = sqrt(k*R*T/M_mol);
     
 % Combinar valores de temperatura y velocidad en una matriz
-    tabla = [t,c];
+    tabla = [t;c];
     
-% Crear un título de tabla
-    disp('Tabla de velocidad del sonido en el aire en función de la temperatura')
+% Crear un tï¿½tulo de tabla
+    disp('Tabla de velocidad del sonido en el aire en funciï¿½n de la temperatura')
 
 % Crear encabezados de columna
-    disp('Temperatura [C°] Velocidad [m/s]')
+    disp('Temperatura [Cï¿½] Velocidad [m/s]')
     
 % Desplegar la tabla
     fprintf('%8.0f %18.2f \n',tabla)
@@ -28,6 +28,6 @@
     plot(t,c)
     grid on
     axis([min(t) max(t) min(c) inf])
-    xlabel('Temperatura [°c]')
-    ylabel('Velocidad de progración [c]')
-    title('velocidad de propagación del sonido')
+    xlabel('Temperatura [ï¿½c]')
+    ylabel('Velocidad de prograciï¿½n [c]')
+    title('velocidad de propagaciï¿½n del sonido')
