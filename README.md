@@ -4,12 +4,7 @@ Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingenier
 
 ## Contenidos del curso
 
-<<<<<<< HEAD
 * [Consigna de trabajo práctico](consigna_TP_agosto_2019.pdf)
-=======
-* [Consigna de trabajo práctico](Desarrollo de software para el cálculo de parámetros acústicos ISO 3382 (Ago2019).pdf)
-
->>>>>>> b5d2e32005d8436b35503f39b310722b109bb229
 * [Introducción](https://docs.google.com/presentation/d/1gEb5sLCnzbIypZ-_O4A_d9vsVgYbpxo3E62I9krsjjM/edit?usp=sharing)
     * Organización.
     * Bibliografía.
