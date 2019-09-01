@@ -5,8 +5,8 @@
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
 
-.ipynb_checkpoints
-*/clases completas (GDrive)/*
+# carpeta
+clases completas (GDrive)/
 
 # Remove previous ipynb_checkpoints
 # git rm -r .ipynb_checkpoints/
