@@ -1,0 +1,1 @@
+- Ver el docstring de las funciones discSignal, operSignal y viewSignal. (help discSignal)

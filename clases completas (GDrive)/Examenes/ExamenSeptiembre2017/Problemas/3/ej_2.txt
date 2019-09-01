@@ -1,0 +1,2 @@
+- ¿Cuantas señales puede sumar/multiplicar el script? ¿Como se podria incrementar sin interrefir con las funciones locales
+correspondientes?

@@ -1,0 +1,3 @@
+- Ver el docstring de las funciones discSignal, operSignal y viewSignal. (help discSignal)
+- Hacer uso del breakpoint en del debugging de alguna funcion local, 
+para analizar los valores que toman las variables locales.

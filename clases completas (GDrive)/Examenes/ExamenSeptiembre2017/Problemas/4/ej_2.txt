@@ -1,0 +1,3 @@
+- Crear una funcion local en operSignal, llamada "evaluacion". Sin argumentos de entrada o salida. 
+Debe evaluar a discSignal con todas sus funciones handles. La idea principal es que llame a todas y cada una
+de las funciones, usando variables locales y stem().

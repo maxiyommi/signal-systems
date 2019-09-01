@@ -1,0 +1,4 @@
+https://geekytheory.com/pylab-parte-1-python-se-viste-de-matlab
+https://geekytheory.com/pylab-parte-2-datos-basicos-numpy
+https://nbviewer.jupyter.org/github/unpingco/Python-for-Signal-Processing/tree/master/
+http://cesarhdz.com/articulos/escribir-en-markdown

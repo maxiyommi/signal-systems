@@ -1,0 +1,3 @@
+- Crear una funcion local en viewSignal, llamada "evaluacion". Sin argumentos de entrada o salida. 
+Debe evaluar a viewSignal con todas sus funciones handles. La idea principal es que llame a todas y cada una
+de las funciones, usando variables locales y stem().

@@ -1,0 +1,3 @@
+- Almacenar el resultado en un .dat y cargarlos con excel o algo similar
+- Hacer uso del breakpoint en del debugging de alguna funcion local, 
+para analizar los valores que toman las variables locales.

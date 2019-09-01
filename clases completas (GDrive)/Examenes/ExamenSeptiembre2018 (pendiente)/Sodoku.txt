@@ -1,0 +1,3 @@
+http://www.sudoku-online.org/
+https://www.mathworks.com/company/newsletters/articles/solving-sudoku-with-matlab.html
+https://la.mathworks.com/help/optim/examples/solve-sudoku-puzzles-via-integer-programming.html?requestedDomain=true
