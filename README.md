@@ -1,5 +1,7 @@
 # Señales y Sistemas
 
+<img src="LogoPractica.png" alt="drawing" width="200"/>
+
 Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingeniería de Sonido](https://www.untref.edu.ar/carrera/ingenieria-de-sonido), en la [Universidad Nacional de Tres de Febrero](https://www.untref.edu.ar), Buenos Aires - Argentina.
 
 ## Fechas importantes
