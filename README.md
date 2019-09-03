@@ -13,7 +13,7 @@ Las entregas y/o presentaciones se realizan en el dia y horario de las práctica
 | 2da entrega TP | 08/10/2019 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo.|
 | 3er entrega TP | 29/10/2019 |  | |
 | Parcialito MATLAB | 05/11/2019 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
-| 4ta entrega TP | 19/11/2019 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Enviar informe y código final por mail. |
+| 4ta entrega TP | 19/11/2019 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo.|
 | Recuperatorios TP-MATLAB  | 26/11/2019 |  |  |
 
 ## Contenidos del curso
