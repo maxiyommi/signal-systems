@@ -1,20 +1,20 @@
 # Señales y Sistemas
 
-<img src="LogoPractica.png" class="center" width="200"/>
+<img src="LogoPractica.png" class="center" width="300"/>
 
 Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingeniería de Sonido](https://www.untref.edu.ar/carrera/ingenieria-de-sonido), en la [Universidad Nacional de Tres de Febrero](https://www.untref.edu.ar), Buenos Aires - Argentina.
 
 ## Fechas importantes
 Las entregas y/o presentaciones se realizan en el dia y horario de las prácticas de la asignatura.
 
-| Evento | Fecha | OBS
-| ---------- | --------- | --------- |
+| Actividad | Fecha | Link | Observaciones
+| ---------- | ---- | ---- |--------- |
 | 1er entrega TP | 17/09/2019 |  |
-| 2da entrega TP | 08/10/2019 | Enviar informe preliminar por mail. |
-| 3er entrega TP | 29/10/2019 |  |
-| Parcialito MATLAB | 05/11/2019 | Presencial |
-| 4ta entrega TP | 19/11/2019 | Enviar informe y código final por mail. |
-| Recuperatorios TP-MATLAB  | 26/11/2019 |  |
+| 2da entrega TP | 08/10/2019 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo.|
+| 3er entrega TP | 29/10/2019 |  | |
+| Parcialito MATLAB | 05/11/2019 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
+| 4ta entrega TP | 19/11/2019 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Enviar informe y código final por mail. |
+| Recuperatorios TP-MATLAB  | 26/11/2019 |  |  |
 
 ## Contenidos del curso
 
