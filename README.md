@@ -68,6 +68,8 @@ Las entregas y/o presentaciones se realizan en el dia y horario de las práctica
     * Funciones anidadas.
     * Encapsulado de funciones.
     * Ejercicio propuesto.
+* Clases especiales
+    - [Audio en MATLAB](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Audio/LiveScript/html/ClaseEspecial_Audio.html)
 
 ## Docentes
 

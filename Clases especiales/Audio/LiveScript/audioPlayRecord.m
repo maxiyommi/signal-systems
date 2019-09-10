@@ -1,9 +1,9 @@
-fileReader = dsp.AudioFileReader('xt.wav');
+fileReader = dsp.AudioFileReader('sinesweep.wav');
 
 deviceWriter = audioDeviceWriter();
     deviceWriter.SampleRate = 44100;
     deviceWriter.BitDepth = '16-bit integer';
-fileInfo = audioinfo('xt.wav')
+fileInfo = audioinfo('sinesweep.wav')
 
 setup(deviceWriter,zeros(fileReader.SamplesPerFrame,fileInfo.NumChannels));
 
@@ -15,14 +15,13 @@ deviceReader = audioDeviceReader;
 
 setup(deviceReader) ;% Función de MATLAB para autoconfigurar objetos y dismunir la carga computacional
 
-fileWriter = dsp.AudioFileWriter('nuevo.wav', 'FileFormat', 'WAV'); % Utilizo AudioFileWriter, objeto de la clase
+fileWriter = dsp.AudioFileWriter('sinesweep_mod.wav', 'FileFormat', 'WAV'); % Utilizo AudioFileWriter, objeto de la clase
     
 
 while ~isDone(fileReader)
     audioData = fileReader();
     audioFromDevice = deviceReader();
     deviceWriter(audioData);
-    scope(audioFromDevice)
     fileWriter(audioFromDevice);
 end
 
@@ -30,3 +29,5 @@ release(fileReader);
 release(deviceWriter); 
 release(deviceReader)
 release(fileWriter)
+close all
+clear all
