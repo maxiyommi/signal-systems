@@ -8,10 +8,10 @@ Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingenier
 Las entregas y/o presentaciones se realizan en el dia y horario de las prácticas de la asignatura.
 
 | Actividad | Fecha | Link | Observaciones
-| ---------- | ---- | ---- |--------- |
+| ---------- | ---- | ---- | --------- |
 | 1er entrega TP | 17/09/2019 |  |
 | 2da entrega TP | 08/10/2019 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo.|
-| 3er entrega TP | 29/10/2019 |  | |
+| 3er entrega TP | 29/10/2019 | 
 | Parcialito MATLAB | 05/11/2019 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
 | 4ta entrega TP | 19/11/2019 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo.|
 | Recuperatorios TP-MATLAB  | 26/11/2019 |  |  |
@@ -70,6 +70,10 @@ Las entregas y/o presentaciones se realizan en el dia y horario de las práctica
     * Ejercicio propuesto.
 * Clases especiales
     - [Audio en MATLAB](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Audio/LiveScript/html/ClaseEspecial_Audio.html)
+
+## Consultas
+Las consultas sobre el material y/o consigna del TP estan centralizadas en la sección de [**Issues**](https://github.com/maxiyommi/signal-systems/issues).
+
 
 ## Docentes
 
