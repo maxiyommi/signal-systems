@@ -69,7 +69,9 @@ Las entregas y/o presentaciones se realizan en el dia y horario de las práctica
     * Encapsulado de funciones.
     * Ejercicio propuesto.
 * Clases especiales
-    - [Audio en MATLAB](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Audio/LiveScript/html/ClaseEspecial_Audio.html)
+    * [Audio en MATLAB.](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Audio/LiveScript/html/ClaseEspecial_Audio.html)
+    * GUI [proximamente].
+    * Migrar de MATLAB a Python [proximamente].
 
 ## Consultas
 Las consultas sobre el material y/o consigna del TP estan centralizadas en la sección de [**Issues**](https://github.com/maxiyommi/signal-systems/issues).
