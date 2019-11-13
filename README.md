@@ -10,11 +10,11 @@ Las entregas y/o presentaciones se realizan en el dia y horario de las práctica
 | Actividad | Fecha | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
 | 1er entrega TP | 17/09/2019 |  |
-| 2da entrega TP | 08/10/2019 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos).|
+| 2da entrega TP | 08/10/2019 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos).|
 | 3er entrega TP | 29/10/2019 | 
 | Parcialito MATLAB | 12/11/2019 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
-| 4ta entrega TP | 19/11/2019 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
-| Recuperatorios TP-MATLAB  | 26/11/2019 |  |  |
+| 4ta entrega TP + defensa | 19/11/2019 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
+| Recuperatorios TP-MATLAB  | 29/11/2019 |  |  |
 
 ## Contenidos del curso
 
