@@ -23,7 +23,7 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 
 ## Contenidos del curso
 
-* [Consigna de trabajo práctico](Desarrollo de software para el cálculo de parámetros acústicos ISO 3382.pdf)
+* [Consigna de trabajo práctico](consigna_TP.pdf)
 * [Introducción](https://docs.google.com/presentation/d/1gEb5sLCnzbIypZ-_O4A_d9vsVgYbpxo3E62I9krsjjM/edit?usp=sharing)
     * Organización.
     * Bibliografía.
