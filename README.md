@@ -10,11 +10,11 @@ Las entregas y/o presentaciones se realizan en el dia y horario de las práctica
 | Actividad | Fecha | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
 | 1er entrega TP | a confirmar |  |
-| 2da entrega TP | a confirmar  | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos).|
-| 3er entrega TP | a confirmar  | 
-| Parcialito MATLAB | a confirmar  | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
-| 4ta entrega TP + defensa | a confirmar  |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
-| Recuperatorios TP-MATLAB  | a confirmar  |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
+| 2da entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos).|
+| 3er entrega TP | a confirmar | 
+| Parcialito MATLAB | a confirmar | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
+| 4ta entrega TP + defensa | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
+| Recuperatorios TP-MATLAB  | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
 
 ## Evaluación
 Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
@@ -23,7 +23,7 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 
 ## Contenidos del curso
 
-* [Consigna de trabajo práctico](consigna_TP_agosto_2019.pdf)
+* [Consigna de trabajo práctico](Desarrollo de software para el cálculo de parámetros acústicos ISO 3382.pdf)
 * [Introducción](https://docs.google.com/presentation/d/1gEb5sLCnzbIypZ-_O4A_d9vsVgYbpxo3E62I9krsjjM/edit?usp=sharing)
     * Organización.
     * Bibliografía.
