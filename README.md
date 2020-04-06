@@ -24,14 +24,15 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 ## Contenidos del curso
 
 * [Consigna de trabajo práctico](consigna_TP.pdf)
+* [Guía de ejercicios](GUIA_DE_EJERCICIOS.pdf)
 * [Introducción](https://docs.google.com/presentation/d/1gEb5sLCnzbIypZ-_O4A_d9vsVgYbpxo3E62I9krsjjM/edit?usp=sharing)
     * Organización.
     * Bibliografía.
-    * Introducción al curso.    
+    * Introducción al curso.
 * [Introducción y fundamentos principales - I](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2001%20-%20Introducci%C3%B3n%20y%20fundamentos%20principales/html/clase_01_a.html)
     * Conceptos básicos de programación.
     * MATLAB.
-    * Estrategia de aprendizaje.   
+    * Estrategia de aprendizaje.
 * [Introducción y fundamentos principales - II](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2001%20-%20Introducci%C3%B3n%20y%20fundamentos%20principales/html/clase_01_b.html)
     * Entorno de trabajo y ventanas.
     * Ayuda y documentación.
@@ -41,7 +42,7 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Scripts.
     * Introducción a estructuras de control (o sentencias).
     * Funciones predefinidas.
-    * Números complejos.    
+    * Números complejos.
 * [Trabajando con señales - I](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2002%20-%20%20Trabajando%20con%20se%C3%B1ales/html/clase_02_a.html)
     * Representación númerica.
     * Energía y potencia.
@@ -81,6 +82,8 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 ## Consultas
 Las consultas sobre el material y/o consigna del TP estan centralizadas en la sección de [**Issues**](https://github.com/maxiyommi/signal-systems/issues).
 
+## Contenido teórico
+Ingresar con el usuario personal al [**Aula virtual**](https://untrefpresencial.educativa.org/)
 
 ## Docentes
 
