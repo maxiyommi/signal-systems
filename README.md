@@ -83,7 +83,7 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 Las consultas sobre el material y/o consigna del TP estan centralizadas en la sección de [**Issues**](https://github.com/maxiyommi/signal-systems/issues).
 
 ## Contenido teórico
-Ingresar con el usuario personal al [**Aula virtual**](https://untrefpresencial.educativa.org/)
+Ingresar con el usuario personal al [**Aula virtual**](https://untrefpresencial.educativa.org/).
 
 ## Docentes
 
