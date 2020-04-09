@@ -3,7 +3,7 @@ clear all
 
 %% Ejercicio a)
     display('Ejecicio a')
-    syms t
+    syms t T
     x = sym(3*exp(-2*t))
     
     figure ()
@@ -20,7 +20,7 @@ clear all
 
 %% Ejercicio b)
     display('Ejecicio b')
-    syms t
+    syms t T
     w0 = 2*pi*1;
     x = sym(2*cos(w0*t+pi))
     
@@ -38,7 +38,7 @@ clear all
     
 %% Ejercicio c)
     display('Ejecicio c')
-    syms t
+    syms t T
     x = sym(2)
     
     figure ()
