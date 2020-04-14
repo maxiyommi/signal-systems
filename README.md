@@ -9,12 +9,12 @@ Las entregas y/o presentaciones se realizan en el dia y horario de las práctica
 
 | Actividad | Fecha | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
-| 1er entrega TP | a confirmar |  |
-| 2da entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos).|
-| 3er entrega TP | a confirmar | 
+| 1er entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/oxuSflL7PvdjOPpZngXT)| Subir **funciones** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| 2da entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **funciones** e **informe preliminar** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| 3er entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/93L0K4IGe9udPnecWjzk) | Subir **funciones** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
 | Parcialito MATLAB | a confirmar | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
-| 4ta entrega TP + defensa | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
-| Recuperatorios TP-MATLAB  | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **informe y código final** con apellido de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Informes corregidos)|
+| 4ta entrega TP + defensa | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **funciones** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| Recuperatorios TP-MATLAB  | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **funciones** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
 
 ## Evaluación
 Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
