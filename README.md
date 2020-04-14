@@ -5,16 +5,18 @@
 Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingeniería de Sonido](https://www.untref.edu.ar/carrera/ingenieria-de-sonido), en la [Universidad Nacional de Tres de Febrero](https://www.untref.edu.ar), Buenos Aires - Argentina.
 
 ## Fechas importantes
-Las entregas y/o presentaciones se realizan en el dia y horario de las prácticas de la asignatura.
+Las presentaciones se realizan en el dia y horario de las prácticas de la asignatura. **Todas las actividades son obligatorias**
 
-| Actividad | Fecha | Link | Observaciones
+| Actividad | Fecha limite | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
-| 1er entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/oxuSflL7PvdjOPpZngXT)| Subir **funciones** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-| 2da entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **funciones** e **informe preliminar** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-| 3er entrega TP | a confirmar | [Subir](https://www.dropbox.com/request/93L0K4IGe9udPnecWjzk) | Subir **funciones** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-| Parcialito MATLAB | a confirmar | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** presencial |
-| 4ta entrega TP + defensa | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **funciones** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-| Recuperatorios TP-MATLAB  | a confirmar |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **funciones** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo (antes de la fecha). La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| 1er entrega TP | 05/05/2020 | - | Enviar por mail el link de [**Gist**](https://gist.github.com/) con todas las **funciones** que correspondan a la entrega. Agregar en el cuerpo del mail los integrantes del grupo. Los comentarios se realizaran por **Gist** |
+| 2da entrega TP | 19/05/2020 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** en .pdf con los apellidos de los integrantes separados por guion bajo. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). Los comentarios de las funciones se realizaran por **Gist** |
+| 3er entrega TP | 02/06/2020 | - | Usar el mismo link de **Gist** de la 1er entrega, deben figurar todas las **funciones** que correspondan a la entrega. Las correcciones se realizaran por **Gist** |
+| Parcialito MATLAB | 12/06/2020 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario|
+| 4ta entrega TP + defensa | 16/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| Recuperatorios TP-MATLAB  | 23/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+
+> [**Gist**](https://help.github.com/es/github/writing-on-github/editing-and-sharing-content-with-gists), es un plataforma para snippets, o lo que es lo mismo, pequeños pedazos de código reusables con una funcionalidad concreta. Estos snippets serían ideales tenerlos en un sitio donde se puedan compartir, almacenar y evitar que se pierdan en el olvido, pero donde crear un repositorio git, parece ser excesivo y sería matar moscas con una escopeta. Para eso existe Gist, ademas de ser ideal para que se comenten los códigos subidos. **Procurar mantener el mismo link a lo largo de toda la cursada**.
 
 ## Evaluación
 Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
