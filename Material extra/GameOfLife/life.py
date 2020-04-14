@@ -2,6 +2,7 @@
 
 """Juego de la vida de Conway.
 Autor: Juan Luis Cano <juanlu001@gmail.com>
+Adaptado para la ser usado por la asignatura por Maximiliano Yommi.
 El tablero es un array de NumPy, donde 0 significa célula muerta y 1 célula
 viva. Se muestra una animación con matplotlib.
 """
@@ -49,17 +50,17 @@ M = 30
 # Construimos el tablero
 tablero = np.zeros((N, M), dtype=int)
 
-glider = [[1, 0, 0],
+nave = [[1, 0, 0],
           [0, 1, 1],
           [1, 1, 0]]
 
-# Añadimos una nave
+# Patrones iniciales
 #np.random.seed(0)
 r = np.random.random((10, 20))
 #tablero[10:20, 10:30] = (r > 0.75)
-tablero[15, 13:16] = 1
-tablero[16, 12:15] = 1
-#tablero[:3, :3] = glider
+#tablero[15, 13:16] = 1
+#tablero[16, 12:15] = 1
+tablero[:3, :3] = nave
 
 # Creamos la figura
 fig = plt.figure(figsize=(4, 4))

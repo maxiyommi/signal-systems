@@ -5,7 +5,7 @@
 Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingeniería de Sonido](https://www.untref.edu.ar/carrera/ingenieria-de-sonido), en la [Universidad Nacional de Tres de Febrero](https://www.untref.edu.ar), Buenos Aires - Argentina.
 
 ## Fechas importantes
-Las presentaciones se realizan en el dia y horario de las prácticas de la asignatura. **Todas las actividades son obligatorias**
+Las presentaciones se realizan en el dia y horario de las prácticas de la asignatura. **Todas las actividades son obligatorias**.
 
 | Actividad | Fecha limite | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
@@ -76,7 +76,7 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Funciones anidadas.
     * Encapsulado de funciones.
     * Ejercicio propuesto.
-* Clases especiales
+* Material extra
     * [Audio en MATLAB.](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Audio/LiveScript/html/ClaseEspecial_Audio.html)
     * [Interfaz gráfica - GUI](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Gui/LiveScript/html/ClaseEspecial_UI.html).
     * [Introducción a Python](https://github.com/infiniemlabs-acustica/python_introduccion).
