@@ -44,8 +44,8 @@ def paso(b):
 
 
 # Parámetros del problema
-N = 30
-M = 30
+N = 100
+M = 100
 
 # Construimos el tablero
 tablero = np.zeros((N, M), dtype=int)
@@ -57,10 +57,10 @@ nave = [[1, 0, 0],
 # Patrones iniciales
 #np.random.seed(0)
 r = np.random.random((10, 20))
-#tablero[10:20, 10:30] = (r > 0.75)
+tablero[10:20, 10:30] = (r > 0.75)
 #tablero[15, 13:16] = 1
 #tablero[16, 12:15] = 1
-tablero[:3, :3] = nave
+#tablero[:3, :3] = nave
 
 # Creamos la figura
 fig = plt.figure(figsize=(4, 4))

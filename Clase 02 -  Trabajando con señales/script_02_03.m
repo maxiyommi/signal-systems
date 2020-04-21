@@ -1,4 +1,4 @@
-function script_02_02 = script_02_02 (w0,dominio)
+function script_02_03 = script_02_03 (w0,dominio)
 % script3 = script3  (w0,dominio)
 %
 % Funcion para determinar el periodo de funciones continuas o discretas("docstring"). 
@@ -15,12 +15,12 @@ function script_02_02 = script_02_02 (w0,dominio)
     if dominio == 't'
         k = 1:1:100; % Numero natural (sin el cero)
         T =(2*k*pi)/w0; 
-        script_02_02 = min(T);
+        script_02_03 = min(T);
     elseif dominio =='n'
         k = 1:1:100; % Numero natural (sin el cero)
         N = 2*k*pi;
         k2 = find(rem(N,w0)==0,1);
-        script_02_02 = 2*pi*k2/w0;
+        script_02_03 = 2*pi*k2/w0;
     else
         msgbox('Argumento no valido', 'Error','Error');
     end
