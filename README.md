@@ -12,7 +12,7 @@ Las presentaciones se realizan en el dia y horario de las prácticas de la asign
 | 1er entrega TP | 05/05/2020 | - | Enviar por mail el link de [**Gist**](https://gist.github.com/) con todas las **funciones** que correspondan a la entrega. Agregar en el cuerpo del mail los integrantes del grupo. Los comentarios se realizaran por **Gist** |
 | 2da entrega TP | 19/05/2020 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** en .pdf con los apellidos de los integrantes separados por guion bajo. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). Los comentarios de las funciones se realizaran por **Gist** |
 | 3er entrega TP | 02/06/2020 | - | Usar el mismo link de **Gist** de la 1er entrega, deben figurar todas las **funciones** que correspondan a la entrega. Las correcciones se realizaran por **Gist** |
-| Parcialito MATLAB | 12/06/2020 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario|
+| Parcialito MATLAB | 09/06/2020 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario|
 | 4ta entrega TP + defensa | 16/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
 | Recuperatorios TP-MATLAB  | 23/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
 
