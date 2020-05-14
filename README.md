@@ -10,11 +10,11 @@ Las presentaciones se realizan en el dia y horario de las prácticas de la asign
 | Actividad | Fecha limite | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
 | 1er entrega TP | 05/05/2020 | - | Enviar por mail el link de [**Gist**](https://gist.github.com/) con todas las **funciones** que correspondan a la entrega. Agregar en el cuerpo del mail los integrantes del grupo. Los comentarios se realizaran por **Gist** |
-| 2da entrega TP | 19/05/2020 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir **informe preliminar** en .pdf con los apellidos de los integrantes separados por guion bajo. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). Los comentarios de las funciones se realizaran por **Gist** |
+| 2da entrega TP | 19/05/2020 | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir [**informe preliminar**](TP/readme.md) en .pdf con los apellidos de los integrantes separados por guion bajo. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). Los comentarios de las funciones se realizaran por **Gist** |
 | 3er entrega TP | 02/06/2020 | - | Usar el mismo link de **Gist** de la 1er entrega, deben figurar todas las **funciones** que correspondan a la entrega. Las correcciones se realizaran por **Gist** |
 | Parcialito MATLAB | 09/06/2020 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario|
-| 4ta entrega TP + defensa | 16/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-| Recuperatorios TP-MATLAB  | 23/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e **informe final** en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| 4ta entrega TP + defensa | 16/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e [**informe final**](TP/readme.md) en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| Recuperatorios TP-MATLAB  | 23/06/2020 |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e [**informe final**](TP/readme.md)  en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
 
 > [**Gist**](https://help.github.com/es/github/writing-on-github/editing-and-sharing-content-with-gists), es un plataforma para snippets, o lo que es lo mismo, pequeños pedazos de código reusables con una funcionalidad concreta. Estos snippets serían ideales tenerlos en un sitio donde se puedan compartir, almacenar y evitar que se pierdan en el olvido, pero donde crear un repositorio git, parece ser excesivo y sería matar moscas con una escopeta. Para eso existe Gist, ademas de ser ideal para que se comenten los códigos subidos. **Procurar mantener el mismo link a lo largo de toda la cursada**.
 
@@ -25,7 +25,9 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 
 ## Contenidos del curso
 
-* [Consigna de trabajo práctico](consigna_TP.pdf)
+* Trabajo práctico
+    * [Consigna del trabajo práctico](TP/consigna_TP.pdf)
+    * [Informe técnico](TP/readme.md)
 * [Guía de ejercicios](GUIA_DE_EJERCICIOS.pdf)
 * [Introducción](https://docs.google.com/presentation/d/1gEb5sLCnzbIypZ-_O4A_d9vsVgYbpxo3E62I9krsjjM/edit?usp=sharing)
     * Organización.
