@@ -8,7 +8,7 @@ El trabajo práctico consta de un informe técnico que refleja los avances en el
 * Editor online de LaTeX - [Overleaf](https://www.overleaf.com/)
 * Editor offline de LaTeX - [Texmaker](https://www.xm1math.net/texmaker/) + [MiKTeX](https://miktex.org/)
 
-En cualquiera de los casos el template para confeccionar el informe se utiliza el formato de la UNTREF para [memorias cuatrimestrales](template/Caracterizaci_n_ac_stica_de_recinto_bajo_norma_ISO_3382.pdf). Los archivos .tex, se encuentran en la carpeta [template](template). El mismo consta de un [main.tex](template/main.tex) con la estructura base del template y en la carpeta [secciones](template/secciones), las distintas partes del documento.
+En cualquiera de los casos el template para confeccionar el informe se utiliza el formato de la UNTREF para [memorias cuatrimestrales](template/template.pdf). Los archivos .tex, se encuentran en la carpeta [template](template). El mismo consta de un [main.tex](template/main.tex) con la estructura base del template y en la carpeta [secciones](template/secciones), las distintas partes del documento.
 
 ## Informe preliminar
 
