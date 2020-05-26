@@ -25,6 +25,8 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 
 ## Contenidos del curso
 
+> Todas las clases fueron desarrolladas en [Live Script](https://www.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html). Se recomienda ejecutarlas en Matlab R2018b o posterior.
+
 * Trabajo práctico
     * [Consigna del trabajo práctico](TP/consigna_TP.pdf)
     * [Informe técnico](TP/readme.md)
@@ -33,11 +35,11 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Organización.
     * Bibliografía.
     * Introducción al curso.
-* [Introducción y fundamentos principales - I](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2001%20-%20Introducci%C3%B3n%20y%20fundamentos%20principales/html/clase_01_a.html)
+* [Introducción y fundamentos principales - I](Clase_01_introduccion_y_fundamentos_principales/clase_01_a.pdf)
     * Conceptos básicos de programación.
     * MATLAB.
     * Estrategia de aprendizaje.
-* [Introducción y fundamentos principales - II](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2001%20-%20Introducci%C3%B3n%20y%20fundamentos%20principales/html/clase_01_b.html)
+* [Introducción y fundamentos principales - II](Clase_01_introduccion_y_fundamentos_principales/clase_01_b.pdf)
     * Entorno de trabajo y ventanas.
     * Ayuda y documentación.
     * Datos (built-in).
@@ -47,14 +49,14 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Introducción a estructuras de control (o sentencias).
     * Funciones predefinidas.
     * Números complejos.
-* [Trabajando con señales - I](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2002%20-%20%20Trabajando%20con%20se%C3%B1ales/html/clase_02_a.html)
+* [Trabajando con señales - I](Clase_02_trabajando_con_señales/clase_02_a.pdf)
     * Representación númerica.
     * Energía y potencia.
     * Matrices.
     * Secuencias.
     * Señales discretas básicas.
     * Señales continuas básicas.
-* [Trabajando con señales - II](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2002%20-%20%20Trabajando%20con%20se%C3%B1ales/html/clase_02_b.html)
+* [Trabajando con señales - II](Clase_02_trabajando_con_señales/clase_02_b.pdf)
     * Funciones (I).
     * Debugging.
     * Transformaciones de la variable independiente.
@@ -65,13 +67,13 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Visualización de matrices.
     * Comentarios sobre los gráficos.
     * Señales reales.
-* [Estructuras y sistemas - I](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2003%20-%20%20Estructuras%20y%20sistemas/html/clase_03_a.html)
+* [Estructuras y sistemas - I](Clase_03_Estructuras_y_sistemas/clase_03_a.pdf)
     * Clasificación de sistemas.
     * Estructuras de control (o sentencias) (II).
     * Menejo de errores.
     * Estructura de datos avanzada.
     * uiControl.
-* [Estructuras y sistemas - II](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clase%2003%20-%20%20Estructuras%20y%20sistemas/html/clase_03_b.html)
+* [Estructuras y sistemas - II](Clase_03_Estructuras_y_sistemas/clase_03_b.pdf)
     * Funciones (II).
     * Funciones anónimas.
     * Funciones principales y subfunciones.
@@ -79,8 +81,8 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Encapsulado de funciones.
     * Ejercicio propuesto.
 * Material extra
-    * [Audio en MATLAB.](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Audio/LiveScript/html/ClaseEspecial_Audio.html)
-    * [Interfaz gráfica - GUI](https://htmlpreview.github.io/?https://github.com/maxiyommi/signal-systems/blob/master/Clases%20especiales/Gui/LiveScript/html/ClaseEspecial_UI.html).
+    * [Audio en MATLAB.]()
+    * [Interfaz gráfica - GUI]().
     * [Game of Life](https://github.com/maxiyommi/signal-systems/blob/master/Material%20extra/GameOfLife/gameOfLife.ipynb)
     * [Introducción a Python](https://github.com/infiniemlabs-acustica/python_introduccion).
     * [Introducción a filtros](https://github.com/maxiyommi/signal-systems/blob/master/Material%20extra/Filtros/intro_filtros.ipynb).

@@ -1,0 +1,2 @@
+materia fecha_1 fecha_2 fecha_3 docentes examen_1 examen_2 examenFinal prom
+"Señales y sistemas" 17 3 10 "Gonzales M., Fernandez F." 70 80 50 66.6666666666667
