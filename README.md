@@ -35,11 +35,11 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Organización.
     * Bibliografía.
     * Introducción al curso.
-* [Introducción y fundamentos principales - I](Clase_01_introduccion_y_fundamentos_principales/clase_01_a.pdf)
+* [Introducción y fundamentos principales - I](Introduccion_y_fundamentos_principales/clase_01_a.pdf)
     * Conceptos básicos de programación.
     * MATLAB.
     * Estrategia de aprendizaje.
-* [Introducción y fundamentos principales - II](Clase_01_introduccion_y_fundamentos_principales/clase_01_b.pdf)
+* [Introducción y fundamentos principales - II](Introduccion_y_fundamentos_principales/clase_01_b.pdf)
     * Entorno de trabajo y ventanas.
     * Ayuda y documentación.
     * Datos (built-in).
@@ -49,14 +49,14 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Introducción a estructuras de control (o sentencias).
     * Funciones predefinidas.
     * Números complejos.
-* [Trabajando con señales - I](Clase_02_trabajando_con_señales/clase_02_a.pdf)
+* [Trabajando con señales - I](Trabajando_con_señales/clase_02_a.pdf)
     * Representación númerica.
     * Energía y potencia.
     * Matrices.
     * Secuencias.
     * Señales discretas básicas.
     * Señales continuas básicas.
-* [Trabajando con señales - II](Clase_02_trabajando_con_señales/clase_02_b.pdf)
+* [Trabajando con señales - II](Trabajando_con_señales/clase_02_b.pdf)
     * Funciones (I).
     * Debugging.
     * Transformaciones de la variable independiente.
@@ -67,13 +67,13 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Visualización de matrices.
     * Comentarios sobre los gráficos.
     * Señales reales.
-* [Estructuras y sistemas - I](Clase_03_Estructuras_y_sistemas/clase_03_a.pdf)
+* [Estructuras y sistemas - I](Estructuras_y_sistemas/clase_03_a.pdf)
     * Clasificación de sistemas.
     * Estructuras de control (o sentencias) (II).
     * Menejo de errores.
     * Estructura de datos avanzada.
     * uiControl.
-* [Estructuras y sistemas - II](Clase_03_Estructuras_y_sistemas/clase_03_b.pdf)
+* [Estructuras y sistemas - II](Estructuras_y_sistemas/clase_03_b.pdf)
     * Funciones (II).
     * Funciones anónimas.
     * Funciones principales y subfunciones.
@@ -81,8 +81,8 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Encapsulado de funciones.
     * Ejercicio propuesto.
 * Material extra
-    * [Audio en MATLAB.]()
-    * [Interfaz gráfica - GUI]().
+    * [Audio en MATLAB.](Material_extra/Audio/LiveScript/ClaseEspecial_Audio.pdf)
+    * [Interfaz gráfica - GUI](Material_extra/Gui/LiveScript/ClaseEspecial_UI.pdf).
     * [Game of Life](https://github.com/maxiyommi/signal-systems/blob/master/Material%20extra/GameOfLife/gameOfLife.ipynb)
     * [Introducción a Python](https://github.com/infiniemlabs-acustica/python_introduccion).
     * [Introducción a filtros](https://github.com/maxiyommi/signal-systems/blob/master/Material%20extra/Filtros/intro_filtros.ipynb).
