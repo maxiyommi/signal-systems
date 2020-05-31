@@ -35,11 +35,11 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Organización.
     * Bibliografía.
     * Introducción al curso.
-* [Introducción y fundamentos principales - I](Introduccion_y_fundamentos_principales/clase_01_a.pdf)
+* [Introducción y fundamentos principales - I](01_Introduccion_y_fundamentos_principales/clase_01_a.pdf)
     * Conceptos básicos de programación.
     * MATLAB.
     * Estrategia de aprendizaje.
-* [Introducción y fundamentos principales - II](Introduccion_y_fundamentos_principales/clase_01_b.pdf)
+* [Introducción y fundamentos principales - II](01_Introduccion_y_fundamentos_principales/clase_01_b.pdf)
     * Entorno de trabajo y ventanas.
     * Ayuda y documentación.
     * Datos (built-in).
@@ -49,14 +49,14 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Introducción a estructuras de control (o sentencias).
     * Funciones predefinidas.
     * Números complejos.
-* [Trabajando con señales - I](Trabajando_con_señales/clase_02_a.pdf)
+* [Trabajando con señales - I](02_Trabajando_con_señales/clase_02_a.pdf)
     * Representación númerica.
     * Energía y potencia.
     * Matrices.
     * Secuencias.
     * Señales discretas básicas.
     * Señales continuas básicas.
-* [Trabajando con señales - II](Trabajando_con_señales/clase_02_b.pdf)
+* [Trabajando con señales - II](02_Trabajando_con_señales/clase_02_b.pdf)
     * Funciones (I).
     * Debugging.
     * Transformaciones de la variable independiente.
@@ -67,13 +67,13 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Visualización de matrices.
     * Comentarios sobre los gráficos.
     * Señales reales.
-* [Estructuras y sistemas - I](Estructuras_y_sistemas/clase_03_a.pdf)
+* [Estructuras y sistemas - I](03_Estructuras_y_sistemas/clase_03_a.pdf)
     * Clasificación de sistemas.
     * Estructuras de control (o sentencias) (II).
     * Menejo de errores.
     * Estructura de datos avanzada.
     * uiControl.
-* [Estructuras y sistemas - II](Estructuras_y_sistemas/clase_03_b.pdf)
+* [Estructuras y sistemas - II](03_Estructuras_y_sistemas/clase_03_b.pdf)
     * Funciones (II).
     * Funciones anónimas.
     * Funciones principales y subfunciones.
