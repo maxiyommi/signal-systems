@@ -80,6 +80,10 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * Funciones anidadas.
     * Encapsulado de funciones.
     * Ejercicio propuesto.
+* [Convolución](04_Convolucion/clase_04.pdf)
+    * Convolución continua.
+    * Convolución discreta.
+    * Respuesta acústica de un recinto.
 * Material extra
     * [Audio en MATLAB.](Material_extra/Audio/LiveScript/ClaseEspecial_Audio.pdf)
     * [Interfaz gráfica - GUI](Material_extra/Gui/LiveScript/ClaseEspecial_UI.pdf).
