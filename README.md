@@ -87,7 +87,7 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
 * Material extra
     * [Audio en MATLAB.](Material_extra/Audio/LiveScript/ClaseEspecial_Audio.pdf)
     * [Interfaz gráfica - GUI](Material_extra/Gui/LiveScript/ClaseEspecial_UI.pdf).
-    * [Game of Life](https://github.com/maxiyommi/signal-systems/blob/master/Material%20extra/GameOfLife/gameOfLife.ipynb)
+    * [Game of Life](Material_extra/GameOfLife/gameOfLife.ipynb)
     * [Introducción a Python](https://github.com/infiniemlabs-acustica/python_introduccion).
     * [Introducción a filtros](Material_extra/Filtros/intro_filtros.ipynb).
     * [Introducción a IA](Material_extra/Intro_IA/Introducción_IA.pdf).
