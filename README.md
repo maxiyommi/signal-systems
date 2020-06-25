@@ -89,7 +89,8 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * [Interfaz gráfica - GUI](Material_extra/Gui/LiveScript/ClaseEspecial_UI.pdf).
     * [Game of Life](https://github.com/maxiyommi/signal-systems/blob/master/Material%20extra/GameOfLife/gameOfLife.ipynb)
     * [Introducción a Python](https://github.com/infiniemlabs-acustica/python_introduccion).
-    * [Introducción a filtros](https://github.com/maxiyommi/signal-systems/blob/master/Material%20extra/Filtros/intro_filtros.ipynb).
+    * [Introducción a filtros](Material_extra/Filtros/intro_filtros.ipynb).
+    * [Introducción a IA](Material_extra/Intro_IA/LiveScript/Introducción a IA.pdf).
 
 ## Consultas
 Las consultas sobre el material y/o consigna del TP estan centralizadas en la sección de [**Issues**](https://github.com/maxiyommi/signal-systems/issues).
