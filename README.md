@@ -103,6 +103,6 @@ Ingresar con el usuario personal al [**Aula virtual**](https://untrefpresencial.
 
 * **Lic. Miriam Sassano** - miryam.sassano@gmail.com
 * **Ing. Antonio Greco** - antogreco2015@gmail.com
-* **Ing. Maximiliano Yommi** - maximilianoyommi@gmail.com
+* **Ing. Maximiliano Yommi** - myommi@untref.edu.ar
 * **Tec. Agustín Morelli** - agustinmorelli88@gmail.com
 
