@@ -9,23 +9,21 @@ Las presentaciones se realizan en el dia y horario de las prácticas de la asign
 
 | Actividad | Fecha limite | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
-| 1er entrega TP | a definir | - | Enviar por mail el link de [**Gist**](https://gist.github.com/) con todas las **funciones** que correspondan a la entrega. Agregar en el cuerpo del mail los integrantes del grupo. Los comentarios se realizaran por **Gist** |
-| 2da entrega TP | a definir  | [Subir](https://www.dropbox.com/request/9YcAGMs2enpmEgz4JwPF)| Subir [**informe preliminar**](TP/readme.md) en .pdf con los apellidos de los integrantes separados por guion bajo. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). Los comentarios de las funciones se realizaran por **Gist** |
-| 3er entrega TP | a definir  | - | Usar el mismo link de **Gist** de la 1er entrega, deben figurar todas las **funciones** que correspondan a la entrega. Las correcciones se realizaran por **Gist** |
-| Parcialito MATLAB | a definir  | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario|
-| 4ta entrega TP + defensa | a definir  |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e [**informe final**](TP/readme.md) en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-| Recuperatorios TP-MATLAB  | a definir  |[Subir](https://www.dropbox.com/request/HL7I2C9RxEPRcj8X8d1I) | Subir **código final** e [**informe final**](TP/readme.md)  en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-
-> [**Gist**](https://help.github.com/es/github/writing-on-github/editing-and-sharing-content-with-gists), es un plataforma para snippets, o lo que es lo mismo, pequeños pedazos de código reusables con una funcionalidad concreta. Estos snippets serían ideales tenerlos en un sitio donde se puedan compartir, almacenar y evitar que se pierdan en el olvido, pero donde crear un repositorio git, parece ser excesivo y sería matar moscas con una escopeta. Para eso existe Gist, ademas de ser ideal para que se comenten los códigos subidos. **Procurar mantener el mismo link a lo largo de toda la cursada**.
+| 1er entrega TP | a definir | - | Enviar por mail **antes de la fecha limite** el notebook con las consignas resueltas. |
+| 2da entrega TP | a definir  | - |Enviar por mail **antes de la fecha limite** el [**informe preliminar**](TP/readme.md) en .pdf con los apellidos de los integrantes separados por guion bajo y el notebook con las consignas resueltas. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). |
+| 3er entrega TP | a definir  | - | Enviar por mail **antes de la fecha limite** el notebook con las consignas resueltas. |
+| Parcialito | a definir  | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario con ejercicios. |
+| 4ta entrega TP + defensa | a definir  |-| Enviar por mail **código final** e [**informe final**](TP/readme.md) en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| Recuperatorios TP-Parcialito  | a definir  |-| Subir **código final** e [**informe final**](TP/readme.md)  en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
 
 ## Evaluación
-Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
+Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito x 0.3
 
 > **Recordar**: el desglose de la nota del TP se encuentra en la consigna del mismo.
 
-## Contenidos del curso
+## Contenidos del curso [en revisión]
 
-> Todas las clases fueron desarrolladas en [Live Script](https://www.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html). Se recomienda ejecutarlas en Matlab R2018b o posterior.
+> El contenido de MATLAB fue desarrollado en [Live Script](https://www.mathworks.com/help/matlab/matlab_prog/what-is-a-live-script-or-function.html). Se recomienda ejecutarlas en Matlab R2018b o posterior.
 
 * Trabajo práctico
     * [Consigna del trabajo práctico](TP/consigna_TP.pdf)
@@ -94,7 +92,8 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     	* [Clasificación](Material_extra/Intro_IA/2_Clasificacion.pdf).
 
 ## Consultas
-Las consultas sobre el material y/o consigna del TP estan centralizadas en la sección de [**Issues**](https://github.com/maxiyommi/signal-systems/issues).
+Las consultas sobre el material y/o consigna del TP están centralizadas en el espacio de trabajo de [Slack](https://slack.com/intl/es-ar/). Por favor consultar el [siguiente documento](https://github.com/maxiyommi/signal-systems/blob/master/reglas_slack.md) para realizar las consultas apropiadamente.
+* [Unirte al espacio de trabajo](https://join.slack.com/t/senalesysistemas/shared_invite/zt-h561cob9-aY4~y~k8FaOeZt1qNIr6JA)
 
 ## Contenido teórico
 Ingresar con el usuario personal al [**Aula virtual**](https://untrefpresencial.educativa.org/).
@@ -106,3 +105,5 @@ Ingresar con el usuario personal al [**Aula virtual**](https://untrefpresencial.
 * **Ing. Maximiliano Yommi** - myommi@untref.edu.ar
 * **Tec. Agustín Morelli** - agustinmorelli88@gmail.com
 
+## Licencia
+El contenido puede ser reutilizado, siempre y cuando se cumplan los terminos de la licencia [Creative Commons BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es).
