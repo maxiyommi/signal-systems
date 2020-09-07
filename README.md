@@ -31,7 +31,7 @@ Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito MATLAB x 0.3
     * [Consigna del trabajo práctico](TP/consigna_TP.pdf)
     * [Informe técnico](TP/readme.md)
 * [Guía de ejercicios](GUIA_DE_EJERCICIOS.pdf)
-* [Introducción](https://docs.google.com/presentation/d/1gEb5sLCnzbIypZ-_O4A_d9vsVgYbpxo3E62I9krsjjM/edit?usp=sharing)
+* [Introducción](https://drive.google.com/file/d/1RZ0z2b058rDOcL5y-iZSmM2msSV9AwRO/view?usp=sharing)
     * Organización.
     * Bibliografía.
     * Introducción al curso.
