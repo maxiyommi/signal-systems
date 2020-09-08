@@ -4,6 +4,28 @@
 
 Contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingeniería de Sonido](https://www.untref.edu.ar/carrera/ingenieria-de-sonido), en la [Universidad Nacional de Tres de Febrero](https://www.untref.edu.ar), Buenos Aires - Argentina.
 
+## Uso del material
+
+Todas las clases prácticas de la materia están desarrolladas en *notebooks* de [Jupyter](https://jupyter.org/) y ubicadas en la carpeta `python/notebooks/`. La numeración de los notebooks esta definida de la siguiente manera
+
+![](python/img/notebook_indicador.png)
+
+Para disponer del material se puede realizar de la siguiente manera:
+
+**Con `git`**
+Si tiene instalado git, la forma más fácil de acceder a estos archivos es clonar el repositorio en el directorio que elija.
+
+``` bash
+git clone https://github.com/maxiyommi/signal-systems.git
+```
+
+**Sin `git`**
+Alternativamente, puede descargar todo el repositorio como un archivo .zip desde la página de inicio del repositorio utilizando el botón verde "Clonar o descargar" en la esquina superior derecha.
+
+![](python/img/git_download.png)
+
+> Para conocer más sobre git, esta el [notebook](pyhon/notebooks/102_intro_git.ipynb) de ayuda.
+
 ## Fechas importantes
 Las presentaciones se realizan en el dia y horario de las prácticas de la asignatura. **Todas las actividades son obligatorias**.
 
