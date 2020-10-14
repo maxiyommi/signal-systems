@@ -31,12 +31,11 @@ Las presentaciones se realizan en el dia y horario de las prácticas de la asign
 
 | Actividad | Fecha limite | Link | Observaciones
 | ---------- | ---- | ---- | --------- |
-| 1er entrega TP | a definir | - | Enviar por mail **antes de la fecha limite** el notebook con las consignas resueltas. |
-| 2da entrega TP | a definir  | - |Enviar por mail **antes de la fecha limite** el [**informe preliminar**](TP/readme.md) en .pdf con los apellidos de los integrantes separados por guion bajo y el notebook con las consignas resueltas. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). |
-| 3er entrega TP | a definir  | - | Enviar por mail **antes de la fecha limite** el notebook con las consignas resueltas. |
-| Parcialito | a definir  | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario con ejercicios. |
-| 4ta entrega TP + defensa | a definir  |-| Enviar por mail **código final** e [**informe final**](TP/readme.md) en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
-| Recuperatorios TP-Parcialito  | a definir  |-| Subir **código final** e [**informe final**](TP/readme.md)  en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| 1er entrega TP | 27/10 | - | Enviar por mail **antes de la fecha limite** el notebook con las consignas resueltas. |
+| 2da entrega TP | 10/11  | - |Enviar por mail **antes de la fecha limite** el [**informe preliminar**](TP/readme.md) en .pdf con los apellidos de los integrantes separados por guion bajo y el notebook con las consignas resueltas. Las correcciones del informe van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones). |
+| Parcialito | ?/11 | [Formulario](https://forms.gle/FhRTqopTm7CvU4uk7)| **Multiple choice** domiciliario con ejercicios. |
+| 3ra entrega TP + defensa | 01/12  |-| Enviar por mail **código final** e [**informe final**](TP/readme.md) en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
+| Recuperatorios TP-Parcialito  | 08/12  |-| Subir **código final** e [**informe final**](TP/readme.md)  en una carpeta con los apellidos de los integrantes separados por guion bajo. La correcciones van a estar disponibles en el GDrive (/Práctica/TPN1/Correcciones)|
 
 ## Evaluación
 Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito x 0.3

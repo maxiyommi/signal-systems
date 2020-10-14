@@ -7,9 +7,19 @@
     - [ ] curva del olvido.
     - [ ] numeros complejos.
 - [ ] cosas en la clase_02_a de MATLAB que no agregue aun:
+    - [ ] definir las señales basicas usando "np.piecewise" (http://blog.espol.edu.ec/telg1001/category/temas-por-semana/senales/)
     - [ ] toda la primer parte de representación númerica.
     - [ ] la parte de matrices (lo dejo para cuando muestre superficies o incluso para curva del olvido con varios parametros)
-    
-    
+    - [ ] falta la resolucion de los ejercicios
+- [ ] cosas en la clase_02_b de MATLAB que no agregue aun:
+    - [ ] debugging
+
+
+- En la clase 5 agregar operaciones entre vectores y matrices. Copia y vista de vectores.
+https://damianavila.github.io/Python-Cientifico-HCC/3_NumPy.html
+
 http://blog.espol.edu.ec/telg1001/3-3-1-respuesta-a-impulso-python/
 https://nbviewer.jupyter.org/github/mgaitan/curso-python-cientifico/blob/fcefyn/Clase%205.ipynb
+
+
+http://mathesaurus.sourceforge.net/matlab-numpy.html
