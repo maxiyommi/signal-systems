@@ -13,7 +13,11 @@
     - [ ] falta la resolucion de los ejercicios
 - [ ] cosas en la clase_02_b de MATLAB que no agregue aun:
     - [ ] debugging
-
+- [ ] cosas en la clase_03_a de MATLAB que no agregue aun:
+    - [ ] Sentencia break, continue, return
+    - [ ] try/catch
+    - [ ] otras estructuras de datos
+    - [ ] algo de uicontrols
 
 - En la clase 5 agregar operaciones entre vectores y matrices. Copia y vista de vectores.
 https://damianavila.github.io/Python-Cientifico-HCC/3_NumPy.html
