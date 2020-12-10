@@ -40,7 +40,7 @@ Las presentaciones se realizan en el dia y horario de las prácticas de la asign
 ## Evaluación
 Nota final parte práctica = Nota TP x 0.7 + Nota Parcialito x 0.3
 
-> **Recordar**: el desglose de la nota del TP se encuentra en la consigna del mismo.
+> **Recordar**: el desglose de la nota del TP se encuentra en la consigna del mismo y la nota minima de aprobación es 6.
 
 ## Contenidos del curso [en revisión]
 
