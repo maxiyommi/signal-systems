@@ -1,4 +1,0 @@
-# Programa
-
-## Clase 1
-
