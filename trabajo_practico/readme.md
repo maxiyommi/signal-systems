@@ -14,28 +14,28 @@ Los alumnos adquirirán las siguientes habilidades:
 * Adquirir las capacidades de interpretar los lineamientos de una normativa.
 * Autonomía en la lectura del material dispuesto por los docentes.
 * Presentación de avances de producción.
-* Documentar el procedimiento de medición y diseño de scripts.
+* Documentar (en [LaTeX](https://www.latex-project.org/)) el procedimiento de medición y diseño de scripts.
 
 # Tiempo de reverberación (TR)
 El desarrollo teórico del parámetro acústico “Tiempo de reverberación” ha sido profundamente estudiado por numerosos autores, entre ellos pueden destacarse W.C. Sabine, Eyring, Millington, Fitzroy y Kuttruff (Sabine, W.C. 1964) (Kuttruff, 2009). Una presentación clara sobre el modelo de Millington puede encontrarse en el trabajo de L. E. Kinsler (Kinsler L. E. 1982). Para interpretar el modelo propuesto por Fitzroy puede estudiarse el análisis planteado por M. Rettinger (Rettinger M. 1977). El Tiempo de Reverberación está definido en la Norma ISO 354 de la siguiente manera: “Es el tiempo necesario para que el nivel de presión sonora disminuya 60 dB después del cese de la fuente”. En la actualidad la mayoría de los equipos usualmente empleados para cuantificar el mencionado descriptor, entregan el parámetro T30, definido en la Norma ISO 3382 según: “Es el tiempo, expresado en segundos, que se requiere para que el nivel de presión sonora disminuya en 60 dB, calculado sobre una recta obtenida de la regresión lineal por mínimos cuadrados de una curva de caída medida desde un nivel 5 dB por debajo del nivel inicial, hasta un nivel de 35 dB inferior a dicho nivel” (UNE-EN ISO 3382, 2010). En este trabajo se desarrollan algunos de los descriptores que permiten caracterizar un recinto cerrado.
 
-## Consigna
+## Entregas
 Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en grupos reducidos de 3 a 4 integrantes (excluyente). Las entregas se realizan en el dia y horario de las prácticas de la asignatura.
 
 <table>
 	<tr>
-		<th>N° de avance</th>
+		<th>N° de entrega</th>
 		<th>Función</th>
 		<th>Uso</th>
         <th>Test</th>
  	</tr>
  	<tr>
-  		<td rowspan="3">1° avance</td>
+  		<td rowspan="3"><a href="notebooks/primer_entrega.ipynb">1° entrega</a></td>
    		<td>Función de sintetización de ruido rosa</td>
 		<td>Se utiliza para ajustar el nivel de la fuente al menos a 45 dB por encima del nivel de ruido de fondo en la banda de frecuencia correspondiente</td>
    		<td rowspan="3" style="text-align:left"><ul><li>Corroborar que ambas funciones (Ruido rosa - Sine sweep logarítmico + Filtro
 inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity, para ver sus respectivos espectros.
-</li><li>Convolucionar un sine sweep logarítmico generado y su respectivo filtro inverso y estudiar resultados.</li><li>Función de reproducir y grabar de manera simultánea.</li></ul>
+</li><li>Convolucionar un sine sweep logarítmico generado y su respectivo filtro inverso y estudiar resultados.</li><li>Reproducir y grabar de manera simultánea.</li></ul>
 </td>
  	</tr>
 	<tr>
@@ -50,7 +50,7 @@ inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity
   		<td rowspan="4">2° Entrega</td>
    		<td>Función de carga de archivos de audio (dataset)</td>
 		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audio</td>
-   		<td rowspan="4" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li><li>Obtener respuesta al impulso a partir de los sine sweep y el filtro inverso descargados (dataset).</li>
+   		<td rowspan="4" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los sine sweep y el filtro inverso descargados (dataset).</li>
 <li>Evaluar las respuestas al impulso sintetizadas, las respuesta al impulso generadas y sine sweep, con algún programa comercial</li></ul>
 </td>	
  	</tr>
@@ -60,7 +60,7 @@ inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity
  	</tr>
     
 	<tr>
-  		<td>Función filtros norma IEC 61260/td>
+  		<td>Función filtros norma IEC 61260</td>
    		<td>La función filtros norma IEC 61260 es útil para filtrar la respuesta al impulso y calcular los parámetros acústicos por frecuencia</td>
  	</tr>
     <tr>
@@ -106,9 +106,6 @@ inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity
  	</tr>
 </table>
 
-https://www.audacityteam.org/
-
-
 ## Informe técnico
 El trabajo práctico consta de un informe técnico que refleja los resultados y el código desarrollado, el mismo se realiza íntegramente en [Latex](https://www.latex-project.org/).
 
@@ -133,7 +130,7 @@ producción del software, su evaluación y su validación.
 * El informe preliminar ​ no debe exceder las 3 páginas. ​ 
 * Respetar fecha de entrega.
 
-## Informe final
+## Informe final (obligatorio)
 Respetar las siguientes pautas:
 
 * Realizar un informe final, con el mismo formato establecido en el informe
@@ -147,7 +144,6 @@ dicha relación.
 * Validación del algoritmo con software comercial.
 * Los informes finales entregados fuera de fecha no serán evaluados (pasan directamente a recuperatorio)
 
-
 ## Distribución de contenidos del informe 
 | Resumen | Introducción | Marco teórico | Desarrollo experimental | Resultados | Conclusiones |
 | -- | -- | -- | -- | -- | --  |
@@ -158,3 +154,5 @@ dicha relación.
 * [Ejemplo de distintos elementos y componentes de LaTeX](ejemplos_latex)
 * [Generador de tablas en LaTeX](https://www.tablesgenerator.com/)
 * [Base de datos de RI](https://www.openairlib.net/)
+* [How to read a paper](https://web.stanford.edu/class/ee384m/Handouts/HowtoReadPaper.pdf)
+* [Consigna de TP versión Matlab](consigna_TP_obsoleta.pdf)
