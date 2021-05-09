@@ -30,7 +30,7 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
         <th>Test</th>
  	</tr>
  	<tr>
-  		<td rowspan="3"><a href="notebooks/primer_entrega.ipynb">1° entrega</a></td>
+  		<td rowspan="3"><a href="noteboks/primer_entrega.ipynb">1° entrega</a></td>
    		<td>Función de sintetización de ruido rosa</td>
 		<td>Se utiliza para ajustar el nivel de la fuente al menos a 45 dB por encima del nivel de ruido de fondo en la banda de frecuencia correspondiente</td>
    		<td rowspan="3" style="text-align:left"><ul><li>Corroborar que ambas funciones (Ruido rosa - Sine sweep logarítmico + Filtro
