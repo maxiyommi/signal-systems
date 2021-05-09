@@ -34,9 +34,9 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
    		<td>Función de sintetización de ruido rosa</td>
 		<td>Se utiliza para ajustar el nivel de la fuente al menos a 45 dB por encima del nivel de ruido de fondo en la banda de frecuencia correspondiente</td>
    		<td rowspan="3" style="text-align:left"><ul><li>Corroborar que ambas funciones (Ruido rosa - Sine sweep logarítmico + Filtro
-inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity, para ver sus respectivos espectros.
-</li><li>Convolucionar un sine sweep logarítmico generado y su respectivo filtro inverso y estudiar resultados.</li><li>Reproducir y grabar de manera simultánea.</li></ul>
-</td>
+            inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity, para ver sus respectivos espectros.
+        </li><li>Convolucionar un sine sweep logarítmico generado y su respectivo filtro inverso y estudiar resultados.</li><li>Reproducir y grabar de manera simultánea.</li></ul>
+        </td>
  	</tr>
 	<tr>
   		<td>Función de generación de sine sweep logarítmico + filtro inverso</td>
@@ -46,25 +46,25 @@ inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity
   		<td>Adquisición y reproducción</td>
    		<td>Se utiliza para adquirir y reproducir las señales durante una medición in-situ.</td>
  	</tr>
-     	<tr>
+    <tr>
   		<td rowspan="4">2° Entrega</td>
    		<td>Función de carga de archivos de audio (dataset)</td>
 		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audio</td>
-   		<td rowspan="4" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los sine sweep y el filtro inverso descargados (dataset).</li>
-<li>Evaluar las respuestas al impulso sintetizadas, las respuesta al impulso generadas y sine sweep, con algún programa comercial</li></ul>
-</td>	
+   		<td rowspan="4" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los 
+            sine sweep y el filtro inverso descargados (dataset).</li>
+            <li>Evaluar las respuestas al impulso sintetizadas, las respuesta al impulso generadas y sine sweep, con algún programa comercial</li></ul>
+        </td>	
  	</tr>
 	<tr>
   		<td>Función de sintetización de respuesta al impulso</td>
    		<td>Se utiliza para obtener la respuesta al impulso a partir del sine sweep logarítmico</td>
  	</tr>
-    
 	<tr>
   		<td>Función filtros norma IEC 61260</td>
    		<td>La función filtros norma IEC 61260 es útil para filtrar la respuesta al impulso y calcular los parámetros acústicos por frecuencia</td>
  	</tr>
     <tr>
-    <td>Función conversión a escala logarítmica normalizada</td>
+        <td>Función conversión a escala logarítmica normalizada</td>
 		<td>Se utiliza para visualizar la señal en una escala más acorde al fenómeno que se estudia</td>
     </tr>
     <tr>
@@ -101,8 +101,9 @@ inverso) se comportan adecuadamente utilizando, por ejemplo el software Audacity
   		<td rowspan="1">Extra</td>
    		<td>Función Lundeby</td>
 		<td>Se utiliza para encontrar los extremos de integración más precisos.</td>
-   		<td rowspan="1" style="text-align:left"><ul><li>Probar con las respuestas muestras descargadas nuevamente y cuantificar la diferencia respecto a no utilizar Lundeby.</li></ul>
-</td>	
+   		<td rowspan="1" style="text-align:left"><ul><li>Probar con las respuestas muestras descargadas nuevamente y cuantificar la diferencia respecto a no utilizar 
+            Lundeby.</li></ul>
+        </td>	
  	</tr>
 </table>
 
