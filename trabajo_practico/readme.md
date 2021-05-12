@@ -120,32 +120,26 @@ En cualquiera de los casos el template para confeccionar el informe se utiliza e
 ## Informe preliminar (opcional)
 Respetar las siguientes pautas:
 
-* Mencionar los detalles en el diseño de los scripts (con ayuda de diagramas de
-flujo o pseudocódigo) ​ sin agregar código propiamente dicho​ .
+* Mencionar los detalles en el diseño de los scripts (con ayuda de diagramas de flujo o pseudocódigo), sin agregar código propiamente dicho.
 * Describir el dataset seleccionado para probar el software.
-* El informe debe reflejar la arquitectura del software desarrollado y los avances
-en la producción del mismo. Los datos que se informan tiene que ser relevantes
-y garantizar la reproducibilidad de los mismos. ​ No ahondar en muchos detalles
-teóricos y definiciones (hacer uso de referencias), hacer más bien foco en la
-producción del software, su evaluación y su validación.
-* El informe preliminar ​ no debe exceder las 3 páginas. ​ 
+* El informe debe reflejar la arquitectura del software desarrollado y los avances en la producción del mismo. Los datos que se informan tiene que ser relevantes y garantizar la reproducibilidad de los mismos. No ahondar en muchos detalles teóricos y definiciones (hacer uso de referencias), hacer más bien foco en la producción del software, su evaluación y su validación.
+* El informe preliminar no debe exceder las 3 páginas. 
 * Respetar fecha de entrega.
 
 ## Informe final (obligatorio)
 Respetar las siguientes pautas:
 
-* Realizar un informe final, con el mismo formato establecido en el informe
-preliminar (atendiendo a las observaciones marcadas en la entrega del informe preliminar), pero en este caso ​ no debe exceder las 5 páginas​ . 
+* Realizar un informe final, con el mismo formato establecido en el informe preliminar (atendiendo a las observaciones marcadas en la entrega del informe preliminar), pero en este caso no debe exceder las 5 página. 
 * Remitir solamente a detalles relevante.
-* En el informe debe figurar claramente cómo se unen todas las funciones
-definidas y la interacción entre ellas. Utilizar algún diagrama para visualizar
-dicha relación.
+* En el informe debe figurar claramente cómo se unen todas las funciones definidas y la interacción entre ellas. Utilizar algún diagrama para visualizar dicha relación.
 * Mencionar detalladamente el procedimiento.
-* Mostrar curvas de filtros, plot del procesamiento de la seña.
+* Mostrar curvas de filtros, plot del procesamiento de la señal.
 * Validación del algoritmo con software comercial.
-* Los informes finales entregados fuera de fecha no serán evaluados (pasan directamente a recuperatorio)
+* Los informes finales entregados fuera de fecha no serán evaluados (pasan directamente a recuperatorio).
 
 ## Distribución de contenidos del informe 
+A modo ilustrastivo se muestra los porcentajes del contenido en los informes:
+
 | Resumen | Introducción | Marco teórico | Desarrollo experimental | Resultados | Conclusiones |
 | -- | -- | -- | -- | -- | --  |
 | 5% | 10% | 10% | 25% | 30% | 20% |
@@ -156,4 +150,4 @@ dicha relación.
 * [Generador de tablas en LaTeX](https://www.tablesgenerator.com/)
 * [Base de datos de RI](https://www.openairlib.net/)
 * [How to read a paper](https://web.stanford.edu/class/ee384m/Handouts/HowtoReadPaper.pdf)
-* [Consigna de TP versión Matlab](consigna_TP_obsoleta.pdf)
+* [Consigna de TP versión Matlab](consigna_TP_matlab.pdf)
