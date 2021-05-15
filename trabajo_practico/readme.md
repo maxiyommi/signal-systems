@@ -47,7 +47,7 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
    		<td>Se utiliza para adquirir y reproducir las señales durante una medición in-situ.</td>
  	</tr>
     <tr>
-  		<td rowspan="4">2° Entrega</td>
+  		<td rowspan="4"><a href="noteboks/segunda_entrega.ipynb">2° entrega</a></td>
    		<td>Función de carga de archivos de audio (dataset)</td>
 		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audio</td>
    		<td rowspan="4" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los 
