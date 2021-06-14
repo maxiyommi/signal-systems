@@ -47,16 +47,20 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
    		<td>Se utiliza para adquirir y reproducir las señales durante una medición in-situ.</td>
  	</tr>
     <tr>
-  		<td rowspan="4"><a href="noteboks/segunda_entrega.ipynb">2° entrega</a></td>
+  		<td rowspan="5"><a href="noteboks/segunda_entrega.ipynb">2° entrega</a></td>
    		<td>Función de carga de archivos de audio (dataset)</td>
 		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audio</td>
-   		<td rowspan="4" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los 
+   		<td rowspan="5" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los 
             sine sweep y el filtro inverso descargados (dataset).</li>
             <li>Evaluar las respuestas al impulso sintetizadas, las respuesta al impulso generadas y sine sweep, con algún programa comercial</li></ul>
         </td>	
  	</tr>
 	<tr>
   		<td>Función de sintetización de respuesta al impulso</td>
+   		<td>Se utiliza evaluar el algoritmo con una señal conocida</td>
+ 	</tr>
+    <tr>
+  		<td>Función obtener respuesta al impulso</td>
    		<td>Se utiliza para obtener la respuesta al impulso a partir del sine sweep logarítmico</td>
  	</tr>
 	<tr>
@@ -68,7 +72,7 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
 		<td>Se utiliza para visualizar la señal en una escala más acorde al fenómeno que se estudia</td>
     </tr>
     <tr>
-  		<td rowspan="5">3° Entrega</td>
+  		<td rowspan="5"><a href="noteboks/tercer_entrega.ipynb">3° entrega</a></td>
    		<td>Función suavizado de señal</td>
    		<td>Se utiliza para las fluctuaciones producto del ruido intrínseco en la respuesta al impulso.</td>
    		<td rowspan="5" style="text-align:left">
