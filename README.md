@@ -49,6 +49,10 @@ En esa ventana de tu navegador puedes moverte por las carpetas y ver los archivo
 
 ![](jupyterlab.png)
 
+## Clases
+
+La distribución del material clase a clase se encuentra en el siguiente [link](clases/README.md)
+
 ## Trabajo práctico
 El material referido al trabajo práctico se encuentra en la carpeta [`trabajo_practico`](trabajo_practico/readme.md). Las presentaciones se realizan en el dia y horario de las prácticas de la asignatura. **Todas las actividades son obligatorias**.
 
