@@ -17,7 +17,7 @@ Para **usar** el material de este repositorio se puede optar varios caminos:
 
 * De manera online:
     * [GitHub](https://github.com/maxiyommi/signal-systems) o desde [nbviewer](https://nbviewer.jupyter.org/github/maxiyommi/signal-systems/tree/master/). En ambos casos son una web estática, esto quiere decir que **no podemos interactuar con el material**.
-    * [Google Colab](colab.research.google.com) o [Blinder](https://mybinder.org/), **podemos interactuar con el material**.
+    * [Google Colab](https://colab.research.google.com/notebooks/intro.ipynb#recent=true) o [Blinder](https://mybinder.org/), **podemos interactuar con el material**.
 
 * De manera offline:
     * Instalar un interprete de notebooks como [Jupyter](https://jupyter.org/), con ayuda del siguiente [instructivo](https://gist.github.com/maxiyommi/a21fa6af877d1e00f1498e60654e6c4a).
