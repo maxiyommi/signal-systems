@@ -13,11 +13,13 @@ Los alumnos adquirirán las siguientes habilidades:
     * Procesamiento de las RI.
 * Adquirir las capacidades de interpretar los lineamientos de una normativa.
 * Autonomía en la lectura del material dispuesto por los docentes.
-* Presentación de avances de producción.
+* Autoevaluación de todo el material desarrollado.
+* Presentación de avances.
+* Los resultados optenidos no deben diferir en más de ±0.5 s de los arrojados por algún software comercial.
 * Documentar (en [LaTeX](https://www.latex-project.org/)) el procedimiento de medición y diseño de scripts.
 
-# Tiempo de reverberación (TR)
-El desarrollo teórico del parámetro acústico “Tiempo de reverberación” ha sido profundamente estudiado por numerosos autores, entre ellos pueden destacarse W.C. Sabine, Eyring, Millington, Fitzroy y Kuttruff (Sabine, W.C. 1964) (Kuttruff, 2009). Una presentación clara sobre el modelo de Millington puede encontrarse en el trabajo de L. E. Kinsler (Kinsler L. E. 1982). Para interpretar el modelo propuesto por Fitzroy puede estudiarse el análisis planteado por M. Rettinger (Rettinger M. 1977). El Tiempo de Reverberación está definido en la Norma ISO 354 de la siguiente manera: “Es el tiempo necesario para que el nivel de presión sonora disminuya 60 dB después del cese de la fuente”. En la actualidad la mayoría de los equipos usualmente empleados para cuantificar el mencionado descriptor, entregan el parámetro T30, definido en la Norma ISO 3382 según: “Es el tiempo, expresado en segundos, que se requiere para que el nivel de presión sonora disminuya en 60 dB, calculado sobre una recta obtenida de la regresión lineal por mínimos cuadrados de una curva de caída medida desde un nivel 5 dB por debajo del nivel inicial, hasta un nivel de 35 dB inferior a dicho nivel” (UNE-EN ISO 3382, 2010). En este trabajo se desarrollan algunos de los descriptores que permiten caracterizar un recinto cerrado.
+## Consigna
+La siguiente [presentación](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit?usp=sharing) tiene el detalle de la consigna del TP.
 
 ## Entregas
 Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en grupos reducidos de 3 a 4 integrantes (excluyente). Las entregas se realizan en el dia y horario de las prácticas de la asignatura.
