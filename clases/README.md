@@ -6,4 +6,4 @@
 | 4 | Introducción a Python cientifico (ecosistema SciPy). Señales discretas. Arrays y matrices. Presentación del trabajo práctico  | [400_intro_python_cientifico.ipynb](clase_4/400_intro_python_cientifico.ipynb) <br> [402_señales_discretas.ipynb](clase_4/402_señales_discretas.ipynb) <br> [Presentación TP](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit?usp=sharing) |  [401_ejercicios.ipynb](clase_4/401_ejercicios.ipynb) <br> [403_ejercicios.ipynb](clases/clase_4/403_ejercicios.ipynb) | [Solución de los ejercicios](clase_4) |
 | 5 | Periodicidad. Transformación de la variable independiente. Operación entre señales.  | [500_trabajando_señales.ipynb](clase_5/500_trabajando_señales.ipynb) |  [501_ejercicios.ipynb](clase_5/501_ejercicios.ipynb) | - |
 | 6 | Nociones básicas de audio y su uso en Python | [600_audio.ipynb](clase_6/600_audio.ipynb) |  - | - |
-
+| 7 | Clasificación de sistemas | [700_sistemas.ipynb](clase_7/700_sistemas.ipynb) | [701_ejercicios.ipynb](clase_7/701_ejercicios.ipynb) | - |
