@@ -6,6 +6,9 @@ Repositorio con el contenido práctico de la asignatura Señales y Sistemas de l
 
 El contenido esta orientado para alumnos con algún conocimiento previo de programación y de ninguna manera pretende ser un curso de programación en Python, sino más bien un material de apoyo intenso y desafiante, que invita a pensar y a desarrollar soluciones para validar los resultados analíticos de las [guiá de la asignatura](guia_ejercicios.pdf).
 
+> ❗ La distribución de la clases se encuentra en el siguiente [link](clases/README.md).
+
+
 ## Como comenzar
 Todas las clases de este repositorio están desarrolladas en *notebooks* de [Jupyter](https://jupyter.org/). La numeración de los notebooks esta definida de la siguiente manera
 
@@ -24,16 +27,14 @@ Para **usar** el material de este repositorio se puede optar varios caminos:
     
     * Descargar el material del repositorio:
         * Con `git` instalado en nuestro sistema operativo, la forma más fácil de acceder a estos archivos es clonar el repositorio en el directorio que elija.
-
-            ``` bash
-            git clone https://github.com/maxiyommi/signal-systems.git
-            ```
-
+``` bash
+    git clone https://github.com/maxiyommi/signal-systems.git
+```
         * Sin `git` instalado, puede descargar todo el repositorio como un archivo .zip desde la página de inicio del repositorio utilizando el botón verde "Clonar o descargar" en la esquina superior derecha.
 
-            ![](clases/img/git_download.png)
+![](clases/img/git_download.png)
 
-        > Para conocer más sobre git, se recomienda leer el siguiente [documento](https://gist.github.com/maxiyommi/b5d2ef4c66f17870a92bc27f4afe71c2) de ayuda.
+> Para conocer más sobre git, se recomienda leer el siguiente [documento](https://gist.github.com/maxiyommi/b5d2ef4c66f17870a92bc27f4afe71c2) de ayuda.
 
 
 ## Utilizar el material del repositorio
@@ -82,7 +83,4 @@ La mayor parte del contenido teórico de este curso fue extraida de:
 
 ## Licencia
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Licencia de Creative Commons" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />Este documento se destribuye con una <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">licencia Atribución CompartirIgual 4.0 Internacional de Creative Commons</a>.
-
-Material adaptado del curso [Introducción a Python](https://github.com/infiniemlabs-acustica/python_introduccion)
-
-© 2020. Infiniem Labs Acústica. infiniemlab.dsp@gmail.com (CC BY-SA 4.0)
+© 2020. [Infiniem Labs](https://www.infiniemlabs.com.ar). infiniemlab.dsp@gmail.com (CC BY-SA 4.0)

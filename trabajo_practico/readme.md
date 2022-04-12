@@ -15,14 +15,14 @@ Los alumnos adquirirán las siguientes habilidades:
 * Autonomía en la lectura del material dispuesto por los docentes.
 * Autoevaluación de todo el material desarrollado.
 * Presentación de avances.
-* Los resultados optenidos no deben diferir en más de ±0.5 s de los arrojados por algún software comercial.
+* **Los resultados optenidos no deben diferir en más de ±0.5 s de los arrojados por algún software comercial.**
 * Documentar (en [LaTeX](https://www.latex-project.org/)) el procedimiento de medición y diseño de scripts.
 
 ## Consigna
 La siguiente [presentación](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit?usp=sharing) tiene el detalle de la consigna del TP.
 
 ## Entregas
-Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en grupos reducidos de 3 a 4 integrantes (excluyente). Las entregas se realizan en el dia y horario de las prácticas de la asignatura.
+Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en **grupos reducidos de 3 a 4 integrantes (excluyente). Los envios se realizan por mail y se deben presentar antes del dia definido para las entregas (como figura en el calendario)**.
 
 <table>
 	<tr>
