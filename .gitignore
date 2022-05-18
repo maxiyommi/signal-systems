@@ -1,5 +1,8 @@
 # carpeta
 backup/
+__pycache__/
+.env
+.vscode
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 clases/pendientes.md
