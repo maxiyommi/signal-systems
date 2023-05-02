@@ -54,7 +54,7 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
     <tr>
   		<td rowspan="5"><a href="noteboks/segunda_entrega.ipynb">2° entrega</a></td>
    		<td>Función de carga de archivos de audio (dataset)</td>
-		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audio</td>
+		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audios</td>
    		<td rowspan="5" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los 
             sine sweep y el filtro inverso descargados (dataset).</li>
             <li>Evaluar las respuestas al impulso sintetizadas, las respuesta al impulso generadas y sine sweep, con algún programa comercial</li></ul>

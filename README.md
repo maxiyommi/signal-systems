@@ -4,13 +4,13 @@
 
 Repositorio con el contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingeniería de Sonido](https://www.untref.edu.ar/carrera/ingenieria-de-sonido), en la [Universidad Nacional de Tres de Febrero](https://www.untref.edu.ar), Buenos Aires - Argentina.
 
-El contenido esta orientado para alumnos con algún conocimiento previo de programación y de ninguna manera pretende ser un curso de programación en Python, sino más bien un material de apoyo intenso y desafiante, que invita a pensar y a desarrollar soluciones para validar los resultados analíticos de las [guiá de la asignatura](guia_ejercicios.pdf).
+El contenido está orientado para alumnos con algún conocimiento previo de programación y de ninguna manera pretende ser un curso de programación en Python, sino más bien un material de apoyo intenso y desafiante, que invita a pensar y a desarrollar soluciones para validar los resultados analíticos de las [guiá de la asignatura](guia_ejercicios.pdf).
 
 > ❗ La distribución de la clases se encuentra en el siguiente [link](clases/README.md).
 
 
 ## Como comenzar
-Todas las clases de este repositorio están desarrolladas en *notebooks* de [Jupyter](https://jupyter.org/). La numeración de los notebooks esta definida de la siguiente manera
+Todas las clases de este repositorio están desarrolladas en *notebooks* de [Jupyter](https://jupyter.org/). La numeración de los notebooks está definida de la siguiente manera
 
 ![](clases/img/notebook_indicador.png)
 
