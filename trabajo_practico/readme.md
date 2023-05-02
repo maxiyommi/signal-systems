@@ -21,8 +21,11 @@ Los alumnos adquirirán las siguientes habilidades:
 ## Consigna
 La siguiente [presentación](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit?usp=sharing) tiene el detalle de la consigna del TP.
 
+## Material
+Todo el material necesario para elaborar el TP se encuentra en la siguiente [carpeta](https://drive.google.com/drive/folders/1unNETr7js3hWZtuxa7-5uV9wns9KdTdT?usp=share_link).
+
 ## Entregas
-Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en **grupos reducidos de 3 a 4 integrantes (excluyente). Los envios se realizan por mail y se deben presentar antes del dia definido para las entregas (como figura en el calendario)**.
+Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en **grupos reducidos de 3 a 4 integrantes (excluyente). Los envios se realizan por mail/slack y se deben presentar antes del dia definido para las entregas (como figura en el calendario)**.
 
 <table>
 	<tr>
@@ -113,6 +116,8 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
  	</tr>
 </table>
 
+> 👮 La columna *test* indica las pruebas que tienen que superar las funciones para considerarse aprobadas. Recomendamos atenderlas para probar el código presentado.
+
 ## Informe técnico
 El trabajo práctico consta de un informe técnico que refleja los resultados y el código desarrollado, el mismo se realiza íntegramente en [Latex](https://www.latex-project.org/).
 
@@ -121,7 +126,9 @@ El trabajo práctico consta de un informe técnico que refleja los resultados y 
 * Editor online de LaTeX - [Overleaf](https://www.overleaf.com/)
 * Editor offline de LaTeX - [Texmaker](https://www.xm1math.net/texmaker/) + [MiKTeX](https://miktex.org/)
 
-En cualquiera de los casos el template para confeccionar el informe se utiliza el formato de la UNTREF para [memorias cuatrimestrales](template/template.pdf). Los archivos .tex, se encuentran en la carpeta [template](template). El mismo consta de un [main.tex](template/main.tex) con la estructura base del template y en la carpeta [secciones](template/secciones), las distintas partes del documento.
+En cualquiera de los casos el template para confeccionar el informe se utiliza el formato de la UNTREF para [memorias cuatrimestrales](https://drive.google.com/file/d/1YwtmfM1YYl1k_J5mDwJ6zEJEetitKask/view?usp=share_link). Los archivos .tex, se encuentran en la siguiente [carpeta](https://drive.google.com/drive/folders/1giSkdwsGBNFW-aSAB3JxaDxZ5dRmKU3x?usp=share_link). El mismo consta de un [main.tex](https://drive.google.com/file/d/1aGV3BoehQocyW0AbcdslqzODplwIqpKT/view?usp=share_link) con la estructura base del template y en la carpeta secciones las distintas partes del documento.
+
+> 🌈 Para la elaboración del informe recomendamos la lectura del documento [Curso introductorio a escritura en LaTeX](https://drive.google.com/file/d/1yaJD1QCCDyI8oMFzS0ZVzFg-8cyGPZCA/view?usp=share_link). Desarrollado por [Nahuel Passano](https://www.linkedin.com/in/nahuelpassano) - [Paula Ortega Riera](https://www.linkedin.com/in/paulaortegariera) de [Infiniem Labs](https://www.infiniemlabs.com.ar/).
 
 ## Informe preliminar (opcional)
 Respetar las siguientes pautas:
@@ -136,15 +143,18 @@ Respetar las siguientes pautas:
 Respetar las siguientes pautas:
 
 * Realizar un informe final, con el mismo formato establecido en el informe preliminar (atendiendo a las observaciones marcadas en la entrega del informe preliminar), pero en este caso no debe exceder las 5 página. 
-* Remitir solamente a detalles relevante.
+* Remitir solamente a detalles relevantes.
 * En el informe debe figurar claramente cómo se unen todas las funciones definidas y la interacción entre ellas. Utilizar algún diagrama para visualizar dicha relación.
 * Mencionar detalladamente el procedimiento.
 * Mostrar curvas de filtros, plot del procesamiento de la señal.
 * Validación del algoritmo con software comercial.
 * Los informes finales entregados fuera de fecha no serán evaluados (pasan directamente a recuperatorio).
 
+> A modo de ejemplo dejamos dos informes modelos: [Dylan Kaplan - Franco Rebora - Santiago Salinas](https://drive.google.com/file/d/1Xum3AZLTr6sm2q462rsJaoRpM00sgSNk/view?usp=share_link) y [Castelli Corina - Espindola Agustin - Lareo Matıas Federico - Passano Nahuel](https://drive.google.com/file/d/1HSazrH4OWhI8_3VEaoks2ZMtf0E63aEA/view?usp=share_link)
+
+
 ## Distribución de contenidos del informe 
-A modo ilustrastivo se muestra los porcentajes del contenido en los informes:
+A modo ilustrativo se muestra los porcentajes del contenido en los informes:
 
 | Resumen | Introducción | Marco teórico | Desarrollo experimental | Resultados | Conclusiones |
 | -- | -- | -- | -- | -- | --  |
@@ -152,7 +162,6 @@ A modo ilustrastivo se muestra los porcentajes del contenido en los informes:
 
 ## + Info
 * [Documentación oficial de overleaf](https://www.overleaf.com/learn)
-* [Ejemplo de distintos elementos y componentes de LaTeX](ejemplos_latex)
 * [Generador de tablas en LaTeX](https://www.tablesgenerator.com/)
 * [Base de datos de RI](https://www.openairlib.net/)
 * [How to read a paper](https://web.stanford.edu/class/ee384m/Handouts/HowtoReadPaper.pdf)
