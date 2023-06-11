@@ -160,6 +160,23 @@ A modo ilustrativo se muestra los porcentajes del contenido en los informes:
 | -- | -- | -- | -- | -- | --  |
 | 5% | 10% | 10% | 25% | 30% | 20% |
 
+## Presentación oral
+Los resultados alcanzados deben ser presentados de manera oral, a continuación algunas pautas para ayudarlos a prepararla:
+
+1. **Estructura clara y coherente**: Organiza tu presentación de manera lógica y estructurada. Introduce el tema y los objetivos del proyecto, presenta los pasos seguidos en el desarrollo del software y explica los resultados obtenidos. Utiliza transiciones claras.
+
+2. **Contextualiza el problema**: Explica la importancia y relevancia de los parámetros acústicos en el campo en el que se aplica el software. Destaca los desafíos o problemas que se enfrentan al calcular estos parámetros y cómo tu software resuelve o mejora esos aspectos.
+
+3. **Demuestra el proceso de desarrollo**: Explica los pasos que seguiste durante el desarrollo del software. Describe las metodologías utilizadas, los algoritmos implementados y cualquier otro aspecto técnico relevante. Utiliza gráficos, diagramas o ejemplos para ilustrar cómo funciona el software.
+
+4. **Destaca los resultados y beneficios**: Presenta los resultados obtenidos a través del uso del software. Muestra cómo se comparan con los resultados obtenidos por otros métodos o herramientas existentes. Resalta los beneficios y ventajas que ofrece tu software en términos de precisión, eficiencia o cualquier otro aspecto relevante.
+
+5. **Conclusión y perspectivas futuras**: Cierra tu presentación resumiendo los principales puntos y conclusiones del trabajo práctico. Discute posibles mejoras o ampliaciones que podrían implementarse en el futuro. 
+
+Recorda practicar tu presentación varias veces para asegurarte de que fluya de manera suave y que puedas transmitir claramente los aspectos clave de tu trabajo práctico.
+
+> El tiempo dispuesto para cada equipo es de 15 minútos.
+
 ## + Info
 * [Documentación oficial de overleaf](https://www.overleaf.com/learn)
 * [Generador de tablas en LaTeX](https://www.tablesgenerator.com/)
