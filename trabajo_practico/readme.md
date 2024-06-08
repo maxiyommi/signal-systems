@@ -21,8 +21,11 @@ Los alumnos adquirirán las siguientes habilidades:
 ## Consigna
 La siguiente [presentación](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit?usp=sharing) tiene el detalle de la consigna del TP.
 
+## Material
+Todo el material necesario para elaborar el TP se encuentra en la siguiente [carpeta](https://drive.google.com/drive/folders/1unNETr7js3hWZtuxa7-5uV9wns9KdTdT?usp=share_link).
+
 ## Entregas
-Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en **grupos reducidos de 3 a 4 integrantes (excluyente). Los envios se realizan por mail y se deben presentar antes del dia definido para las entregas (como figura en el calendario)**.
+Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumidas en la siguiente tabla, en **grupos reducidos de 3 a 4 integrantes (excluyente). Los envios se realizan por mail/slack y se deben presentar antes del dia definido para las entregas (como figura en el calendario)**.
 
 <table>
 	<tr>
@@ -51,7 +54,7 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
     <tr>
   		<td rowspan="5"><a href="noteboks/segunda_entrega.ipynb">2° entrega</a></td>
    		<td>Función de carga de archivos de audio (dataset)</td>
-		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audio</td>
+		<td>Se utiliza para administrar información al software y evaluar los parámetros acústicos ISO 3382 de dichos audios</td>
    		<td rowspan="5" style="text-align:left"><ul><li>Verificar el espectro de los filtros generados, utilizando scipy.</li><li>Obtener respuesta al impulso a partir de los 
             sine sweep y el filtro inverso descargados (dataset).</li>
             <li>Evaluar las respuestas al impulso sintetizadas, las respuesta al impulso generadas y sine sweep, con algún programa comercial</li></ul>
@@ -113,6 +116,8 @@ Realizar un trabajo práctico que cumpla con las tres etapas de entrega resumida
  	</tr>
 </table>
 
+> 👮 La columna *test* indica las pruebas que tienen que superar las funciones para considerarse aprobadas. Recomendamos atenderlas para probar el código presentado.
+
 ## Informe técnico
 El trabajo práctico consta de un informe técnico que refleja los resultados y el código desarrollado, el mismo se realiza íntegramente en [Latex](https://www.latex-project.org/).
 
@@ -121,7 +126,9 @@ El trabajo práctico consta de un informe técnico que refleja los resultados y 
 * Editor online de LaTeX - [Overleaf](https://www.overleaf.com/)
 * Editor offline de LaTeX - [Texmaker](https://www.xm1math.net/texmaker/) + [MiKTeX](https://miktex.org/)
 
-En cualquiera de los casos el template para confeccionar el informe se utiliza el formato de la UNTREF para [memorias cuatrimestrales](template/template.pdf). Los archivos .tex, se encuentran en la carpeta [template](template). El mismo consta de un [main.tex](template/main.tex) con la estructura base del template y en la carpeta [secciones](template/secciones), las distintas partes del documento.
+En cualquiera de los casos el template para confeccionar el informe se utiliza el formato de la UNTREF para [memorias cuatrimestrales](https://drive.google.com/file/d/1YwtmfM1YYl1k_J5mDwJ6zEJEetitKask/view?usp=share_link). Los archivos .tex, se encuentran en la siguiente [carpeta](https://drive.google.com/drive/folders/1giSkdwsGBNFW-aSAB3JxaDxZ5dRmKU3x?usp=share_link). El mismo consta de un [main.tex](https://drive.google.com/file/d/1aGV3BoehQocyW0AbcdslqzODplwIqpKT/view?usp=share_link) con la estructura base del template y en la carpeta secciones las distintas partes del documento.
+
+> 🌈 Para la elaboración del informe recomendamos la lectura del documento [Curso introductorio a escritura en LaTeX](https://drive.google.com/file/d/1yaJD1QCCDyI8oMFzS0ZVzFg-8cyGPZCA/view?usp=share_link). Desarrollado por [Nahuel Passano](https://www.linkedin.com/in/nahuelpassano) - [Paula Ortega Riera](https://www.linkedin.com/in/paulaortegariera) de [Infiniem Labs](https://www.infiniemlabs.com.ar/).
 
 ## Informe preliminar (opcional)
 Respetar las siguientes pautas:
@@ -136,23 +143,42 @@ Respetar las siguientes pautas:
 Respetar las siguientes pautas:
 
 * Realizar un informe final, con el mismo formato establecido en el informe preliminar (atendiendo a las observaciones marcadas en la entrega del informe preliminar), pero en este caso no debe exceder las 5 página. 
-* Remitir solamente a detalles relevante.
+* Remitir solamente a detalles relevantes.
 * En el informe debe figurar claramente cómo se unen todas las funciones definidas y la interacción entre ellas. Utilizar algún diagrama para visualizar dicha relación.
 * Mencionar detalladamente el procedimiento.
 * Mostrar curvas de filtros, plot del procesamiento de la señal.
 * Validación del algoritmo con software comercial.
 * Los informes finales entregados fuera de fecha no serán evaluados (pasan directamente a recuperatorio).
 
+> A modo de ejemplo dejamos dos informes modelos: [Dylan Kaplan - Franco Rebora - Santiago Salinas](https://drive.google.com/file/d/1Xum3AZLTr6sm2q462rsJaoRpM00sgSNk/view?usp=share_link) y [Castelli Corina - Espindola Agustin - Lareo Matıas Federico - Passano Nahuel](https://drive.google.com/file/d/1HSazrH4OWhI8_3VEaoks2ZMtf0E63aEA/view?usp=share_link)
+
+
 ## Distribución de contenidos del informe 
-A modo ilustrastivo se muestra los porcentajes del contenido en los informes:
+A modo ilustrativo se muestra los porcentajes del contenido en los informes:
 
 | Resumen | Introducción | Marco teórico | Desarrollo experimental | Resultados | Conclusiones |
 | -- | -- | -- | -- | -- | --  |
 | 5% | 10% | 10% | 25% | 30% | 20% |
 
+## Presentación oral
+Los resultados alcanzados deben ser presentados de manera oral, a continuación algunas pautas para ayudarlos a prepararla:
+
+1. **Estructura clara y coherente**: Organiza tu presentación de manera lógica y estructurada. Introduce el tema y los objetivos del proyecto, presenta los pasos seguidos en el desarrollo del software y explica los resultados obtenidos. Utiliza transiciones claras.
+
+2. **Contextualiza el problema**: Explica la importancia y relevancia de los parámetros acústicos en el campo en el que se aplica el software. Destaca los desafíos o problemas que se enfrentan al calcular estos parámetros y cómo tu software resuelve o mejora esos aspectos.
+
+3. **Demuestra el proceso de desarrollo**: Explica los pasos que seguiste durante el desarrollo del software. Describe las metodologías utilizadas, los algoritmos implementados y cualquier otro aspecto técnico relevante. Utiliza gráficos, diagramas o ejemplos para ilustrar cómo funciona el software.
+
+4. **Destaca los resultados y beneficios**: Presenta los resultados obtenidos a través del uso del software. Muestra cómo se comparan con los resultados obtenidos por otros métodos o herramientas existentes. Resalta los beneficios y ventajas que ofrece tu software en términos de precisión, eficiencia o cualquier otro aspecto relevante.
+
+5. **Conclusión y perspectivas futuras**: Cierra tu presentación resumiendo los principales puntos y conclusiones del trabajo práctico. Discute posibles mejoras o ampliaciones que podrían implementarse en el futuro. 
+
+Recorda practicar tu presentación varias veces para asegurarte de que fluya de manera suave y que puedas transmitir claramente los aspectos clave de tu trabajo práctico.
+
+> El tiempo dispuesto para cada equipo es de 15 minútos.
+
 ## + Info
 * [Documentación oficial de overleaf](https://www.overleaf.com/learn)
-* [Ejemplo de distintos elementos y componentes de LaTeX](ejemplos_latex)
 * [Generador de tablas en LaTeX](https://www.tablesgenerator.com/)
 * [Base de datos de RI](https://www.openairlib.net/)
 * [How to read a paper](https://web.stanford.edu/class/ee384m/Handouts/HowtoReadPaper.pdf)

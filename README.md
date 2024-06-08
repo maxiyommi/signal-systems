@@ -4,13 +4,13 @@
 
 Repositorio con el contenido práctico de la asignatura Señales y Sistemas de la carrera [Ingeniería de Sonido](https://www.untref.edu.ar/carrera/ingenieria-de-sonido), en la [Universidad Nacional de Tres de Febrero](https://www.untref.edu.ar), Buenos Aires - Argentina.
 
-El contenido esta orientado para alumnos con algún conocimiento previo de programación y de ninguna manera pretende ser un curso de programación en Python, sino más bien un material de apoyo intenso y desafiante, que invita a pensar y a desarrollar soluciones para validar los resultados analíticos de las [guiá de la asignatura](guia_ejercicios.pdf).
+El contenido está orientado para alumnos con algún conocimiento previo de programación y de ninguna manera pretende ser un curso de programación en Python, sino más bien un material de apoyo intenso y desafiante, que invita a pensar y a desarrollar soluciones para validar los resultados analíticos de las [guiá de la asignatura](guia_ejercicios.pdf).
 
 > ❗ La distribución de la clases se encuentra en el siguiente [link](clases/README.md).
 
 
 ## Como comenzar
-Todas las clases de este repositorio están desarrolladas en *notebooks* de [Jupyter](https://jupyter.org/). La numeración de los notebooks esta definida de la siguiente manera
+Todas las clases de este repositorio están desarrolladas en *notebooks* de [Jupyter](https://jupyter.org/). La numeración de los notebooks está definida de la siguiente manera
 
 ![](clases/img/notebook_indicador.png)
 
@@ -46,16 +46,16 @@ Una vez que el entorno de desarrollo está [instalado y configurado](https://gis
 
 Aparecerán unas cuantas líneas y se abrirá tu navegador web predefinido. **No hace falta disponer de conexión a Internet**. Lo que está ocurriendo es que "tu navegador está mostrando lo que le manda el programa que se está ejecutando desde la línea de comandos". Así que no cierres la línea de comandos (terminal) hasta que termines de usar el notebook y ya lo hayas guardado y cerrado en tu navegador.
 
-En esa ventana de tu navegador puedes moverte por las carpetas y ver los archivos con extensión .ipynb. Ve a la carpeta **notebooks** y abre la primera clase haciendo click sobre ella. 
+En esa ventana de tu navegador puedes moverte por las carpetas y ver los archivos con extensión .ipynb. Ve a la carpeta **notebooks** y abre la primera clase haciendo clic sobre ella. 
 
 ![](jupyterlab.png)
 
 ## Clases
-
 La distribución del material clase a clase se encuentra en el siguiente [link](clases/README.md)
 
 ## Trabajo práctico
-El material referido al trabajo práctico se encuentra en la carpeta [`trabajo_practico`](trabajo_practico/readme.md). Las presentaciones se realizan en el dia y horario de las prácticas de la asignatura. **Todas las actividades son obligatorias**.
+El material referido al trabajo práctico se encuentra en la carpeta [`trabajo_practico`](trabajo_practico/readme.md). 
+> 💣 **Todas las actividades son obligatorias**.
 
 ## Contenido teórico
 Ingresar con el usuario personal al [**Aula virtual**](https://presenciales.untref.edu.ar/acceso.cgi).
@@ -64,7 +64,7 @@ Ingresar con el usuario personal al [**Aula virtual**](https://presenciales.untr
 Las consultas sobre el material y/o consigna del TP están centralizadas en el espacio de trabajo de [Slack](https://slack.com/intl/es-ar/). Por favor consultar el [siguiente documento](https://github.com/maxiyommi/signal-systems/blob/master/reglas_slack.md) para realizar las consultas apropiadamente.
 * [Unirte al espacio de trabajo](https://join.slack.com/t/senalesysistemas/shared_invite/zt-o44s05m8-Yhw_W10tEch6fBy~e8mo2w)
 
-## Bibliografia recomendada para seguir las clases
+## Bibliografía recomendada para seguir las clases
 La mayor parte del contenido teórico de este curso fue extraida de: 
 
 * Varoquaux, G., Gouillart, E., Vahtras, O., Haenel, V., Rougier, N. P., Gommers, R., ... & Pinte, D. *Scipy lecture note*, 2015
