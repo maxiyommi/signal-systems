@@ -77,11 +77,9 @@ uv run pytest
 
 1. Descargar desde [code.visualstudio.com](https://code.visualstudio.com/)
 2. Instalar las siguientes extensiones:
-   - **Python** (Microsoft) — soporte Python
-   - **Pylance** (Microsoft) — autocompletado inteligente
-   - **Ruff** (Astral) — linting y formateo
-   - **GitLens** (GitKraken) — visualización de Git avanzada
-   - **Marimo** (marimo-team) — soporte para notebooks Marimo
+    - **Python** (Microsoft) — soporte Python
+    - **Pylance** (Microsoft) — autocompletado inteligente
+    - **Marimo** (marimo-team) — soporte para notebooks Marimo
 
 ### Configuración recomendada de VS Code
 Agregar en `settings.json` (Ctrl+Shift+P → "Preferences: Open User Settings (JSON)"):

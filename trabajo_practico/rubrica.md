@@ -82,7 +82,7 @@ M0 se evalua como aprobado/desaprobado con los siguientes criterios:
 | Branching strategy documentada | Si | 1 |
 | **Total** | | **10** |
 
-**Nota**: M0 se aprueba con 6/10 o mas.
+**Nota**: M0 se aprueba con 4/10 o mas.
 
 ---
 

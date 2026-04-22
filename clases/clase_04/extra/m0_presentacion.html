@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M0: El Plano — Señales y Sistemas UNTREF</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css">
+
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --bg-raised: #efece3;
+      --fg: #1a1a22;
+      --dim: #6b7180;
+      --faint: #b0b3bc;
+      --rule: rgba(26, 26, 34, 0.08);
+      --panel: rgba(26, 26, 34, 0.025);
+
+      --accent: #2563eb;
+      --accent-strong: #1d4ed8;
+      --warn: #b45309;
+      --good: #047857;
+      --bad: #b91c1c;
+
+      --f-sans: "Geist", system-ui, sans-serif;
+      --f-mono: "Geist Mono", ui-monospace, monospace;
+    }
+
+    .reveal .backgrounds { background: var(--bg); }
+
+    .reveal {
+      font-family: var(--f-sans);
+      font-weight: 400;
+      font-size: 34px;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+    }
+
+    .reveal .slides { text-align: left; }
+
+    .reveal .slides section {
+      padding: 3rem 4.2rem;
+      box-sizing: border-box;
+      max-width: 1920px;
+      overflow: hidden;
+    }
+
+    /* ---- Headings ---- */
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: var(--f-sans);
+      color: var(--fg);
+      text-transform: none;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0 0 1rem 0;
+    }
+
+    .reveal h2 {
+      font-size: 2.2em;
+      font-weight: 600;
+    }
+
+    .reveal h3 {
+      font-size: 0.78em;
+      font-weight: 600;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.5em;
+    }
+
+    .reveal p {
+      line-height: 1.4;
+      margin: 0 0 0.75rem 0;
+      color: var(--fg);
+      max-width: 42ch;
+    }
+
+    .reveal p.wide { max-width: none; }
+
+    .reveal strong { color: var(--fg); font-weight: 600; }
+    .reveal em { font-style: normal; color: var(--accent); }
+
+    .reveal a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(96, 165, 250, 0.3);
+    }
+    .reveal a:hover {
+      color: var(--fg);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ---- Lists ---- */
+    .reveal ul, .reveal ol {
+      list-style: none;
+      padding-left: 0;
+      margin: 0 0 1rem 0;
+    }
+    .reveal ul li, .reveal ol li {
+      padding-left: 1.5em;
+      margin-bottom: 0.65em;
+      line-height: 1.4;
+      position: relative;
+      overflow-wrap: anywhere;
+    }
+    .reveal ul li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--faint);
+    }
+    .reveal ol {
+      counter-reset: n;
+    }
+    .reveal ol li {
+      counter-increment: n;
+    }
+    .reveal ol li::before {
+      content: counter(n) ".";
+      position: absolute;
+      left: 0;
+      color: var(--faint);
+      font-family: var(--f-mono);
+      font-size: 0.85em;
+    }
+
+    /* ---- Code ---- */
+    .reveal code {
+      font-family: var(--f-mono);
+      font-size: 0.85em;
+      background: rgba(26, 26, 34, 0.06);
+      color: var(--fg);
+      padding: 0.08em 0.4em;
+      border-radius: 3px;
+    }
+    .reveal pre {
+      width: 100%;
+      box-shadow: none;
+      border-radius: 6px;
+      margin: 0 0 1rem 0;
+    }
+    .reveal pre code {
+      font-size: 0.58em;
+      line-height: 1.5;
+      padding: 0.9em 1.1em;
+      background: #ebe8df;
+      color: #1a1a22;
+      border-radius: 6px;
+      border: 1px solid var(--rule);
+      display: block;
+      max-height: 22em;
+      overflow: hidden;
+    }
+
+    .panel pre { margin: 0.5em 0 0.6em 0; }
+    .panel pre code {
+      font-size: 0.5em;
+      line-height: 1.45;
+      padding: 0.75em 0.9em;
+      max-height: none;
+    }
+
+    /* grid items must be allowed to shrink to prevent horizontal overflow */
+    .grid-2 > *, .grid-3 > *, .split > * { min-width: 0; }
+
+    /* ---- Kicker / small header ---- */
+    .kicker {
+      font-family: var(--f-mono);
+      font-size: 0.5em;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 1.5rem;
+    }
+    .kicker .m { color: var(--warn); }
+
+    /* ---- Lead (sub-headline) ---- */
+    .lead {
+      font-size: 1.02em;
+      color: var(--dim);
+      max-width: 46ch;
+      line-height: 1.4;
+      margin-bottom: 1.5rem !important;
+    }
+
+    /* ---- Pills ---- */
+    .pill {
+      display: inline-block;
+      font-family: var(--f-mono);
+      font-size: 0.6em;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      padding: 0.15em 0.55em;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-right: 0.35em;
+      background: rgba(26, 26, 34, 0.06);
+      color: var(--fg);
+    }
+    .pill-m0 { background: rgba(180, 83, 9, 0.15); color: var(--warn); }
+    .pill-m1, .pill-m2, .pill-m3 {
+      background: rgba(26, 26, 34, 0.05);
+      color: var(--dim);
+    }
+
+    .tag {
+      font-family: var(--f-mono);
+      font-size: 0.72em;
+      color: var(--dim);
+      background: rgba(26, 26, 34, 0.04);
+      padding: 0.08em 0.5em;
+      border-radius: 3px;
+    }
+
+    /* ---- Layout ---- */
+    .grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5em; align-items: start; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5em; }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 3em;
+      align-items: start;
+    }
+
+    /* ---- Panels (lo mas neutro posible) ---- */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.15em 1.35em;
+    }
+    .panel h3 { margin-top: 0; margin-bottom: 0.4em; }
+    .panel p { margin-bottom: 0.5em; }
+    .panel p:last-child { margin-bottom: 0; }
+
+    .bad { color: var(--bad); }
+    .good { color: var(--good); }
+
+    /* ---- Tables ---- */
+    .reveal table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78em;
+      font-variant-numeric: tabular-nums;
+      margin: 0 0 1rem 0;
+    }
+    .reveal table th {
+      font-family: var(--f-mono);
+      font-size: 0.82em;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-align: left;
+      padding: 0.7em 0.9em;
+      border-bottom: 1px solid var(--rule);
+    }
+    .reveal table td {
+      padding: 0.85em 0.9em;
+      border-bottom: 1px solid var(--rule);
+      color: var(--fg);
+    }
+    .reveal table tr.hl td { color: var(--fg); }
+    .reveal table tr.hl td:first-child {
+      box-shadow: inset 3px 0 0 var(--warn);
+    }
+
+    /* ---- Blockquote ---- */
+    .reveal blockquote {
+      border: none;
+      background: none;
+      box-shadow: none;
+      border-left: 2px solid var(--rule);
+      padding: 0.3em 0 0.3em 1.2em;
+      margin: 1.5rem 0;
+      font-style: normal;
+      font-size: 0.92em;
+      color: var(--dim);
+      line-height: 1.45;
+    }
+    .reveal blockquote strong { color: var(--fg); }
+
+    /* ---- URL box ---- */
+    .url-box {
+      display: block;
+      font-family: var(--f-mono);
+      font-size: 0.82em;
+      padding: 0.7em 1em;
+      background: rgba(37, 99, 235, 0.05);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 6px;
+      margin: 0.6em 0 1em 0;
+      word-break: break-all;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a.url-box { border-bottom: none; }
+    .url-box a { color: var(--accent); border: none; }
+
+    /* ---- Checklist ---- */
+    .reveal ul.checklist { list-style: none; padding: 0; margin: 0; }
+    .reveal ul.checklist li {
+      padding-left: 2em;
+      margin-bottom: 0.75em;
+      line-height: 1.4;
+      position: relative;
+      color: var(--fg);
+    }
+    .reveal ul.checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.35em;
+      width: 1.1em;
+      height: 1.1em;
+      border: 1.5px solid var(--faint);
+      border-radius: 3px;
+      background: transparent;
+    }
+
+    .small { font-size: 0.78em; color: var(--dim); line-height: 1.4; }
+    .muted { color: var(--dim); }
+
+    /* ---- Timeline de deterioro ---- */
+    .timeline {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 0.55em;
+      left: 6%;
+      right: 6%;
+      height: 1px;
+      background: var(--rule);
+      z-index: 0;
+    }
+
+    .timeline li {
+      position: relative;
+      padding: 0;
+      margin: 0;
+      padding-top: 1.5em;
+      z-index: 1;
+    }
+
+    .timeline li::before {
+      content: "";
+      position: absolute;
+      top: 0.35em;
+      left: 0;
+      width: 0.5em;
+      height: 0.5em;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--faint);
+    }
+
+    .timeline li.crit::before {
+      border-color: var(--bad);
+      background: var(--bad);
+    }
+
+    .timeline li .when {
+      display: block;
+      font-family: var(--f-mono);
+      font-size: 0.58em;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 0.4em;
+    }
+
+    .timeline li .what {
+      font-size: 0.88em;
+      line-height: 1.35;
+      color: var(--fg);
+    }
+
+    .timeline li.crit .what {
+      color: var(--bad);
+      font-weight: 500;
+    }
+
+    /* ---- ASCII tree ---- */
+    pre.tree {
+      font-family: var(--f-mono);
+      font-size: 0.62em;
+      line-height: 1.55;
+      color: var(--fg);
+      background: #ebe8df;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.1em 1.3em;
+      white-space: pre;
+    }
+    pre.tree .dim { color: var(--dim); }
+    pre.tree .acc { color: var(--accent); }
+    pre.tree .ok { color: var(--good); }
+
+    /* ---- Controls ---- */
+    .reveal .controls { color: var(--dim); }
+    .reveal .controls.layout-edges .navigate-left { left: 2em; }
+    .reveal .controls.layout-edges .navigate-right { right: 2em; }
+    .reveal .controls.layout-edges .navigate-up { top: 1.4em; }
+    .reveal .controls.layout-edges .navigate-down { bottom: 1.4em; }
+    .reveal .controls button { opacity: 0.35; transition: opacity 0.2s; }
+    .reveal .controls button:hover { opacity: 1; }
+
+    /* ---- Slide number ---- */
+    .reveal .slide-number {
+      font-family: var(--f-mono);
+      font-size: 0.55em;
+      letter-spacing: 0.15em;
+      background: transparent;
+      color: var(--faint);
+      right: 2rem;
+      bottom: 1.2rem;
+    }
+    .reveal .progress { color: var(--accent); height: 1px; }
+
+    /* ---- Title slides ---- */
+    .reveal section.titulo { padding: 0; height: 100%; }
+
+    .titulo-wrap {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 4rem 5rem;
+    }
+
+    .titulo-top, .titulo-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--f-mono);
+      font-size: 0.5em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .titulo-main {
+      align-self: center;
+    }
+
+    .titulo-main h1 {
+      font-size: 5.5em;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      margin: 0 0 0.3em 0;
+      color: var(--fg);
+    }
+
+    .titulo-main .bajada {
+      font-size: 1em;
+      font-weight: 400;
+      color: var(--dim);
+      max-width: 28ch;
+      margin: 0;
+    }
+
+    .titulo-main .tag-ms {
+      font-family: var(--f-mono);
+      font-size: 0.55em;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--warn);
+      margin-bottom: 0.8em;
+    }
+
+    .titulo-bottom .meta {
+      display: flex;
+      gap: 3.5em;
+    }
+    .titulo-bottom .meta .kv {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25em;
+    }
+    .titulo-bottom .meta .k {
+      font-size: 0.9em;
+      color: var(--faint);
+    }
+    .titulo-bottom .meta .v {
+      font-family: var(--f-sans);
+      font-size: 1.2em;
+      font-weight: 500;
+      color: var(--fg);
+      text-transform: none;
+      letter-spacing: 0.01em;
+    }
+
+    /* subtle fade-in */
+    .reveal .slides section.present > *:not(aside) {
+      animation: fadeIn 0.4s ease-out backwards;
+    }
+    .reveal .slides section.present > *:nth-child(1) { animation-delay: 0s; }
+    .reveal .slides section.present > *:nth-child(2) { animation-delay: 0.05s; }
+    .reveal .slides section.present > *:nth-child(3) { animation-delay: 0.1s; }
+    .reveal .slides section.present > *:nth-child(4) { animation-delay: 0.15s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ========================================================= -->
+<!-- SLIDE 1 — Portada -->
+<!-- ========================================================= -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top">
+      <div>Señales y Sistemas · UNTREF</div>
+      <div>Clase 04 / 15</div>
+    </div>
+
+    <div class="titulo-main">
+      <div class="tag-ms">Milestone 0</div>
+      <h1>El Plano.</h1>
+      <p class="bajada">Arquitectura del software antes de la primera línea de código.</p>
+    </div>
+
+    <div class="titulo-bottom">
+      <div class="meta">
+        <div class="kv"><span class="k">Hoy</span><span class="v">21 abr 2026</span></div>
+        <div class="kv"><span class="k">Entrega M0</span><span class="v">28 abr 2026</span></div>
+      </div>
+      <div>TP · RIR-API</div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Bienvenida breve (30s). Aclarar: "ya vimos el TP conceptual, ahora aterrizamos M0".
+    - Timing: 1 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 2 — Dónde estamos -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · el mapa</div>
+  <h2>¿Dónde estamos?</h2>
+  <p class="lead">El TP se desarrolla en cuatro entregas incrementales. La primera vence en una semana.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 24%;">Milestone</th>
+        <th>Entregan</th>
+        <th style="width: 22%;">Fecha</th>
+        <th style="width: 10%;">Peso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="hl">
+        <td><span class="pill pill-m0">M0</span> El Plano</td>
+        <td>Arquitectura · repo · issues</td>
+        <td><strong>28 Abr</strong> — próxima clase</td>
+        <td>5%</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-m1">M1</span> Generación</td>
+        <td>Ruido rosa · sine sweep</td>
+        <td>19 May</td>
+        <td>15%</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-m2">M2</span> Procesamiento</td>
+        <td>Filtros · deconvolución · RI</td>
+        <td>16 Jun</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-m3">M3</span> Producto</td>
+        <td>API REST · informe · demo</td>
+        <td>7 Jul</td>
+        <td>30%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <blockquote>
+    <strong>Importante:</strong> el 28/4 no solo entregan M0 — también lo presentan en vivo al docente.
+  </blockquote>
+
+  <aside class="notes">
+    - Remarcar que la próxima clase NO es una clase tradicional: la mitad es presentación de M0.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 3 — Por qué planificar -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · ¿por qué importa?</div>
+  <h2>El plano viene antes que la obra.</h2>
+
+  <div class="grid-2" style="margin-top: 2rem;">
+    <div>
+      <p class="wide">
+        Nadie construye un edificio sin un plano. Con software pasa lo mismo:
+        arrancar a codear sin plan termina en un proyecto que <strong>colapsa en M2</strong>.
+      </p>
+      <p class="wide">M0 no es un milestone de código. Es el acuerdo del grupo:</p>
+      <ul>
+        <li>¿Qué estamos construyendo?</li>
+        <li>¿Cómo se organizan las partes?</li>
+        <li>¿Quién hace qué?</li>
+        <li>¿En qué orden?</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3>Señales de un plano flojo</h3>
+      <ul>
+        <li>Nadie sabe qué carpeta toca</li>
+        <li>Tres personas tocan el mismo archivo</li>
+        <li>Issues vagos: <em>"hacer M1"</em></li>
+        <li>Para M2, el código es un caos</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="muted small" style="margin-top: 2rem;">
+    5% de la nota. 100% de la base del resto del TP.
+  </p>
+
+  <aside class="notes">
+    - Analogía arquitecto/obra: funciona bien con ing. de sonido.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 4 — Demo API -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · ¿qué están construyendo?</div>
+  <h2>Una API REST.</h2>
+  <p class="lead">Un servidor que recibe pedidos HTTP y devuelve datos en JSON.</p>
+
+  <div class="grid-2" style="margin-top: 1.5rem; gap: 3em;">
+    <div>
+      <p><strong>Ábranla ahora en el navegador:</strong></p>
+      <div class="url-box">
+        <a href="https://rir-api.onrender.com/docs" target="_blank">https://rir-api.onrender.com/docs</a>
+      </div>
+
+      <p style="margin-top: 1.2em;"><strong>O probenla desde la terminal:</strong></p>
+<pre><code class="language-bash"># request
+curl https://rir-api.onrender.com/health
+
+# response (JSON)
+{
+  "status": "healthy",
+  "version": "0.1.0",
+  "timestamp": "2026-04-21T15:30:00"
+}</code></pre>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom: 1em;">
+        <h3>Endpoint</h3>
+        <p class="small">Una URL que hace una cosa. Ej: <code>GET /health</code> devuelve "estoy vivo".</p>
+      </div>
+      <div class="panel" style="margin-bottom: 1em;">
+        <h3>Request · Response</h3>
+        <p class="small">El cliente manda audio y parámetros; la API responde con T60, C80, etc.</p>
+      </div>
+      <div class="panel">
+        <h3>JSON</h3>
+        <p class="small">Formato para pasar datos. <code>{"t60": 1.2, "c80": 5.4}</code></p>
+      </div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - ESTE ES EL MOMENTO WOW. Abrir el link en pantalla en vivo.
+    - Si Render está dormido, esperar ~30s — advertirlo.
+    - Ejecutar el curl en vivo también, que vean la respuesta cruda.
+    - Timing: 5 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 5 — Arquitectura -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · arquitectura</div>
+  <h2>Tres capas. Memorícenlo.</h2>
+
+  <div style="display: flex; justify-content: center; margin: 1.5rem 0;">
+    <svg viewBox="0 0 1100 300" style="width: 100%; max-width: 1200px; height: auto;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+        </marker>
+        <style>
+          .n-lbl { font: 500 17px "Geist", system-ui, sans-serif; fill: #1a1a22; letter-spacing: -0.01em; }
+          .n-sub { font: 400 12px "Geist Mono", monospace; fill: #6b7180; letter-spacing: 0.08em; text-transform: uppercase; }
+          .edge { stroke: #2563eb; stroke-width: 1.2; fill: none; opacity: 0.7; }
+        </style>
+      </defs>
+
+      <rect x="20" y="110" width="160" height="70" rx="4" fill="transparent" stroke="#b0b3bc" stroke-width="1"/>
+      <text x="100" y="142" text-anchor="middle" class="n-lbl">Cliente</text>
+      <text x="100" y="162" text-anchor="middle" class="n-sub">HTTP</text>
+
+      <rect x="240" y="110" width="180" height="70" rx="4" fill="transparent" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="330" y="142" text-anchor="middle" class="n-lbl">Routers</text>
+      <text x="330" y="162" text-anchor="middle" class="n-sub">endpoints</text>
+
+      <rect x="240" y="220" width="180" height="70" rx="4" fill="transparent" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="330" y="252" text-anchor="middle" class="n-lbl">Schemas</text>
+      <text x="330" y="272" text-anchor="middle" class="n-sub">Pydantic</text>
+
+      <rect x="480" y="110" width="180" height="70" rx="4" fill="transparent" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="570" y="142" text-anchor="middle" class="n-lbl">Services</text>
+      <text x="570" y="162" text-anchor="middle" class="n-sub">lógica</text>
+
+      <rect x="740" y="30" width="260" height="60" rx="4" fill="transparent" stroke="#b0b3bc" stroke-width="1" stroke-dasharray="4,4"/>
+      <text x="870" y="58" text-anchor="middle" class="n-sub">M1</text>
+      <text x="870" y="78" text-anchor="middle" class="n-lbl">Generación</text>
+
+      <rect x="740" y="115" width="260" height="60" rx="4" fill="transparent" stroke="#b0b3bc" stroke-width="1" stroke-dasharray="4,4"/>
+      <text x="870" y="143" text-anchor="middle" class="n-sub">M2</text>
+      <text x="870" y="163" text-anchor="middle" class="n-lbl">Procesamiento</text>
+
+      <rect x="740" y="200" width="260" height="60" rx="4" fill="transparent" stroke="#b0b3bc" stroke-width="1" stroke-dasharray="4,4"/>
+      <text x="870" y="228" text-anchor="middle" class="n-sub">M3</text>
+      <text x="870" y="248" text-anchor="middle" class="n-lbl">Análisis</text>
+
+      <path d="M 180 145 L 240 145" class="edge" marker-end="url(#arrow)"/>
+      <path d="M 420 145 L 480 145" class="edge" marker-end="url(#arrow)"/>
+      <path d="M 330 180 L 330 220" class="edge" marker-end="url(#arrow)"/>
+      <path d="M 660 140 C 700 140, 700 60, 740 60" class="edge" marker-end="url(#arrow)"/>
+      <path d="M 660 145 L 740 145" class="edge" marker-end="url(#arrow)"/>
+      <path d="M 660 150 C 700 150, 700 230, 740 230" class="edge" marker-end="url(#arrow)"/>
+    </svg>
+  </div>
+
+  <div class="grid-3">
+    <div class="panel">
+      <h3>Routers <span class="muted" style="font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.85em;">· puerta de entrada</span></h3>
+<pre><code class="language-python">@router.post("/pink-noise")
+async def pink_noise(req: PinkNoiseReq):
+    audio = services.generar_ruido_rosa(
+        req.duracion, req.fs
+    )
+    return {"audio": audio.tolist()}</code></pre>
+      <p class="small">Reciben el request, llaman al service, devuelven JSON. No calculan.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Services <span class="muted" style="font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.85em;">· cerebro</span></h3>
+<pre><code class="language-python">def generar_ruido_rosa(
+    duracion: float, fs: int
+) -&gt; np.ndarray:
+    n = int(duracion * fs)
+    # algoritmo Voss-McCartney
+    return signal</code></pre>
+      <p class="small">Funciones puras. No saben de HTTP ni de JSON.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Schemas <span class="muted" style="font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.85em;">· aduana</span></h3>
+<pre><code class="language-python">class PinkNoiseReq(BaseModel):
+    duracion: float = Field(gt=0, le=60)
+    fs: int = Field(default=44100)
+</code></pre>
+      <p class="small">Validan que los datos entren y salgan con la forma correcta.</p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Esta es LA idea central del TP.
+    - "El router no calcula, el service no sabe de HTTP, el schema no hace lógica".
+    - Recorrer los tres snippets: el router LLAMA al service (no lo implementa); el service es una función pura; el schema es declarativo.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 6 — README -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker">Entregable 01 / 04</div>
+  <h2>README.md</h2>
+  <p class="lead">Lo primero que mira el docente cuando abre el repo.</p>
+
+  <div class="grid-2">
+    <div>
+      <h3>Debe tener</h3>
+      <ul>
+        <li>Nombre y descripción (1-2 párrafos)</li>
+        <li><strong>Integrantes con rol asignado</strong><br>
+          <span class="small">señales · procesamiento · testing/CI · docs</span>
+        </li>
+        <li>Instrucciones que funcionen copy-paste</li>
+        <li>Estructura del proyecto comentada</li>
+        <li>Branching strategy</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3 class="good">Bueno</h3>
+      <pre><code class="language-bash">git clone https://...
+cd rir-api
+uv sync
+uv run uvicorn app.main:app --reload</code></pre>
+
+      <h3 class="bad" style="margin-top: 1.2em;">Flojo</h3>
+      <p class="small bad" style="margin: 0;">"Para instalar, pip install (ver requirements.txt)"</p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Los roles no son decorativos.
+    - "Instrucciones que funcionan" = probálas clonando fresh.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 7 — Diagrama Mermaid -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker">Entregable 02 / 04</div>
+  <h2>Diagrama de arquitectura.</h2>
+  <p class="lead">Formato: Mermaid (en el README) o draw.io (PNG).</p>
+
+  <div class="grid-2">
+    <div>
+      <h3>Debe mostrar</h3>
+      <ul>
+        <li>Las 3 capas (routers / services / schemas)</li>
+        <li>Módulos de <strong>M1, M2 y M3</strong> — no solo M0</li>
+        <li>Flujo de datos: request → validación → service → response</li>
+        <li>Dependencias externas relevantes</li>
+      </ul>
+      <p class="small">
+        Mermaid = diagramas en texto. Se versionan en Git.
+        Probalo en <a href="https://mermaid.live" target="_blank">mermaid.live</a>.
+      </p>
+    </div>
+
+    <div>
+      <h3>Sintaxis mínima</h3>
+      <pre><code class="language-markdown">```mermaid
+graph LR
+    Client --> R[Routers]
+    R --> S[Services]
+    S --> Gen[Generación]
+    S --> Proc[Procesamiento]
+    S --> An[Análisis]
+    R --> Sch[Schemas]
+```</code></pre>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Mostrar mermaid.live en vivo si da tiempo.
+    - El diagrama debe reflejar M1+M2+M3. Es proyección.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 8 — Issues -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker">Entregable 03 / 04</div>
+  <h2>GitHub Issues.</h2>
+  <p class="lead">Al menos 10 issues, cada uno con título, descripción, labels y asignación.</p>
+
+  <div class="grid-2">
+    <div class="panel">
+      <h3 class="bad">Malo</h3>
+      <p style="font-size: 1.1em; margin: 0.3em 0;">"Hacer M1"</p>
+      <p class="small muted">Demasiado grande. Nadie sabe qué entra ni cuándo está listo.</p>
+    </div>
+
+    <div class="panel">
+      <h3 class="good">Bueno</h3>
+      <p style="font-size: 0.95em; margin: 0.3em 0;">"Implementar <code>generar_ruido_rosa</code> con Voss-McCartney"</p>
+      <p class="small muted" style="margin-bottom: 0.3em;"><strong>Criterios:</strong></p>
+      <ul class="small" style="margin-bottom: 0.6em;">
+        <li>Recibe <code>(duracion, fs)</code>, devuelve <code>np.ndarray</code></li>
+        <li>Espectro cae ~3 dB/octava</li>
+        <li>Test unitario que lo verifique</li>
+      </ul>
+      <p class="small" style="margin: 0;">
+        <span class="tag">milestone-1</span>
+        <span class="tag">complejidad-media</span>
+        <span class="muted">· @maria</span>
+      </p>
+    </div>
+  </div>
+
+  <blockquote>
+    Regla de oro: un issue = algo que una persona puede terminar en una sesión de trabajo.
+  </blockquote>
+
+  <aside class="notes">
+    - Labels requeridos: milestone-1, milestone-2, milestone-3.
+    - "Sin criterios de aceptación, nadie sabe cuándo está terminado".
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 9 — Estructura del repo -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker">Entregable 04 / 04</div>
+  <h2>Estructura del repo.</h2>
+  <p class="lead">Buena noticia: ya está hecha. Forkean el template, no lo reescriben.</p>
+
+  <div class="grid-2">
+    <div>
+<pre class="tree"><span class="acc">rir-api/</span>
+├── pyproject.toml    <span class="dim">← dependencias</span>
+├── README.md
+├── <span class="acc">app/</span>
+│   ├── main.py       <span class="dim">← entrada FastAPI</span>
+│   ├── settings.py
+│   ├── <span class="acc">routers/</span>
+│   │   └── health.py <span class="ok">← ya funciona</span>
+│   ├── <span class="acc">schemas/</span>
+│   └── <span class="acc">services/</span>
+├── <span class="acc">tests/</span>
+│   └── test_placeholder.py
+├── <span class="acc">docs/</span>
+└── <span class="acc">data/</span></pre>
+    </div>
+
+    <div>
+      <h3>Qué hacer</h3>
+      <ol>
+        <li>Forkear <code>template_repo</code></li>
+        <li>Clonar localmente</li>
+        <li>Levantar el server:<br>
+          <code style="display: inline-block; margin-top: 0.3em;">uv sync</code><br>
+          <code>uv run uvicorn app.main:app --reload</code>
+        </li>
+        <li>Abrir <code>localhost:8000/docs</code></li>
+        <li>Correr tests: <code>pytest -v</code></li>
+      </ol>
+      <p class="small muted">Si todo esto funciona, cumplieron los requisitos técnicos de M0.</p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - NO están construyendo la app desde cero. El template ya corre.
+    - Si alguien no logra levantar el server: Slack antes del sábado.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 10 — /health -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · el único código que ya existe</div>
+  <h2>El endpoint <code style="font-family: var(--f-mono); font-size: 0.85em;">/health</code>.</h2>
+  <p class="lead">El más tonto posible: devuelve "estoy vivo". Confirma que el servidor corre.</p>
+
+  <pre><code class="language-python">from datetime import datetime
+from fastapi import APIRouter
+
+router = APIRouter()
+
+
+@router.get("/health")
+async def health_check():
+    """Verifica que la API esta funcionando correctamente."""
+    return {
+        "status": "healthy",
+        "version": "0.1.0",
+        "timestamp": datetime.now().isoformat(),
+    }</code></pre>
+
+  <p class="small muted" style="margin-top: 1rem;">
+    Criterio de M0: que esto responda <code>200 OK</code> cuando levantan el server.
+  </p>
+
+  <aside class="notes">
+    - No expliquen FastAPI en profundidad. Solo "vean la forma".
+    - Pydantic y schemas: viene en clases 6-8.
+    - Timing: 1 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 11 — Git -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · git</div>
+  <h2>Las reglas mínimas.</h2>
+
+  <div class="grid-2" style="margin-top: 1.5rem;">
+    <div>
+      <h3>Branching</h3>
+      <ul>
+        <li><code>main</code> protegida — merge solo vía <strong>pull request</strong></li>
+        <li><code>feature/nombre-descriptivo</code> — una rama por issue</li>
+        <li>Commits: recomendado <a href="https://www.conventionalcommits.org/" target="_blank">Conventional Commits</a><br>
+          <span class="small"><code>feat:</code> · <code>fix:</code> · <code>docs:</code> · <code>test:</code></span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3 class="bad">No olvidar</h3>
+      <p>Agregar a los docentes como <strong>colaboradores del repo</strong>.</p>
+      <p class="small muted" style="margin: 0;">
+        Settings → Collaborators → Add people.<br>
+        Sin esto no podemos ver ni corregir el TP.
+      </p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - El tema de colaboradores se olvida todos los años. Insistir.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 12 — Checklist -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · ¿qué tildar?</div>
+  <h2>Checklist de aprobación.</h2>
+  <p class="lead">El 28 de abril, esto tiene que estar tildado.</p>
+
+  <div class="grid-2" style="margin-top: 1rem; gap: 3em;">
+    <ul class="checklist">
+      <li>Repositorio accesible por los docentes</li>
+      <li>README completo con instrucciones que funcionan</li>
+      <li>Diagrama con todos los módulos de M1, M2 y M3</li>
+      <li>Al menos 10 issues con labels y asignaciones</li>
+    </ul>
+    <ul class="checklist">
+      <li>Estructura que levanta con <code>uvicorn</code></li>
+      <li>Endpoint <code>/health</code> responde <code>200 OK</code></li>
+      <li>Al menos un test que pase con <code>pytest</code></li>
+      <li>Branching strategy documentada</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="margin-top: 2rem;">Ocho checks. Nada más, nada menos.</p>
+
+  <aside class="notes">
+    - Este es el resumen operativo. Leerlo en voz alta, sin apurarse.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 13 — Recursos -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker"><span class="m">M0</span> · recursos</div>
+  <h2>Para llevar a casa.</h2>
+
+  <div class="grid-2" style="margin-top: 1.5rem;">
+    <div>
+      <h3>Del TP</h3>
+      <ul>
+        <li><a href="https://rir-api.onrender.com/docs" target="_blank">API de referencia — Swagger</a></li>
+        <li><a href="https://rir-api.onrender.com/redoc" target="_blank">API de referencia — ReDoc</a></li>
+        <li>Especificación: <code class="small">trabajo_practico/especificacion/m0_arquitectura.md</code></li>
+        <li>Template: <code class="small">trabajo_practico/template_repo/</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Herramientas</h3>
+      <ul>
+        <li><a href="https://fastapi.tiangolo.com/" target="_blank">FastAPI</a></li>
+        <li><a href="https://docs.astral.sh/uv/" target="_blank">uv — gestor de paquetes</a></li>
+        <li><a href="https://mermaid.live" target="_blank">Mermaid Live Editor</a></li>
+        <li><a href="https://www.conventionalcommits.org/" target="_blank">Conventional Commits</a></li>
+        <li><a href="https://docs.github.com/en/issues" target="_blank">GitHub Issues — buenas prácticas</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Todo está linkeado desde el README del TP.
+    - Timing: 1 min.
+  </aside>
+</section>
+
+<!-- ========================================================= -->
+<!-- SLIDE 14 — Cierre -->
+<!-- ========================================================= -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top">
+      <div>Fin · M0</div>
+      <div>Señales y Sistemas · UNTREF</div>
+    </div>
+
+    <div class="titulo-main">
+      <div class="tag-ms">Próximos pasos</div>
+      <h1>Esta semana, planifiquen.</h1>
+      <p class="bajada" style="font-size: 1.3em; color: var(--accent); margin-top: 0.6em; max-width: none;">
+        Próxima clase: presentan M0 en vivo.
+      </p>
+    </div>
+
+    <div class="titulo-bottom">
+      <div class="meta">
+        <div class="kv"><span class="k">Dudas</span><span class="v">Slack · #signal-systems</span></div>
+        <div class="kv"><span class="k">Deadline</span><span class="v">28 abr 2026</span></div>
+      </div>
+      <div style="font-size: 2em; font-weight: 500; color: var(--fg); text-transform: none; letter-spacing: -0.02em;">¿preguntas?</div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Abrir el piso a preguntas.
+    - "Cualquier duda, Slack antes del sábado".
+  </aside>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    controls: true,
+    controlsLayout: 'edges',
+    controlsBackArrows: 'visible',
+    progress: true,
+    center: false,
+    width: 1920,
+    height: 1080,
+    margin: 0.03,
+    minScale: 0.2,
+    maxScale: 2.0,
+    plugins: [RevealHighlight, RevealNotes],
+  });
+</script>
+</body>
+</html>
