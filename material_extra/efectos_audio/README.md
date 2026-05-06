@@ -283,6 +283,3 @@ sf.write("guitar_catedral.wav", y, fs_x)
 | [`efectos.py`](https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/efectos.py) | `tremolo()`, `delay()` |
 | [`func.py`](https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/func.py) | `normalizar()`, `to_mono()`, `diente_de_sierra()` |
 | [`conv.py`](https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
-ctos_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
-os_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
-ctos_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
