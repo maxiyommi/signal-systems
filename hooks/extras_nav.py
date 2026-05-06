@@ -63,15 +63,15 @@ EXTRAS_CONFIG: list[dict] = [
         "asset_globs": ["*.pdf"],
     },
     # ── Para agregar la sección de efectos de audio cuando esté lista: ─────
-    # {
-    #     "id": "efectos_audio",
-    #     "title": "Efectos de Audio en Python",
-    #     "description": "Tremolo, delay, reverb y flanger vistos desde señales y sistemas.",
-    #     "source_dir": "material_extra/efectos_audio",
-    #     "has_readme": True,
-    #     "has_pdfs": False,
-    #     "asset_globs": ["*.png", "*.wav"],
-    # },
+    {
+        "id": "efectos_audio",
+        "title": "Efectos de Audio en Python",
+        "description": "Tremolo, delay, reverb y flanger vistos desde señales y sistemas.",
+        "source_dir": "material_extra/efectos_audio",
+        "has_readme": True,
+        "has_pdfs": False,
+        "asset_globs": ["*.png", "*.wav", "assets/*", "*.py"],
+    },
 ]
 
 EXTRAS_DOCS_SUBDIR = "extras"
@@ -131,7 +131,9 @@ def _process_extra(extra: dict, extras_dir: str) -> None:
     os.makedirs(dest_dir, exist_ok=True)
     for pattern in extra.get("asset_globs", []):
         for filepath in glob.glob(os.path.join(source_dir, pattern)):
-            dest = os.path.join(dest_dir, os.path.basename(filepath))
+            rel_path = os.path.relpath(filepath, source_dir)
+            dest = os.path.join(dest_dir, rel_path)
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
             if not _is_up_to_date(filepath, dest):
                 shutil.copy2(filepath, dest)
     if extra.get("has_readme"):
