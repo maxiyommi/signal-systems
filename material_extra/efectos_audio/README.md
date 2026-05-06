@@ -40,21 +40,7 @@ Esta sumatoria infinita clasifica al sistema como **IIR** (*Infinite Impulse Res
 
 ### Diagrama del sistema
 
-```mermaid
-graph LR
-    X(["x[n]"]) --> SUM(("＋"))
-    SUM --> Y(["y[n]"])
-    Y --> N(( ))
-    N --> ZD["z⁻ᴰ — Retardo D muestras"]
-    ZD --> G["× g"]
-    G --> SUM
-
-    style X   fill:#f8514915,stroke:#f85149,color:#f85149
-    style Y   fill:#58a6ff15,stroke:#58a6ff,color:#58a6ff
-    style ZD  fill:#3fb95015,stroke:#3fb950,color:#3fb950
-    style G   fill:#d2992215,stroke:#d29922,color:#d29922
-    style SUM fill:#21262d,stroke:#8b949e,color:#e6edf3
-```
+![Diagrama del sistema de Delay](assets/diagrama-delay.png)
 
 ### Propiedades
 
@@ -204,20 +190,7 @@ La diferencia auditiva viene del retardo base: con retardos cortos (< 10 ms) el 
 
 ### Diagrama del sistema
 
-```mermaid
-graph LR
-    X(["x[n]"]) --> SUM(("＋"))
-    X           --> VD["Retardo Variable\nD(n) = D₀ + A · sin(2π f_LFO · n)"]
-    LFO["LFO"] -.->|controla D(n)| VD
-    VD          --> SUM
-    SUM         --> Y(["y[n]"])
-
-    style X   fill:#f8514915,stroke:#f85149,color:#f85149
-    style Y   fill:#58a6ff15,stroke:#58a6ff,color:#58a6ff
-    style VD  fill:#3fb95015,stroke:#3fb950,color:#3fb950
-    style LFO fill:#d2992215,stroke:#d29922,color:#d29922
-    style SUM fill:#21262d,stroke:#8b949e,color:#e6edf3
-```
+![Diagrama del sistema Flanger](assets/diagrama-flanger.png)
 
 ### Propiedades
 
@@ -328,3 +301,6 @@ sf.write("guitar_catedral.wav", y, fs_x)
 | [`efectos.py`](https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/efectos.py) | `tremolo()`, `delay()` |
 | [`func.py`](https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/func.py) | `normalizar()`, `to_mono()`, `diente_de_sierra()` |
 | [`conv.py`](https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
+ctos_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
+os_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
+ctos_audio/conv.py) | `convolve_ir()` — reverb convolutiva via FFT |
