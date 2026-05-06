@@ -1,7 +1,9 @@
 # Efectos de Audio en Python
 
-> **Clase 06 — Material complementario**  
-> Audio en Python: efectos de señal desde el marco de Señales y Sistemas
+> **Clase 06 — Material complementario**<br>
+> Audio en Python: efectos de señal desde el marco de Señales y Sistemas<br>
+*Por Jerónimo Scafati*
+
 
 En esta sección implementamos efectos de audio clásicos y los analizamos como **sistemas**. Cada efecto tiene propiedades bien definidas (causalidad, linealidad, invarianza temporal, estabilidad) que determinan su comportamiento y sus posibilidades musicales.
 
@@ -108,17 +110,7 @@ El parámetro $d$ (*depth*) controla qué tan profunda es la modulación: con $d
 
 ### Diagrama del sistema
 
-```mermaid
-graph LR
-    X(["x[n]"]) --> MULT(("×"))
-    LFO["LFO\nm[n] = (1−d) + d · ½ · (1 + sin(2π f_mod · n/fs))"] --> MULT
-    MULT --> Y(["y[n]"])
-
-    style X    fill:#f8514915,stroke:#f85149,color:#f85149
-    style Y    fill:#bc8cff15,stroke:#bc8cff,color:#bc8cff
-    style LFO  fill:#d2992215,stroke:#d29922,color:#d29922
-    style MULT fill:#21262d,stroke:#8b949e,color:#e6edf3
-```
+![Diagrama del sistema de tremolo](assets/diagrama-tremolo.png)
 
 ### Propiedades
 
@@ -228,17 +220,7 @@ $$Y(\omega) = X(\omega) \cdot H(\omega) \quad \Longrightarrow \quad y[n] = \text
 
 ### Diagrama del sistema
 
-```mermaid
-graph LR
-    X(["x[n]"]) --> CONV["Convolución\ny = x ✱ h\n(vía FFT)"]
-    IR["IR de sala\nh[n]"]         --> CONV
-    CONV --> Y(["y[n]"])
-
-    style X    fill:#f8514915,stroke:#f85149,color:#f85149
-    style Y    fill:#58a6ff15,stroke:#58a6ff,color:#58a6ff
-    style IR   fill:#3fb95015,stroke:#3fb950,color:#3fb950
-    style CONV fill:#21262d,stroke:#8b949e,color:#e6edf3
-```
+![Diagrama del sistema de Reverb](assets/diagrama-reverb.png)
 
 ### Propiedades
 

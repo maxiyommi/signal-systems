@@ -83,7 +83,19 @@ def on_config(config: dict) -> dict:
     if nav is None:
         log.info("[extras_nav] Nav no definido en mkdocs.yml, usando auto-discovery.")
         return config
-    nav.append({"Extras": _build_nav_entries()})
+    
+    # Insertar antes de 'Reglas Slack'
+    extras_entry = {"Extras": _build_nav_entries()}
+    inserted = False
+    for i, item in enumerate(nav):
+        if isinstance(item, dict) and "Reglas Slack" in item:
+            nav.insert(i, extras_entry)
+            inserted = True
+            break
+    
+    if not inserted:
+        nav.append(extras_entry)
+
     config["nav"] = nav
     log.info(f"[extras_nav] Sección 'Extras' inyectada con {len(EXTRAS_CONFIG)} entradas.")
     return config
