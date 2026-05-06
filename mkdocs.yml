@@ -73,6 +73,9 @@ plugins:
   - search:
       lang: es
 
+hooks:
+  - hooks/extras_nav.py
+
 markdown_extensions:
   - tables
   - admonition

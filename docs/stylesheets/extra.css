@@ -185,3 +185,23 @@ html {
 [data-md-color-scheme="slate"] .md-typeset tr.clase-current {
   background: rgba(79, 143, 247, 0.08);
 }
+
+/* ── Material Extra: PDFs embebidos ─────────────────────────────────────── */
+
+.pdf-viewer {
+  width: 100%;
+  margin: 1rem 0 1.5rem;
+}
+
+.pdf-viewer iframe {
+  display: block;
+  border-radius: 4px;
+}
+
+@media screen and (max-width: 76.1875em) {
+  .pdf-viewer iframe { height: 560px; }
+}
+
+@media screen and (max-width: 600px) {
+  .pdf-viewer iframe { height: 440px; }
+}
