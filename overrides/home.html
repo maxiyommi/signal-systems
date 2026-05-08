@@ -1,0 +1,586 @@
+{% extends "main.html" %}
+
+{% block tabs %}
+  {{ super() }}
+
+  <style>
+    /* Hide default content elements on home */
+    .md-content__button { display: none; }
+    .md-sidebar--secondary { display: none; }
+
+    /* ===== SVG ICON BASE ===== */
+    .icon {
+      display: inline-flex;
+      width: 1em; height: 1em;
+      vertical-align: -0.125em;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .icon--lg { width: 1.5em; height: 1.5em; }
+    .icon--xl { width: 2em; height: 2em; }
+
+    /* ===== HERO ===== */
+    .hero {
+      padding: 3.5rem 1rem 4.5rem;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 40%, #1a1e2e 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    [data-md-color-scheme="default"] .hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #3730a3 100%);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 30% 50%, rgba(99, 179, 237, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 50%, rgba(129, 140, 248, 0.06) 0%, transparent 50%);
+      animation: pulse 8s ease-in-out infinite alternate;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+    .hero__inner {
+      position: relative; z-index: 1;
+      max-width: 800px; margin: 0 auto;
+    }
+    .hero__logo {
+      width: 220px; height: auto;
+      margin-bottom: 1.2rem;
+      filter: drop-shadow(0 0 20px rgba(99, 179, 237, 0.3));
+    }
+    .hero__title {
+      font-size: 2.6rem; font-weight: 800;
+      color: #f0f6fc; margin: 0 0 0.3rem;
+      letter-spacing: -0.02em; line-height: 1.1;
+    }
+    .hero__subtitle {
+      font-size: 1.1rem; color: #94a3b8;
+      margin: 0; font-weight: 400;
+    }
+    .hero__badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #238636, #2ea043);
+      color: #fff; padding: 0.25rem 0.9rem;
+      border-radius: 2rem; font-size: 0.82rem;
+      font-weight: 600; margin: 1rem 0 0;
+    }
+
+    /* ===== SECTIONS CONTAINER ===== */
+    .home-sections {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    /* ===== SECTION HEADER ===== */
+    .section-header {
+      display: flex; align-items: center; gap: 0.5rem;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--md-default-fg-color--lightest);
+    }
+    .section-header .icon { color: var(--md-default-fg-color--light); }
+    .section-header__title {
+      font-size: 1rem; font-weight: 700;
+      color: var(--md-default-fg-color); margin: 0;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .section-header__link {
+      margin-left: auto; font-size: 0.82rem;
+      color: var(--md-typeset-a-color);
+      text-decoration: none; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .section-header__link:hover { text-decoration: underline; }
+
+    /* ===== START HERE BANNER ===== */
+    .start-here {
+      margin-top: -2.5rem;
+      position: relative; z-index: 2;
+      background: var(--md-default-bg-color);
+      border: 2px solid var(--md-primary-fg-color);
+      border-radius: 0.85rem;
+      padding: 1.5rem 1.8rem;
+      display: flex; align-items: center; gap: 1.5rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+    .start-here__icon {
+      flex-shrink: 0;
+      color: var(--md-primary-fg-color);
+      width: 48px; height: 48px;
+    }
+    .start-here__icon .icon { width: 48px; height: 48px; stroke-width: 1.5; }
+    .start-here__content { flex: 1; }
+    .start-here__title {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--md-default-fg-color); margin: 0 0 0.3rem;
+    }
+    .start-here__desc {
+      font-size: 0.88rem;
+      color: var(--md-default-fg-color--light);
+      margin: 0 0 0.8rem; line-height: 1.5;
+    }
+    .start-here__steps { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .start-here__step {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 2rem; font-size: 0.82rem; font-weight: 600;
+      text-decoration: none; transition: all 0.2s ease;
+    }
+    .start-here__step--1 { background: var(--md-primary-fg-color); color: #fff; }
+    .start-here__step--1:hover { transform: translateY(-1px); color: #fff; box-shadow: 0 4px 12px rgba(79, 143, 247, 0.3); }
+    .start-here__step--2, .start-here__step--3 {
+      background: var(--md-default-bg-color--light);
+      color: var(--md-default-fg-color);
+      border: 1px solid var(--md-default-fg-color--lightest);
+    }
+    .start-here__step--2:hover, .start-here__step--3:hover {
+      border-color: var(--md-primary-fg-color); color: var(--md-primary-fg-color); transform: translateY(-1px);
+    }
+    .start-here__num {
+      background: rgba(255,255,255,0.2);
+      width: 1.3rem; height: 1.3rem;
+      border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center;
+      font-size: 0.7rem;
+    }
+    .start-here__step--2 .start-here__num,
+    .start-here__step--3 .start-here__num {
+      background: var(--md-default-fg-color--lightest);
+    }
+
+    /* ===== PILLAR CARDS ===== */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin-top: 1.5rem;
+    }
+    .pillar-card {
+      background: var(--md-default-bg-color);
+      border: 1px solid var(--md-default-fg-color--lightest);
+      border-radius: 0.75rem;
+      padding: 1.2rem 1rem; text-align: center;
+      transition: all 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+    .pillar-card::before {
+      content: ""; position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+    }
+    .pillar-card:nth-child(1)::before { background: linear-gradient(90deg, #4f8ff7, #63b3ed); }
+    .pillar-card:nth-child(2)::before { background: linear-gradient(90deg, #a78bfa, #818cf8); }
+    .pillar-card:nth-child(3)::before { background: linear-gradient(90deg, #34d399, #2dd4bf); }
+    .pillar-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); }
+    .pillar-card__icon {
+      margin-bottom: 0.5rem; display: flex; justify-content: center;
+    }
+    .pillar-card:nth-child(1) .pillar-card__icon { color: #4f8ff7; }
+    .pillar-card:nth-child(2) .pillar-card__icon { color: #a78bfa; }
+    .pillar-card:nth-child(3) .pillar-card__icon { color: #34d399; }
+    .pillar-card__icon .icon { width: 2rem; height: 2rem; stroke-width: 1.5; }
+    .pillar-card__title { font-size: 0.9rem; font-weight: 700; color: var(--md-default-fg-color); margin: 0 0 0.2rem; }
+    .pillar-card__desc { font-size: 0.78rem; color: var(--md-default-fg-color--light); margin: 0; line-height: 1.4; }
+
+    /* ===== CLASS LIST ===== */
+    .class-list { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 1rem; }
+    .class-item {
+      display: flex; align-items: center;
+      gap: 0.8rem; padding: 0.7rem 1rem;
+      border-radius: 0.5rem;
+      background: var(--md-default-bg-color);
+      border: 1px solid var(--md-default-fg-color--lightest);
+      text-decoration: none;
+      color: var(--md-default-fg-color);
+      transition: all 0.15s ease;
+      font-size: 0.88rem;
+    }
+    .class-item:hover { border-color: var(--md-primary-fg-color); transform: translateX(3px); color: var(--md-default-fg-color); }
+    .class-item__num {
+      font-size: 0.72rem; font-weight: 700;
+      width: 1.6rem; height: 1.6rem; border-radius: 0.3rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      background: var(--md-default-bg-color--light); color: var(--md-default-fg-color--light);
+    }
+    .class-item__info { flex: 1; min-width: 0; }
+    .class-item__title { font-weight: 600; }
+    .class-item__date { font-size: 0.75rem; color: var(--md-default-fg-color--light); margin-left: 0.5rem; }
+    .class-item__status { font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 1rem; flex-shrink: 0; white-space: nowrap; }
+
+    /* Status styles */
+    .class-item--past { opacity: 0.5; }
+    .class-item--past .class-item__num { background: #238636; color: #fff; }
+    .class-item--past .class-item__status { color: #238636; }
+    .class-item--current {
+      border-color: var(--md-primary-fg-color);
+      background: linear-gradient(135deg, rgba(79, 143, 247, 0.06), rgba(129, 140, 248, 0.03));
+      box-shadow: 0 2px 8px rgba(79, 143, 247, 0.1);
+    }
+    .class-item--current .class-item__num { background: var(--md-primary-fg-color); color: #fff; }
+    .class-item--current .class-item__status { background: var(--md-primary-fg-color); color: #fff; padding: 0.2rem 0.6rem; }
+    .class-item--future .class-item__status { color: var(--md-default-fg-color--lighter); }
+
+    /* Entrega badge */
+    .class-item__entrega {
+      font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem;
+      border-radius: 0.3rem; flex-shrink: 0;
+    }
+    .class-item__entrega--m0 { background: #1c3a5f; color: #63b3ed; }
+    .class-item__entrega--m1 { background: #2d2256; color: #a78bfa; }
+    .class-item__entrega--m2 { background: #1a3a2a; color: #34d399; }
+    .class-item__entrega--m3 { background: #3a2a1a; color: #fbbf24; }
+    [data-md-color-scheme="default"] .class-item__entrega--m0 { background: #dbeafe; color: #2563eb; }
+    [data-md-color-scheme="default"] .class-item__entrega--m1 { background: #ede9fe; color: #7c3aed; }
+    [data-md-color-scheme="default"] .class-item__entrega--m2 { background: #d1fae5; color: #059669; }
+    [data-md-color-scheme="default"] .class-item__entrega--m3 { background: #fef3c7; color: #d97706; }
+
+    /* ===== MILESTONES ===== */
+    .milestones { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
+    .milestone {
+      display: flex; align-items: center;
+      gap: 1rem; padding: 0.85rem 1.2rem;
+      background: var(--md-default-bg-color);
+      border: 1px solid var(--md-default-fg-color--lightest);
+      border-radius: 0.6rem; text-decoration: none;
+      color: var(--md-default-fg-color); transition: all 0.2s ease;
+    }
+    .milestone:hover { border-color: var(--md-primary-fg-color); transform: translateX(4px); color: var(--md-default-fg-color); }
+    .milestone__tag {
+      font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem;
+      border-radius: 0.3rem; flex-shrink: 0; min-width: 2.5rem; text-align: center;
+    }
+    .milestone:nth-child(1) .milestone__tag { background: #1c3a5f; color: #63b3ed; }
+    .milestone:nth-child(2) .milestone__tag { background: #2d2256; color: #a78bfa; }
+    .milestone:nth-child(3) .milestone__tag { background: #1a3a2a; color: #34d399; }
+    .milestone:nth-child(4) .milestone__tag { background: #3a2a1a; color: #fbbf24; }
+    [data-md-color-scheme="default"] .milestone:nth-child(1) .milestone__tag { background: #dbeafe; color: #2563eb; }
+    [data-md-color-scheme="default"] .milestone:nth-child(2) .milestone__tag { background: #ede9fe; color: #7c3aed; }
+    [data-md-color-scheme="default"] .milestone:nth-child(3) .milestone__tag { background: #d1fae5; color: #059669; }
+    [data-md-color-scheme="default"] .milestone:nth-child(4) .milestone__tag { background: #fef3c7; color: #d97706; }
+    .milestone__info { flex: 1; min-width: 0; }
+    .milestone__title { font-size: 0.88rem; font-weight: 600; }
+    .milestone__date { font-size: 0.78rem; color: var(--md-default-fg-color--light); }
+    .milestone__arrow { color: var(--md-default-fg-color--lighter); flex-shrink: 0; }
+    .milestone__arrow .icon { width: 1rem; height: 1rem; }
+
+    /* ===== NAV GRID ===== */
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem; margin-top: 1rem;
+    }
+    .nav-item {
+      display: flex; align-items: center;
+      gap: 0.65rem; padding: 0.85rem 1rem;
+      border-radius: 0.6rem;
+      background: var(--md-default-bg-color);
+      border: 1px solid var(--md-default-fg-color--lightest);
+      text-decoration: none;
+      color: var(--md-default-fg-color);
+      font-weight: 500; font-size: 0.88rem;
+      transition: all 0.2s ease;
+    }
+    .nav-item:hover {
+      border-color: var(--md-primary-fg-color); transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); color: var(--md-primary-fg-color);
+    }
+    .nav-item .icon { width: 1.15rem; height: 1.15rem; flex-shrink: 0; color: var(--md-default-fg-color--light); }
+    .nav-item:hover .icon { color: var(--md-primary-fg-color); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero__title { font-size: 2rem; }
+      .pillars { grid-template-columns: 1fr; }
+      .start-here { flex-direction: column; text-align: center; }
+      .start-here__steps { justify-content: center; }
+      .nav-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .nav-grid { grid-template-columns: 1fr; }
+      .start-here__steps { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+
+  <!-- ===== SVG ICON DEFS (Lucide icons) ===== -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+    <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-clipboard-check" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-git-branch" viewBox="0 0 24 24"><line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-notebook" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+    <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+    <symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></symbol>
+  </svg>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero__inner">
+      <img src="{{ config.theme.logo | url }}" alt="Logo" class="hero__logo">
+      <h1 class="hero__title">Señales y Sistemas</h1>
+      <p class="hero__subtitle">Ingeniería de Sonido — UNTREF</p>
+      <span class="hero__badge">1er Cuatrimestre 2026 — Martes 15 a 18h</span>
+    </div>
+  </section>
+
+  <div class="home-sections">
+
+    <!-- ===== POR DONDE ARRANCO ===== -->
+    <div class="start-here">
+      <span class="start-here__icon">
+        <svg class="icon"><use href="#i-compass"/></svg>
+      </span>
+      <div class="start-here__content">
+        <h2 class="start-here__title">¿Primera vez? Arrancá por acá</h2>
+        <p class="start-here__desc">Seguí estos 3 pasos antes de la primera clase y vas a llegar listo.</p>
+        <div class="start-here__steps">
+          <a href="{{ 'guias/setup_entorno/' | url }}" class="start-here__step start-here__step--1">
+            <span class="start-here__num">1</span> Instalar el entorno
+          </a>
+          <a href="{{ 'guias/git_basico/' | url }}" class="start-here__step start-here__step--2">
+            <span class="start-here__num">2</span> Aprender Git básico
+          </a>
+          <a href="{{ 'guias/marimo_intro/' | url }}" class="start-here__step start-here__step--3">
+            <span class="start-here__num">3</span> Conocer Marimo
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PILARES ===== -->
+    <section class="pillars">
+      <div class="pillar-card">
+        <div class="pillar-card__icon"><svg class="icon icon--xl"><use href="#i-code"/></svg></div>
+        <h3 class="pillar-card__title">Lógica y programación</h3>
+        <p class="pillar-card__desc">Python, NumPy, SciPy. Desde cero hasta procesar señales de audio.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-card__icon"><svg class="icon icon--xl"><use href="#i-bot"/></svg></div>
+        <h3 class="pillar-card__title">Vibecoding y Agentes IA</h3>
+        <p class="pillar-card__desc">Claude, ChatGPT, Copilot. IA como herramienta real de desarrollo.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-card__icon"><svg class="icon icon--xl"><use href="#i-rocket"/></svg></div>
+        <h3 class="pillar-card__title">De idea a MVP</h3>
+        <p class="pillar-card__desc">Git, testing, CI/CD, FastAPI. Construir una API de acústica real.</p>
+      </div>
+    </section>
+
+    <!-- ===== CLASES ===== -->
+    <div class="section-header">
+      <svg class="icon icon--lg"><use href="#i-book-open"/></svg>
+      <h2 class="section-header__title">Clases</h2>
+      <a href="{{ 'clases/' | url }}" class="section-header__link">Ver detalle completo <svg class="icon"><use href="#i-arrow-right"/></svg></a>
+    </div>
+
+    <div class="class-list" id="class-list">
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_01" class="class-item" data-date="2026-03-31">
+        <span class="class-item__num">1</span>
+        <span class="class-item__info"><span class="class-item__title">El Punto de Partida</span><span class="class-item__date">31 Mar</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_02" class="class-item" data-date="2026-04-07">
+        <span class="class-item__num">2</span>
+        <span class="class-item__info"><span class="class-item__title">Hablar en Python</span><span class="class-item__date">7 Abr</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_03" class="class-item" data-date="2026-04-14">
+        <span class="class-item__num">3</span>
+        <span class="class-item__info"><span class="class-item__title">Construir con Funciones</span><span class="class-item__date">14 Abr</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_04" class="class-item" data-date="2026-04-21">
+        <span class="class-item__num">4</span>
+        <span class="class-item__info"><span class="class-item__title">El Universo NumPy y las Señales</span><span class="class-item__date">21 Abr</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_05" class="class-item" data-date="2026-04-28">
+        <span class="class-item__num">5</span>
+        <span class="class-item__info"><span class="class-item__title">Operaciones con Señales</span><span class="class-item__date">28 Abr</span></span>
+        <span class="class-item__entrega class-item__entrega--m0">M0</span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_06" class="class-item" data-date="2026-05-05">
+        <span class="class-item__num">6</span>
+        <span class="class-item__info"><span class="class-item__title">Audio en Python + Generación</span><span class="class-item__date">5 May</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_07" class="class-item" data-date="2026-05-12">
+        <span class="class-item__num">7</span>
+        <span class="class-item__info"><span class="class-item__title">Sistemas y Clasificación</span><span class="class-item__date">12 May</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_08" class="class-item" data-date="2026-05-19">
+        <span class="class-item__num">8</span>
+        <span class="class-item__info"><span class="class-item__title">Convolución + Entrega 1</span><span class="class-item__date">19 May</span></span>
+        <span class="class-item__entrega class-item__entrega--m1">M1</span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_09" class="class-item" data-date="2026-05-26">
+        <span class="class-item__num">9</span>
+        <span class="class-item__info"><span class="class-item__title">Frecuencia y Filtros</span><span class="class-item__date">26 May</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_10" class="class-item" data-date="2026-06-02">
+        <span class="class-item__num">10</span>
+        <span class="class-item__info"><span class="class-item__title">Procesamiento de la RI</span><span class="class-item__date">2 Jun</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_11" class="class-item" data-date="2026-06-09">
+        <span class="class-item__num">11</span>
+        <span class="class-item__info"><span class="class-item__title">Vibecoding en Profundidad</span><span class="class-item__date">9 Jun</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_12" class="class-item" data-date="2026-06-16">
+        <span class="class-item__num">12</span>
+        <span class="class-item__info"><span class="class-item__title">Entrega 2 + Documentación</span><span class="class-item__date">16 Jun</span></span>
+        <span class="class-item__entrega class-item__entrega--m2">M2</span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_13" class="class-item" data-date="2026-06-23">
+        <span class="class-item__num">13</span>
+        <span class="class-item__info"><span class="class-item__title">De Funciones a Producto</span><span class="class-item__date">23 Jun</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_14" class="class-item" data-date="2026-06-30">
+        <span class="class-item__num">14</span>
+        <span class="class-item__info"><span class="class-item__title">Pulido y Preparación</span><span class="class-item__date">30 Jun</span></span>
+        <span class="class-item__status"></span>
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_15" class="class-item" data-date="2026-07-07">
+        <span class="class-item__num">15</span>
+        <span class="class-item__info"><span class="class-item__title">Demo Day</span><span class="class-item__date">7 Jul</span></span>
+        <span class="class-item__entrega class-item__entrega--m3">M3</span>
+        <span class="class-item__status"></span>
+      </a>
+    </div>
+
+    <!-- ===== TRABAJO PRACTICO ===== -->
+    <div class="section-header">
+      <svg class="icon icon--lg"><use href="#i-target"/></svg>
+      <h2 class="section-header__title">Trabajo Práctico — RIR-API</h2>
+      <a href="{{ 'trabajo_practico/' | url }}" class="section-header__link">Ver consigna completa <svg class="icon"><use href="#i-arrow-right"/></svg></a>
+    </div>
+
+    <div class="milestones">
+      <a href="{{ 'trabajo_practico/especificacion/m0_arquitectura/' | url }}" class="milestone">
+        <span class="milestone__tag">M0</span>
+        <div class="milestone__info">
+          <div class="milestone__title">Arquitectura</div>
+          <div class="milestone__date">28 Abr — Semana 5 — 5%</div>
+        </div>
+        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+      </a>
+      <a href="{{ 'trabajo_practico/especificacion/m1_generacion/' | url }}" class="milestone">
+        <span class="milestone__tag">M1</span>
+        <div class="milestone__info">
+          <div class="milestone__title">Generación de señales</div>
+          <div class="milestone__date">19 May — Semana 8 — 15%</div>
+        </div>
+        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+      </a>
+      <a href="{{ 'trabajo_practico/especificacion/m2_procesamiento/' | url }}" class="milestone">
+        <span class="milestone__tag">M2</span>
+        <div class="milestone__info">
+          <div class="milestone__title">Procesamiento de RI</div>
+          <div class="milestone__date">16 Jun — Semana 12 — 20%</div>
+        </div>
+        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+      </a>
+      <a href="{{ 'trabajo_practico/especificacion/m3_producto_final/' | url }}" class="milestone">
+        <span class="milestone__tag">M3</span>
+        <div class="milestone__info">
+          <div class="milestone__title">Producto final + Demo Day</div>
+          <div class="milestone__date">7 Jul — Semana 15 — 30%</div>
+        </div>
+        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+      </a>
+    </div>
+
+    <!-- ===== GUIAS Y RECURSOS ===== -->
+    <div class="section-header">
+      <svg class="icon icon--lg"><use href="#i-map"/></svg>
+      <h2 class="section-header__title">Guías y recursos</h2>
+    </div>
+
+    <div class="nav-grid">
+      <a href="{{ 'guias/setup_entorno/' | url }}" class="nav-item">
+        <svg class="icon"><use href="#i-settings"/></svg> Setup del entorno
+      </a>
+      <a href="{{ 'guias/git_basico/' | url }}" class="nav-item">
+        <svg class="icon"><use href="#i-git-branch"/></svg> Git básico
+      </a>
+      <a href="{{ 'guias/marimo_intro/' | url }}" class="nav-item">
+        <svg class="icon"><use href="#i-notebook"/></svg> Intro a Marimo
+      </a>
+      <a href="{{ 'guias/quarto_informe/' | url }}" class="nav-item">
+        <svg class="icon"><use href="#i-file-text"/></svg> Quarto (informes)
+      </a>
+      <a href="{{ 'cronograma/' | url }}" class="nav-item">
+        <svg class="icon"><use href="#i-calendar"/></svg> Cronograma completo
+      </a>
+      <a href="{{ 'trabajo_practico/rubrica/' | url }}" class="nav-item">
+        <svg class="icon"><use href="#i-clipboard-check"/></svg> Rúbrica de evaluación
+      </a>
+      <a href="{{ 'reglas_slack/' | url }}" class="nav-item">
+        <svg class="icon"><use href="#i-message-circle"/></svg> Slack y consultas
+      </a>
+      <a href="https://github.com/maxiyommi/signal-systems" class="nav-item">
+        <svg class="icon"><use href="#i-package"/></svg> Repositorio GitHub
+      </a>
+    </div>
+
+  </div>
+
+  <!-- ===== DATE TRACKING SCRIPT ===== -->
+  <script>
+    (function() {
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      var items = document.querySelectorAll('.class-item[data-date]');
+      var currentFound = false;
+
+      items.forEach(function(item, i) {
+        var classDate = new Date(item.getAttribute('data-date') + 'T00:00:00');
+        var nextDate = items[i + 1] ? new Date(items[i + 1].getAttribute('data-date') + 'T00:00:00') : null;
+        var status = item.querySelector('.class-item__status');
+
+        if (nextDate && today >= nextDate) {
+          item.classList.add('class-item--past');
+          status.textContent = 'Vista';
+        } else if (today >= classDate && !currentFound) {
+          item.classList.add('class-item--current');
+          status.textContent = 'Esta semana';
+          currentFound = true;
+          setTimeout(function() {
+            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300);
+        } else {
+          item.classList.add('class-item--future');
+          var diff = Math.ceil((classDate - today) / (1000 * 60 * 60 * 24));
+          if (diff <= 14) {
+            status.textContent = 'En ' + diff + ' días';
+          }
+        }
+      });
+    })();
+  </script>
+
+{% endblock %}
+
+{% block content %}{% endblock %}
