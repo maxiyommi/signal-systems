@@ -29,8 +29,6 @@ theme:
     - navigation.top
     - navigation.indexes
     - navigation.tabs
-    - navigation.instant
-    - navigation.instant.progress
     - search.highlight
     - search.suggest
     - content.code.copy
