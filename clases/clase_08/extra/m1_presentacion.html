@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M1: Generacion — Señales y Sistemas UNTREF</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script"></script>
+
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --bg-raised: #efece3;
+      --fg: #1a1a22;
+      --dim: #6b7180;
+      --faint: #b0b3bc;
+      --rule: rgba(26, 26, 34, 0.08);
+      --panel: rgba(26, 26, 34, 0.025);
+
+      --accent: #2563eb;
+      --accent-strong: #1d4ed8;
+      --warn: #b45309;
+      --good: #047857;
+      --bad: #b91c1c;
+
+      --f-sans: "Geist", system-ui, sans-serif;
+      --f-mono: "Geist Mono", ui-monospace, monospace;
+    }
+
+    .reveal .backgrounds { background: var(--bg); }
+
+    .reveal {
+      font-family: var(--f-sans);
+      font-weight: 400;
+      font-size: 34px;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+    }
+
+    .reveal .slides { text-align: left; }
+
+    .reveal .slides section {
+      padding: 3rem 4.2rem;
+      box-sizing: border-box;
+      max-width: 1920px;
+      overflow: hidden;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: var(--f-sans);
+      color: var(--fg);
+      text-transform: none;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0 0 1rem 0;
+    }
+
+    .reveal h2 {
+      font-size: 2.2em;
+      font-weight: 600;
+    }
+
+    .reveal h3 {
+      font-size: 0.78em;
+      font-weight: 600;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.5em;
+    }
+
+    .reveal p {
+      line-height: 1.4;
+      margin: 0 0 0.75rem 0;
+      color: var(--fg);
+      max-width: 42ch;
+    }
+
+    .reveal p.wide { max-width: none; }
+
+    .reveal strong { color: var(--fg); font-weight: 600; }
+    .reveal em { font-style: normal; color: var(--accent); }
+
+    .reveal a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(96, 165, 250, 0.3);
+    }
+    .reveal a:hover {
+      color: var(--fg);
+      border-bottom-color: var(--accent);
+    }
+
+    .reveal ul, .reveal ol {
+      list-style: none;
+      padding-left: 0;
+      margin: 0 0 1rem 0;
+    }
+    .reveal ul li, .reveal ol li {
+      padding-left: 1.5em;
+      margin-bottom: 0.65em;
+      line-height: 1.4;
+      position: relative;
+      overflow-wrap: anywhere;
+    }
+    .reveal ul li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--faint);
+    }
+    .reveal ol { counter-reset: n; }
+    .reveal ol li { counter-increment: n; }
+    .reveal ol li::before {
+      content: counter(n) ".";
+      position: absolute;
+      left: 0;
+      color: var(--faint);
+      font-family: var(--f-mono);
+      font-size: 0.85em;
+    }
+
+    .reveal code {
+      font-family: var(--f-mono);
+      font-size: 0.85em;
+      background: rgba(26, 26, 34, 0.06);
+      color: var(--fg);
+      padding: 0.08em 0.4em;
+      border-radius: 3px;
+    }
+    .reveal pre {
+      width: 100%;
+      box-shadow: none;
+      border-radius: 6px;
+      margin: 0 0 1rem 0;
+    }
+    .reveal pre code {
+      font-size: 0.58em;
+      line-height: 1.5;
+      padding: 0.9em 1.1em;
+      background: #ebe8df;
+      color: #1a1a22;
+      border-radius: 6px;
+      border: 1px solid var(--rule);
+      display: block;
+      max-height: 22em;
+      overflow: hidden;
+    }
+
+    .panel pre { margin: 0.5em 0 0.6em 0; }
+    .panel pre code {
+      font-size: 0.5em;
+      line-height: 1.45;
+      padding: 0.75em 0.9em;
+      max-height: none;
+    }
+    /* dentro de un panel, los parrafos usan ancho completo */
+    .panel p, .panel ul li { max-width: none; }
+
+    /* variante compacta del panel: code mas chico, padding reducido */
+    .panel.compact { padding: 0.85em 1.05em; }
+    .panel.compact pre { margin: 0.35em 0 0.4em 0; }
+    .panel.compact pre code { font-size: 0.44em; padding: 0.65em 0.8em; }
+    .panel.compact h3 { font-size: 0.7em; margin-bottom: 0.3em; }
+    .panel.compact ul li { font-size: 0.78em; margin-bottom: 0.4em; }
+    .panel.compact p { font-size: 0.78em; line-height: 1.35; margin-bottom: 0.35em; }
+
+    .grid-2 > *, .grid-3 > *, .split > * { min-width: 0; }
+
+    .kicker {
+      font-family: var(--f-mono);
+      font-size: 0.5em;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 1.5rem;
+    }
+    .kicker .m { color: var(--accent); }
+
+    .lead {
+      font-size: 1.02em;
+      color: var(--dim);
+      max-width: 46ch;
+      line-height: 1.4;
+      margin-bottom: 1.5rem !important;
+    }
+
+    .pill {
+      display: inline-block;
+      font-family: var(--f-mono);
+      font-size: 0.6em;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      padding: 0.15em 0.55em;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-right: 0.35em;
+      background: rgba(26, 26, 34, 0.06);
+      color: var(--fg);
+    }
+    .pill-m1 { background: rgba(37, 99, 235, 0.15); color: var(--accent); }
+    .pill-m0, .pill-m2, .pill-m3 {
+      background: rgba(26, 26, 34, 0.05);
+      color: var(--dim);
+    }
+
+    .tag {
+      font-family: var(--f-mono);
+      font-size: 0.72em;
+      color: var(--dim);
+      background: rgba(26, 26, 34, 0.04);
+      padding: 0.08em 0.5em;
+      border-radius: 3px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5em; align-items: start; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5em; }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 3em;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.15em 1.35em;
+    }
+    .panel h3 { margin-top: 0; margin-bottom: 0.4em; }
+    .panel p { margin-bottom: 0.5em; }
+    .panel p:last-child { margin-bottom: 0; }
+
+    .bad { color: var(--bad); }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+
+    .reveal table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78em;
+      font-variant-numeric: tabular-nums;
+      margin: 0 0 1rem 0;
+    }
+    .reveal table th {
+      font-family: var(--f-mono);
+      font-size: 0.82em;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-align: left;
+      padding: 0.7em 0.9em;
+      border-bottom: 1px solid var(--rule);
+    }
+    .reveal table td {
+      padding: 0.85em 0.9em;
+      border-bottom: 1px solid var(--rule);
+      color: var(--fg);
+    }
+    .reveal table tr.hl td { color: var(--fg); }
+    .reveal table tr.hl td:first-child {
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+
+    .reveal blockquote {
+      border: none;
+      background: none;
+      box-shadow: none;
+      border-left: 2px solid var(--rule);
+      padding: 0.3em 0 0.3em 1.2em;
+      margin: 1.5rem 0;
+      font-style: normal;
+      font-size: 0.92em;
+      color: var(--dim);
+      line-height: 1.45;
+    }
+    .reveal blockquote strong { color: var(--fg); }
+
+    .url-box {
+      display: block;
+      font-family: var(--f-mono);
+      font-size: 0.82em;
+      padding: 0.7em 1em;
+      background: rgba(37, 99, 235, 0.05);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 6px;
+      margin: 0.6em 0 1em 0;
+      word-break: break-all;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a.url-box { border-bottom: none; }
+    .url-box a { color: var(--accent); border: none; }
+
+    .reveal ul.checklist { list-style: none; padding: 0; margin: 0; }
+    .reveal ul.checklist li {
+      padding-left: 2em;
+      margin-bottom: 0.75em;
+      line-height: 1.4;
+      position: relative;
+      color: var(--fg);
+    }
+    .reveal ul.checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.35em;
+      width: 1.1em;
+      height: 1.1em;
+      border: 1.5px solid var(--faint);
+      border-radius: 3px;
+      background: transparent;
+    }
+
+    .small { font-size: 0.78em; color: var(--dim); line-height: 1.4; }
+    .muted { color: var(--dim); }
+
+    .figure {
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 0.6em;
+    }
+    .figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 4px;
+    }
+    .figure figcaption {
+      font-family: var(--f-mono);
+      font-size: 0.5em;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-top: 0.5em;
+      padding: 0 0.4em;
+    }
+
+    /* hero figure: ocupa el ancho completo, imagen grande arriba */
+    .figure-hero {
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 0.6em;
+      margin: 0 0 1.2rem 0;
+    }
+    .figure-hero img {
+      width: 100%;
+      max-height: 560px;
+      object-fit: contain;
+      display: block;
+      border-radius: 4px;
+    }
+    .figure-hero figcaption {
+      font-family: var(--f-mono);
+      font-size: 0.5em;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-top: 0.5em;
+      padding: 0 0.4em;
+    }
+
+    /* enunciado: parrafo ancho debajo de la figura */
+    .enunciado {
+      font-size: 0.78em;
+      line-height: 1.45;
+      max-width: 92ch;
+      color: var(--fg);
+    }
+    .enunciado p { max-width: 92ch; margin-bottom: 0.6em; }
+    .enunciado .src {
+      font-family: var(--f-mono);
+      font-size: 0.78em;
+      color: var(--dim);
+      letter-spacing: 0.05em;
+      margin-top: 0.4em;
+    }
+
+    /* ---- Function cards (slide 4) ---- */
+    .fn-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.4em;
+      margin-top: 1.5rem;
+    }
+    .fn-card {
+      position: relative;
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.6em 1.5em 1.4em 1.5em;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .fn-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      opacity: 0.85;
+    }
+    .fn-card .num {
+      font-family: var(--f-mono);
+      font-size: 0.65em;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      margin-bottom: 0.6em;
+    }
+    .fn-card .num .slash {
+      color: var(--faint);
+      margin: 0 0.3em;
+    }
+    .fn-card .name {
+      font-family: var(--f-mono);
+      font-size: 0.78em;
+      font-weight: 500;
+      color: var(--fg);
+      background: rgba(37, 99, 235, 0.08);
+      border-radius: 4px;
+      padding: 0.25em 0.5em;
+      display: inline-block;
+      margin-bottom: 0.4em;
+      width: fit-content;
+    }
+    .fn-card .title {
+      font-size: 1.15em;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--fg);
+      margin: 0.2em 0 1em 0;
+    }
+    .fn-card .io {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      margin-bottom: 1em;
+      flex: 1;
+    }
+    .fn-card .io-row {
+      display: grid;
+      grid-template-columns: 2.6em 1fr;
+      align-items: start;
+      gap: 0.5em;
+    }
+    .fn-card .io-tag {
+      font-family: var(--f-mono);
+      font-size: 0.5em;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dim);
+      padding-top: 0.3em;
+    }
+    .fn-card .io-tag.tag-in { color: var(--warn); }
+    .fn-card .io-tag.tag-out { color: var(--good); }
+    .fn-card .io-body {
+      font-family: var(--f-mono);
+      font-size: 0.62em;
+      line-height: 1.55;
+      color: var(--fg);
+    }
+    .fn-card .io-body .param {
+      color: var(--dim);
+    }
+    .fn-card .io-body .param strong {
+      color: var(--fg);
+      font-weight: 500;
+    }
+    .fn-card .footer {
+      border-top: 1px solid var(--rule);
+      padding-top: 0.7em;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25em;
+    }
+    .fn-card .footer .label {
+      font-family: var(--f-mono);
+      font-size: 0.48em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .fn-card .footer .value {
+      font-size: 0.78em;
+      color: var(--fg);
+      line-height: 1.35;
+    }
+
+    .formula {
+      background: #ebe8df;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 0.9em 1.1em;
+      margin: 0.8em 0 1em 0;
+      font-size: 0.95em;
+      overflow-x: auto;
+    }
+
+    .reveal .controls { color: var(--dim); }
+    .reveal .controls.layout-edges .navigate-left { left: 2em; }
+    .reveal .controls.layout-edges .navigate-right { right: 2em; }
+    .reveal .controls.layout-edges .navigate-up { top: 1.4em; }
+    .reveal .controls.layout-edges .navigate-down { bottom: 1.4em; }
+    .reveal .controls button { opacity: 0.35; transition: opacity 0.2s; }
+    .reveal .controls button:hover { opacity: 1; }
+
+    .reveal .slide-number {
+      font-family: var(--f-mono);
+      font-size: 0.55em;
+      letter-spacing: 0.15em;
+      background: transparent;
+      color: var(--faint);
+      right: 2rem;
+      bottom: 1.2rem;
+    }
+    .reveal .progress { color: var(--accent); height: 1px; }
+
+    .reveal section.titulo { padding: 0; height: 100%; }
+
+    .titulo-wrap {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 4rem 5rem;
+    }
+
+    .titulo-top, .titulo-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--f-mono);
+      font-size: 0.5em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .titulo-main { align-self: center; }
+
+    .titulo-main h1 {
+      font-size: 5.5em;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      margin: 0 0 0.3em 0;
+      color: var(--fg);
+    }
+
+    .titulo-main .bajada {
+      font-size: 1em;
+      font-weight: 400;
+      color: var(--dim);
+      max-width: 32ch;
+      margin: 0;
+    }
+
+    .titulo-main .tag-ms {
+      font-family: var(--f-mono);
+      font-size: 0.55em;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8em;
+    }
+
+    .titulo-bottom .meta { display: flex; gap: 3.5em; }
+    .titulo-bottom .meta .kv {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25em;
+    }
+    .titulo-bottom .meta .k { font-size: 0.9em; color: var(--faint); }
+    .titulo-bottom .meta .v {
+      font-family: var(--f-sans);
+      font-size: 1.2em;
+      font-weight: 500;
+      color: var(--fg);
+      text-transform: none;
+      letter-spacing: 0.01em;
+    }
+
+    .reveal .slides section.present > *:not(aside) {
+      animation: fadeIn 0.4s ease-out backwards;
+    }
+    .reveal .slides section.present > *:nth-child(1) { animation-delay: 0s; }
+    .reveal .slides section.present > *:nth-child(2) { animation-delay: 0.05s; }
+    .reveal .slides section.present > *:nth-child(3) { animation-delay: 0.1s; }
+    .reveal .slides section.present > *:nth-child(4) { animation-delay: 0.15s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- SLIDE 1 — Portada -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top">
+      <div>Señales y Sistemas · UNTREF</div>
+      <div>Clase 08 / 15</div>
+    </div>
+
+    <div class="titulo-main">
+      <div class="tag-ms">Milestone 1</div>
+      <h1>Generación.</h1>
+      <p class="bajada">Las tres señales que excitan la sala — y los tests que las validan.</p>
+    </div>
+
+    <div class="titulo-bottom">
+      <div class="meta">
+        <div class="kv"><span class="k">Hoy</span><span class="v">19 may 2026</span></div>
+        <div class="kv"><span class="k">Entrega M1</span><span class="v">hoy · v0.1.0</span></div>
+      </div>
+      <div>TP · RIR-API</div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Hoy entregan y presentan en vivo.
+    - Esta presentacion sirve para repasar conceptos antes de la ronda de presentaciones de cada grupo.
+    - Timing: 1 min.
+  </aside>
+</section>
+
+<!-- SLIDE 2 — Donde estamos -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · el mapa</div>
+  <h2>¿Dónde estamos?</h2>
+  <p class="lead">Pasamos del plano al primer código que calcula. Esto es lo que va a usar el resto del TP.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 24%;">Milestone</th>
+        <th>Entregan</th>
+        <th style="width: 22%;">Fecha</th>
+        <th style="width: 10%;">Peso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="pill pill-m0">M0</span> El Plano</td>
+        <td>Arquitectura · repo · issues</td>
+        <td><span class="muted">28 Abr</span></td>
+        <td><span class="muted">5%</span></td>
+      </tr>
+      <tr class="hl">
+        <td><span class="pill pill-m1">M1</span> Generación</td>
+        <td>Ruido rosa · sine sweep · playrec</td>
+        <td><strong>19 May</strong> — hoy</td>
+        <td>15%</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-m2">M2</span> Procesamiento</td>
+        <td>Filtros · deconvolución · RI</td>
+        <td>16 Jun</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-m3">M3</span> Producto</td>
+        <td>API REST · informe · demo</td>
+        <td>7 Jul</td>
+        <td>30%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="panel" style="margin-top: 1rem; padding: 1.1em 1.3em;">
+    <h3 style="font-size: 0.75em; margin-bottom: 0.5em;">Cómo se crea el tag — desde <code>main</code>, después del último PR mergeado</h3>
+<pre style="margin: 0.4em 0 0.6em 0;"><code class="language-bash" style="font-size: 0.5em; padding: 0.85em 1em;">git checkout main && git pull origin main                    # estar al día con el remote
+git tag -a v0.1.0 -m "M1: ruido rosa, sine sweep, playrec"   # tag anotado
+git push origin v0.1.0                                       # empujar SOLO ese tag al remote</code></pre>
+    <p style="font-size: 0.72em; line-height: 1.4; color: var(--dim); margin-bottom: 0; max-width: none;">
+      <code>-a</code> = tag <strong>anotado</strong> (con autor, fecha y mensaje). Sin <code>-a</code> es un tag liviano y no queda quién lo hizo. <strong>Si no está el tag empujado al remote, oficialmente no entregaron</strong>.
+    </p>
+  </div>
+
+  <aside class="notes">
+    - Recordar que la entrega ES el tag anotado en main, no el ultimo commit en develop.
+    - Insistir: primero pull en main, despues tag, despues push del tag.
+    - "git push origin v0.1.0" empuja SOLO ese tag. Para todos los tags: "git push --tags".
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 3 — Del plano al codigo -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · ¿qué cambia?</div>
+  <h2>Del plano al primer cálculo.</h2>
+
+  <div class="grid-2" style="margin-top: 2rem;">
+    <div>
+      <p class="wide">
+        En M0 dibujaron las tres capas. En M1 le ponen <strong>código real</strong> a una sola
+        de ellas: <code>services/</code>.
+      </p>
+      <p class="wide">Los routers no se tocan todavía. Los schemas tampoco. Solo:</p>
+      <ul>
+        <li><code>services/pink_noise.py</code></li>
+        <li><code>services/sine_sweep.py</code></li>
+        <li><code>services/audio_io.py</code> (reproducir/grabar)</li>
+      </ul>
+      <p class="small wide">
+        Cada uno es una <em>función pura de DSP</em>: entra <code>numpy</code>, sale <code>numpy</code>.
+        No saben de HTTP. No saben de JSON. No saben de FastAPI.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3>Por qué importa</h3>
+      <ul>
+        <li>Si la función es pura, los tests son triviales</li>
+        <li>Si la función es pura, en M3 la enchufan a una ruta y listo</li>
+        <li>Si la función mezcla cosas, en M2 van a sufrir</li>
+      </ul>
+      <p class="small" style="margin-top: 1em;">
+        <strong>Regla:</strong> el service no abre archivos, no llama a la red, no imprime. Recibe arrays, devuelve arrays.
+      </p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Insistir: la funcion pura es lo que hace que M3 sea facil.
+    - Si alguien metio sounddevice dentro de generar_ruido_rosa, eso es deuda.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 4 — Las tres funciones -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · entregables de código</div>
+  <h2>Tres funciones. Una entrega.</h2>
+
+  <div class="fn-grid">
+    <article class="fn-card">
+      <div class="num">01<span class="slash">/</span>03 · función</div>
+      <div class="name">generar_ruido_rosa</div>
+      <div class="title">Ruido rosa.</div>
+
+      <div class="io">
+        <div class="io-row">
+          <div class="io-tag tag-in">in</div>
+          <div class="io-body">
+            <div class="param"><strong>duracion</strong> · float · segundos</div>
+            <div class="param"><strong>fs</strong> · int · Hz</div>
+          </div>
+        </div>
+        <div class="io-row">
+          <div class="io-tag tag-out">out</div>
+          <div class="io-body">
+            <div class="param"><strong>np.ndarray</strong> · normalizado en [-1, 1]</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">PSD con pendiente -3 ± 1 dB/oct.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">02<span class="slash">/</span>03 · función</div>
+      <div class="name">generar_sine_sweep</div>
+      <div class="title">Sweep + filtro inverso.</div>
+
+      <div class="io">
+        <div class="io-row">
+          <div class="io-tag tag-in">in</div>
+          <div class="io-body">
+            <div class="param"><strong>f1, f2</strong> · float · Hz</div>
+            <div class="param"><strong>duracion</strong> · float · segundos</div>
+            <div class="param"><strong>fs</strong> · int · Hz</div>
+          </div>
+        </div>
+        <div class="io-row">
+          <div class="io-tag tag-out">out</div>
+          <div class="io-body">
+            <div class="param"><strong>tuple[np.ndarray, np.ndarray]</strong></div>
+            <div class="param">(sweep, filtro_inverso)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">sweep × inverso ≈ δ(t) · pico &gt; 40 dB sobre piso.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">03<span class="slash">/</span>03 · función</div>
+      <div class="name">reproducir_y_grabar</div>
+      <div class="title">Adquisición.</div>
+
+      <div class="io">
+        <div class="io-row">
+          <div class="io-tag tag-in">in</div>
+          <div class="io-body">
+            <div class="param"><strong>signal</strong> · np.ndarray · mono o estéreo</div>
+            <div class="param"><strong>fs</strong> · int · Hz</div>
+            <div class="param"><strong>duracion_grabacion</strong> · float · s</div>
+          </div>
+        </div>
+        <div class="io-row">
+          <div class="io-tag tag-out">out</div>
+          <div class="io-body">
+            <div class="param"><strong>np.ndarray</strong> · señal grabada</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">Shape correcto · duración ± 1% · error si no hay device.</div>
+      </div>
+    </article>
+  </div>
+
+  <p class="muted small" style="margin-top: 1.4rem;">
+    Spec completa en <code>trabajo_practico/especificacion/m1_generacion.md</code> · cambian la firma y los tests dejan de pasar.
+  </p>
+
+  <aside class="notes">
+    - Estas son las tres firmas que la rubrica busca. Si cambian la firma, los tests se rompen.
+    - Cada card muestra in/out y el test que valida. Ese es el contrato.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 5 — Ruido rosa -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · función 01 · ruido rosa</div>
+
+  <figure class="figure-hero">
+    <img src="img/psd_ruido_rosa.png" alt="PSD del ruido rosa generado con la API de referencia">
+    <figcaption>PSD medida (Welch) vs. teórico -3 dB/oct · pendiente medida sobre la API de cátedra: -3.02 dB/oct</figcaption>
+  </figure>
+
+  <div class="enunciado">
+    <p>
+      El ruido rosa (también llamado ruido $1/f$) se caracteriza por tener una densidad espectral de potencia
+      inversamente proporcional a la frecuencia: $S(f) = k/f$, donde $k$ es una constante. En escala logarítmica
+      esto corresponde a una caída de <strong>-3 dB/octava</strong> (o equivalentemente, -10 dB/década), porque
+      $\Delta L = 10 \log_{10}(1/2) \approx -3{,}01$ dB.
+    </p>
+    <p>
+      Algoritmo recomendado <strong>Voss-McCartney</strong>: suma de múltiples generadores de ruido blanco que se
+      actualizan a tasas $2^i$. El generador $i$ se actualiza cuando el bit $i$ del índice $n$ cambia. La suma
+      produce una señal cuyo espectro se aproxima a $1/f$. Alternativa aceptable: ruido blanco filtrado en
+      frecuencia con $H(f) = 1/\sqrt{f}$.
+    </p>
+    <p class="src">
+      Spec · m1_generacion.md §1 — <em>Voss, R. F. &amp; Clarke, J. (1978). "1/f noise" in music. JASA 63(1).</em>
+    </p>
+  </div>
+
+  <aside class="notes">
+    - El plot sale de generate_pink_noise() de la API de referencia.
+    - Pendiente medida -3.02 dB/oct: cumple holgado el test (tolerancia ±1 dB/oct).
+    - Recordar el truco perceptual: ruido rosa "suena igual de fuerte" en cada octava.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 6 — Sine sweep -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · función 02 · sine sweep logarítmico</div>
+
+  <figure class="figure-hero">
+    <img src="img/sweep_waveform_spec.png" alt="Waveform y espectrograma del sine sweep 20 Hz a 20 kHz">
+    <figcaption>Sweep 20 Hz → 20 kHz, 5 s · línea blanca discontinua = f(t) teórica</figcaption>
+  </figure>
+
+  <div class="enunciado">
+    <p>
+      El sine sweep logarítmico (también llamado exponencial) se define como:
+      $\;x(t) = \sin\!\left[\tfrac{2\pi f_1 T}{\ln(f_2/f_1)}\!\left(e^{t \ln(f_2/f_1)/T} - 1\right)\right]$,
+      con $f_1$ frecuencia inicial, $f_2$ final, $T$ duración total, $0 \leq t \leq T$.
+    </p>
+    <p>
+      La frecuencia instantánea es $f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}$, que crece exponencialmente de $f_1$
+      a $f_2$. Logarítmico (no lineal) porque buscamos <em>igual energía por octava</em> — coincide con la
+      escala de los filtros de bandas IEC 61260 que van a usar en M2.
+    </p>
+    <p class="src">
+      Spec · m1_generacion.md §2 — <em>Farina, A. (2000). Simultaneous measurement of impulse response and distortion with a swept-sine technique. 108th AES Convention.</em>
+    </p>
+  </div>
+
+  <aside class="notes">
+    - El espectrograma muestra el barrido como una curva exponencial.
+    - La linea blanca discontinua es f(t) calculada con la formula — coincide perfecto.
+    - Si alumnos preguntan: si fuera lineal, el sweep concentraria toda la energia en agudos.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 7 — Filtro inverso y convolucion -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · función 02 · filtro inverso</div>
+
+  <figure class="figure-hero">
+    <img src="img/convolucion_impulso.png" alt="Convolucion del sweep con su filtro inverso resultando en un pico tipo impulso">
+    <figcaption>Convolución sweep × inverso · pico vs. piso ≈ 98 dB de relación (test pide ≥ 40 dB)</figcaption>
+  </figure>
+
+  <div class="enunciado">
+    <p>
+      El filtro inverso se obtiene invirtiendo temporalmente el sweep y aplicando una corrección de amplitud
+      que compensa la distribución no uniforme de energía por frecuencia del sweep logarítmico:
+      $\;x_{\text{inv}}(t) = x(T - t) / A(t)$, con envolvente $A(t) = e^{-t \ln(f_2/f_1)/T}$.
+    </p>
+    <p>
+      La corrección es necesaria porque el sweep logarítmico permanece <strong>más tiempo en las frecuencias
+      bajas</strong> y concentra más energía allí. El filtro inverso compensa atenuando esa banda.
+      La convolución del sweep con su filtro inverso debe producir un impulso ideal:
+      $\;x(t) * x_{\text{inv}}(t) \approx \delta(t)$. En la práctica, un pulso estrecho con lóbulos laterales pequeños.
+    </p>
+    <p class="src">
+      Spec · m1_generacion.md §2 (filtro inverso) — <em>esto es lo que en M2 usan para deconvolucionar la respuesta al impulso de la sala.</em>
+    </p>
+  </div>
+
+  <aside class="notes">
+    - Insistir en el hilo M1 -> M2: lo que estan generando hoy es la pre-condicion de la deconvolucion.
+    - 98 dB es la API de catedra. Los grupos no tienen que llegar ahi: con 40 dB ya pasan el test.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 8 — Reproducir y grabar -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · adquisición</div>
+  <h2>Reproducir y grabar en simultáneo.</h2>
+
+  <div class="grid-2" style="gap: 1.8em; margin-top: 0.5rem;">
+    <div class="panel compact">
+      <h3>Backend · <code>sounddevice</code></h3>
+<pre><code class="language-python">import sounddevice as sd
+recorded = sd.playrec(signal, samplerate=fs, channels=1, blocking=True)
+sd.wait()</code></pre>
+      <p class="muted" style="margin-bottom: 0;">
+        Hace play + record a la vez sobre el mismo dispositivo, muestra contra muestra. Documenten en el README la config: dispositivo, canales, fs, buffer size.
+      </p>
+    </div>
+
+    <div class="panel compact">
+      <h3>Detalles que rompen mediciones</h3>
+      <ul>
+        <li><strong>Pre-roll</strong> 0.5-1 s — compensa latencia del driver</li>
+        <li><strong>Grabación &gt; señal</strong> — capturar la cola de reverberación</li>
+        <li>Manejar <strong>mono y estéreo</strong> sin asumir shape</li>
+        <li>Error <strong>informativo</strong> si no hay device</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top: 1.2rem; padding: 1.4em 1.6em;">
+    <h3 style="font-size: 0.85em; margin-bottom: 0.7em;">Cliente · cómo se hace lo mismo en el navegador (frontend de cátedra)</h3>
+    <p style="font-size: 0.85em; line-height: 1.45; margin-bottom: 0.6em; max-width: none;">
+      <code>sd.playrec()</code> no existe en el browser. La analogía es la <strong>Web Audio API</strong>:
+    </p>
+    <ul style="font-size: 0.82em; line-height: 1.45;">
+      <li><code>navigator.mediaDevices.getUserMedia({audio: {sampleRate: {ideal: fs}}})</code> — permiso + micrófono</li>
+      <li><code>new AudioContext({sampleRate})</code> + <code>AudioBufferSourceNode</code> — reproduce la señal de excitación</li>
+      <li><code>new MediaRecorder(stream, {mimeType: 'audio/webm;codecs=opus'})</code> — captura el stream</li>
+      <li>Conversión a WAV en cliente con <code>OfflineAudioContext</code> antes de subir al backend</li>
+      <li><code>setSinkId()</code> para elegir salida cuando hay múltiples dispositivos</li>
+    </ul>
+    <p style="font-size: 0.82em; line-height: 1.45; color: var(--dim); margin: 0.7em 0 0 0; max-width: none;">
+      <strong>Mismos cuidados</strong>: sample rate explícito, manejo de permisos denegados, latencia entre play y record (acá la introduce el browser, no el driver de audio). Grabar en mono para no duplicar el tamaño del archivo subido al backend.
+    </p>
+  </div>
+
+  <aside class="notes">
+    - El pre-roll es el detalle que todos los grupos se olvidan.
+    - "Duracion grabacion > duracion senal": si miden T60 = 1.5 s, grabar al menos 1.5 s mas que el sweep.
+    - El frontend de catedra esta en RIR-API_frontend (privado). Usa Web Audio API + MediaRecorder.
+    - Web no permite WAV directo desde MediaRecorder: hay que convertir con OfflineAudioContext.
+    - Si llegan a hacer cliente en M3 (no es requisito), este es el camino.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 9 — Los cuatro tests -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · validación automática</div>
+  <h2>Los cuatro tests.</h2>
+  <p class="lead">El contrato de M1 son los tests. Si pasan, hay nota base. Si no pasan, no.</p>
+
+  <div class="grid-2" style="gap: 1.5em;">
+    <div class="panel">
+      <h3>Test 1 · Espectro ruido rosa</h3>
+      <p class="small">
+        Welch → pendiente entre 100 Hz y 10 kHz.<br>
+        <strong>Criterio:</strong> dentro de -3 ± 1 dB/oct.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3>Test 2 · Rango del sweep</h3>
+      <p class="small">
+        Espectrograma → energía en $f_1$ y $f_2$.<br>
+        <strong>Criterio:</strong> frecuencia instantánea monótona creciente.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3>Test 3 · Convolución → impulso</h3>
+      <p class="small">
+        <code>fftconvolve(sweep, inv)</code> → pico.<br>
+        <strong>Criterio:</strong> pico ≥ 40 dB sobre la media del resto.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3>Test 4 · Forma de playrec</h3>
+      <p class="small">
+        Acepta 1D y 2D · duración correcta ± 1% · error informativo si no hay device.<br>
+        <strong>Tip:</strong> mock del dispositivo para CI.
+      </p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - "Si el test pasa, su funcion esta bien hecha".
+    - El test 4 es el que mas problemas trae en CI: explicar que el mock de sounddevice es estandar.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 10 — Validacion manual -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · validación manual</div>
+  <h2>Lo que va en el informe.</h2>
+
+  <div class="grid-2">
+    <div>
+      <p class="wide">Además de los tests automatizados, cada grupo entrega evidencia visual:</p>
+      <ul>
+        <li>Espectro del ruido rosa abierto en <strong>Audacity</strong> o REW, con la pendiente visible</li>
+        <li>Espectrograma del sweep mostrando el barrido $f_1 \to f_2$</li>
+        <li>Gráfica de la convolución sweep × inverso (debe parecer un impulso)</li>
+        <li>Prueba real con altavoz + micrófono (puede ser la PC)</li>
+      </ul>
+      <p class="small muted">
+        Capturas o PNGs van en <code>docs/m1/</code> del repo.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3>Referencia visual</h3>
+      <p class="small">Comparen contra los plots que mostramos hoy (slides 5, 6, 7). Las pendientes y SNRs deberían estar en el mismo orden.</p>
+      <ul class="small">
+        <li>Ruido rosa: -3 ± 1 dB/oct</li>
+        <li>Sweep: barrido monótono visible</li>
+        <li>Convolución: pico claro &gt; 40 dB sobre el piso</li>
+      </ul>
+      <p class="small">
+        Si su resultado se ve muy distinto a las imágenes de cátedra, hay un bug — empiecen por ahí.
+      </p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - El informe se evalua aparte. Que las graficas tengan ejes, leyenda y unidades.
+    - "Si la pendiente les da -8 dB/oct, no es ruido rosa, es ruido cafe".
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 11 — Buenas practicas extraidas del codigo -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · seis decisiones que pagan en M2</div>
+  <h2>Buenas prácticas que ya vimos funcionar.</h2>
+  <p class="lead">Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les ahorran trabajo en M2 y M3.</p>
+
+  <div class="grid-2" style="gap: 1.2em; margin-top: 1rem;">
+    <div class="panel">
+      <h3 class="good">01 · Devolver dict, no solo el array</h3>
+      <p class="small">
+        Junto al <code>audio_data</code>, devolver <code>file_path</code>, <code>sample_rate</code>,
+        <code>num_samples</code>, <code>max_amplitude</code>. Mismo dict se serializa como JSON en M3 sin retrabajo.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3 class="good">02 · Normalizar al 90% del máximo</h3>
+      <p class="small">
+        <code>signal = signal / max(|signal|) * 0.9</code><br>
+        Deja headroom para evitar clipping al guardar WAV o reproducir. Multiplicar por <code>1.0</code> y rezar no es estrategia.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3 class="good">03 · Descartar el transitorio del filtro IIR</h3>
+      <p class="small">
+        Si usan <code>scipy.signal.lfilter</code>, generar <code>N + nt60</code> muestras y tirar las primeras <code>nt60</code>.
+        Si no, los primeros milisegundos están sucios.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3 class="good">04 · Generación ≠ Plotting</h3>
+      <p class="small">
+        <code>pink_noise.py</code> genera. <code>signal_utils.py</code> grafica. Funciones distintas, archivos distintos.
+        Si mañana cambian el plot, no rompen el generador.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3 class="good">05 · <code>output_path</code> opcional</h3>
+      <p class="small">
+        Default a <code>tempfile</code>, no al cwd del que llama. Tests no ensucian el repo; M3 puede generar WAV efímeros para la response.
+      </p>
+    </div>
+
+    <div class="panel">
+      <h3 class="good">06 · Dos implementaciones, mismo test</h3>
+      <p class="small">
+        Voss-McCartney y filtro IIR son ambos válidos. El test es el contrato — no la implementación. Esto les da margen de optimizar después sin romper nada.
+      </p>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Estos seis puntos salen de la API que ven en https://rir-api.onrender.com/docs.
+    - Insistir en (04): el alumno que mete matplotlib dentro de generar_ruido_rosa esta acumulando deuda.
+    - (06) es el argumento de que la spec admite varias soluciones — el test es el contrato.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 12 — Calidad de codigo -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · calidad</div>
+  <h2>Lo que mira el docente.</h2>
+
+  <div class="grid-2">
+    <div>
+      <h3>Código</h3>
+      <ul class="checklist">
+        <li>Docstrings NumPy en toda función pública</li>
+        <li>Type hints en parámetros y retorno</li>
+        <li>Tests en <code>tests/</code> que pasen al correr <code>pytest -v</code></li>
+        <li>Imports limpios, sin código muerto</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Git</h3>
+      <ul class="checklist">
+        <li>Cada función en una rama propia</li>
+        <li>Merge a <code>main</code> vía PR con review de otro integrante</li>
+        <li>Historial coherente (no un commit gigante "M1")</li>
+        <li>Tag <code>v0.1.0</code> anotado y empujado al remote</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel compact" style="margin-top: 1rem;">
+    <h3>Recordatorio · cómo correr los tests</h3>
+<pre><code class="language-bash"># desde la raiz del repo
+uv sync                              # asegurar dependencias instaladas
+uv run pytest -v                     # correr todos los tests con output verboso
+uv run pytest -v tests/test_pink.py  # correr solo un archivo
+uv run pytest -v -k "ruido_rosa"     # correr tests que matchean el nombre</code></pre>
+    <p class="muted" style="margin: 0;">
+      <code>-v</code> (verbose) muestra cada test con su nombre y si pasó; sin <code>-v</code> solo ven puntos. <code>-k</code> filtra tests por substring del nombre — útil para correr solo lo que estás tocando. Si un test falla, <code>pytest --pdb</code> abre el debugger en el punto exacto de la falla, y <code>pytest -x</code> detiene la corrida en el primer fallo.
+    </p>
+  </div>
+
+  <aside class="notes">
+    - El tag v0.1.0 es la foto del estado entregable. Sin push del tag, no entregaron.
+    - pytest -v es el comando minimo. -k filtra por nombre, --pdb abre debugger.
+    - Si alguien tiene pytest configurado con auto-discover, los tests aparecen solos.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 13 — Checklist -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · ¿qué tildar hoy?</div>
+  <h2>Checklist de aprobación.</h2>
+  <p class="lead">Lo que tiene que estar antes de presentar.</p>
+
+  <div class="grid-2" style="margin-top: 1rem; gap: 3em;">
+    <ul class="checklist">
+      <li><code>generar_ruido_rosa</code> con test pasando</li>
+      <li><code>generar_sine_sweep</code> + filtro inverso con tests pasando</li>
+      <li><code>reproducir_y_grabar</code> con test de forma</li>
+      <li>Las 3 gráficas de validación en <code>docs/m1/</code></li>
+    </ul>
+    <ul class="checklist">
+      <li><code>pytest -v</code> en verde — los 4 tests requeridos</li>
+      <li>Docstrings y type hints en las 3 funciones públicas</li>
+      <li>PRs mergeados, no commits directos a <code>main</code></li>
+      <li>Tag <code>v0.1.0</code> anotado y empujado al remote</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="margin-top: 2rem;">Ocho checks. Si están, presentan tranquilos.</p>
+
+  <aside class="notes">
+    - Leer en voz alta, sin apurarse. Que cada grupo se autochequee mentalmente.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 14 — Recursos -->
+<section>
+  <div class="kicker"><span class="m">M1</span> · recursos</div>
+  <h2>Para llevar a casa.</h2>
+
+  <div class="grid-2" style="margin-top: 1.5rem;">
+    <div>
+      <h3>Del TP</h3>
+      <ul>
+        <li><a href="https://rir-api.onrender.com/docs" target="_blank">API de referencia — Swagger</a></li>
+        <li>Especificación: <code class="small">trabajo_practico/especificacion/m1_generacion.md</code></li>
+        <li>Rúbrica: <code class="small">trabajo_practico/rubrica.md</code></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3>Material técnico</h3>
+      <ul>
+        <li><a href="https://python-sounddevice.readthedocs.io/" target="_blank">sounddevice docs</a></li>
+        <li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.welch.html" target="_blank">scipy.signal.welch</a></li>
+        <li><a href="http://pcfarina.eng.unipr.it/Public/Papers/134-AES00.PDF" target="_blank">Farina (2000) — Swept-sine</a></li>
+        <li><a href="https://www.firstpr.com.au/dsp/pink-noise/" target="_blank">Voss-McCartney</a></li>
+        <li><a href="https://manual.audacityteam.org/man/plot_spectrum.html" target="_blank">Audacity — análisis espectral</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Todo linkeado tambien desde el README del TP.
+    - Timing: 1 min.
+  </aside>
+</section>
+
+<!-- SLIDE 15 — Cierre -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top">
+      <div>Fin · M1</div>
+      <div>Señales y Sistemas · UNTREF</div>
+    </div>
+
+    <div class="titulo-main">
+      <div class="tag-ms">Próximos pasos</div>
+      <h1>Ahora, presentan.</h1>
+      <p class="bajada" style="font-size: 1.3em; color: var(--accent); margin-top: 0.6em; max-width: none;">
+        Próxima clase: frecuencia y filtros · puerta de entrada a M2.
+      </p>
+    </div>
+
+    <div class="titulo-bottom">
+      <div class="meta">
+        <div class="kv"><span class="k">Tag</span><span class="v">v0.1.0 · main</span></div>
+        <div class="kv"><span class="k">Próxima entrega</span><span class="v">16 jun · M2</span></div>
+      </div>
+      <div style="font-size: 2em; font-weight: 500; color: var(--fg); text-transform: none; letter-spacing: -0.02em;">a presentar.</div>
+    </div>
+  </div>
+
+  <aside class="notes">
+    - Pasar a la ronda de presentaciones por grupo + code review cruzado.
+    - Anunciar el orden de presentaciones.
+  </aside>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    controls: true,
+    controlsLayout: 'edges',
+    controlsBackArrows: 'visible',
+    progress: true,
+    center: false,
+    width: 1920,
+    height: 1080,
+    margin: 0.03,
+    minScale: 0.2,
+    maxScale: 2.0,
+    plugins: [RevealHighlight, RevealNotes],
+  });
+</script>
+</body>
+</html>
