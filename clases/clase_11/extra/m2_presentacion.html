@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M2: Procesamiento — Señales y Sistemas UNTREF</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script"></script>
+
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --bg-raised: #efece3;
+      --fg: #1a1a22;
+      --dim: #6b7180;
+      --faint: #b0b3bc;
+      --rule: rgba(26, 26, 34, 0.08);
+      --panel: rgba(26, 26, 34, 0.025);
+      --accent: #2563eb;
+      --accent-strong: #1d4ed8;
+      --warn: #b45309;
+      --good: #047857;
+      --bad: #b91c1c;
+      --f-sans: "Geist", system-ui, sans-serif;
+      --f-mono: "Geist Mono", ui-monospace, monospace;
+    }
+    .reveal .backgrounds { background: var(--bg); }
+    .reveal { font-family: var(--f-sans); font-weight: 400; font-size: 35px; color: var(--fg); letter-spacing: -0.01em; }
+    .reveal .slides { text-align: left; }
+    .reveal .slides section { padding: 2rem 3.5rem; box-sizing: border-box; max-width: 1920px; overflow: hidden; }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--f-sans); color: var(--fg); text-transform: none; font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 0.7rem 0; }
+    .reveal h2 { font-size: 2.1em; font-weight: 600; }
+    .reveal h3 { font-size: 0.78em; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5em; }
+    .reveal p { line-height: 1.4; margin: 0 0 0.75rem 0; color: var(--fg); max-width: 42ch; }
+    .reveal p.wide { max-width: none; }
+    .reveal strong { color: var(--fg); font-weight: 600; }
+    .reveal em { font-style: normal; color: var(--accent); }
+    .reveal a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(96, 165, 250, 0.3); }
+    .reveal a:hover { color: var(--fg); border-bottom-color: var(--accent); }
+    .reveal ul, .reveal ol { list-style: none; padding-left: 0; margin: 0 0 1rem 0; }
+    .reveal ul li, .reveal ol li { padding-left: 1.5em; margin-bottom: 0.65em; line-height: 1.4; position: relative; overflow-wrap: anywhere; }
+    .reveal ul li::before { content: "—"; position: absolute; left: 0; color: var(--faint); }
+    .reveal ol { counter-reset: n; }
+    .reveal ol li { counter-increment: n; }
+    .reveal ol li::before { content: counter(n) "."; position: absolute; left: 0; color: var(--faint); font-family: var(--f-mono); font-size: 0.85em; }
+    .reveal code { font-family: var(--f-mono); font-size: 0.85em; background: rgba(26, 26, 34, 0.06); color: var(--fg); padding: 0.08em 0.4em; border-radius: 3px; }
+    .reveal pre { width: 100%; box-shadow: none; border-radius: 6px; margin: 0 0 1rem 0; }
+    .reveal pre code { font-size: 0.58em; line-height: 1.5; padding: 0.9em 1.1em; background: #ebe8df; color: #1a1a22; border-radius: 6px; border: 1px solid var(--rule); display: block; max-height: 22em; overflow: hidden; }
+    .panel pre { margin: 0.5em 0 0.6em 0; }
+    .panel pre code { font-size: 0.5em; line-height: 1.45; padding: 0.75em 0.9em; max-height: none; }
+    .panel p, .panel ul li { max-width: none; }
+    .panel.compact { padding: 0.85em 1.05em; }
+    .panel.compact pre { margin: 0.35em 0 0.4em 0; }
+    .panel.compact pre code { font-size: 0.44em; padding: 0.65em 0.8em; }
+    .panel.compact h3 { font-size: 0.7em; margin-bottom: 0.3em; }
+    .panel.compact ul li { font-size: 0.78em; margin-bottom: 0.4em; }
+    .panel.compact p { font-size: 0.78em; line-height: 1.35; margin-bottom: 0.35em; }
+    .grid-2 > *, .grid-3 > *, .split > * { min-width: 0; }
+    .kicker { font-family: var(--f-mono); font-size: 0.5em; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-bottom: 1rem; }
+    .kicker .m { color: var(--accent); }
+    .lead { font-size: 1em; color: var(--dim); max-width: 56ch; line-height: 1.4; margin-bottom: 1rem !important; }
+    .pill { display: inline-block; font-family: var(--f-mono); font-size: 0.6em; font-weight: 500; letter-spacing: 0.1em; padding: 0.15em 0.55em; border-radius: 3px; vertical-align: middle; margin-right: 0.35em; background: rgba(26, 26, 34, 0.06); color: var(--fg); }
+    .pill-m2 { background: rgba(37, 99, 235, 0.15); color: var(--accent); }
+    .pill-m0, .pill-m1, .pill-m3 { background: rgba(26, 26, 34, 0.05); color: var(--dim); }
+    .tag { font-family: var(--f-mono); font-size: 0.72em; color: var(--dim); background: rgba(26, 26, 34, 0.04); padding: 0.08em 0.5em; border-radius: 3px; }
+    .grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5em; align-items: start; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5em; }
+    .split { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 3em; align-items: start; }
+    .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 0.9em 1.1em; }
+    .panel h3 { margin-top: 0; margin-bottom: 0.4em; }
+    .panel p { margin-bottom: 0.5em; }
+    .panel p:last-child { margin-bottom: 0; }
+    .bad { color: var(--bad); }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+    .reveal table { width: 100%; border-collapse: collapse; font-size: 0.78em; font-variant-numeric: tabular-nums; margin: 0 0 1rem 0; }
+    .reveal table th { font-family: var(--f-mono); font-size: 0.82em; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); text-align: left; padding: 0.7em 0.9em; border-bottom: 1px solid var(--rule); }
+    .reveal table td { padding: 0.85em 0.9em; border-bottom: 1px solid var(--rule); color: var(--fg); }
+    .reveal table tr.hl td { color: var(--fg); }
+    .reveal table tr.hl td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+    .reveal blockquote { border: none; background: none; box-shadow: none; border-left: 2px solid var(--rule); padding: 0.3em 0 0.3em 1.2em; margin: 1.5rem 0; font-style: normal; font-size: 0.92em; color: var(--dim); line-height: 1.45; }
+    .reveal blockquote strong { color: var(--fg); }
+    .url-box { display: block; font-family: var(--f-mono); font-size: 0.82em; padding: 0.7em 1em; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 6px; margin: 0.6em 0 1em 0; word-break: break-all; color: var(--accent); text-decoration: none; }
+    a.url-box { border-bottom: none; }
+    .url-box a { color: var(--accent); border: none; }
+    .reveal ul.checklist { list-style: none; padding: 0; margin: 0; }
+    .reveal ul.checklist li { padding-left: 2em; margin-bottom: 0.75em; line-height: 1.4; position: relative; color: var(--fg); }
+    .reveal ul.checklist li::before { content: ""; position: absolute; left: 0; top: 0.35em; width: 1.1em; height: 1.1em; border: 1.5px solid var(--faint); border-radius: 3px; background: transparent; }
+    .small { font-size: 0.78em; color: var(--dim); line-height: 1.4; }
+    .muted { color: var(--dim); }
+    .figure { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 0.6em; }
+    .figure img { width: 100%; height: auto; display: block; border-radius: 4px; }
+    .figure figcaption { font-family: var(--f-mono); font-size: 0.5em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-top: 0.5em; padding: 0 0.4em; }
+    .figure-hero { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 0.4em; margin: 0 0 0.8rem 0; }
+    .figure-hero img { width: 100%; max-height: 420px; object-fit: contain; display: block; border-radius: 4px; }
+    .figure-hero figcaption { font-family: var(--f-mono); font-size: 0.5em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-top: 0.5em; padding: 0 0.4em; }
+    .enunciado { font-size: 0.78em; line-height: 1.45; max-width: none; color: var(--fg); }
+    .enunciado p { max-width: none; margin-bottom: 0.55em; }
+    .enunciado .src { font-family: var(--f-mono); font-size: 0.78em; color: var(--dim); letter-spacing: 0.05em; margin-top: 0.4em; }
+    .formula { background: #ebe8df; border: 1px solid var(--rule); border-radius: 6px; padding: 0.7em 1em; margin: 0.5em 0 0.7em 0; font-size: 0.9em; overflow-x: auto; }
+    .fn-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2em; margin-top: 1rem; }
+    .fn-grid.cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.9em; }
+    .fn-card { position: relative; background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 1.3em 1.1em 1.1em 1.1em; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+    .fn-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); opacity: 0.85; }
+    .fn-card .num { font-family: var(--f-mono); font-size: 0.55em; letter-spacing: 0.18em; color: var(--dim); margin-bottom: 0.5em; }
+    .fn-card .num .slash { color: var(--faint); margin: 0 0.25em; }
+    .fn-card .name { font-family: var(--f-mono); font-size: 0.65em; font-weight: 500; color: var(--fg); background: rgba(37, 99, 235, 0.08); border-radius: 4px; padding: 0.2em 0.45em; display: inline-block; margin-bottom: 0.35em; width: fit-content; word-break: break-all; }
+    .fn-card .title { font-size: 0.95em; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: var(--fg); margin: 0.15em 0 0.7em 0; }
+    .fn-card .io { display: flex; flex-direction: column; gap: 0.4em; margin-bottom: 0.7em; flex: 1; }
+    .fn-card .io-row { display: grid; grid-template-columns: 2.2em 1fr; align-items: start; gap: 0.4em; }
+    .fn-card .io-tag { font-family: var(--f-mono); font-size: 0.42em; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim); padding-top: 0.3em; }
+    .fn-card .io-tag.tag-in { color: var(--warn); }
+    .fn-card .io-tag.tag-out { color: var(--good); }
+    .fn-card .io-body { font-family: var(--f-mono); font-size: 0.5em; line-height: 1.5; color: var(--fg); }
+    .fn-card .io-body .param { color: var(--dim); }
+    .fn-card .io-body .param strong { color: var(--fg); font-weight: 500; }
+    .fn-card .footer { border-top: 1px solid var(--rule); padding-top: 0.55em; margin-top: auto; display: flex; flex-direction: column; gap: 0.2em; }
+    .fn-card .footer .label { font-family: var(--f-mono); font-size: 0.42em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+    .fn-card .footer .value { font-size: 0.65em; color: var(--fg); line-height: 1.3; }
+    .reveal .controls { color: var(--dim); }
+    .reveal .controls.layout-edges .navigate-left { left: 2em; }
+    .reveal .controls.layout-edges .navigate-right { right: 2em; }
+    .reveal .controls.layout-edges .navigate-up { top: 1.4em; }
+    .reveal .controls.layout-edges .navigate-down { bottom: 1.4em; }
+    .reveal .controls button { opacity: 0.35; transition: opacity 0.2s; }
+    .reveal .controls button:hover { opacity: 1; }
+    .reveal .slide-number { font-family: var(--f-mono); font-size: 0.55em; letter-spacing: 0.15em; background: transparent; color: var(--faint); right: 2rem; bottom: 1.2rem; }
+    .reveal .progress { color: var(--accent); height: 1px; }
+    .reveal section.titulo { padding: 0; height: 100%; }
+    .titulo-wrap { position: absolute; inset: 0; display: grid; grid-template-rows: auto 1fr auto; padding: 4rem 5rem; }
+    .titulo-top, .titulo-bottom { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 0.5em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); }
+    .titulo-main { align-self: center; }
+    .titulo-main h1 { font-size: 4.8em; font-weight: 600; letter-spacing: -0.04em; line-height: 0.95; margin: 0 0 0.3em 0; color: var(--fg); }
+    .titulo-main .bajada { font-size: 1em; font-weight: 400; color: var(--dim); max-width: 32ch; margin: 0; }
+    .titulo-main .tag-ms { font-family: var(--f-mono); font-size: 0.55em; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8em; }
+    .titulo-bottom .meta { display: flex; gap: 3.5em; }
+    .titulo-bottom .meta .kv { display: flex; flex-direction: column; gap: 0.25em; }
+    .titulo-bottom .meta .k { font-size: 0.9em; color: var(--faint); }
+    .titulo-bottom .meta .v { font-family: var(--f-sans); font-size: 1.2em; font-weight: 500; color: var(--fg); text-transform: none; letter-spacing: 0.01em; }
+    .reveal .slides section.present > *:not(aside) { animation: fadeIn 0.4s ease-out backwards; }
+    .reveal .slides section.present > *:nth-child(1) { animation-delay: 0s; }
+    .reveal .slides section.present > *:nth-child(2) { animation-delay: 0.05s; }
+    .reveal .slides section.present > *:nth-child(3) { animation-delay: 0.1s; }
+    .reveal .slides section.present > *:nth-child(4) { animation-delay: 0.15s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+
+    /* ---- Audio row (slide 7) ---- */
+    .audio-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1em;
+      margin: 0 0 1em 0;
+      padding: 0.6em 0.8em;
+      background: var(--panel);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+    }
+    .audio-item { display: flex; flex-direction: column; gap: 0.3em; min-width: 0; }
+    .audio-item .audio-label {
+      font-family: var(--f-mono);
+      font-size: 0.4em;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .audio-item audio { width: 100%; height: 28px; }
+    .audio-item audio::-webkit-media-controls-panel {
+      background-color: rgba(26, 26, 34, 0.04);
+    }
+
+    /* ---- Lightbox para imagenes ---- */
+    .figure-hero img, .figure img { cursor: zoom-in; transition: opacity 0.15s; }
+    .figure-hero img:hover, .figure img:hover { opacity: 0.92; }
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 14, 0.94);
+      display: none;
+      z-index: 9999;
+      cursor: zoom-out;
+      align-items: center;
+      justify-content: center;
+      padding: 1vh 1vw;
+      box-sizing: border-box;
+      animation: lightboxFade 0.18s ease-out;
+    }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-overlay img {
+      max-width: 98vw;
+      max-height: 98vh;
+      object-fit: contain;
+      box-shadow: 0 6px 32px rgba(0, 0, 0, 0.5);
+      cursor: zoom-out;
+      background: white;
+      border-radius: 4px;
+    }
+    .lightbox-overlay::after {
+      content: "esc · click para cerrar";
+      position: absolute;
+      bottom: 0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      pointer-events: none;
+    }
+    @keyframes lightboxFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+  </style>
+</head>
+
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- SLIDE 1 — Portada -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top">
+      <div>Señales y Sistemas · UNTREF</div>
+      <div>Clase 11 / 15</div>
+    </div>
+    <div class="titulo-main">
+      <div class="tag-ms">Milestone 2</div>
+      <h1>Procesamiento.</h1>
+      <p class="bajada">De la grabación al T60 por banda — el motor de cálculo del TP.</p>
+    </div>
+    <div class="titulo-bottom">
+      <div class="meta">
+        <div class="kv"><span class="k">Hoy</span><span class="v">9 jun 2026</span></div>
+        <div class="kv"><span class="k">Entrega M2</span><span class="v">16 jun · v0.2.0</span></div>
+      </div>
+      <div>TP · RIR-API</div>
+    </div>
+  </div>
+  <aside class="notes">
+    - El material se libera hoy (clase 11) para que los grupos lo tengan una semana antes.
+    - La entrega y presentaciones son la proxima clase (12, 16 jun).
+    - Timing: 1 min.
+  </aside>
+</section>
+
+<!-- SLIDE 2 — Donde estamos -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · el mapa</div>
+  <h2>¿Dónde estamos?</h2>
+  <p class="lead">Penúltima entrega antes del producto final. Es la más densa del TP — cinco funciones que cierran el flujo de procesamiento.</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 24%;">Milestone</th>
+        <th>Entregan</th>
+        <th style="width: 22%;">Fecha</th>
+        <th style="width: 10%;">Peso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="pill pill-m0">M0</span> El Plano</td><td>Arquitectura · repo · issues</td><td><span class="muted">28 Abr</span></td><td><span class="muted">5%</span></td></tr>
+      <tr><td><span class="pill pill-m1">M1</span> Generación</td><td>Ruido rosa · sine sweep · playrec</td><td><span class="muted">19 May</span></td><td><span class="muted">15%</span></td></tr>
+      <tr class="hl"><td><span class="pill pill-m2">M2</span> Procesamiento</td><td>Cargar · sintetizar RI · deconv · filtros · log</td><td><strong>16 Jun</strong> — próxima clase</td><td><strong>20%</strong></td></tr>
+      <tr><td><span class="pill pill-m3">M3</span> Producto</td><td>API REST · informe · demo</td><td>7 Jul</td><td>30%</td></tr>
+    </tbody>
+  </table>
+  <div class="panel compact" style="margin-top: 0.8rem;">
+    <h3 style="font-size: 0.75em; margin-bottom: 0.5em;">Cómo se crea el tag — desde <code>main</code>, después del último PR mergeado</h3>
+<pre style="margin: 0.4em 0 0.6em 0;"><code class="language-bash" style="font-size: 0.5em; padding: 0.85em 1em;">git checkout main && git pull origin main
+git tag -a v0.2.0 -m "M2: cargar, sintetizar RI, deconv, filtros, log"
+git push origin v0.2.0</code></pre>
+    <p style="font-size: 0.72em; line-height: 1.4; color: var(--dim); margin-bottom: 0; max-width: none;">
+      Mismo protocolo que M1. Sin el tag empujado, oficialmente no entregaron.
+    </p>
+  </div>
+  <aside class="notes">
+    - M2 es 20% (vs 15% de M1). Es la entrega mas larga porque tiene mas funciones.
+    - Tag v0.2.0 anotado. Igual que M1.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 3 — Del estimulo al parametro -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · ¿qué cambia?</div>
+  <h2>Del estímulo al parámetro.</h2>
+  <div class="grid-2" style="margin-top: 2rem;">
+    <div>
+      <p class="wide">
+        En M1 generaron las señales que <em>excitan</em> la sala. En M2 las usan para extraer la <strong>respuesta al impulso real</strong> y, sobre esa RI, calculan los parámetros acústicos <strong>por banda</strong>.
+      </p>
+      <p class="wide">El flujo nuevo:</p>
+      <ul>
+        <li>Cargar un WAV grabado en la sala</li>
+        <li>(Opcional) sintetizar una RI de prueba con T60 conocidos</li>
+        <li>Deconvolucionar para obtener la RI desde una grabación de sweep</li>
+        <li>Filtrar en bandas de octava (IEC 61260)</li>
+        <li>Llevar todo a escala logarítmica para el análisis</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>De qué clases viene</h3>
+      <p><strong>Clase 9 · Frecuencia y Filtros</strong> — FFT, ventanas, espectrogramas, Butterworth FIR/IIR, bandas IEC 61260. Es el fundamento de <code>filtro_octava()</code>.</p>
+      <p><strong>Clase 10 · Procesamiento de la RI</strong> — Transformada de Hilbert, envolvente, suavizado, integral de Schroeder, regresión por mínimos cuadrados. Es el puente al cálculo de T60 (que viene en M3).</p>
+      <p class="small muted" style="margin-top: 0.8em;">Si esas dos clases las tienen frescas, M2 se resuelve casi por composición.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - Encadenar M1 -> M2 -> M3: cada milestone arma una capa sobre la anterior.
+    - Las clases 9 y 10 son LITERALMENTE la base de M2. Sin esas, no se puede.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 4 — Las cinco funciones -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · entregables de código</div>
+  <h2>Cinco funciones. Una entrega.</h2>
+  <div class="fn-grid cols-5">
+
+    <article class="fn-card">
+      <div class="num">01<span class="slash">/</span>05 · función</div>
+      <div class="name">cargar_audio</div>
+      <div class="title">Carga WAV/FLAC.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>ruta</strong> · str | Path</div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>tuple[ndarray, int]</strong></div><div class="param">(señal, fs)</div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">Normalizado [-1, 1] · acepta mono y estéreo · error si formato inválido.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">02<span class="slash">/</span>05 · función</div>
+      <div class="name">sintetizar_ri</div>
+      <div class="title">RI con T60 conocidos.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>t60_por_banda</strong> · dict[fc, T60]</div><div class="param"><strong>fs</strong>, <strong>duracion</strong></div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>ndarray</strong></div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">T60 medido dentro del 10% del especificado por banda.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">03<span class="slash">/</span>05 · función</div>
+      <div class="name">obtener_ri_desde_sweep</div>
+      <div class="title">Deconvolución.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>grabacion</strong> · ndarray</div><div class="param"><strong>filtro_inverso</strong> · ndarray</div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>ndarray</strong> · RI recuperada</div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">Correlación cruzada con RI original &gt; 0.9.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">04<span class="slash">/</span>05 · función</div>
+      <div class="name">filtro_octava</div>
+      <div class="title">Butterworth IEC 61260.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>signal</strong>, <strong>fc</strong>, <strong>fs</strong></div><div class="param"><strong>orden</strong> · int = 4</div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>ndarray</strong> · filtrada</div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">-3 dB ± 1 dB en flancos · &gt; 20 dB de atenuación a la octava.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">05<span class="slash">/</span>05 · función</div>
+      <div class="name">a_escala_log</div>
+      <div class="title">Conversión a dB.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>signal</strong> · ndarray</div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>ndarray</strong> · en dB</div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">Máximo en 0 dB · amplitud mitad → -6 dB.</div>
+      </div>
+    </article>
+
+  </div>
+  <p class="muted small" style="margin-top: 1.4rem;">Spec completa en <code>trabajo_practico/especificacion/m2_procesamiento.md</code>. Cambian la firma y los tests dejan de pasar.</p>
+  <aside class="notes">
+    - 5 cards en linea. Las firmas son lo que la rubrica valida.
+    - Las cinco funciones son independientes — se pueden paralelizar entre miembros del grupo.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 5 — Cargar audio -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · función 01 · cargar audio</div>
+  <h2>El punto de entrada.</h2>
+  <div class="split" style="margin-top: 1rem;">
+    <div>
+      <p class="wide">Cargar un WAV o FLAC y devolver <strong>(señal, fs)</strong> normalizado entre -1 y 1.</p>
+      <p class="wide">Detalles que no son obvios:</p>
+      <ul>
+        <li>Soporte mono <em>y</em> estéreo (acá ya pueden convertir a mono haciendo <code>mean(axis=1)</code>)</li>
+        <li>Validar la extensión antes de leer — no es lo mismo un .wav corrupto que un .mp3 mal etiquetado</li>
+        <li>El <code>fs</code> sale del header del archivo — nunca lo asuman</li>
+        <li>Normalizar al máximo absoluto evita que un archivo grabado con poco nivel les arruine los plots después</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Caso real · OpenAIR</h3>
+      <p>Para la validación manual del informe van a usar IRs de <strong>OpenAIR</strong> (catálogo público). Vienen en variedad de sample rates (44.1, 48, 96 kHz) y resoluciones (16 o 24 bit).</p>
+      <p>Si su <code>cargar_audio</code> hace asunciones, se rompe en el primer archivo de ahí.</p>
+      <p class="small muted" style="margin-top: 0.6em;">Recomendación: <code>soundfile.read()</code> (más robusto que <code>scipy.io.wavfile</code>) y siempre revisar <code>signal.shape</code> antes de usarla.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - Funcion conceptualmente "simple" pero es la puerta de entrada.
+    - Si se rompe acá, todo el flujo de abajo se rompe.
+    - soundfile vs scipy.io.wavfile: ambos sirven, pero soundfile es mas estandar.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 6 — Sintetizar RI (modelo spec: ruido filtrado x envolvente) -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · función 02 · sintetizar RI</div>
+  <figure class="figure-hero">
+    <img src="img/ri_sintetica.png" alt="IR sintetica generada con ruido filtrado por banda multiplicado por envolvente exponencial">
+    <figcaption>IR sintética 4 s · 9 bandas de octava · T60 1.2 s (graves) → 0.4 s (agudos) · ruido filtrado × envolvente exponencial</figcaption>
+  </figure>
+  <div class="enunciado">
+    <p>
+      Una RI idealizada de un recinto se modela como un <strong>decaimiento exponencial modulado por ruido</strong>. Por banda: tomar ruido blanco, filtrar pasa-banda en la octava, y multiplicar por una envolvente $e^{-\alpha t}$ con $\alpha$ derivado del T60 objetivo:
+    </p>
+    <div class="formula">$$ h_i(t) = n_i(t) \cdot e^{-\alpha_i\, t}, \quad \alpha_i = \frac{3 \ln(10)}{T_{60,i}} \approx \frac{6{,}908}{T_{60,i}}, \quad h(t) = \sum_i h_i(t) $$</div>
+    <p>
+      $n_i(t)$ es <em>ruido blanco filtrado por banda</em> con Butterworth pasa-banda IEC 61260 ($f_c / \sqrt{2}$ a $f_c \cdot \sqrt{2}$). El factor $\alpha = 6{,}908 / T_{60}$ sale de pedir $20 \log_{10}(e^{-\alpha T_{60}}) = -60$ dB. Suma las 9 bandas y normaliza al pico. <strong>Tip:</strong> normalizar cada banda por su RMS antes de aplicar la envolvente — sin eso, las bandas más anchas (agudas) dominan la mezcla.
+    </p>
+    <p class="src">Spec · m2_procesamiento.md §2 — el caracter de "ruido decayente" se ve en el waveform; la envolvente RMS de la derecha cae linealmente en dB hasta cerca de $-60$ dB en $\approx T_{60}$ promedio.</p>
+  </div>
+  <aside class="notes">
+    - El modelo: ruido (n_i) por banda x decaimiento exponencial. NO es superposicion de cosenoides.
+    - El waveform tiene caracter de ruido — eso es lo correcto para una IR real.
+    - Tip de implementacion: normalizar por RMS por banda. Sin eso, agudos pesan mas que graves.
+    - alpha = 6.908/T60 garantiza -60dB exactos en T60.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 7 — Obtener RI desde sweep -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · función 03 · deconvolución</div>
+  <figure class="figure-hero">
+    <img src="img/deconvolucion_ri.png" alt="Tres paneles: control sweep × inverso = delta; grabación en el recinto; RI recuperada por deconvolución">
+    <figcaption>(a) control · sweep $\ast$ inverso $\approx \delta(t)$ &nbsp;·&nbsp; (b) grabación del recinto &nbsp;·&nbsp; (c) <code>obtener_ri_desde_sweep(grabacion, filtro_inverso)</code></figcaption>
+  </figure>
+  <div class="audio-row">
+    <div class="audio-item">
+      <span class="audio-label">01 · sweep estimulo (3 s)</span>
+      <audio controls preload="metadata" src="audio/sweep_estimulo.wav"></audio>
+    </div>
+    <div class="audio-item">
+      <span class="audio-label">02 · grabacion del recinto (4.5 s)</span>
+      <audio controls preload="metadata" src="audio/grabacion_recinto.wav"></audio>
+    </div>
+    <div class="audio-item">
+      <span class="audio-label">03 · RI recuperada (1.5 s)</span>
+      <audio controls preload="metadata" src="audio/ri_recuperada.wav"></audio>
+    </div>
+  </div>
+  <div class="enunciado">
+    <p>
+      <strong>En el recinto</strong> tienen tres cosas: el sweep sintético que <em>reproducen</em>, el filtro inverso sintético del mismo sweep (que <em>guardan</em>, lo conocen porque lo generaron en M1), y la <em>grabación</em> que entra por el micrófono. La respuesta al impulso de la sala $h(t)$ <strong>no la conocen</strong> — es lo que quieren extraer.
+    </p>
+    <p>Algebra del flujo: si $y(t) = x(t) * h(t)$ es la grabación, convolucionando con $x_{\text{inv}}$:</p>
+    <div class="formula">$$ y(t) * x_{\text{inv}}(t) = (x * h) * x_{\text{inv}} = h(t) * (x * x_{\text{inv}}) \approx h(t) * \delta(t) = h(t) $$</div>
+    <p>
+      La firma de la spec es <code>obtener_ri_desde_sweep(grabacion, filtro_inverso)</code>. Implementación: <code>scipy.signal.fftconvolve(grabacion, filtro_inverso, mode='full')</code>, ubicar el pico con <code>np.argmax(np.abs(...))</code> y recortar la cola. <code>fftconvolve</code> es órdenes de magnitud más rápido que <code>convolve</code> para señales largas (la grabación típica son ~3-5 s a 48 kHz).
+    </p>
+    <p class="src">Spec · m2_procesamiento.md §3 — Farina (2000). Test: correlación cruzada con la RI original &gt; 0.9. En el panel (b) la $h_\text{sala}$ está simulada con el modelo de la spec (ruido $\times$ envolvente) para poder mostrar el flujo completo sin grabar realmente.</p>
+  </div>
+  <aside class="notes">
+    - Insistir: lo unico que TIENEN es grabacion + filtro_inverso. h_sala es lo que QUIEREN extraer.
+    - El filtro inverso lo conocen porque lo generaron en M1 con generar_sine_sweep(inv=True).
+    - Panel (a) prueba que sweep * inverso aproxima delta (sin tocar la sala).
+    - Panel (b) es la grabacion (simulada para el ejemplo, real en su TP).
+    - Panel (c) es el output de obtener_ri_desde_sweep.
+    - SNR ~93 dB de la cadena simulada — holgado para el test (>40 dB suele alcanzar). En una grabacion real con sonda + microfono, baja a 40-60 dB.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE NUEVO 8a — Algebra del flujo (parte 1) -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · profundidad · álgebra del flujo</div>
+  <h2>¿Por qué funciona la deconvolución?</h2>
+  <p class="lead">Cuatro pasos. Cada uno se apoya en el anterior.</p>
+
+  <div class="grid-2" style="gap: 1.2em; margin-top: 0.5rem;">
+
+    <div class="panel">
+      <h3>01 · La sala es LTI</h3>
+      <p style="max-width: none; font-size: 0.92em;">Asumimos linealidad e invariancia en el tiempo. Bajo esa hipótesis la sala queda caracterizada por una sola función: su <strong>respuesta al impulso</strong> $h(t)$. Para cualquier entrada $x(t)$:</p>
+      <div class="formula" style="margin: 0.4em 0 0 0;">$$ y(t) = (x * h)(t) $$</div>
+    </div>
+
+    <div class="panel">
+      <h3>02 · El sueño: meter un $\delta$</h3>
+      <p style="max-width: none; font-size: 0.92em;">Como $\delta * h = h$, si pudieras reproducir un impulso perfecto la grabación <em>sería</em> $h(t)$. El parlante no puede — $\delta$ tiene amplitud infinita. Una palmada se aproxima pero el SNR es malo en graves.</p>
+    </div>
+
+    <div class="panel">
+      <h3>03 · El truco · sweep + inverso</h3>
+      <p style="max-width: none; font-size: 0.92em;">Generaste en M1 dos señales con esta propiedad (Farina 2000):</p>
+      <div class="formula" style="margin: 0.4em 0 0 0;">$$ x(t) * x_{\text{inv}}(t) \approx \delta(t) $$</div>
+      <p class="small" style="margin: 0.4em 0 0 0;">Cada frecuencia del sweep se apila en $t=0$ al convolucionar con su pareja invertida.</p>
+    </div>
+
+    <div class="panel">
+      <h3>04 · La cadena</h3>
+      <p style="max-width: none; font-size: 0.92em;">Reproducís $x$, grabás $y = x * h$. Convolucionás con $x_{\text{inv}}$ (que también conocés). Aplicando asociatividad:</p>
+      <div class="formula" style="font-size: 0.82em; margin: 0.4em 0 0 0;">$$ y * x_{\text{inv}} = (x * h) * x_{\text{inv}} = h * (x * x_{\text{inv}}) \approx h $$</div>
+    </div>
+
+  </div>
+
+  <aside class="notes">
+    - Insistir: LTI es ASUNCION. No es exacta pero vale con error <1 dB en condiciones razonables.
+    - El sueño 02 explica por que esta cadena tiene sentido en primer lugar.
+    - Trick 03: del paper de Farina. Lo vieron ya en M1.
+    - Cadena 04 es álgebra trivial, pero hay que ENTENDER que asociatividad vale por conmutatividad y por la propiedad de Fourier.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE NUEVO 8b — Por que funciona (frecuencia) + resumen operacional -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · profundidad · ¿por qué se puede reordenar?</div>
+  <h2>En frecuencia se ve más claro.</h2>
+
+  <div class="grid-2" style="gap: 2em; margin-top: 1rem;">
+
+    <div>
+      <p style="max-width: none;">El teorema de convolución dice que convolución en el tiempo $=$ multiplicación en frecuencia. La conmutatividad/asociatividad de la convolución vienen de las del producto de números complejos.</p>
+
+      <p style="max-width: none;">Aplicado a la cadena:</p>
+
+      <div class="formula" style="font-size: 0.82em;">$$ \mathcal{F}\{y * x_{\text{inv}}\} = Y(f)\cdot X_{\text{inv}}(f) $$</div>
+
+      <div class="formula" style="font-size: 0.82em;">$$ = X(f)\, H(f)\, X_{\text{inv}}(f) = H(f)\,\underbrace{X(f)\, X_{\text{inv}}(f)}_{\approx\,1} $$</div>
+
+      <p style="max-width: none;">Inversa de Fourier → recuperás $h(t)$. La propiedad de Farina del sweep es exactamente que $X(f) \cdot X_{\text{inv}}(f) \approx 1$ en toda la banda útil.</p>
+    </div>
+
+    <div class="panel">
+      <h3>Resumen operacional</h3>
+      <table style="margin: 0;">
+        <thead>
+          <tr>
+            <th>Qué tenés</th>
+            <th>De dónde sale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>x(t)</code> · sweep</td>
+            <td>M1 — <code>generar_sine_sweep(inv=False)</code></td>
+          </tr>
+          <tr>
+            <td><code>x_inv(t)</code> · inverso</td>
+            <td>M1 — <code>generar_sine_sweep(inv=True)</code></td>
+          </tr>
+          <tr>
+            <td><code>y(t)</code> · grabación</td>
+            <td>el micrófono en la sala</td>
+          </tr>
+          <tr class="hl">
+            <td><code>h(t)</code> · RI</td>
+            <td><code>obtener_ri_desde_sweep(y, x_inv)</code></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top: 0.6em;">Tres entradas conocidas, una salida deseada. La función de M2 es una sola línea: <code>scipy.signal.fftconvolve(grabacion, filtro_inverso, mode='full')</code> más ubicar el pico y recortar.</p>
+    </div>
+
+  </div>
+
+  <blockquote style="margin-top: 1rem;">
+    <strong>Material extendido:</strong> <code>clase_11/extra/algebra_deconvolucion.md</code> — derivación detallada de las propiedades, comparación con MLS, implementación paso a paso, referencias.
+  </blockquote>
+
+  <aside class="notes">
+    - Si entienden esto, entienden por qué deconvolucion via filtro inverso es un metodo CORRECTO, no solo un truco.
+    - Mencionar que MLS (otra opcion) NO tiene la ventaja de separar distorsion en el tiempo. Por eso sweep gano la industria.
+    - El .md tiene la derivacion paso a paso con cambio de variable y Fubini. Por si quieren ir mas profundo.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 10 — Filtro de octava (alineado con spec §4) -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · función 04 · filtro_octava(signal, fc, fs, orden)</div>
+  <figure class="figure-hero" style="margin-bottom: 0.5rem;">
+    <img src="img/filtros_octava.png" alt="Respuesta en frecuencia de filtros Butterworth de octava IEC 61260" style="max-height: 290px;">
+    <figcaption>Butterworth pasa-banda · IEC 61260 · 9 bandas mostradas (31,5 Hz–8 kHz · la décima a 16 kHz cae fuera de Nyquist a 44,1 kHz)</figcaption>
+  </figure>
+
+  <div class="grid-2" style="gap: 1.2em;">
+
+    <div>
+      <p style="max-width: none; font-size: 0.78em; margin: 0 0 0.3em 0;">
+        Norma <strong>IEC 61260</strong>: $f_\text{inf} = f_c \cdot 2^{-1/2}$, $f_\text{sup} = f_c \cdot 2^{1/2}$. 10 bandas estándar de octava (la última excede Nyquist a 44,1 kHz).
+      </p>
+      <table style="margin: 0; font-size: 0.5em;">
+        <thead>
+          <tr><th>banda</th><th>$f_c$ (Hz)</th><th>$f_\text{inf}$ - $f_\text{sup}$ (Hz)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>31,5</td><td>22,3 - 44,5</td></tr>
+          <tr><td>2</td><td>63</td><td>44,5 - 89,1</td></tr>
+          <tr><td>3</td><td>125</td><td>88,4 - 176,8</td></tr>
+          <tr><td>4</td><td>250</td><td>176,8 - 353,6</td></tr>
+          <tr><td>5</td><td>500</td><td>353,6 - 707,1</td></tr>
+          <tr><td>6</td><td>1 000</td><td>707,1 - 1 414,2</td></tr>
+          <tr><td>7</td><td>2 000</td><td>1 414,2 - 2 828,4</td></tr>
+          <tr><td>8</td><td>4 000</td><td>2 828,4 - 5 656,9</td></tr>
+          <tr><td>9</td><td>8 000</td><td>5 656,9 - 11 313,7</td></tr>
+          <tr><td>10</td><td>16 000</td><td>11 313,7 - 22 627,4</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="panel" style="padding: 0.7em 0.9em;">
+        <h3 style="font-size: 0.65em; margin-bottom: 0.3em;">Implementación (spec §4)</h3>
+<pre style="margin: 0.2em 0;"><code class="language-python" style="font-size: 0.42em; padding: 0.55em 0.7em;">import numpy as np
+import scipy.signal
+
+def filtro_octava(signal, fc, fs, orden=4):
+    f_inf = fc / np.sqrt(2)
+    f_sup = fc * np.sqrt(2)
+    # frecuencias normalizadas a Nyquist
+    W_inf = 2 * f_inf / fs
+    W_sup = 2 * f_sup / fs
+    b, a = scipy.signal.butter(orden, [W_inf, W_sup], btype='band')
+    return scipy.signal.filtfilt(b, a, signal)</code></pre>
+        <p class="small muted" style="margin: 0.2em 0 0 0; font-size: 0.62em;">
+          Para órdenes altos (&gt;6) podés usar <code>output='sos'</code> + <code>sosfiltfilt</code> — más estable numéricamente.
+        </p>
+      </div>
+
+      <div class="panel" style="margin-top: 0.5em; padding: 0.7em 0.9em; background: rgba(180, 83, 9, 0.08); border-color: rgba(180, 83, 9, 0.2);">
+        <h3 class="warn" style="font-size: 0.65em; margin-bottom: 0.3em;"><code>filtfilt</code>, no <code>lfilter</code></h3>
+        <p style="margin: 0; max-width: none; font-size: 0.68em; line-height: 1.4;">
+          Aplica el filtro <em>forward + backward</em> → fase <strong>cero</strong>. Crítico para parámetros temporales (EDT, T60). Sin esto, el retardo de grupo desplaza el inicio del decaimiento por banda y T60 en graves sale 5–15% inflado.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <aside class="notes">
+    - Bandas IEC 61260 estandar: 31.5, 63, 125, 250, 500, 1k, 2k, 4k, 8k, 16k Hz (10 bandas).
+    - A fs=44.1kHz la banda de 16kHz tiene f_sup=22627 > Nyquist (22050). Por eso el plot muestra 9.
+    - Spec §4 usa b,a + filtfilt explicitamente. El SOS es UNA SUGERENCIA para orden alto.
+    - filtfilt vs lfilter: critico para medir tiempos. Sin esto, T60 sale inflado en graves.
+    - Para tercio de octava: f_inf = fc * 2^(-1/6), f_sup = fc * 2^(1/6). 27 bandas.
+    - Timing: 5 min.
+  </aside>
+</section>
+
+<!-- SLIDE 11 — Escala logaritmica (alineado con spec §5) -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · función 05 · a_escala_log(signal)</div>
+  <h2>De lineal a dB.</h2>
+  <div class="grid-2" style="margin-top: 1rem;">
+    <div>
+      <p class="wide">Convertir la amplitud a dB relativos al máximo es lo que permite ver el decaimiento real de la RI — en lineal, casi todo se ve "pegado a cero".</p>
+      <div class="formula">$$ L(t) = 20 \cdot \log_{10}\!\left(\frac{|h(t)|}{\max |h(t)|}\right) $$</div>
+      <p class="wide">Detalles que no aparecen en la fórmula pero rompen la implementación:</p>
+      <ul>
+        <li><strong>Reemplazar ceros antes del log</strong>: $\log_{10}(0) = -\infty$. La spec sugiere <code>np.finfo(float).eps</code> (≈ $2{,}2 \times 10^{-16}$, la mínima resolución de <code>float</code>).</li>
+        <li><strong>Piso de ruido opcional</strong>: clipear a -120 dB <em>después</em> del log para que el plot no se vaya muy bajo.</li>
+        <li><strong>Normalización al máximo</strong>: el resultado siempre tiene 0 dB como pico.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="panel" style="padding: 0.8em 1em;">
+        <h3 style="font-size: 0.7em; margin-bottom: 0.3em;">Implementación (spec §5)</h3>
+<pre style="margin: 0.2em 0;"><code class="language-python" style="font-size: 0.45em; padding: 0.6em 0.8em;">import numpy as np
+
+def a_escala_log(signal):
+    # 1. Reemplazar ceros para evitar log(0) = -inf
+    safe = np.where(signal == 0, np.finfo(float).eps, np.abs(signal))
+    # 2. Normalizar al maximo y convertir a dB
+    return 20 * np.log10(safe / np.max(safe))</code></pre>
+        <p class="small muted" style="margin: 0.3em 0 0 0; font-size: 0.65em;">
+          La spec también acepta dejar los <code>-np.inf</code> resultantes sin reemplazar. Ambas opciones son válidas — la diferencia es solo cosmética en el plot.
+        </p>
+      </div>
+      <div class="panel" style="margin-top: 0.6em; padding: 0.8em 1em;">
+        <h3 style="font-size: 0.7em; margin-bottom: 0.3em;">Cuándo sirve</h3>
+        <ul style="margin: 0;">
+          <li>Visualizar el decaimiento como <em>recta</em> — la pendiente se ve directa.</li>
+          <li>Calcular T60 vía regresión lineal (método ISO 3382, viene en M3).</li>
+          <li>Comparar rango dinámico real de una IR contra el piso de ruido.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    - La spec sugiere np.finfo(float).eps. En dB es ~-313 dB — practicamente -inf pero finito.
+    - Alternativa: dejar -inf y filtrarlo después con isfinite. Ambas pasan el test.
+    - El piso de -120 dB es DESPUES del log, no antes. Eso evita confusion.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 10 — Puente · Schroeder + Lundeby -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · puente conceptual</div>
+  <figure class="figure-hero">
+    <img src="img/schroeder_lundeby.png" alt="Curva de Schroeder con crossover de Lundeby y regresiones T20/T30 superpuestas">
+    <figcaption>Integral de Schroeder · crossover Lundeby · regresiones para T20 y T30 sobre IR sintética T60 = 1.0 s</figcaption>
+  </figure>
+  <div class="enunciado">
+    <p>
+      Esta no es una función que pide M2 — pero es el <strong>siguiente paso natural</strong>: una vez que tienen la RI filtrada por banda y en escala log, lo que viene es medir el T60. Y eso requiere dos cosas que vieron en clase 10:
+    </p>
+    <p>
+      <strong>Integral de Schroeder</strong> · transforma la RI ruidosa en una curva monótona decreciente que es directamente la energía residual desde $t$ en adelante: $S(t) = \int_t^\infty h^2(\tau)\, d\tau$. Se calcula al revés con cumsum invertido. La pendiente de $10 \log_{10} S(t)$ es lo que se usa para extrapolar a -60 dB.
+    </p>
+    <p>
+      <strong>Método de Lundeby</strong> · detecta el <em>punto de cruce</em> entre el decaimiento real y el ruido de fondo. Sin esto, el T60 sale inflado por el ruido residual de la cola. En el plot, la línea roja vertical marca exactamente ese cutoff.
+    </p>
+    <p class="src">Clase 10 · M3 cierra el círculo: combinan Schroeder + Lundeby + regresión lineal para calcular T30/T20/T10/EDT por banda.</p>
+  </div>
+  <aside class="notes">
+    - Este slide es el "y despues que viene". Conecta M2 con M3.
+    - El plot muestra T60 medido via T20 = 1.00s y via T30 = 0.98s contra objetivo 1.00s.
+    - Schroeder es UNA LINEA de codigo: cumsum(x[::-1]**2)[::-1] / sum(x**2). Eso es todo.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 11 — T30/T20/T10/EDT por banda -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · adelanto a M3</div>
+  <figure class="figure-hero">
+    <img src="img/t30_por_banda.png" alt="T30 T20 T10 EDT por banda con paleta del frontend">
+    <figcaption>Parámetros acústicos por banda · paleta del frontend de cátedra (T30 rojo, T20 lima, T10 cyan, EDT púrpura) · objetivo T60 escalonado</figcaption>
+  </figure>
+  <div class="enunciado">
+    <p>
+      Este es el <strong>output final</strong> del análisis acústico, donde van a llegar en M3. Cuatro parámetros por banda según ISO 3382:
+    </p>
+    <ul>
+      <li><strong>EDT</strong> (Early Decay Time) — pendiente entre 0 y -10 dB · sensible a las primeras reflexiones</li>
+      <li><strong>T10</strong> — entre -5 y -15 dB, extrapolado a -60 dB</li>
+      <li><strong>T20</strong> — entre -5 y -25 dB, extrapolado a -60 dB</li>
+      <li><strong>T30</strong> — entre -5 y -35 dB, extrapolado a -60 dB · es el estándar</li>
+    </ul>
+    <p>
+      La paleta es la <em>misma</em> que van a ver en el frontend de cátedra cuando suban su WAV — continuidad visual entre deck, app y informe. <code>T30 = T20 ≈ T10 ≈ EDT</code> indica un decaimiento limpio (sala bien comportada). Si difieren mucho, la IR tiene reflexiones tempranas fuertes o ruido de fondo alto.
+    </p>
+    <p class="src">Spec ISO 3382 · M3 implementa el cálculo · M2 deja todo listo para ese cálculo (filtros por banda + escala log).</p>
+  </div>
+  <aside class="notes">
+    - Los 4 parametros son CASI IDENTICOS en la IR sintetica (sin reflexiones tempranas, sin ruido fuerte).
+    - En IRs reales: EDT < T10 < T20 < T30 tipicamente. Diferencias indican comportamiento de la sala.
+    - Los alumnos ya pueden ver esto en https://rir-api-frontend.onrender.com con la IR que ellos sinteticen en M2.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 12 — Frontend de catedra -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · herramienta</div>
+  <h2>El frontend de cátedra.</h2>
+  <p class="lead">Una herramienta web para comparar sus resultados contra los de la cátedra <em>en vivo</em>.</p>
+  <a class="url-box" href="https://rir-api-frontend.onrender.com" target="_blank">https://rir-api-frontend.onrender.com</a>
+  <div class="grid-2" style="margin-top: 1.2rem;">
+    <div class="panel">
+      <h3>Analizador</h3>
+      <p>Suben un WAV de una RI (la que sintetizaron con su <code>sintetizar_ri</code>, o una de OpenAIR) y la app calcula:</p>
+      <ul>
+        <li>SNR · cutoff Lundeby · ratio EDT/T30</li>
+        <li>T30/T20/T10/EDT por banda con la gráfica que ven en la slide anterior</li>
+        <li>Tabla completa de valores por banda</li>
+      </ul>
+    </div>
+    <div>
+      <div class="panel" style="margin-bottom: 1em;">
+        <h3>Generador</h3>
+        <p class="small">Ruido rosa, sine sweep + filtro inverso, RI sintética, convolución. Útil para generar la grabación de prueba si no tienen una sala disponible.</p>
+      </div>
+      <div class="panel">
+        <h3>Grabador</h3>
+        <p class="small">Captura directa desde el navegador con Web Audio API. Pueden grabar una palmada y obtener una RI cruda para procesar.</p>
+      </div>
+    </div>
+  </div>
+  <blockquote style="margin-top: 0.8rem; font-size: 0.85em;">
+    <strong>Tip M2:</strong> sinteticen una RI con T60 conocidos, súbanla al Analizador, comparen los valores que devuelve contra los que pusieron como entrada. Si difieren mucho, hay bug.
+  </blockquote>
+  <aside class="notes">
+    - El frontend ya esta en produccion (lo subimos esta semana).
+    - Backend = nuestra API de referencia. El frontend es el cliente que la consume.
+    - Si CORS falla por algun motivo, el navegador lo va a marcar en consola.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 13 — Los cinco tests -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · validación automática</div>
+  <h2>Los cinco tests.</h2>
+  <p class="lead">El contrato de M2 son los tests. Si pasan los 5, hay nota base. Si no, no.</p>
+  <div class="grid-2" style="gap: 1.2em;">
+    <div class="panel">
+      <h3>Test 1 · cargar_audio</h3>
+      <p class="small">Carga WAV válido sin romperse · acepta mono y estéreo · lanza error informativo si el formato es inválido.<br><strong>Criterio:</strong> normalizado entre -1 y 1.</p>
+    </div>
+    <div class="panel">
+      <h3>Test 2 · sintetizar_ri</h3>
+      <p class="small">Sintetizar con T60=2.0 s @ 1 kHz, filtrar en 1 kHz, medir T60.<br><strong>Criterio:</strong> error &lt; 10% del objetivo.</p>
+    </div>
+    <div class="panel">
+      <h3>Test 3 · obtener_ri_desde_sweep</h3>
+      <p class="small">Tomar M1 sweep + filtro inverso, simular grabación con RI sintética, recuperar RI.<br><strong>Criterio:</strong> correlación cruzada con RI original &gt; 0.9.</p>
+    </div>
+    <div class="panel">
+      <h3>Test 4 · filtro_octava</h3>
+      <p class="small">Probar respuesta en frecuencia del filtro.<br><strong>Criterio:</strong> 0 dB ± 0.5 en fc · -3 dB ± 1 en $f_c \cdot 2^{\pm 1/2}$ · &gt; 20 dB de atenuación a la octava.</p>
+    </div>
+    <div class="panel">
+      <h3>Test 5 · a_escala_log</h3>
+      <p class="small">Verifica que el máximo es 0 dB y que la amplitud mitad da -6 dB.<br><strong>Criterio:</strong> exacto (tolerancia numérica).</p>
+    </div>
+  </div>
+  <p class="muted small" style="margin-top: 0.7rem;">La spec recomienda llegar a <strong>80% de cobertura</strong> en M2. <code>pytest --cov=app tests/</code> les da el reporte.</p>
+  <aside class="notes">
+    - Si pasan los 5, nota base. El resto (calidad de código, docs, validación manual) suma.
+    - El test 3 es el mas dificil: requiere encadenar M1 con M2. Coordinar con quien hizo M1 del grupo.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 14 — Validacion manual + OpenAIR -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · validación manual</div>
+  <h2>Lo que va en el informe.</h2>
+  <div class="grid-2">
+    <div>
+      <p class="wide">Tests automatizados son <em>condición necesaria</em>, no suficiente. La validación manual del informe pide:</p>
+      <ul>
+        <li>Descargar al menos <strong>dos IRs de OpenAIR</strong> (recomendado: una con T60 largo, otra corto)</li>
+        <li>Procesarlas con su pipeline completo</li>
+        <li>Comparar visualmente espectro, decaimiento y T30 por banda contra los valores que reporta la página</li>
+        <li>Comparar contra software de referencia (<strong>REW</strong> es gratuito y suficiente)</li>
+      </ul>
+      <p class="small muted">Gráficas y screenshots en <code>docs/m2/</code> del repo.</p>
+    </div>
+    <div class="panel">
+      <h3>Recomendaciones de OpenAIR</h3>
+      <p class="small"><a href="https://www.openairlib.net/" target="_blank">openairlib.net</a></p>
+      <ul class="small">
+        <li><strong>Elveden Hall</strong> — T60 largo (~3 s), ideal para ver decaimientos limpios</li>
+        <li><strong>Maes Howe</strong> — T60 corto, sala pequeña</li>
+        <li><strong>Hamilton Mausoleum</strong> — T60 extremo (~15 s), interesante pero requiere SNR alto</li>
+      </ul>
+      <p class="small muted" style="margin-top: 0.5em;">Y si quieren cerrar el círculo: suban la misma IR al <a href="https://rir-api-frontend.onrender.com">frontend de cátedra</a> y comparen.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - OpenAIR es el dataset estandar academico. Gratuito, registrarse y bajar WAVs.
+    - REW (Room EQ Wizard) es la referencia de la industria de acustica. Gratuito.
+    - "Si su pendiente les da -50% del valor de REW, hay un bug".
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 15 — Buenas practicas extraidas del codigo -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · seis decisiones que pagan en M3</div>
+  <h2>Buenas prácticas del código de referencia.</h2>
+  <p class="lead">Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les ahorran trabajo en M3 y mejoran la precisión numérica.</p>
+  <div class="grid-2" style="gap: 1.2em; margin-top: 1rem;">
+    <div class="panel">
+      <h3 class="good">01 · <code>filtfilt</code> para fase cero</h3>
+      <p class="small">Usen <code>scipy.signal.sosfiltfilt</code>, no <code>sosfilt</code>. Aplica el filtro forward y backward — sin desfasaje. Crítico para medir T60 correctamente.</p>
+    </div>
+    <div class="panel">
+      <h3 class="good">02 · <code>fftconvolve</code> para deconvolución</h3>
+      <p class="small">Con señales largas, <code>fftconvolve</code> es órdenes de magnitud más rápido que <code>convolve</code>. Para una grabación de 10 s a 48 kHz, la diferencia es de segundos a horas.</p>
+    </div>
+    <div class="panel">
+      <h3 class="good">03 · Schroeder en una línea</h3>
+      <p class="small"><code>cumsum(x[::-1]**2)[::-1] / sum(x**2)</code><br>Invertir, sumar acumulativo, normalizar, invertir de vuelta. Eso es todo.</p>
+    </div>
+    <div class="panel">
+      <h3 class="good">04 · Clip antes del log</h3>
+      <p class="small">Siempre <code>np.log10(x + 1e-10)</code> o <code>np.clip(x, 1e-10, None)</code>. Evita <code>-inf</code> en los plots y los cálculos.</p>
+    </div>
+    <div class="panel">
+      <h3 class="good">05 · Lundeby devuelve <code>float</code></h3>
+      <p class="small">No un array — el tiempo en segundos del cruce señal/ruido. Lo usan para <em>truncar</em> la RI antes de medir T60. Sin esto, el ruido infla el cálculo.</p>
+    </div>
+    <div class="panel">
+      <h3 class="good">06 · Mono y estéreo · una línea</h3>
+      <p class="small"><code>if signal.ndim &gt; 1: signal = signal.mean(axis=1)</code><br>Resuelve OpenAIR y cualquier WAV interleaved en una línea. Lo hacen al inicio de cada función.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - Estos 6 puntos no son obvios y los van a sufrir si los descubren tarde.
+    - filtfilt es el unico que cambia un test que YA estaba pasando — sin filtfilt, el test de T60 puede salir 5-15% off.
+    - fftconvolve cambia tiempo de ejecucion de minutos a milisegundos en algunos casos.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 16 — Calidad + checklist + cierre fusionados -->
+<section>
+  <div class="kicker"><span class="m">M2</span> · checklist final</div>
+  <h2>Lo que tiene que estar para el 16 de junio.</h2>
+  <div class="grid-2" style="margin-top: 1rem; gap: 3em;">
+    <ul class="checklist">
+      <li>Las 5 funciones implementadas con firma exacta de la spec</li>
+      <li><code>pytest -v</code> en verde — los 5 tests + cobertura &gt; 80%</li>
+      <li>Docstrings NumPy + type hints en todas las funciones públicas</li>
+      <li>PRs mergeados, no commits directos a <code>main</code></li>
+    </ul>
+    <ul class="checklist">
+      <li>Tag <code>v0.2.0</code> anotado en <code>main</code> y empujado al remote</li>
+      <li>Carpeta <code>docs/m2/</code> con gráficas de validación manual (2+ IRs de OpenAIR)</li>
+      <li>Comparación contra REW o software equivalente en el informe</li>
+      <li>Integración con M1 testeada (sweep × inverso → δ sigue funcionando)</li>
+    </ul>
+  </div>
+  <p class="muted" style="margin-top: 1rem;">Ocho checks. Si están, presentan tranquilos.</p>
+  <div class="panel" style="margin-top: 1rem; background: rgba(37, 99, 235, 0.05); border-color: rgba(37, 99, 235, 0.2); padding: 0.8em 1.1em;">
+    <h3 style="color: var(--accent);">Próxima parada · M3 (7 de julio)</h3>
+    <p style="max-width: none;">
+      M3 cierra el TP: API REST completa, endpoints expuestos como su propia versión de <code>rir-api.onrender.com</code>, informe técnico (Quarto), demo en vivo. La buena noticia: si M2 está bien, M3 es 70% wrap up — exponer las funciones que ya tienen como endpoints.
+    </p>
+  </div>
+  <aside class="notes">
+    - Slide doble: checklist + cierre con proximos pasos.
+    - "Si M2 esta bien, M3 es wrap up" — es VERDAD, pero solo si M2 esta bien.
+    - Hacer pausa para preguntas al final.
+    - Timing: 3 min + 5 min de preguntas.
+  </aside>
+</section>
+
+</div>
+</div>
+
+<div id="lightbox" class="lightbox-overlay" role="dialog" aria-hidden="true"><img alt=""></div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    controls: true,
+    controlsLayout: 'edges',
+    controlsBackArrows: 'visible',
+    progress: true,
+    center: false,
+    width: 1920,
+    height: 1080,
+    margin: 0.03,
+    minScale: 0.2,
+    maxScale: 2.0,
+    plugins: [RevealHighlight, RevealNotes],
+  });
+</script>
+
+<script>
+  (function() {
+    const lb = document.getElementById('lightbox');
+    const lbImg = lb.querySelector('img');
+
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('.figure-hero img, .figure img');
+      if (img && !lb.classList.contains('open')) {
+        e.stopPropagation();
+        e.preventDefault();
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || '';
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden', 'false');
+        return;
+      }
+      // si el lightbox esta abierto y se clickea cualquier cosa dentro, cerrar
+      if (lb.classList.contains('open') && lb.contains(e.target)) {
+        e.stopPropagation();
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        lbImg.src = '';
+      }
+    }, true);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lb.classList.contains('open')) {
+        e.stopPropagation();
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        lbImg.src = '';
+      }
+    }, true);
+  })();
+</script>
+</body>
+</html>
