@@ -99,7 +99,7 @@ Completar la [rubrica de evaluacion](rubrica.md) para conocer los criterios deta
 La catedra desarrolló una implementacion completa de RIR-API como ejemplo de como llevar una idea tecnica a un producto funcional:
 
 - **Backend (API)**: API REST desplegada en [https://rir-api.onrender.com](https://rir-api.onrender.com) — los alumnos pueden explorar la [documentacion interactiva (Swagger UI)](https://rir-api.onrender.com/docs) para entender la estructura, los endpoints y los schemas de respuesta.
-- **Frontend**: Aplicacion web que consume la API (se mostrara en clase como demo).
+- **Frontend**: Aplicacion web que consume la API, desplegada en [https://rir-api-frontend.onrender.com](https://rir-api-frontend.onrender.com) — pueden usarla para comparar sus resultados contra los de la implementacion de referencia.
 - **Deploy**: La API corre en produccion en Render, accesible desde cualquier lugar.
 
 Este flujo (modulos de procesamiento → API → frontend → deploy) es un ejemplo concreto de como transformar conocimiento tecnico en un MVP presentable. **El objetivo del TP es que cada grupo recorra este mismo camino con su propia implementacion.**
@@ -186,6 +186,7 @@ Cada grupo debe mantener un archivo **`AI_LOG.md`** en la raiz del repositorio q
 ## Recursos
 
 ### API de referencia
+- [Frontend web (comparar resultados)](https://rir-api-frontend.onrender.com)
 - [Documentacion interactiva (Swagger UI)](https://rir-api.onrender.com/docs)
 - [Documentacion alternativa (ReDoc)](https://rir-api.onrender.com/redoc)
 
