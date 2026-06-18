@@ -74,3 +74,6 @@ docs/extras/
 
 # Devoluciones a alumnos 
 trabajo_practico/devoluciones/
+
+# Seguimiento interno de evaluacion (notas/guias del docente, queda local)
+trabajo_practico/seguimiento/
