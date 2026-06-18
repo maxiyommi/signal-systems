@@ -1,0 +1,6 @@
+# CODEOWNERS — signal-systems
+#
+# Cualquier cambio requiere aprobación de los owners listados.
+# Sintaxis: <pattern> <usuario1> <usuario2>
+
+* @maxiyommi
