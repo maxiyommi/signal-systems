@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flanger / Chorus — Visualización Interactiva</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #f8f9fb;
+    --surface:  #ffffff;
+    --border:   #d0d7de;
+    --text:     #1c2128;
+    --muted:    #57606a;
+    --red:      #c0392b;
+    --green:    #1a7f37;
+    --blue:     #0553b1;
+    --amber:    #875500;
+    --canvas-bg:#f0f3f7;
+    --radius:   6px;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 13px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .controls {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .presets {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .presets span { color: var(--muted); font-size: 11px; margin-right: 4px; }
+  .pbtn {
+    background: #eef1f4;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 5px 14px;
+    font: inherit;
+    cursor: pointer;
+    transition: .15s;
+  }
+  .pbtn.active, .pbtn:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  .sliders {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .ctrl { display: flex; flex-direction: column; gap: 3px; min-width: 130px; }
+  .ctrl label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+  .ctrl input[type=range] { accent-color: var(--blue); cursor: pointer; }
+  .ctrl .val { font-size: 13px; font-weight: 700; color: var(--blue); }
+
+  .eq {
+    margin-left: auto;
+    font-size: 12px;
+    font-family: sans-serif;
+    line-height: 1.8;
+    color: var(--muted);
+    align-self: center;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-height: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  .panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+  }
+  canvas {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    border-radius: 3px;
+    background: var(--canvas-bg);
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <div class="presets">
+    <span>PRESET:</span>
+    <button class="pbtn active" id="btn-fl" onclick="preset('flanger')">Flanger (D corto)</button>
+    <button class="pbtn"        id="btn-ch" onclick="preset('chorus')">Chorus (D largo)</button>
+    <div class="eq">
+      <span style="color:var(--blue)">y[n]</span> = <span style="color:var(--red)">x[n]</span> +
+      <span style="color:var(--red)">x</span>[n − <span style="color:var(--green)">D(n)</span>]&nbsp;&nbsp;
+      <span style="color:var(--green)">D(n)</span> = D₀ + A · sin(2π · f<sub>LFO</sub> · n/f<sub>s</sub>)
+    </div>
+  </div>
+  <div class="sliders">
+    <div class="ctrl">
+      <label>Retardo base D₀ (ms)</label>
+      <input type="range" id="d0"  min="1" max="40" step="0.5" value="3">
+      <div class="val">D₀ = <span id="d0v">3.0</span> ms</div>
+    </div>
+    <div class="ctrl">
+      <label>Amplitud LFO A (ms)</label>
+      <input type="range" id="amp" min="0" max="20" step="0.5" value="2.5">
+      <div class="val">A = <span id="ampv">2.5</span> ms</div>
+    </div>
+    <div class="ctrl">
+      <label>Frecuencia LFO (Hz)</label>
+      <input type="range" id="lfo" min="0.1" max="3" step="0.1" value="0.3">
+      <div class="val">f_LFO = <span id="lfov">0.3</span> Hz</div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" style="border-left: 3px solid var(--green);">
+  <div class="panel-title" style="color:var(--green)">Línea de retardo — puntero <span style="color:var(--red)">escritura</span> y <span style="color:var(--blue)">lectura</span> (D[n] variable)</div>
+  <canvas id="cv-buf"></canvas>
+</div>
+
+<div class="panel" style="border-left: 3px solid var(--amber);">
+  <div class="panel-title" style="color:var(--amber)">x[n] vs x[n − D(n)] — Desfasaje temporal</div>
+  <canvas id="cv-cmp"></canvas>
+</div>
+
+<div class="panel" style="border-left: 3px solid var(--blue);">
+  <div class="panel-title" style="color:var(--blue)">y[n] = x[n] + x[n − D(n)] — Filtro peine variable</div>
+  <canvas id="cv-out"></canvas>
+</div>
+
+<script>
+const slD0  = document.getElementById('d0');
+const slAmp = document.getElementById('amp');
+const slLfo = document.getElementById('lfo');
+
+function upd() {
+  document.getElementById('d0v').textContent  = parseFloat(slD0.value).toFixed(1);
+  document.getElementById('ampv').textContent = parseFloat(slAmp.value).toFixed(1);
+  document.getElementById('lfov').textContent = parseFloat(slLfo.value).toFixed(1);
+}
+[slD0, slAmp, slLfo].forEach(s => s.addEventListener('input', upd));
+
+function preset(type) {
+  document.getElementById('btn-fl').classList.toggle('active', type === 'flanger');
+  document.getElementById('btn-ch').classList.toggle('active', type === 'chorus');
+  if (type === 'flanger') { slD0.value = 3;  slAmp.value = 2.5; slLfo.value = 0.3; }
+  else                    { slD0.value = 25; slAmp.value = 12;  slLfo.value = 0.6; }
+  upd();
+}
+
+const cvBuf = document.getElementById('cv-buf');
+const cvCmp = document.getElementById('cv-cmp');
+const cvOut = document.getElementById('cv-out');
+
+const WAVE_F = 0.05;
+let time = 0;
+
+function wave(x, t) { return Math.sin(x * WAVE_F - t * 7); }
+
+function drawGrid(ctx, W, H) {
+  ctx.strokeStyle = '#dce1e8';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    ctx.beginPath(); ctx.moveTo(0, i * H / 4); ctx.lineTo(W, i * H / 4); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+}
+
+function drawLine(ctx, W, H, fn, color, lw) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth   = lw || 1.8;
+  for (let px = 0; px < W; px++) {
+    const y = H / 2 - fn(px) * (H / 2 - 4);
+    if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+  }
+  ctx.stroke();
+}
+
+function resizeCanvases() {
+  [cvBuf, cvCmp, cvOut].forEach(cv => {
+    cv.width  = cv.offsetWidth  || 600;
+    cv.height = cv.offsetHeight || 80;
+  });
+}
+
+function tick() {
+  time += 0.012;
+
+  const d0  = parseFloat(slD0.value);
+  const a   = parseFloat(slAmp.value);
+  const lfo = parseFloat(slLfo.value);
+
+  const Dn = d0 + a * Math.sin(2 * Math.PI * lfo * time);
+
+  // Panel 1: Buffer
+  {
+    const W = cvBuf.width, H = cvBuf.height;
+    const ctx = cvBuf.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    drawGrid(ctx, W, H);
+
+    drawLine(ctx, W, H, (px) => wave(px, time) * 0.6, '#c8d0da', 1);
+
+    const wrX = W - 40;
+    const dpx  = Math.min(Dn * 4, W - 80);
+    const rdX  = wrX - dpx;
+
+    ctx.beginPath();
+    ctx.strokeStyle = '#1a7f3740';
+    ctx.setLineDash([4, 4]);
+    ctx.moveTo(rdX, H / 2); ctx.lineTo(wrX, H / 2);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.fillStyle   = '#1a7f37';
+    ctx.font        = '11px monospace';
+    ctx.textAlign   = 'center';
+    ctx.fillText(`D(n) = ${Dn.toFixed(1)} ms`, (rdX + wrX) / 2, H / 2 - 8);
+
+    ctx.fillStyle = '#c0392b';
+    ctx.fillRect(wrX - 2, 8, 4, H - 16);
+    ctx.font = '10px monospace'; ctx.textAlign = 'center';
+    ctx.fillText('W', wrX, 6);
+
+    ctx.fillStyle = '#0553b1';
+    ctx.fillRect(rdX - 2, 8, 4, H - 16);
+    ctx.fillText('R', rdX, 6);
+  }
+
+  // Panel 2: Superposición
+  {
+    const W = cvCmp.width, H = cvCmp.height;
+    const ctx = cvCmp.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    drawGrid(ctx, W, H);
+
+    drawLine(ctx, W, H, (px) => wave(px, time), '#c0392b99', 1.2);
+    drawLine(ctx, W, H, (px) => {
+      const t2 = time - (W - px) * 0.008;
+      const dn = d0 + a * Math.sin(2 * Math.PI * lfo * t2);
+      return wave(px - dn * 4, time);
+    }, '#0553b1', 1.8);
+  }
+
+  // Panel 3: Output
+  {
+    const W = cvOut.width, H = cvOut.height;
+    const ctx = cvOut.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+    drawGrid(ctx, W, H);
+
+    drawLine(ctx, W, H, (px) => {
+      const orig = wave(px, time);
+      const t2   = time - (W - px) * 0.008;
+      const dn   = d0 + a * Math.sin(2 * Math.PI * lfo * t2);
+      return (orig + wave(px - dn * 4, time)) * 0.5;
+    }, '#0553b1', 1.8);
+  }
+
+  requestAnimationFrame(tick);
+}
+
+const ro = new ResizeObserver(() => resizeCanvases());
+[cvBuf, cvCmp, cvOut].forEach(cv => ro.observe(cv));
+resizeCanvases();
+upd();
+tick();
+</script>
+</body>
+</html>

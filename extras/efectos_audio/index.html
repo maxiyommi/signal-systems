@@ -1,0 +1,1977 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Material práctico de Señales y Sistemas — Ingeniería de Sonido — UNTREF">
+      
+      
+      
+        <link rel="canonical" href="https://maxiyommi.github.io/signal-systems/extras/efectos_audio/">
+      
+      
+        <link rel="prev" href="../intro_ia/">
+      
+      
+        <link rel="next" href="../../reglas_slack/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../LogoPractica.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Efectos de Audio en Python - Señales y Sistemas — UNTREF</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#efectos-de-audio-en-python" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../.." title="Señales y Sistemas — UNTREF" class="md-header__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../LogoPractica.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Señales y Sistemas — UNTREF
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Efectos de Audio en Python
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../clases/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Clases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../trabajo_practico/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Trabajo Práctico
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guias/setup_entorno/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guías
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Extras
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reglas_slack/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reglas Slack
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Señales y Sistemas — UNTREF" class="md-nav__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../LogoPractica.png" alt="logo">
+
+    </a>
+    Señales y Sistemas — UNTREF
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../clases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../trabajo_practico/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trabajo Práctico
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Trabajo Práctico
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../trabajo_practico/rubrica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rúbrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Milestones
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Milestones
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../trabajo_practico/especificacion/m0_arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M0 — Arquitectura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../trabajo_practico/especificacion/m1_generacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M1 — Generación
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../trabajo_practico/especificacion/m2_procesamiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M2 — Procesamiento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../trabajo_practico/especificacion/m3_producto_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M3 — Producto Final
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guías
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guías
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/setup_entorno/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup del Entorno
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/git_basico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Básico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/marimo_intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marimo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/quarto_informe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quarto (Informes)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extras
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ggwave/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ggwave — Datos por Audio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recursos_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos de IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intro_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción a la IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Efectos de Audio en Python
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Efectos de Audio en Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#clasificacion-de-los-sistemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clasificación de los sistemas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-delay-eco" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Delay (Eco)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Delay (Eco)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fundamento-teorico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fundamento teórico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagrama-del-sistema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagrama del sistema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#propiedades" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propiedades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualizacion-interactiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualización interactiva
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tremolo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Tremolo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Tremolo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fundamento-teorico_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fundamento teórico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagrama-del-sistema_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagrama del sistema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#propiedades_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propiedades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualizacion-interactiva_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualización interactiva
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementacion_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-flanger-chorus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Flanger / Chorus
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Flanger / Chorus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fundamento-teorico_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fundamento teórico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagrama-del-sistema_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagrama del sistema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#propiedades_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propiedades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visualizacion-interactiva_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualización interactiva
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-reverb-por-convolucion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Reverb por Convolución
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Reverb por Convolución">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fundamento-teorico_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fundamento teórico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diagrama-del-sistema_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagrama del sistema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#propiedades_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propiedades
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implementacion_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resumen-comparativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resumen comparativo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#archivos-del-modulo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Archivos del módulo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reglas_slack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reglas Slack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="efectos-de-audio-en-python">Efectos de Audio en Python<a class="headerlink" href="#efectos-de-audio-en-python" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Clase 06 — Material complementario</strong><br>
+Audio en Python: efectos de señal desde el marco de Señales y Sistemas<br>
+<em>Por Jerónimo Scafati</em></p>
+</blockquote>
+<p>En esta sección implementamos efectos de audio clásicos y los analizamos como <strong>sistemas</strong>. Cada efecto tiene propiedades bien definidas (causalidad, linealidad, invarianza temporal, estabilidad) que determinan su comportamiento y sus posibilidades musicales.</p>
+<hr />
+<h2 id="clasificacion-de-los-sistemas">Clasificación de los sistemas<a class="headerlink" href="#clasificacion-de-los-sistemas" title="Permanent link">&para;</a></h2>
+<p>Antes de ver los efectos, es útil tener un mapa de las propiedades que vamos a usar:</p>
+<table>
+<thead>
+<tr>
+<th>Propiedad</th>
+<th>Significado</th>
+<th>Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LTI</strong></td>
+<td>Lineal y tiempo-invariante</td>
+<td>Delay con parámetros fijos</td>
+</tr>
+<tr>
+<td><strong>LTV</strong></td>
+<td>Lineal y <strong>tiempo-variante</strong></td>
+<td>Tremolo, Flanger</td>
+</tr>
+<tr>
+<td><strong>Causal</strong></td>
+<td>Usa solo muestras presentes y pasadas</td>
+<td>Todos los efectos de audio en tiempo real</td>
+</tr>
+<tr>
+<td><strong>IIR</strong></td>
+<td>Respuesta al impulso infinita (hay feedback)</td>
+<td>Delay con retroalimentación</td>
+</tr>
+<tr>
+<td><strong>FIR</strong></td>
+<td>Respuesta al impulso finita (sin feedback)</td>
+<td>Tremolo, Flanger</td>
+</tr>
+<tr>
+<td><strong>BIBO estable</strong></td>
+<td>Entrada acotada → salida acotada</td>
+<td>Delay con |g| &lt; 1</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-delay-eco">1. Delay (Eco)<a class="headerlink" href="#1-delay-eco" title="Permanent link">&para;</a></h2>
+<h3 id="fundamento-teorico">Fundamento teórico<a class="headerlink" href="#fundamento-teorico" title="Permanent link">&para;</a></h3>
+<p>El delay es el efecto más elemental: suma a la señal original una copia de sí misma, retardada <span class="arithmatex">\(D\)</span> muestras y atenuada por la ganancia de retroalimentación <span class="arithmatex">\(g\)</span>.</p>
+<p><strong>Ecuación en diferencias:</strong></p>
+<div class="arithmatex">\[y[n] = x[n] + g \cdot y[n - D]\]</div>
+<p>La retroalimentación hace que cada eco genere nuevos ecos, con amplitud decayendo geométricamente. La respuesta al impulso resulta en la suma infinita:</p>
+<div class="arithmatex">\[h[n] = \sum_{k=0}^{\infty} g^k \cdot \delta[n - kD]\]</div>
+<p>Esta sumatoria infinita clasifica al sistema como <strong>IIR</strong> (<em>Infinite Impulse Response</em>).</p>
+<h3 id="diagrama-del-sistema">Diagrama del sistema<a class="headerlink" href="#diagrama-del-sistema" title="Permanent link">&para;</a></h3>
+<p><img alt="Diagrama del sistema de Delay" src="assets/diagrama-delay.png" /></p>
+<h3 id="propiedades">Propiedades<a class="headerlink" href="#propiedades" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Causal</strong> ✅ — <span class="arithmatex">\(y[n]\)</span> depende de <span class="arithmatex">\(x[n]\)</span> y de <span class="arithmatex">\(y[n-D]\)</span> (pasado), nunca del futuro.</li>
+<li><strong>LTI</strong> ✅ — con <span class="arithmatex">\(g\)</span> y <span class="arithmatex">\(D\)</span> fijos, el sistema es lineal y tiempo-invariante.</li>
+<li><strong>IIR</strong> — la respuesta al impulso es infinita (ecos que se repiten indefinidamente).</li>
+<li><strong>Estabilidad</strong> — el sistema es BIBO estable si y solo si <span class="arithmatex">\(|g| &lt; 1\)</span>. Los polos se ubican en <span class="arithmatex">\(z_k = g^{1/D}\)</span>, dentro del círculo unitario. Con <span class="arithmatex">\(|g| \geq 1\)</span> el sistema diverge (ecos que crecen sin límite).</li>
+</ul>
+<h3 id="visualizacion-interactiva">Visualización interactiva<a class="headerlink" href="#visualizacion-interactiva" title="Permanent link">&para;</a></h3>
+<p>Generá un impulso y observá cómo se propaga la energía por el sistema. Modificá <span class="arithmatex">\(D\)</span> y <span class="arithmatex">\(g\)</span> para ver cómo cambia la densidad y el decaimiento de los ecos.</p>
+<div style="border-radius:8px; overflow:hidden; border:1px solid #30363d;">
+<iframe src="assets/delay_viz.html" style="width:100%; height:430px; border:none; display:block;"></iframe>
+</div>
+
+<h3 id="implementacion">Implementación<a class="headerlink" href="#implementacion" title="Permanent link">&para;</a></h3>
+<div class="highlight"><span class="filename">efectos.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">delay</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">delay_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>   <span class="c1"># segundos entre ecos</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">feedback</span><span class="p">:</span>   <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>   <span class="c1"># ganancia de retroalimentación (&lt; 1)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">dry_wet</span><span class="p">:</span>    <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>   <span class="c1"># mezcla seco/húmedo</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">delay_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delay_time</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="n">echo</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">delay_samples</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">delay_samples</span> <span class="k">else</span> <span class="mf">0.0</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">feedback</span> <span class="o">*</span> <span class="n">echo</span>          <span class="c1"># ecuación en diferencias</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">dry_wet</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">dry_wet</span> <span class="o">*</span> <span class="n">y</span>   <span class="c1"># mezcla dry/wet</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Uso</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">soundfile</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sf</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">efectos</span><span class="w"> </span><span class="kn">import</span> <span class="n">delay</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">audio</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;guitar.wav&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">y</span> <span class="o">=</span> <span class="n">delay</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">delay_time</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">feedback</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">dry_wet</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">sf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;guitar_delay.wav&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Parámetro <code>feedback</code></p>
+<p>La condición <span class="arithmatex">\(|g| &lt; 1\)</span> no es opcional: es la condición matemática de <strong>estabilidad BIBO</strong> del sistema. Valores iguales o mayores a 1 producen ecos que crecen indefinidamente, lo que en la práctica satura (o destruye) el sistema de audio.</p>
+</div>
+<hr />
+<h2 id="2-tremolo">2. Tremolo<a class="headerlink" href="#2-tremolo" title="Permanent link">&para;</a></h2>
+<h3 id="fundamento-teorico_1">Fundamento teórico<a class="headerlink" href="#fundamento-teorico_1" title="Permanent link">&para;</a></h3>
+<p>El tremolo varía la <strong>amplitud</strong> de la señal en el tiempo. Es la versión audio de la <strong>Modulación de Amplitud (AM)</strong>: la señal portadora <span class="arithmatex">\(x[n]\)</span> se multiplica por una señal modulante <span class="arithmatex">\(m[n]\)</span> generada por un Oscilador de Baja Frecuencia (<strong>LFO</strong>).</p>
+<p><strong>Ecuación:</strong></p>
+<div class="arithmatex">\[y[n] = x[n] \cdot m[n]\]</div>
+<div class="arithmatex">\[m[n] = (1 - d) + d \cdot \frac{1 + \sin(2\pi f_{mod} \cdot n/f_s)}{2}\]</div>
+<p>El parámetro <span class="arithmatex">\(d\)</span> (<em>depth</em>) controla qué tan profunda es la modulación: con <span class="arithmatex">\(d=0\)</span> la señal queda inalterada, con <span class="arithmatex">\(d=1\)</span> la señal alcanza silencio en los valles del LFO.</p>
+<h3 id="diagrama-del-sistema_1">Diagrama del sistema<a class="headerlink" href="#diagrama-del-sistema_1" title="Permanent link">&para;</a></h3>
+<p><img alt="Diagrama del sistema de tremolo" src="assets/diagrama-tremolo.png" /></p>
+<h3 id="propiedades_1">Propiedades<a class="headerlink" href="#propiedades_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lineal</strong> ✅ — <span class="arithmatex">\(y[n]\)</span> es lineal en <span class="arithmatex">\(x[n]\)</span> para cualquier <span class="arithmatex">\(m[n]\)</span> dado.</li>
+<li><strong>Tiempo-variante (LTV)</strong> ❌ — <span class="arithmatex">\(m[n]\)</span> depende de <span class="arithmatex">\(n\)</span>, por lo tanto el sistema <strong>no es LTI</strong>. Un sistema LTI multiplicado por una señal variable en el tiempo deja de ser LTI.</li>
+<li><strong>Sin memoria (FIR)</strong> — <span class="arithmatex">\(y[n]\)</span> depende solo de <span class="arithmatex">\(x[n]\)</span> en el instante actual. No hay retroalimentación.</li>
+<li><strong>Siempre estable</strong> ✅ — <span class="arithmatex">\(m[n] \in [1-d, 1] \subseteq [0, 1]\)</span>, por lo que <span class="arithmatex">\(|y[n]| \leq |x[n]|\)</span> en todo momento.</li>
+<li><strong>Causal</strong> ✅ — no requiere valores futuros de la señal.</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">¿Por qué no es LTI?</p>
+<p>Un sistema es <strong>tiempo-invariante</strong> si retardar la entrada produce exactamente el mismo retardo en la salida. Pero en el tremolo, si retardamos <span class="arithmatex">\(x[n]\)</span> por <span class="arithmatex">\(k\)</span> muestras, la salida es <span class="arithmatex">\(x[n-k] \cdot m[n]\)</span>, <strong>no</strong> <span class="arithmatex">\(x[n-k] \cdot m[n-k]\)</span>. La envolvente <span class="arithmatex">\(m[n]\)</span> no se mueve con la señal → el sistema es variante en el tiempo.</p>
+</div>
+<h3 id="visualizacion-interactiva_1">Visualización interactiva<a class="headerlink" href="#visualizacion-interactiva_1" title="Permanent link">&para;</a></h3>
+<p>Observá cómo el LFO modula la envolvente de la señal. Con <span class="arithmatex">\(d=1\)</span> la señal se "apaga" completamente en cada valle. Con <span class="arithmatex">\(f_{mod}\)</span> alta el tremolo se vuelve un efecto de trémolo rápido o incluso genera bandas laterales audibles (como en AM de radio).</p>
+<div style="border-radius:8px; overflow:hidden; border:1px solid #30363d;">
+<iframe src="assets/tremolo_viz.html" style="width:100%; height:430px; border:none; display:block;"></iframe>
+</div>
+
+<h3 id="implementacion_1">Implementación<a class="headerlink" href="#implementacion_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><span class="filename">efectos.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">tremolo</span><span class="p">(</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">x</span><span class="p">:</span>     <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">fs</span><span class="p">:</span>    <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">depth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>   <span class="c1"># profundidad [0, 1]</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">f_mod</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>   <span class="c1"># frecuencia del LFO en Hz</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">t</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">fs</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">lfo</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f_mod</span> <span class="o">*</span> <span class="n">t</span><span class="p">))</span>   <span class="c1"># ∈ [0, 1]</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">mod</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">depth</span><span class="p">)</span> <span class="o">+</span> <span class="n">depth</span> <span class="o">*</span> <span class="n">lfo</span>                       <span class="c1"># ∈ [1-d, 1]</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">mod</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Uso</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">efectos</span><span class="w"> </span><span class="kn">import</span> <span class="n">tremolo</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">y</span> <span class="o">=</span> <span class="n">tremolo</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">f_mod</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>   <span class="c1"># tremolo a 5 Hz</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Rangos típicos</p>
+<ul>
+<li><code>depth</code> entre 0.5 y 0.9 produce el efecto clásico de tremolo musical.</li>
+<li><code>f_mod</code> entre 1 y 8 Hz es el rango usual. Con valores &gt;20 Hz la modulación genera <strong>bandas laterales</strong> (AM sidebands) y cambia el timbre.</li>
+</ul>
+</div>
+<hr />
+<h2 id="3-flanger-chorus">3. Flanger / Chorus<a class="headerlink" href="#3-flanger-chorus" title="Permanent link">&para;</a></h2>
+<h3 id="fundamento-teorico_2">Fundamento teórico<a class="headerlink" href="#fundamento-teorico_2" title="Permanent link">&para;</a></h3>
+<p>El flanger y el chorus son el <strong>mismo sistema</strong> con diferentes rangos de parámetros. Ambos mezclan la señal original con una copia retardada, pero el retardo <span class="arithmatex">\(D(n)\)</span> <strong>varía en el tiempo</strong> controlado por un LFO:</p>
+<div class="arithmatex">\[y[n] = x[n] + x[n - D(n)]\]</div>
+<div class="arithmatex">\[D(n) = D_0 + A \cdot \sin(2\pi f_{LFO} \cdot n/f_s)\]</div>
+<p>La variación del retardo produce un <strong>efecto Doppler</strong> en la copia: la señal se estira y comprime en frecuencia. Al sumar con la original, las frecuencias que están en fase se refuerzan y las que están en contrafase se cancelan, generando un <strong>filtro peine</strong> (<em>comb filter</em>) cuya frecuencia de corte varía con el LFO.</p>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th><strong>Flanger</strong></th>
+<th><strong>Chorus</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Retardo <span class="arithmatex">\(D_0\)</span></td>
+<td>1–10 ms</td>
+<td>15–35 ms</td>
+</tr>
+<tr>
+<td>Amplitud LFO <span class="arithmatex">\(A\)</span></td>
+<td>≈ <span class="arithmatex">\(D_0\)</span></td>
+<td>5–15 ms</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(f_{LFO}\)</span></td>
+<td>0.1–1 Hz</td>
+<td>0.1–1 Hz</td>
+</tr>
+<tr>
+<td>Efecto percibido</td>
+<td>"jet" metálico</td>
+<td>"coro" de voces</td>
+</tr>
+</tbody>
+</table>
+<p>La diferencia auditiva viene del retardo base: con retardos cortos (&lt; 10 ms) el oído no percibe el eco como separado, sino como coloración tímbrica (flanger). Con retardos largos (&gt; 15 ms) se perciben como "voces" distintas (chorus).</p>
+<h3 id="diagrama-del-sistema_2">Diagrama del sistema<a class="headerlink" href="#diagrama-del-sistema_2" title="Permanent link">&para;</a></h3>
+<p><img alt="Diagrama del sistema Flanger" src="assets/diagrama-flanger.png" /></p>
+<h3 id="propiedades_2">Propiedades<a class="headerlink" href="#propiedades_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Tiempo-variante (LTV)</strong> ❌ — el retardo varía con <span class="arithmatex">\(n\)</span>, rompiendo la invarianza temporal.</li>
+<li><strong>Lineal</strong> ✅ — la suma de dos señales lineales sigue siendo lineal.</li>
+<li><strong>Sin memoria (FIR)</strong> — no hay retroalimentación; en cada instante solo se leen posiciones pasadas del buffer.</li>
+<li><strong>Causal</strong> ✅ — <span class="arithmatex">\(D(n) &gt; 0\)</span> siempre, por lo que solo se leen muestras pasadas.</li>
+</ul>
+<h3 id="visualizacion-interactiva_2">Visualización interactiva<a class="headerlink" href="#visualizacion-interactiva_2" title="Permanent link">&para;</a></h3>
+<p>Usá los presets para comparar flanger y chorus. Observá en el panel del buffer cómo el puntero de lectura (azul) oscila alrededor del puntero de escritura (rojo), generando la variación de retardo.</p>
+<div style="border-radius:8px; overflow:hidden; border:1px solid #30363d;">
+<iframe src="assets/flanger_viz.html" style="width:100%; height:500px; border:none; display:block;"></iframe>
+</div>
+
+<div class="admonition note">
+<p class="admonition-title">Filtro peine</p>
+<p>Cuando <span class="arithmatex">\(D\)</span> es fijo, <span class="arithmatex">\(y[n] = x[n] + x[n-D]\)</span> tiene respuesta en frecuencia <span class="arithmatex">\(|H(e^{j\omega})| = |1 + e^{-j\omega D}|\)</span>, que es un <strong>filtro peine</strong> con ceros en <span class="arithmatex">\(\omega = \pi/D + k\pi/D\)</span>. El LFO mueve estos ceros en frecuencia continuamente, creando el característico "barrido".</p>
+</div>
+<hr />
+<h2 id="4-reverb-por-convolucion">4. Reverb por Convolución<a class="headerlink" href="#4-reverb-por-convolucion" title="Permanent link">&para;</a></h2>
+<h3 id="fundamento-teorico_3">Fundamento teórico<a class="headerlink" href="#fundamento-teorico_3" title="Permanent link">&para;</a></h3>
+<p>La reverberación simula la acústica de un espacio físico. Por el <strong>Teorema de Representación de Sistemas LTI</strong>, cualquier sala puede caracterizarse completamente por su <strong>Respuesta al Impulso</strong> <span class="arithmatex">\(h[n]\)</span> (<em>Impulse Response</em>, IR).</p>
+<p>Conocida la IR, la salida ante cualquier entrada <span class="arithmatex">\(x[n]\)</span> es la <strong>convolución discreta</strong>:</p>
+<div class="arithmatex">\[y[n] = (x * h)[n] = \sum_{k=0}^{M-1} x[k] \cdot h[n - k]\]</div>
+<p>Para IRs largas (salas grandes → IR de varios segundos), la convolución directa tiene complejidad <span class="arithmatex">\(O(N^2)\)</span>. Se usa en cambio el <strong>Teorema de convolución</strong> para reducirla a <span class="arithmatex">\(O(N \log N)\)</span> vía FFT:</p>
+<div class="arithmatex">\[Y(\omega) = X(\omega) \cdot H(\omega) \quad \Longrightarrow \quad y[n] = \text{IFFT}\{X \cdot H\}\]</div>
+<h3 id="diagrama-del-sistema_3">Diagrama del sistema<a class="headerlink" href="#diagrama-del-sistema_3" title="Permanent link">&para;</a></h3>
+<p><img alt="Diagrama del sistema de Reverb" src="assets/diagrama-reverb.png" /></p>
+<h3 id="propiedades_3">Propiedades<a class="headerlink" href="#propiedades_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>LTI</strong> ✅ — la sala es un sistema lineal y tiempo-invariante (a temperatura y presión fijas).</li>
+<li><strong>Causal</strong> ✅ — <span class="arithmatex">\(h[n] = 0\)</span> para <span class="arithmatex">\(n &lt; 0\)</span>; ningún eco llega antes del impulso.</li>
+<li><strong>IIR</strong> — la IR de una sala tiene colas de reverberación que decaen gradualmente.</li>
+<li><strong>Longitud de salida</strong> — la salida tiene longitud <span class="arithmatex">\(N + M - 1\)</span>, donde <span class="arithmatex">\(M\)</span> es la longitud de la IR. La diferencia corresponde a la <strong>cola de reverberación</strong> natural.</li>
+</ul>
+<h3 id="implementacion_2">Implementación<a class="headerlink" href="#implementacion_2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><span class="filename">conv.py</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">convolve_ir</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">x</span><span class="p">:</span>         <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">fs_x</span><span class="p">:</span>      <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">ir</span><span class="p">:</span>        <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">],</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">fs_ir</span><span class="p">:</span>     <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]:</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="c1"># Re-muestrear IR si es necesario</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="k">if</span> <span class="n">fs_x</span> <span class="o">!=</span> <span class="n">fs_ir</span><span class="p">:</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>        <span class="o">...</span>  <span class="c1"># interpolación lineal</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="c1"># Convolución vía FFT: O(N log N)</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">y</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    <span class="k">return</span> <span class="n">y</span>
+</code></pre></div>
+<div class="highlight"><span class="filename">Uso</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">soundfile</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sf</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">conv</span><span class="w"> </span><span class="kn">import</span> <span class="n">convolve_ir</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">x</span><span class="p">,</span>  <span class="n">fs_x</span>  <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;guitar.wav&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">ir</span><span class="p">,</span> <span class="n">fs_ir</span> <span class="o">=</span> <span class="n">sf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;ir_catedral.wav&quot;</span><span class="p">)</span>   <span class="c1"># IR grabada en una catedral real</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">y</span> <span class="o">=</span> <span class="n">convolve_ir</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fs_x</span><span class="p">,</span> <span class="n">ir</span><span class="p">,</span> <span class="n">fs_ir</span><span class="p">)</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="n">sf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;guitar_catedral.wav&quot;</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fs_x</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">IRs gratuitas</p>
+<p>Existen bases de datos de IRs de salas famosas grabadas con globos o pistolas de salva. Una de las más completas es <a href="https://www.openairlib.net/">OpenAIR</a>.</p>
+</div>
+<hr />
+<h2 id="resumen-comparativo">Resumen comparativo<a class="headerlink" href="#resumen-comparativo" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Efecto</th>
+<th>Sistema</th>
+<th>LTI</th>
+<th>Feedback</th>
+<th>Complejidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Delay</strong></td>
+<td>Recursivo, IIR</td>
+<td>✅</td>
+<td>✅</td>
+<td><span class="arithmatex">\(O(N)\)</span></td>
+</tr>
+<tr>
+<td><strong>Tremolo</strong></td>
+<td>Multiplicador AM, FIR</td>
+<td>❌ (LTV)</td>
+<td>❌</td>
+<td><span class="arithmatex">\(O(N)\)</span></td>
+</tr>
+<tr>
+<td><strong>Flanger/Chorus</strong></td>
+<td>Retardo variable, FIR</td>
+<td>❌ (LTV)</td>
+<td>❌</td>
+<td><span class="arithmatex">\(O(N)\)</span></td>
+</tr>
+<tr>
+<td><strong>Reverb conv.</strong></td>
+<td>Convolución LTI</td>
+<td>✅</td>
+<td>❌</td>
+<td><span class="arithmatex">\(O(N \log N)\)</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="archivos-del-modulo">Archivos del módulo<a class="headerlink" href="#archivos-del-modulo" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Archivo</th>
+<th>Contenido</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/efectos.py"><code>efectos.py</code></a></td>
+<td><code>tremolo()</code>, <code>delay()</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/func.py"><code>func.py</code></a></td>
+<td><code>normalizar()</code>, <code>to_mono()</code>, <code>diente_de_sierra()</code></td>
+</tr>
+<tr>
+<td><a href="https://github.com/maxiyommi/signal-systems/blob/master/material_extra/efectos_audio/conv.py"><code>conv.py</code></a></td>
+<td><code>convolve_ir()</code> — reverb convolutiva via FFT</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/maxiyommi/signal-systems" target="_blank" rel="noopener" title="Repositorio del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://senalesysistemas.slack.com" target="_blank" rel="noopener" title="Slack del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "navigation.tabs", "search.highlight", "search.suggest", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

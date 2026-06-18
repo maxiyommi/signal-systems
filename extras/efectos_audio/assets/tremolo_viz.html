@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tremolo — Visualización Estática</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #ffffff;
+    --surface:  #ffffff;
+    --border:   #d0d7de;
+    --text:     #1c2128;
+    --muted:    #57606a;
+    --red:      #c0392b;
+    --amber:    #875500;
+    --purple:   #6a35c9;
+    --canvas-bg:#ffffff;
+    --grid:     #e8ecf0;
+    --axis:     #b0bac4;
+    --radius:   6px;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 13px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 18px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+  .ctrl { display: flex; flex-direction: column; gap: 3px; min-width: 180px; }
+  .ctrl label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+  .ctrl input[type=range] { accent-color: var(--purple); cursor: pointer; width: 100%; }
+  .ctrl .val { font-size: 13px; font-weight: 700; }
+
+  .eq {
+    margin-left: auto;
+    font-size: 12px;
+    font-family: sans-serif;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  /* Main plot area - single Desmos-style canvas */
+  .plot-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 2;
+    min-height: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .plot-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    display: flex;
+    gap: 18px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-line { width: 22px; height: 2.5px; border-radius: 2px; }
+
+  .lower-panels {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-height: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  .panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+  }
+  canvas {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    border-radius: 3px;
+    background: var(--canvas-bg);
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <div class="ctrl">
+    <label>Profundidad (depth)</label>
+    <input type="range" id="depth" min="0" max="1" step="0.01" value="0.8">
+    <div class="val" style="color:var(--purple)">d = <span id="dv">0.80</span></div>
+  </div>
+
+  <div class="ctrl">
+    <label>Frecuencia LFO (f_mod)</label>
+    <input type="range" id="fmod" min="0.2" max="10" step="0.1" value="2.0">
+    <div class="val" style="color:var(--purple)">f_mod = <span id="fv">2.0</span> Hz</div>
+  </div>
+
+  <div class="ctrl">
+    <label>Frecuencia portadora (f_c)</label>
+    <input type="range" id="fc" min="1" max="20" step="0.5" value="8">
+    <div class="val" style="color:var(--red)">f_c = <span id="fcv">8.0</span> Hz</div>
+  </div>
+
+  <div class="eq">
+    <div><span style="color:var(--purple)">y[n]</span> = <span style="color:var(--red)">x[n]</span> · m[n]</div>
+    <div>m[n] = (1 − d) + d · ½ · (1 + sin(2π · f<sub>mod</sub> · t))</div>
+  </div>
+</div>
+
+<!-- Main Desmos-style plot -->
+<div class="plot-wrap">
+  <div class="plot-title">
+    <span>Señal modulada — vista combinada</span>
+    <div class="legend-item"><div class="legend-line" style="background:#c0392b; opacity:.45;"></div><span style="color:#c0392b">x[n] entrada</span></div>
+    <div class="legend-item"><div class="legend-line" style="background:#875500;"></div><span style="color:#875500">envolvente m[n]</span></div>
+    <div class="legend-item"><div class="legend-line" style="background:#6a35c9;"></div><span style="color:#6a35c9">y[n] salida</span></div>
+  </div>
+  <canvas id="cv-main"></canvas>
+</div>
+
+<!-- Two smaller panels -->
+<div class="lower-panels">
+  <div class="panel" style="border-left: 3px solid var(--amber);">
+    <div class="panel-title" style="color:var(--amber)">m[n] — LFO (moduladora)</div>
+    <canvas id="cv-lfo"></canvas>
+  </div>
+  <div class="panel" style="border-left: 3px solid var(--purple);">
+    <div class="panel-title" style="color:var(--purple)">y[n] = x[n] · m[n] — Salida</div>
+    <canvas id="cv-out"></canvas>
+  </div>
+</div>
+
+<script>
+const slDepth = document.getElementById('depth');
+const slFmod  = document.getElementById('fmod');
+const slFc    = document.getElementById('fc');
+const dvEl    = document.getElementById('dv');
+const fvEl    = document.getElementById('fv');
+const fcvEl   = document.getElementById('fcv');
+
+const cvMain = document.getElementById('cv-main');
+const cvLFO  = document.getElementById('cv-lfo');
+const cvOut  = document.getElementById('cv-out');
+
+// Window: show 2 seconds worth
+const T_WIN = 2.0;
+
+function getParams() {
+  return {
+    depth: parseFloat(slDepth.value),
+    fmod:  parseFloat(slFmod.value),
+    fc:    parseFloat(slFc.value),
+  };
+}
+
+function x(t, fc) { return Math.sin(2 * Math.PI * fc * t); }
+function m(t, depth, fmod) {
+  const lfo = 0.5 * (1 + Math.sin(2 * Math.PI * fmod * t));
+  return (1 - depth) + depth * lfo;
+}
+
+function drawGrid(ctx, W, H, yMin, yMax) {
+  // vertical gridlines (time)
+  const nCols = 10;
+  ctx.strokeStyle = '#e8ecf0';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= nCols; i++) {
+    const x = Math.round(i * W / nCols) + 0.5;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  // horizontal gridlines
+  const nRows = 4;
+  for (let i = 0; i <= nRows; i++) {
+    const y = Math.round(i * H / nRows) + 0.5;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  // axis (y=0 line)
+  const zeroFrac = -yMin / (yMax - yMin);
+  const zeroY = Math.round(H - zeroFrac * H) + 0.5;
+  ctx.strokeStyle = '#b0bac4';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, zeroY); ctx.lineTo(W, zeroY); ctx.stroke();
+}
+
+function mapY(v, H, yMin, yMax) {
+  return H - ((v - yMin) / (yMax - yMin)) * H;
+}
+
+function drawCurve(ctx, W, H, fn, color, lw, yMin, yMax) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw || 2;
+  ctx.lineJoin = 'round';
+  for (let px = 0; px <= W; px++) {
+    const t = (px / W) * T_WIN;
+    const v = fn(t);
+    const cy = mapY(v, H, yMin, yMax);
+    if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+  }
+  ctx.stroke();
+}
+
+function fillBetween(ctx, W, H, fnUp, fnDown, color, yMin, yMax) {
+  ctx.beginPath();
+  for (let px = 0; px <= W; px++) {
+    const t = (px / W) * T_WIN;
+    const cy = mapY(fnUp(t), H, yMin, yMax);
+    if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+  }
+  for (let px = W; px >= 0; px--) {
+    const t = (px / W) * T_WIN;
+    const cy = mapY(fnDown(t), H, yMin, yMax);
+    ctx.lineTo(px, cy);
+  }
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function redraw() {
+  const { depth, fmod, fc } = getParams();
+
+  // ── Main panel (Desmos-style combined) ──────────────────
+  {
+    const W = cvMain.width, H = cvMain.height;
+    const ctx = cvMain.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    const yMin = -1.15, yMax = 1.15;
+    drawGrid(ctx, W, H, yMin, yMax);
+
+    // Input signal (faint red)
+    drawCurve(ctx, W, H, t => x(t, fc), '#c0392b55', 1.2, yMin, yMax);
+
+    // Envelope: only +m[n] (always positive — one multiplier)
+    fillBetween(ctx, W, H,
+      t => m(t, depth, fmod),
+      t => 0,
+      '#87550015', yMin, yMax
+    );
+    drawCurve(ctx, W, H, t => m(t, depth, fmod), '#875500cc', 1.5, yMin, yMax);
+
+    // Output y[n] (bold purple)
+    drawCurve(ctx, W, H, t => x(t, fc) * m(t, depth, fmod), '#6a35c9', 2.2, yMin, yMax);
+  }
+
+  // ── LFO panel ────────────────────────────────────────────
+  {
+    const W = cvLFO.width, H = cvLFO.height;
+    const ctx = cvLFO.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    const yMin = -0.1, yMax = 1.15;
+    drawGrid(ctx, W, H, yMin, yMax);
+
+    // Fill under LFO
+    ctx.beginPath();
+    for (let px = 0; px <= W; px++) {
+      const t = (px / W) * T_WIN;
+      const cy = mapY(m(t, depth, fmod), H, yMin, yMax);
+      if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+    }
+    const zeroY = mapY(0, H, yMin, yMax);
+    ctx.lineTo(W, zeroY); ctx.lineTo(0, zeroY); ctx.closePath();
+    ctx.fillStyle = '#87550018';
+    ctx.fill();
+
+    drawCurve(ctx, W, H, t => m(t, depth, fmod), '#875500', 2, yMin, yMax);
+  }
+
+  // ── Output panel ─────────────────────────────────────────
+  {
+    const W = cvOut.width, H = cvOut.height;
+    const ctx = cvOut.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    const yMin = -1.15, yMax = 1.15;
+    drawGrid(ctx, W, H, yMin, yMax);
+
+    // Envelope reference: only +m[n]
+    drawCurve(ctx, W, H, t => m(t, depth, fmod), '#87550044', 1, yMin, yMax);
+
+    drawCurve(ctx, W, H, t => x(t, fc) * m(t, depth, fmod), '#6a35c9', 2, yMin, yMax);
+  }
+}
+
+function resizeCanvases() {
+  [cvMain, cvLFO, cvOut].forEach(cv => {
+    cv.width  = cv.offsetWidth  || 600;
+    cv.height = cv.offsetHeight || 80;
+  });
+  redraw();
+}
+
+function updateLabels() {
+  dvEl.textContent  = parseFloat(slDepth.value).toFixed(2);
+  fvEl.textContent  = parseFloat(slFmod.value).toFixed(1);
+  fcvEl.textContent = parseFloat(slFc.value).toFixed(1);
+}
+
+[slDepth, slFmod, slFc].forEach(s => s.addEventListener('input', () => {
+  updateLabels();
+  redraw();
+}));
+
+const ro = new ResizeObserver(() => resizeCanvases());
+[cvMain, cvLFO, cvOut].forEach(cv => ro.observe(cv));
+resizeCanvases();
+updateLabels();
+</script>
+</body>
+</html>
