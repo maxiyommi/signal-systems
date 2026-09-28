@@ -5,14 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>M1: Generacion — Señales y Sistemas UNTREF</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap">
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css">
-
   <script>
     MathJax = {
       tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
@@ -20,608 +12,13 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script"></script>
-
-  <style>
-    :root {
-      --bg: #f6f4ee;
-      --bg-raised: #efece3;
-      --fg: #1a1a22;
-      --dim: #6b7180;
-      --faint: #b0b3bc;
-      --rule: rgba(26, 26, 34, 0.08);
-      --panel: rgba(26, 26, 34, 0.025);
-
-      --accent: #2563eb;
-      --accent-strong: #1d4ed8;
-      --warn: #b45309;
-      --good: #047857;
-      --bad: #b91c1c;
-
-      --f-sans: "Geist", system-ui, sans-serif;
-      --f-mono: "Geist Mono", ui-monospace, monospace;
-    }
-
-    .reveal .backgrounds { background: var(--bg); }
-
-    .reveal {
-      font-family: var(--f-sans);
-      font-weight: 400;
-      font-size: 34px;
-      color: var(--fg);
-      letter-spacing: -0.01em;
-    }
-
-    .reveal .slides { text-align: left; }
-
-    .reveal .slides section {
-      padding: 3rem 4.2rem;
-      box-sizing: border-box;
-      max-width: 1920px;
-      overflow: hidden;
-    }
-
-    .reveal h1, .reveal h2, .reveal h3 {
-      font-family: var(--f-sans);
-      color: var(--fg);
-      text-transform: none;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      line-height: 1.05;
-      margin: 0 0 1rem 0;
-    }
-
-    .reveal h2 {
-      font-size: 2.2em;
-      font-weight: 600;
-    }
-
-    .reveal h3 {
-      font-size: 0.78em;
-      font-weight: 600;
-      color: var(--dim);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.5em;
-    }
-
-    .reveal p {
-      line-height: 1.4;
-      margin: 0 0 0.75rem 0;
-      color: var(--fg);
-      max-width: 42ch;
-    }
-
-    .reveal p.wide { max-width: none; }
-
-    .reveal strong { color: var(--fg); font-weight: 600; }
-    .reveal em { font-style: normal; color: var(--accent); }
-
-    .reveal a {
-      color: var(--accent);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(96, 165, 250, 0.3);
-    }
-    .reveal a:hover {
-      color: var(--fg);
-      border-bottom-color: var(--accent);
-    }
-
-    .reveal ul, .reveal ol {
-      list-style: none;
-      padding-left: 0;
-      margin: 0 0 1rem 0;
-    }
-    .reveal ul li, .reveal ol li {
-      padding-left: 1.5em;
-      margin-bottom: 0.65em;
-      line-height: 1.4;
-      position: relative;
-      overflow-wrap: anywhere;
-    }
-    .reveal ul li::before {
-      content: "—";
-      position: absolute;
-      left: 0;
-      color: var(--faint);
-    }
-    .reveal ol { counter-reset: n; }
-    .reveal ol li { counter-increment: n; }
-    .reveal ol li::before {
-      content: counter(n) ".";
-      position: absolute;
-      left: 0;
-      color: var(--faint);
-      font-family: var(--f-mono);
-      font-size: 0.85em;
-    }
-
-    .reveal code {
-      font-family: var(--f-mono);
-      font-size: 0.85em;
-      background: rgba(26, 26, 34, 0.06);
-      color: var(--fg);
-      padding: 0.08em 0.4em;
-      border-radius: 3px;
-    }
-    .reveal pre {
-      width: 100%;
-      box-shadow: none;
-      border-radius: 6px;
-      margin: 0 0 1rem 0;
-    }
-    .reveal pre code {
-      font-size: 0.58em;
-      line-height: 1.5;
-      padding: 0.9em 1.1em;
-      background: #ebe8df;
-      color: #1a1a22;
-      border-radius: 6px;
-      border: 1px solid var(--rule);
-      display: block;
-      max-height: 22em;
-      overflow: hidden;
-    }
-
-    .panel pre { margin: 0.5em 0 0.6em 0; }
-    .panel pre code {
-      font-size: 0.5em;
-      line-height: 1.45;
-      padding: 0.75em 0.9em;
-      max-height: none;
-    }
-    /* dentro de un panel, los parrafos usan ancho completo */
-    .panel p, .panel ul li { max-width: none; }
-
-    /* variante compacta del panel: code mas chico, padding reducido */
-    .panel.compact { padding: 0.85em 1.05em; }
-    .panel.compact pre { margin: 0.35em 0 0.4em 0; }
-    .panel.compact pre code { font-size: 0.44em; padding: 0.65em 0.8em; }
-    .panel.compact h3 { font-size: 0.7em; margin-bottom: 0.3em; }
-    .panel.compact ul li { font-size: 0.78em; margin-bottom: 0.4em; }
-    .panel.compact p { font-size: 0.78em; line-height: 1.35; margin-bottom: 0.35em; }
-
-    .grid-2 > *, .grid-3 > *, .split > * { min-width: 0; }
-
-    .kicker {
-      font-family: var(--f-mono);
-      font-size: 0.5em;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--dim);
-      margin-bottom: 1.5rem;
-    }
-    .kicker .m { color: var(--accent); }
-
-    .lead {
-      font-size: 1.02em;
-      color: var(--dim);
-      max-width: 46ch;
-      line-height: 1.4;
-      margin-bottom: 1.5rem !important;
-    }
-
-    .pill {
-      display: inline-block;
-      font-family: var(--f-mono);
-      font-size: 0.6em;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      padding: 0.15em 0.55em;
-      border-radius: 3px;
-      vertical-align: middle;
-      margin-right: 0.35em;
-      background: rgba(26, 26, 34, 0.06);
-      color: var(--fg);
-    }
-    .pill-m1 { background: rgba(37, 99, 235, 0.15); color: var(--accent); }
-    .pill-m0, .pill-m2, .pill-m3 {
-      background: rgba(26, 26, 34, 0.05);
-      color: var(--dim);
-    }
-
-    .tag {
-      font-family: var(--f-mono);
-      font-size: 0.72em;
-      color: var(--dim);
-      background: rgba(26, 26, 34, 0.04);
-      padding: 0.08em 0.5em;
-      border-radius: 3px;
-    }
-
-    .grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5em; align-items: start; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5em; }
-
-    .split {
-      display: grid;
-      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-      gap: 3em;
-      align-items: start;
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--rule);
-      border-radius: 6px;
-      padding: 1.15em 1.35em;
-    }
-    .panel h3 { margin-top: 0; margin-bottom: 0.4em; }
-    .panel p { margin-bottom: 0.5em; }
-    .panel p:last-child { margin-bottom: 0; }
-
-    .bad { color: var(--bad); }
-    .good { color: var(--good); }
-    .warn { color: var(--warn); }
-
-    .reveal table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78em;
-      font-variant-numeric: tabular-nums;
-      margin: 0 0 1rem 0;
-    }
-    .reveal table th {
-      font-family: var(--f-mono);
-      font-size: 0.82em;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--dim);
-      text-align: left;
-      padding: 0.7em 0.9em;
-      border-bottom: 1px solid var(--rule);
-    }
-    .reveal table td {
-      padding: 0.85em 0.9em;
-      border-bottom: 1px solid var(--rule);
-      color: var(--fg);
-    }
-    .reveal table tr.hl td { color: var(--fg); }
-    .reveal table tr.hl td:first-child {
-      box-shadow: inset 3px 0 0 var(--accent);
-    }
-
-    .reveal blockquote {
-      border: none;
-      background: none;
-      box-shadow: none;
-      border-left: 2px solid var(--rule);
-      padding: 0.3em 0 0.3em 1.2em;
-      margin: 1.5rem 0;
-      font-style: normal;
-      font-size: 0.92em;
-      color: var(--dim);
-      line-height: 1.45;
-    }
-    .reveal blockquote strong { color: var(--fg); }
-
-    .url-box {
-      display: block;
-      font-family: var(--f-mono);
-      font-size: 0.82em;
-      padding: 0.7em 1em;
-      background: rgba(37, 99, 235, 0.05);
-      border: 1px solid rgba(37, 99, 235, 0.2);
-      border-radius: 6px;
-      margin: 0.6em 0 1em 0;
-      word-break: break-all;
-      color: var(--accent);
-      text-decoration: none;
-    }
-    a.url-box { border-bottom: none; }
-    .url-box a { color: var(--accent); border: none; }
-
-    .reveal ul.checklist { list-style: none; padding: 0; margin: 0; }
-    .reveal ul.checklist li {
-      padding-left: 2em;
-      margin-bottom: 0.75em;
-      line-height: 1.4;
-      position: relative;
-      color: var(--fg);
-    }
-    .reveal ul.checklist li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.35em;
-      width: 1.1em;
-      height: 1.1em;
-      border: 1.5px solid var(--faint);
-      border-radius: 3px;
-      background: transparent;
-    }
-
-    .small { font-size: 0.78em; color: var(--dim); line-height: 1.4; }
-    .muted { color: var(--dim); }
-
-    .figure {
-      background: var(--panel);
-      border: 1px solid var(--rule);
-      border-radius: 6px;
-      padding: 0.6em;
-    }
-    .figure img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 4px;
-    }
-    .figure figcaption {
-      font-family: var(--f-mono);
-      font-size: 0.5em;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--dim);
-      margin-top: 0.5em;
-      padding: 0 0.4em;
-    }
-
-    /* hero figure: ocupa el ancho completo, imagen grande arriba */
-    .figure-hero {
-      background: var(--panel);
-      border: 1px solid var(--rule);
-      border-radius: 6px;
-      padding: 0.6em;
-      margin: 0 0 1.2rem 0;
-    }
-    .figure-hero img {
-      width: 100%;
-      max-height: 560px;
-      object-fit: contain;
-      display: block;
-      border-radius: 4px;
-    }
-    .figure-hero figcaption {
-      font-family: var(--f-mono);
-      font-size: 0.5em;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--dim);
-      margin-top: 0.5em;
-      padding: 0 0.4em;
-    }
-
-    /* enunciado: parrafo ancho debajo de la figura */
-    .enunciado {
-      font-size: 0.78em;
-      line-height: 1.45;
-      max-width: 92ch;
-      color: var(--fg);
-    }
-    .enunciado p { max-width: 92ch; margin-bottom: 0.6em; }
-    .enunciado .src {
-      font-family: var(--f-mono);
-      font-size: 0.78em;
-      color: var(--dim);
-      letter-spacing: 0.05em;
-      margin-top: 0.4em;
-    }
-
-    /* ---- Function cards (slide 4) ---- */
-    .fn-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1.4em;
-      margin-top: 1.5rem;
-    }
-    .fn-card {
-      position: relative;
-      background: var(--bg);
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      padding: 1.6em 1.5em 1.4em 1.5em;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      overflow: hidden;
-    }
-    .fn-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: var(--accent);
-      opacity: 0.85;
-    }
-    .fn-card .num {
-      font-family: var(--f-mono);
-      font-size: 0.65em;
-      letter-spacing: 0.2em;
-      color: var(--dim);
-      margin-bottom: 0.6em;
-    }
-    .fn-card .num .slash {
-      color: var(--faint);
-      margin: 0 0.3em;
-    }
-    .fn-card .name {
-      font-family: var(--f-mono);
-      font-size: 0.78em;
-      font-weight: 500;
-      color: var(--fg);
-      background: rgba(37, 99, 235, 0.08);
-      border-radius: 4px;
-      padding: 0.25em 0.5em;
-      display: inline-block;
-      margin-bottom: 0.4em;
-      width: fit-content;
-    }
-    .fn-card .title {
-      font-size: 1.15em;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-      color: var(--fg);
-      margin: 0.2em 0 1em 0;
-    }
-    .fn-card .io {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5em;
-      margin-bottom: 1em;
-      flex: 1;
-    }
-    .fn-card .io-row {
-      display: grid;
-      grid-template-columns: 2.6em 1fr;
-      align-items: start;
-      gap: 0.5em;
-    }
-    .fn-card .io-tag {
-      font-family: var(--f-mono);
-      font-size: 0.5em;
-      font-weight: 500;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--dim);
-      padding-top: 0.3em;
-    }
-    .fn-card .io-tag.tag-in { color: var(--warn); }
-    .fn-card .io-tag.tag-out { color: var(--good); }
-    .fn-card .io-body {
-      font-family: var(--f-mono);
-      font-size: 0.62em;
-      line-height: 1.55;
-      color: var(--fg);
-    }
-    .fn-card .io-body .param {
-      color: var(--dim);
-    }
-    .fn-card .io-body .param strong {
-      color: var(--fg);
-      font-weight: 500;
-    }
-    .fn-card .footer {
-      border-top: 1px solid var(--rule);
-      padding-top: 0.7em;
-      margin-top: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25em;
-    }
-    .fn-card .footer .label {
-      font-family: var(--f-mono);
-      font-size: 0.48em;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--dim);
-    }
-    .fn-card .footer .value {
-      font-size: 0.78em;
-      color: var(--fg);
-      line-height: 1.35;
-    }
-
-    .formula {
-      background: #ebe8df;
-      border: 1px solid var(--rule);
-      border-radius: 6px;
-      padding: 0.9em 1.1em;
-      margin: 0.8em 0 1em 0;
-      font-size: 0.95em;
-      overflow-x: auto;
-    }
-
-    .reveal .controls { color: var(--dim); }
-    .reveal .controls.layout-edges .navigate-left { left: 2em; }
-    .reveal .controls.layout-edges .navigate-right { right: 2em; }
-    .reveal .controls.layout-edges .navigate-up { top: 1.4em; }
-    .reveal .controls.layout-edges .navigate-down { bottom: 1.4em; }
-    .reveal .controls button { opacity: 0.35; transition: opacity 0.2s; }
-    .reveal .controls button:hover { opacity: 1; }
-
-    .reveal .slide-number {
-      font-family: var(--f-mono);
-      font-size: 0.55em;
-      letter-spacing: 0.15em;
-      background: transparent;
-      color: var(--faint);
-      right: 2rem;
-      bottom: 1.2rem;
-    }
-    .reveal .progress { color: var(--accent); height: 1px; }
-
-    .reveal section.titulo { padding: 0; height: 100%; }
-
-    .titulo-wrap {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      padding: 4rem 5rem;
-    }
-
-    .titulo-top, .titulo-bottom {
-      display: flex;
-      justify-content: space-between;
-      font-family: var(--f-mono);
-      font-size: 0.5em;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--faint);
-    }
-
-    .titulo-main { align-self: center; }
-
-    .titulo-main h1 {
-      font-size: 5.5em;
-      font-weight: 600;
-      letter-spacing: -0.04em;
-      line-height: 0.95;
-      margin: 0 0 0.3em 0;
-      color: var(--fg);
-    }
-
-    .titulo-main .bajada {
-      font-size: 1em;
-      font-weight: 400;
-      color: var(--dim);
-      max-width: 32ch;
-      margin: 0;
-    }
-
-    .titulo-main .tag-ms {
-      font-family: var(--f-mono);
-      font-size: 0.55em;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.8em;
-    }
-
-    .titulo-bottom .meta { display: flex; gap: 3.5em; }
-    .titulo-bottom .meta .kv {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25em;
-    }
-    .titulo-bottom .meta .k { font-size: 0.9em; color: var(--faint); }
-    .titulo-bottom .meta .v {
-      font-family: var(--f-sans);
-      font-size: 1.2em;
-      font-weight: 500;
-      color: var(--fg);
-      text-transform: none;
-      letter-spacing: 0.01em;
-    }
-
-    .reveal .slides section.present > *:not(aside) {
-      animation: fadeIn 0.4s ease-out backwards;
-    }
-    .reveal .slides section.present > *:nth-child(1) { animation-delay: 0s; }
-    .reveal .slides section.present > *:nth-child(2) { animation-delay: 0.05s; }
-    .reveal .slides section.present > *:nth-child(3) { animation-delay: 0.1s; }
-    .reveal .slides section.present > *:nth-child(4) { animation-delay: 0.15s; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css">
+  <link rel="stylesheet" href="../_comun/deck.css">
 </head>
 
-<body>
+<body data-deck="m1">
 <div class="reveal">
 <div class="slides">
 
@@ -630,7 +27,7 @@
   <div class="titulo-wrap">
     <div class="titulo-top">
       <div>Señales y Sistemas · UNTREF</div>
-      <div>Clase 08 / 15</div>
+      <div>Sesión 2 · 2C 2026</div>
     </div>
 
     <div class="titulo-main">
@@ -641,19 +38,22 @@
 
     <div class="titulo-bottom">
       <div class="meta">
-        <div class="kv"><span class="k">Hoy</span><span class="v">19 may 2026</span></div>
-        <div class="kv"><span class="k">Entrega M1</span><span class="v">hoy · v0.1.0</span></div>
+        <div class="kv"><span class="k">Hoy</span><span class="v">14 oct 2026</span></div>
+        <div class="kv"><span class="k">Entrega M1</span><span class="v">28 oct 2026 · v0.1.0</span></div>
       </div>
       <div>TP · RIR-API</div>
     </div>
   </div>
 
   <aside class="notes">
-    - Hoy entregan y presentan en vivo.
-    - Esta presentacion sirve para repasar conceptos antes de la ronda de presentaciones de cada grupo.
+    - Hoy se presenta la consigna de M1. La entrega es el 28/10, en clase, con el tag v0.1.0.
+    - Material de apoyo: clases 6 y 4.
     - Timing: 1 min.
   </aside>
 </section>
+
+<section data-auto="ruta"></section>
+
 
 <!-- SLIDE 2 — Donde estamos -->
 <section>
@@ -666,34 +66,34 @@
       <tr>
         <th style="width: 24%;">Milestone</th>
         <th>Entregan</th>
-        <th style="width: 22%;">Fecha</th>
-        <th style="width: 10%;">Peso</th>
+        <th style="width: 22%;">Entrega</th>
+        <th style="width: 14%;">Nota</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><span class="pill pill-m0">M0</span> El Plano</td>
         <td>Arquitectura · repo · issues</td>
-        <td><span class="muted">28 Abr</span></td>
-        <td><span class="muted">5%</span></td>
+        <td><span class="muted">7 Oct</span></td>
+        <td><span class="muted">seguimiento</span></td>
       </tr>
       <tr class="hl">
         <td><span class="pill pill-m1">M1</span> Generación</td>
         <td>Ruido rosa · sine sweep · playrec</td>
-        <td><strong>19 May</strong> — hoy</td>
-        <td>15%</td>
+        <td><strong>28 Oct</strong></td>
+        <td class="muted">seguimiento</td>
       </tr>
       <tr>
         <td><span class="pill pill-m2">M2</span> Procesamiento</td>
         <td>Filtros · deconvolución · RI</td>
-        <td>16 Jun</td>
-        <td>20%</td>
+        <td>4 Nov</td>
+        <td class="muted">seguimiento</td>
       </tr>
       <tr>
         <td><span class="pill pill-m3">M3</span> Producto</td>
-        <td>API REST · informe · demo</td>
-        <td>7 Jul</td>
-        <td>30%</td>
+        <td>API REST · validación · demo + oral</td>
+        <td>18 Nov</td>
+        <td><strong>con nota</strong></td>
       </tr>
     </tbody>
   </table>
@@ -1020,7 +420,7 @@ sd.wait()</code></pre>
 <section>
   <div class="kicker"><span class="m">M1</span> · validación automática</div>
   <h2>Los cuatro tests.</h2>
-  <p class="lead">El contrato de M1 son los tests. Si pasan, hay nota base. Si no pasan, no.</p>
+  <p class="lead">El contrato de M1 son los tests. Si pasan, el milestone está en regla. Si no pasan, no.</p>
 
   <div class="grid-2" style="gap: 1.5em;">
     <div class="panel">
@@ -1066,7 +466,7 @@ sd.wait()</code></pre>
 <!-- SLIDE 10 — Validacion manual -->
 <section>
   <div class="kicker"><span class="m">M1</span> · validación manual</div>
-  <h2>Lo que va en el informe.</h2>
+  <h2>Evidencia en el repositorio.</h2>
 
   <div class="grid-2">
     <div>
@@ -1084,7 +484,7 @@ sd.wait()</code></pre>
 
     <div class="panel">
       <h3>Referencia visual</h3>
-      <p class="small">Comparen contra los plots que mostramos hoy (slides 5, 6, 7). Las pendientes y SNRs deberían estar en el mismo orden.</p>
+      <p class="small">Comparen contra los gráficos de las funciones 01 y 02 de esta presentación. Las pendientes y SNRs deberían estar en el mismo orden.</p>
       <ul class="small">
         <li>Ruido rosa: -3 ± 1 dB/oct</li>
         <li>Sweep: barrido monótono visible</li>
@@ -1097,7 +497,7 @@ sd.wait()</code></pre>
   </div>
 
   <aside class="notes">
-    - El informe se evalua aparte. Que las graficas tengan ejes, leyenda y unidades.
+    - Que las graficas tengan ejes, leyenda y unidades. Van al README / docs del repo (no hay informe escrito).
     - "Si la pendiente les da -8 dB/oct, no es ruido rosa, es ruido cafe".
     - Timing: 2 min.
   </aside>
@@ -1214,9 +614,9 @@ uv run pytest -v -k "ruido_rosa"     # correr tests que matchean el nombre</code
 
 <!-- SLIDE 13 — Checklist -->
 <section>
-  <div class="kicker"><span class="m">M1</span> · ¿qué tildar hoy?</div>
-  <h2>Checklist de aprobación.</h2>
-  <p class="lead">Lo que tiene que estar antes de presentar.</p>
+  <div class="kicker"><span class="m">M1</span> · ¿qué tildar para el 28/10?</div>
+  <h2>Checklist de entrega.</h2>
+  <p class="lead">Lo que tiene que estar en el tag <code>v0.1.0</code> el 28/10.</p>
 
   <div class="grid-2" style="margin-top: 1rem; gap: 3em;">
     <ul class="checklist">
@@ -1284,52 +684,34 @@ uv run pytest -v -k "ruido_rosa"     # correr tests que matchean el nombre</code
 
     <div class="titulo-main">
       <div class="tag-ms">Próximos pasos</div>
-      <h1>Ahora, presentan.</h1>
+      <h1>A generar.</h1>
       <p class="bajada" style="font-size: 1.3em; color: var(--accent); margin-top: 0.6em; max-width: none;">
-        Próxima clase: frecuencia y filtros · puerta de entrada a M2.
+        Entrega: 28/10 en clase, con el tag v0.1.0 en main. Próxima sesión: presentación de M2.
       </p>
     </div>
 
     <div class="titulo-bottom">
       <div class="meta">
         <div class="kv"><span class="k">Tag</span><span class="v">v0.1.0 · main</span></div>
-        <div class="kv"><span class="k">Próxima entrega</span><span class="v">16 jun · M2</span></div>
+        <div class="kv"><span class="k">Entrega M1</span><span class="v">28 oct 2026</span></div>
       </div>
-      <div style="font-size: 2em; font-weight: 500; color: var(--fg); text-transform: none; letter-spacing: -0.02em;">a presentar.</div>
+      <div style="font-size: 2em; font-weight: 500; color: var(--fg); text-transform: none; letter-spacing: -0.02em;">a trabajar.</div>
     </div>
   </div>
 
   <aside class="notes">
-    - Pasar a la ronda de presentaciones por grupo + code review cruzado.
-    - Anunciar el orden de presentaciones.
+    - Dudas por Slack durante las dos semanas. El 28/10 cada grupo muestra su avance (~15 min).
   </aside>
 </section>
 
+<section data-auto="siguiente"></section>
+
 </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
-
-<script>
-  Reveal.initialize({
-    hash: true,
-    slideNumber: 'c/t',
-    transition: 'fade',
-    transitionSpeed: 'fast',
-    controls: true,
-    controlsLayout: 'edges',
-    controlsBackArrows: 'visible',
-    progress: true,
-    center: false,
-    width: 1920,
-    height: 1080,
-    margin: 0.03,
-    minScale: 0.2,
-    maxScale: 2.0,
-    plugins: [RevealHighlight, RevealNotes],
-  });
+<script type="module">
+  import { initDeck } from '../_comun/deck.js';
+  initDeck();
 </script>
 </body>
 </html>
