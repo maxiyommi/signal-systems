@@ -59,7 +59,7 @@ Lo que hay que entender antes de implementar, con los gráficos de la implementa
 ### Función 01 · de la RI al decaimiento
 
 <figure class="figura-tp" markdown>
-![Respuesta al impulso cruda superpuesta con su envolvente de Hilbert](../img/m3/rir_vs_envolvente.png)
+[![Respuesta al impulso cruda superpuesta con su envolvente de Hilbert](../img/m3/rir_vs_envolvente.png)](../img/m3/rir_vs_envolvente.png)
 <figcaption markdown="span">RI **sintética** (T60 conocido) · `suavizar_signal` con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
 </figure>
 
@@ -76,12 +76,12 @@ $$
 ### Dos miradas a la misma curva
 
 <figure class="figura-tp" markdown>
-![Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito](../img/m3/schroeder_completo.png)
+[![Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito](../img/m3/schroeder_completo.png)](../img/m3/schroeder_completo.png)
 <figcaption markdown="span">Completa · sin truncar — el decaimiento entra en el ruido (codo) y, al agotarse la energía, la curva cae a −∞. Por eso NO se integra hasta el final.</figcaption>
 </figure>
 
 <figure class="figura-tp" markdown>
-![Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal](../img/m3/schroeder_regresiones.png)
+[![Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal](../img/m3/schroeder_regresiones.png)](../img/m3/schroeder_regresiones.png)
 <figcaption markdown="span">Acotada · sobre el tramo lineal se ajusta la recta (mínimos cuadrados) y se extrapola a −60 dB → T20, T30, EDT.</figcaption>
 </figure>
 
@@ -109,7 +109,7 @@ Early Decay Time | 0 a −10 dB | Percepción *subjetiva* de la reverberación. 
 ### El eje frecuencial · filtrado por bandas
 
 <figure class="figura-tp" markdown>
-![Respuesta en frecuencia del banco de filtros de octava IEC 61260](../img/m3/filtros_octava.png)
+[![Respuesta en frecuencia del banco de filtros de octava IEC 61260](../img/m3/filtros_octava.png)](../img/m3/filtros_octava.png)
 <figcaption markdown="span">Banco de filtros Butterworth de octava · IEC 61260 · cada banda cruza a −3 dB en sus flancos</figcaption>
 </figure>
 
@@ -122,7 +122,7 @@ Los parámetros acústicos se calculan **banda por banda**: primero se filtra la
 ### El output final
 
 <figure class="figura-tp" markdown>
-![EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte](../img/m3/parametros_por_banda.png)
+[![EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte](../img/m3/parametros_por_banda.png)](../img/m3/parametros_por_banda.png)
 <figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** de la Usina del Arte (sala sinfónica, Buenos Aires) · fuente: OpenAIR (York)</figcaption>
 </figure>
 
@@ -135,7 +135,7 @@ Acá se ve una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *
 ### Validación · lo que separa un TP de un producto
 
 <figure class="figura-tp" markdown>
-![Comparacion de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)
+[![Comparacion de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
 <figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real) · RIR-API vs. software de referencia — el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
 </figure>
 
@@ -693,17 +693,17 @@ Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. No debugg
 Son el corazón de la validación en el README y de la presentación oral — las mismas que vieron en esta página.
 
 <figure class="figura-tp" markdown>
-![Curva de decaimiento de Schroeder](../img/m3/schroeder_regresiones.png)
+[![Curva de decaimiento de Schroeder](../img/m3/schroeder_regresiones.png)](../img/m3/schroeder_regresiones.png)
 <figcaption markdown="span">1 · Curva de decaimiento (Schroeder + regresiones)</figcaption>
 </figure>
 
 <figure class="figura-tp" markdown>
-![Comparacion de filtros de octava](../img/m3/filtros_octava.png)
+[![Comparacion de filtros de octava](../img/m3/filtros_octava.png)](../img/m3/filtros_octava.png)
 <figcaption markdown="span">2 · Comparación de filtros por banda</figcaption>
 </figure>
 
 <figure class="figura-tp" markdown>
-![Validacion contra software comercial](../img/m3/validacion_comercial.png)
+[![Validacion contra software comercial](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
 <figcaption markdown="span">3 · Validación vs. software comercial</figcaption>
 </figure>
 

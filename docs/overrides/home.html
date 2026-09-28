@@ -312,8 +312,10 @@
     @media (max-width: 480px) {
       .nav-grid { grid-template-columns: 1fr; }
       .start-here__steps { flex-direction: column; align-items: stretch; }
-      .class-item { gap: 0.6rem; padding: 0.7rem 0.8rem; }
+      .class-item { gap: 0.6rem; padding: 0.7rem 0.8rem; flex-wrap: wrap; }
       .class-item__date { display: block; margin-left: 0; }
+      .class-item__info { flex-basis: calc(100% - 2.4rem); }
+      .class-item__entrega, .class-item__status { margin-left: 2.2rem; }
     }
   </style>
 

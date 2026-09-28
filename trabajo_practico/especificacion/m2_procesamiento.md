@@ -56,7 +56,7 @@ Detalles que no son obvios:
 ### Función 02 · sintetizar RI
 
 <figure class="figura-tp" markdown>
-![IR sintetica generada con ruido filtrado por banda multiplicado por envolvente exponencial](../img/m2/ri_sintetica.png)
+[![IR sintetica generada con ruido filtrado por banda multiplicado por envolvente exponencial](../img/m2/ri_sintetica.png)](../img/m2/ri_sintetica.png)
 <figcaption markdown="span">IR sintética 4 s · 9 bandas de octava · T60 1.2 s (graves) → 0.4 s (agudos) · ruido filtrado × envolvente exponencial</figcaption>
 </figure>
 
@@ -73,7 +73,7 @@ $n_i(t)$ es *ruido blanco filtrado por banda* con Butterworth pasa-banda IEC 612
 ### Función 03 · deconvolución
 
 <figure class="figura-tp" markdown>
-![Tres paneles: control sweep × inverso = delta; grabación en el recinto; RI recuperada por deconvolución](../img/m2/deconvolucion_ri.png)
+[![Tres paneles: control sweep × inverso = delta; grabación en el recinto; RI recuperada por deconvolución](../img/m2/deconvolucion_ri.png)](../img/m2/deconvolucion_ri.png)
 <figcaption markdown="span">(a) control · sweep $\ast$ inverso $\approx \delta(t)$ · (b) grabación del recinto · (c) `obtener_ri_desde_sweep(grabacion, filtro_inverso)`</figcaption>
 </figure>
 
@@ -156,7 +156,7 @@ Inversa de Fourier → recuperás $h(t)$. La propiedad de Farina del sweep es ex
 ### Función 04 · filtro_octava(signal, fc, fs, orden)
 
 <figure class="figura-tp" markdown>
-![Respuesta en frecuencia de filtros Butterworth de octava IEC 61260](../img/m2/filtros_octava.png)
+[![Respuesta en frecuencia de filtros Butterworth de octava IEC 61260](../img/m2/filtros_octava.png)](../img/m2/filtros_octava.png)
 <figcaption markdown="span">Butterworth pasa-banda · IEC 61260 · 9 bandas mostradas (31,5 Hz–8 kHz · la décima a 16 kHz cae fuera de Nyquist a 44,1 kHz)</figcaption>
 </figure>
 
@@ -230,7 +230,7 @@ Detalles que no aparecen en la fórmula pero rompen la implementación:
 ### Puente conceptual
 
 <figure class="figura-tp" markdown>
-![Curva de Schroeder con crossover de Lundeby y regresiones T20/T30 superpuestas](../img/m2/schroeder_lundeby.png)
+[![Curva de Schroeder con crossover de Lundeby y regresiones T20/T30 superpuestas](../img/m2/schroeder_lundeby.png)](../img/m2/schroeder_lundeby.png)
 <figcaption markdown="span">Integral de Schroeder · crossover Lundeby · regresiones para T20 y T30 sobre IR sintética T60 = 1.0 s</figcaption>
 </figure>
 
@@ -245,7 +245,7 @@ Esta no es una función que pide M2 — pero es el **siguiente paso natural**: u
 ### Adelanto a M3
 
 <figure class="figura-tp" markdown>
-![T30 T20 T10 EDT por banda con paleta del frontend](../img/m2/t30_por_banda.png)
+[![T30 T20 T10 EDT por banda con paleta del frontend](../img/m2/t30_por_banda.png)](../img/m2/t30_por_banda.png)
 <figcaption markdown="span">Parámetros acústicos por banda · paleta del frontend de cátedra (T30 rojo, T20 lima, T10 cyan, EDT púrpura) · objetivo T60 escalonado</figcaption>
 </figure>
 

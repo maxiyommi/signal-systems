@@ -14,8 +14,10 @@ export function montar(escena) {
   window.addEventListener('pagehide', () => cambiar(false));
 
   if (embebido) {
-    const informar = () => window.parent.postMessage({ tipo: 'interactivo-altura', altura: document.documentElement.scrollHeight }, '*');
-    new ResizeObserver(informar).observe(document.body);
+    // Altura del contenido (no del documento: scrollHeight nunca baja del alto actual del iframe).
+    const main = document.querySelector('main');
+    const informar = () => window.parent.postMessage({ tipo: 'interactivo-altura', altura: Math.ceil(main.getBoundingClientRect().height) }, '*');
+    new ResizeObserver(informar).observe(main);
     informar();
   }
 }

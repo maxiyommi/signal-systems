@@ -38,7 +38,7 @@ Lo que hay que entender antes de implementar, con los gráficos de la implementa
 ### Función 01 · ruido rosa
 
 <figure class="figura-tp" markdown>
-![PSD del ruido rosa generado con la API de referencia](../img/m1/psd_ruido_rosa.png)
+[![PSD del ruido rosa generado con la API de referencia](../img/m1/psd_ruido_rosa.png)](../img/m1/psd_ruido_rosa.png)
 <figcaption markdown="span">PSD medida (Welch) vs. teórico -3 dB/oct · pendiente medida sobre la API de cátedra: -3.02 dB/oct</figcaption>
 </figure>
 
@@ -51,7 +51,7 @@ Algoritmo recomendado **Voss-McCartney**: suma de múltiples generadores de ruid
 ### Función 02 · sine sweep logarítmico
 
 <figure class="figura-tp" markdown>
-![Waveform y espectrograma del sine sweep 20 Hz a 20 kHz](../img/m1/sweep_waveform_spec.png)
+[![Waveform y espectrograma del sine sweep 20 Hz a 20 kHz](../img/m1/sweep_waveform_spec.png)](../img/m1/sweep_waveform_spec.png)
 <figcaption markdown="span">Sweep 20 Hz → 20 kHz, 5 s · línea blanca discontinua = f(t) teórica</figcaption>
 </figure>
 
@@ -64,7 +64,7 @@ La frecuencia instantánea es $f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}$, que crece
 ### Función 02 · filtro inverso
 
 <figure class="figura-tp" markdown>
-![Convolucion del sweep con su filtro inverso resultando en un pico tipo impulso](../img/m1/convolucion_impulso.png)
+[![Convolucion del sweep con su filtro inverso resultando en un pico tipo impulso](../img/m1/convolucion_impulso.png)](../img/m1/convolucion_impulso.png)
 <figcaption markdown="span">Convolución sweep × inverso · pico vs. piso ≈ 98 dB de relación (test pide ≥ 40 dB)</figcaption>
 </figure>
 

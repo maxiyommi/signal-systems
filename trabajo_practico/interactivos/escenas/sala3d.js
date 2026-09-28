@@ -2,6 +2,7 @@
 // Si no hay WebGL (o three.js no carga) cae a una planta 2D con los mismos controles.
 import { fuentesImagen, llegadas, caminoPlegado, sabineT60, riSintetica, edcDb, tiempoReverberacion } from '../_comun/acustica.js';
 import { obtenerContexto, cargarBuffer, crearCanal } from '../_comun/audio.js';
+import { FUENTE, prepararCanvas, dibujarLeyenda } from '../_comun/grafico.js';
 
 const C = 343;
 const T_MAX = 0.2;                 // s simulados: con orden 16 el ecograma está completo hasta ~190 ms en esta sala
@@ -124,7 +125,7 @@ export function crearSala3D(seccion, {
         <output></output>
         <span class="t60" aria-live="polite"></span>
       </div>
-      <canvas class="ecograma" width="1100" height="230" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
+      <canvas class="ecograma" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
       <p class="small aviso" hidden></p>`;
     ui = {
       escena: raiz.querySelector('.sala-escena'),
@@ -150,22 +151,27 @@ export function crearSala3D(seccion, {
 
   // ---------- Ecograma ----------
 
+  let eco = null;                                         // contexto del ecograma (se rehace si cambia el ancho)
   function dibujarEcograma() {
-    const cv = ui.eco, g = cv.getContext('2d');
-    const W = cv.width, H = cv.height, m = { l: 84, r: 40, t: 40, b: 56 }, dbMin = -60;
+    const ancho = ui.eco.parentElement.clientWidth;
+    if (!eco || Math.abs(eco.anchoPadre - ancho) > 2) eco = { ...prepararCanvas(ui.eco, { aspecto: 0.3, min: 170, max: 240 }), anchoPadre: ancho };
+    const { g, W, H, compacto } = eco;
+    const tt = compacto ? 11 : 13;
+    g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
+    const leyenda = estado.modo === 'real' ? [[COL.violeta, 'RI medida (envolvente)']] : [[COL.senal, 'Sonido directo'], [COL.violeta, 'Reflexiones']];
+    const altoLeyenda = dibujarLeyenda(g, leyenda, { x0: compacto ? 36 : 52, y0: tt + 6, maxAncho: W - 60, tamano: tt });
+    const m = { l: compacto ? 36 : 52, r: 12, t: altoLeyenda + 12, b: compacto ? 36 : 42 }, dbMin = -60;
     const xt = (t) => m.l + (t / T_MAX) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.min(0, d) / dbMin) * (H - m.t - m.b);
-    g.clearRect(0, 0, W, H);
-    g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
-    g.font = '500 18px Archivo, sans-serif'; g.fillStyle = COL.tenue; g.strokeStyle = COL.grilla; g.lineWidth = 1;
-    for (let t = 0; t <= T_MAX + 1e-9; t += 0.05) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${Math.round(t * 1000)}`, xt(t) - 12, H - m.b + 22); }
-    for (const d of [0, -30, -60]) g.fillText(`${d}`, m.l - 36, yd(d) + 6);
-    g.font = '600 18px Archivo, sans-serif';
-    g.fillText('Tiempo desde la emisión (ms)', m.l + (W - m.l - m.r) / 2 - 120, H - 6);
-    g.save(); g.translate(18, H - m.b + 4); g.rotate(-Math.PI / 2); g.fillText('dB rel. directo', 0, 0); g.restore();
-    const leyenda = estado.modo === 'real' ? [[COL.violeta, 'RI medida (envolvente)']] : [[COL.senal, 'Sonido directo'], [COL.violeta, 'Reflexiones']];
-    leyenda.forEach(([c, t], i) => { const x = m.l + 10 + i * 220; g.fillStyle = c; g.fillRect(x, 12, 26, 12); g.fillStyle = COL.tinta; g.fillText(t, x + 34, 24); });
-    g.font = '500 18px Archivo, sans-serif';
+    g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COL.tenue; g.strokeStyle = COL.grilla; g.lineWidth = 1;
+    g.textAlign = 'center';
+    for (let t = 0; t <= T_MAX + 1e-9; t += 0.05) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${Math.round(t * 1000)}`, xt(t), H - m.b + tt + 4); }
+    g.textAlign = 'right';
+    for (const d of [0, -30, -60]) g.fillText(`${d}`, m.l - 5, yd(d) + 4);
+    g.textAlign = 'center'; g.font = `600 ${tt}px ${FUENTE}`;
+    g.fillText('Tiempo desde la emisión (ms)', m.l + (W - m.l - m.r) / 2, H - 4);
+    g.save(); g.translate(tt, m.t + (H - m.t - m.b) / 2); g.rotate(-Math.PI / 2); g.fillText('dB rel. directo', 0, 0); g.restore();
+    g.textAlign = 'left';
     if (estado.modo === 'real' && riRealInfo) {
       const { datos, fs } = riRealInfo;
       let pico = 1e-9; for (let i = 0; i < Math.min(datos.length, fs * T_MAX); i++) pico = Math.max(pico, Math.abs(datos[i]));
@@ -184,7 +190,7 @@ export function crearSala3D(seccion, {
       const d = 20 * Math.log10(l.amp);
       if (d < dbMin) continue;
       g.strokeStyle = l.orden === 0 ? COL.senal : COL.violeta;
-      g.lineWidth = l.orden === 0 ? 4 : 2;
+      g.lineWidth = l.orden === 0 ? (compacto ? 2.5 : 3.5) : (compacto ? 1 : 1.5);
       g.beginPath(); g.moveTo(xt(l.t), H - m.b); g.lineTo(xt(l.t), yd(d)); g.stroke();
     }
   }
@@ -318,39 +324,46 @@ export function crearSala3D(seccion, {
 
   function crearVista2D() {
     const cv = document.createElement('canvas');
-    cv.width = 1100; cv.height = 470;
     ui.escena.appendChild(cv);
     const g = cv.getContext('2d');
-    const esc = Math.min((cv.width - 80) / sala.lx, (cv.height - 60) / sala.ly);
-    const ox = (cv.width - sala.lx * esc) / 2, oy = (cv.height - sala.ly * esc) / 2;
+    let W = 0, H = 0, esc = 1, ox = 0, oy = 0;
+    function medir() {                                     // canvas al tamaño visible (px CSS × densidad)
+      const w = ui.escena.clientWidth, h = ui.escena.clientHeight;
+      if (!w || !h || (w === W && h === H)) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = w; H = h; cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      esc = Math.min((W - 40) / sala.lx, (H - 30) / sala.ly);
+      ox = (W - sala.lx * esc) / 2; oy = (H - sala.ly * esc) / 2;
+    }
     const P = ([x, y]) => [ox + x * esc, oy + y * esc];
     let arrastrando = false;
-    const aSala = (ev) => { const r = cv.getBoundingClientRect(); return [((ev.clientX - r.left) * cv.width / r.width - ox) / esc, ((ev.clientY - r.top) * cv.height / r.height - oy) / esc]; };
-    cv.addEventListener('pointerdown', (ev) => { const [x, y] = aSala(ev); if (Math.hypot(x - estado.mic[0], y - estado.mic[1]) < 0.6) { arrastrando = true; cv.setPointerCapture(ev.pointerId); } });
+    const aSala = (ev) => { const r = cv.getBoundingClientRect(); return [(ev.clientX - r.left - ox) / esc, (ev.clientY - r.top - oy) / esc]; };
+    cv.addEventListener('pointerdown', (ev) => { const [x, y] = aSala(ev); if (Math.hypot(x - estado.mic[0], y - estado.mic[1]) < 0.8) { arrastrando = true; cv.setPointerCapture(ev.pointerId); } });
     cv.addEventListener('pointermove', (ev) => { if (!arrastrando) return; const [x, y] = aSala(ev); estado.mic[0] = Math.min(sala.lx - 0.3, Math.max(0.3, x)); estado.mic[1] = Math.min(sala.ly - 0.3, Math.max(0.3, y)); });
     cv.addEventListener('pointerup', () => { if (arrastrando) { arrastrando = false; recalcular(); } });
 
     function actualizar() {
-      const s = estado.ts * C;
-      g.clearRect(0, 0, cv.width, cv.height);
-      g.fillStyle = COL.papel; g.fillRect(0, 0, cv.width, cv.height);
+      medir();
+      const s = estado.ts * C, tt = W < 520 ? 11 : 13;
+      g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
       if (estado.modo !== 'libre') { g.strokeStyle = COL.tinta; g.lineWidth = 2; g.strokeRect(ox, oy, sala.lx * esc, sala.ly * esc); }
       for (const r of rayos) {
         const p = puntoEn(r, s);
         g.strokeStyle = r.orden === 0 ? COL.senal : COL.violeta;
         g.globalAlpha = Math.max(0.15, Math.min(1, r.amp * 1.4));
-        g.lineWidth = 1.5;
+        g.lineWidth = 1.2;
         g.beginPath(); g.moveTo(...P(r.camino[0]));
         if (p) { for (const tr of r.tramos) { if (tr === p.tramo) break; g.lineTo(...P(tr.hasta)); } g.lineTo(...P(p.punto)); }
         else r.camino.slice(1).forEach((q) => g.lineTo(...P(q)));
         g.stroke();
       }
       g.globalAlpha = 1;
-      g.fillStyle = COL.violeta; g.beginPath(); g.arc(...P(fuente), 9, 0, 2 * Math.PI); g.fill();
-      g.fillStyle = COL.tinta; g.beginPath(); g.arc(...P(estado.mic), 9, 0, 2 * Math.PI); g.fill();
-      g.font = '600 18px Archivo, sans-serif';
-      g.fillText('Micrófono (arrastrable)', P(estado.mic)[0] + 14, P(estado.mic)[1] + 6);
-      g.fillStyle = COL.violeta; g.fillText('Fuente', P(fuente)[0] + 14, P(fuente)[1] + 6);
+      g.fillStyle = COL.violeta; g.beginPath(); g.arc(...P(fuente), 6, 0, 2 * Math.PI); g.fill();
+      g.fillStyle = COL.tinta; g.beginPath(); g.arc(...P(estado.mic), 6, 0, 2 * Math.PI); g.fill();
+      g.font = `600 ${tt}px ${FUENTE}`;
+      g.fillText('Micrófono (arrastrable)', P(estado.mic)[0] + 10, P(estado.mic)[1] + 4);
+      g.fillStyle = COL.violeta; g.fillText('Fuente', P(fuente)[0] + 10, P(fuente)[1] + 4);
     }
     return { reconstruir() {}, actualizar, tipo: '2d' };
   }
