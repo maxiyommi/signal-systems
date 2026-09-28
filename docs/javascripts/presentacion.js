@@ -17,6 +17,12 @@
       boton.innerHTML = activo ? '✕ <span>Salir de presentación</span>' : '⛶ <span>Modo presentación</span>';
       boton.title = activo ? 'Salir del modo presentación (Esc)' : 'Modo presentación (P)';
       guardar(activo);
+      // Los interactivos abiertos en pantalla completa heredan el modo (para mostrar la pizarra).
+      document.querySelectorAll('.interactivo__barra a[href*="interactivos/"]').forEach((a) => {
+        const url = new URL(a.getAttribute('href'), location.href);
+        if (activo) url.searchParams.set('presentacion', '1'); else url.searchParams.delete('presentacion');
+        a.href = url.href;
+      });
     };
     aplicar(leer());
     boton.addEventListener('click', () => aplicar(!document.body.classList.contains(CLAVE)));
