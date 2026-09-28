@@ -14,16 +14,18 @@
 - `contenido.py` — Notebook Marimo: NumPy, senales discretas, SciPy intro
 - `ejercicios.py` — Notebook Marimo: ejercicios practicos
 - `soluciones.py` — Notebook Marimo: soluciones (post-clase)
-- `extra/tp_presentacion.html` — Presentacion del TP RIR-API (consigna, milestones, evaluacion). Abrir primero.
-- `extra/m0_presentacion.html` — Presentacion dedicada de ~30 min sobre M0: El Plano. Se abre despues de la presentacion del TP.
+- [Presentacion del TP](../../trabajo_practico/presentaciones/tp/index.html) — consigna, milestones, evaluacion. Abrir primero.
+- [Presentacion de M0](../../trabajo_practico/presentaciones/m0/index.html) — ~30 min sobre M0: El Plano. Se abre despues de la presentacion del TP.
+
+> El material del TP (presentaciones) vive en `trabajo_practico/presentaciones/` y se publica en el sitio del curso.
 
 ### Flujo sugerido de la clase
 
 1. Contenido de la clase 4 (NumPy, senales, SciPy) con `contenido.py` y `ejercicios.py`.
-2. Abrir `extra/tp_presentacion.html` para presentar el TP en general.
+2. Abrir la presentacion del TP (`trabajo_practico/presentaciones/tp/`) para presentar el TP en general.
    - El slide 2 linkea a la [presentacion conceptual en Google Slides](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit) — recorrerla en vivo.
    - Volver a la presentacion HTML para el detalle de milestones, evaluacion y politicas.
-3. Abrir `extra/m0_presentacion.html` para aterrizar M0 (la entrega de la proxima clase).
+3. Abrir la presentacion de M0 (`trabajo_practico/presentaciones/m0/`) para aterrizar M0 (la entrega de la proxima clase).
 
 ## Tarea
 - Generar y graficar al menos 5 tipos de senales distintas usando NumPy
