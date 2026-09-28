@@ -309,26 +309,3 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 body.modo-presentacion .boton-presentacion { opacity: 0.45; transition: opacity 0.2s; }
 body.modo-presentacion .boton-presentacion:hover, body.modo-presentacion .boton-presentacion:focus-visible { opacity: 1; }
 
-/* ── Pizarra (modo presentación): dibujar con el lápiz sobre la página ── */
-.pizarra-lienzo { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 9; pointer-events: none; }
-.pizarra-lienzo[hidden], .pizarra-barra[hidden] { display: none; }
-body.pizarra-activa .pizarra-lienzo { pointer-events: auto; touch-action: none; cursor: crosshair; }
-.pizarra-barra {
-  position: fixed; right: 1rem; bottom: 4rem; z-index: 10;
-  display: flex; flex-direction: column; gap: 0.35rem; padding: 0.35rem; border-radius: 2rem;
-  background: var(--md-default-bg-color); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-}
-.pizarra-boton {
-  width: 2.6rem; height: 2.6rem; border: 0; border-radius: 50%; cursor: pointer;
-  display: grid; place-items: center; font-size: 1.1rem; line-height: 1;
-  color: var(--md-default-fg-color); background: transparent;
-}
-.pizarra-boton i { display: block; width: 1.1rem; height: 1.1rem; border-radius: 50%; }
-.pizarra-boton i.pizarra-resaltador { width: 1.3rem; height: 0.7rem; border-radius: 0.2rem; background: rgba(255, 214, 0, 0.75); }
-.pizarra-boton[aria-pressed="true"] { background: var(--md-accent-fg-color--transparent, rgba(0, 0, 0, 0.1)); outline: 2px solid var(--md-accent-fg-color); }
-.pizarra-boton:focus-visible { outline: 3px solid var(--md-primary-fg-color); }
-.pizarra-boton--principal { color: var(--md-primary-bg-color); background: var(--md-accent-fg-color); }
-.pizarra-boton--principal[aria-pressed="true"] { outline-offset: 2px; }
-/* Con el lápiz apagado solo se ve el botón principal */
-body:not(.pizarra-activa) .pizarra-boton:not(.pizarra-boton--principal) { display: none; }
-body:not(.pizarra-activa) .pizarra-barra { background: transparent; box-shadow: none; }

@@ -30,7 +30,11 @@
     return herramienta === 'resaltador' ? 18 : 1.5 + 3.5 * p;
   }
 
-  window.PizarraLogica = { borrarCerca, aPantalla, aDocumento, anchoTrazo };
+  // En el sitio aparece con el modo presentación; en un interactivo abierto solo (data-pizarra="siempre"),
+  // siempre. Embebido en un iframe nunca: ahí se dibuja con la pizarra de la página que lo contiene.
+  const debeMostrar = ({ siempre, enIframe, enPresentacion }) => !enIframe && (siempre || enPresentacion);
+
+  window.PizarraLogica = { borrarCerca, aPantalla, aDocumento, anchoTrazo, debeMostrar };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
 
@@ -43,6 +47,10 @@
   const RESALTADOR = 'rgba(255, 214, 0, 0.38)';
 
   function iniciar() {
+    const siempre = document.documentElement.dataset.pizarra === 'siempre';
+    let enIframe = true;
+    try { enIframe = window.self !== window.top; } catch { /* iframe de otro origen */ }
+    if (enIframe) return;
     const lienzo = document.createElement('canvas');
     lienzo.className = 'pizarra-lienzo';
     lienzo.setAttribute('aria-hidden', 'true');
@@ -60,7 +68,7 @@
 
     const colorTinta = () => getComputedStyle(document.body).color;
     const vista = () => {
-      const cont = document.querySelector('.md-content__inner') || document.body;
+      const cont = document.querySelector('.md-content__inner') || document.querySelector('main') || document.body;
       return { scrollY: window.scrollY, origenX: cont.getBoundingClientRect().left };
     };
 
@@ -189,9 +197,11 @@
     window.addEventListener('resize', () => { if (!lienzo.hidden) ajustar(); });
 
     // Se muestra solo en modo presentación (lo maneja presentacion.js con una clase en el body).
-    new MutationObserver(() => mostrar(document.body.classList.contains('modo-presentacion')))
-      .observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    mostrar(document.body.classList.contains('modo-presentacion'));
+    const actualizar = () => mostrar(debeMostrar({
+      siempre, enIframe, enPresentacion: document.body.classList.contains('modo-presentacion'),
+    }));
+    new MutationObserver(actualizar).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    actualizar();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
