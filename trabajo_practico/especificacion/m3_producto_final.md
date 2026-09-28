@@ -1,8 +1,8 @@
 # M3 · Producto final
 
 !!! info "Fechas y evaluación"
-    - **Presentación de la consigna:** miercoles 28 de octubre 2026
-    - **Fecha de entrega:** miercoles 18 de noviembre 2026, junto con la presentación oral (Demo Day)
+    - **Presentación de la consigna:** miércoles 28 de octubre 2026
+    - **Fecha de entrega:** miércoles 18 de noviembre 2026, junto con la presentación oral (Demo Day)
     - **Tag de versión:** `v1.0.0`
     - **Evaluación:** **con nota** — Nota del TP = 60% M3 + 40% presentación oral (ver [rubrica](../rubrica.md))
 

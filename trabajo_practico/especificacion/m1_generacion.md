@@ -1,8 +1,8 @@
 # M1 · Generación de señales
 
 !!! info "Fechas y evaluación"
-    - **Presentación de la consigna:** miercoles 14 de octubre 2026
-    - **Fecha de entrega:** miercoles 28 de octubre 2026 (en clase)
+    - **Presentación de la consigna:** miércoles 14 de octubre 2026
+    - **Fecha de entrega:** miércoles 28 de octubre 2026 (en clase)
     - **Tag de versión:** `v0.1.0`
     - **Evaluación:** seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
 

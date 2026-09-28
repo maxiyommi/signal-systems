@@ -38,10 +38,16 @@ test('el grosor crece con la presión del lápiz y el resaltador es más ancho',
   assert.ok(P.anchoTrazo('lapiz', 0) > 0);   // mouse sin presión: igual se ve
 });
 
-test('visibilidad: en el sitio solo en modo presentación; en un interactivo suelto, siempre; embebido, nunca', () => {
-  assert.equal(P.debeMostrar({ siempre: false, enIframe: false, enPresentacion: false }), false);
-  assert.equal(P.debeMostrar({ siempre: false, enIframe: false, enPresentacion: true }), true);
-  assert.equal(P.debeMostrar({ siempre: true, enIframe: false, enPresentacion: false }), true);
-  // Embebido en la página, dibuja la pizarra de la página: el iframe no muestra la suya.
-  assert.equal(P.debeMostrar({ siempre: true, enIframe: true, enPresentacion: true }), false);
+test('visibilidad: siempre, salvo embebido en un iframe (ahí dibuja la pizarra de la página)', () => {
+  assert.equal(P.debeMostrar({ enIframe: false }), true);
+  assert.equal(P.debeMostrar({ enIframe: true }), false);
+});
+
+test('transformación del lienzo: dibuja en coordenadas de pantalla aunque el lienzo esté corrido', () => {
+  // Lienzo que empieza en (10, 20) de la pantalla, con densidad 2: un punto de pantalla (10, 20)
+  // tiene que caer en el píxel (0, 0) del lienzo.
+  const [a, b, c, d, e, f] = P.transformacion({ left: 10, top: 20 }, 2);
+  assert.deepEqual([a, b, c, d], [2, 0, 0, 2]);
+  assert.equal(a * 10 + e, 0);
+  assert.equal(d * 20 + f, 0);
 });
