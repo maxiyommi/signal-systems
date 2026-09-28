@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import vm from 'node:vm';
+
+const ctx = { window: {} };
+vm.runInNewContext(readFileSync(new URL('../presentacion.js', import.meta.url), 'utf8'), ctx);
+const P = ctx.window.PresentacionLogica;
+
+test('una pestaña abierta desde el modo presentación trae ?presentacion en la URL', () => {
+  assert.equal(P.presentacionEnUrl('?presentacion=1'), true);
+  assert.equal(P.presentacionEnUrl('?sin3d&presentacion=1'), true);
+  assert.equal(P.presentacionEnUrl(''), false);
+  assert.equal(P.presentacionEnUrl('?sin3d'), false);
+});

@@ -23,3 +23,22 @@ test('altoCanvas: proporcional al ancho y acotado', () => {
   assert.equal(altoCanvas(300, { aspecto: 0.5, min: 200, max: 360 }), 200);
   assert.equal(altoCanvas(600, { aspecto: 0.5, min: 200, max: 360 }), 300);
 });
+
+test('paleta: lee los colores de los gráficos de las variables CSS (sin espacios)', async () => {
+  const { paleta } = await import('../grafico.js');
+  const vars = { '--g-fondo': ' #161b22', '--g-tinta': '#c9d1d9 ', '--g-violeta': '#818cf8', '--g-senal': '#4f8ff7',
+    '--g-grilla': '#30363d', '--g-eje': '#8b949e', '--g-tenue': '#6e7681', '--g-mal': '#f85149' };
+  const p = paleta({ getPropertyValue: (n) => vars[n] ?? '' });
+  assert.equal(p.papel, '#161b22');
+  assert.equal(p.tinta, '#c9d1d9');
+  assert.equal(p.violeta, '#818cf8');
+  assert.equal(p.senal, '#4f8ff7');
+  assert.equal(p.mal, '#f85149');
+});
+
+test('paleta: si falta una variable usa el valor oscuro de la landing', async () => {
+  const { paleta } = await import('../grafico.js');
+  const p = paleta({ getPropertyValue: () => '' });
+  assert.equal(p.papel, '#161b22');
+  assert.equal(p.tinta, '#c9d1d9');
+});

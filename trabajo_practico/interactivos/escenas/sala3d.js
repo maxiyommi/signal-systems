@@ -2,13 +2,13 @@
 // Si no hay WebGL (o three.js no carga) cae a una planta 2D con los mismos controles.
 import { fuentesImagen, llegadas, caminoPlegado, sabineT60, riSintetica, edcDb, tiempoReverberacion } from '../_comun/acustica.js';
 import { obtenerContexto, cargarBuffer, crearCanal } from '../_comun/audio.js';
-import { FUENTE, prepararCanvas, dibujarLeyenda } from '../_comun/grafico.js';
+import { FUENTE, prepararCanvas, dibujarLeyenda, paleta } from '../_comun/grafico.js';
 
 const C = 343;
 const T_MAX = 0.2;                 // s simulados: con orden 16 el ecograma está completo hasta ~190 ms en esta sala
 const LENTITUD = 0.05;             // 1 s real = 50 ms simulados
 const MAX_RAYOS = 60;
-const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE', eje: '#5A5872' };
+const COL = paleta();             // colores del tema (oscuro como la landing, o claro si se eligió en el sitio)
 
 const QUIETO = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

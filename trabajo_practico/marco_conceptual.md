@@ -4,12 +4,9 @@ Esta página explica el **fenómeno** que mide el TP y cómo se lo **modela con 
 
 ## 1. Escuchemos y observemos
 
-Tenemos dos grabaciones de la misma fuente: una **anecoica** (sin sala) y otra en una **sala polideportiva**. Escuchalas sin mirar y después revelá la forma de onda; cambiá a *Dominio espectral* para comparar los espectros.
+Tenemos dos grabaciones de la misma fuente: una **anecoica** (sin sala) y otra en una **sala polideportiva**. Abrí el interactivo, escuchalas sin mirar y después revelá la forma de onda; cambiá a *Dominio espectral* para comparar los espectros.
 
-<div class="interactivo">
-<div class="interactivo__barra"><strong>Interactivo · Escucha a ciegas</strong><a href="../interactivos/escucha.html" target="_blank" rel="noopener">Abrir en pantalla completa</a></div>
-<iframe src="../interactivos/escucha.html" loading="lazy" title="Escucha a ciegas" allow="autoplay"></iframe>
-</div>
+<a class="interactivo-enlace" href="../interactivos/escucha.html" target="_blank" rel="noopener"><span class="interactivo-enlace__tag">Interactivo</span><span class="interactivo-enlace__info"><strong>Escucha a ciegas</strong><span>La misma fuente con y sin sala: escuchala y comparala en tiempo y en frecuencia. Se abre en una pestaña nueva.</span></span><span class="interactivo-enlace__flecha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
 
 !!! question "Para pensar"
     - ¿Qué diferencias escuchamos? ¿Y qué diferencias vemos en la forma de onda? ¿Cuánto dura cada señal?
@@ -21,10 +18,7 @@ Tenemos dos grabaciones de la misma fuente: una **anecoica** (sin sala) y otra e
 
 La **reverberación** es la suma del **sonido directo** y de las **reflexiones** en las superficies del recinto. El micrófono no recibe un único evento, sino una sucesión de llegadas: primero el sonido directo, después las primeras reflexiones y finalmente una cola densa que decae. Esa sucesión en el tiempo es el **ecograma**.
 
-<div class="interactivo">
-<div class="interactivo__barra"><strong>Interactivo · La sala: directo, reflexiones y cola</strong><a href="../interactivos/sala.html" target="_blank" rel="noopener">Abrir en pantalla completa</a></div>
-<iframe src="../interactivos/sala.html" loading="lazy" title="La sala: directo, reflexiones y cola" allow="autoplay"></iframe>
-</div>
+<a class="interactivo-enlace" href="../interactivos/sala.html" target="_blank" rel="noopener"><span class="interactivo-enlace__tag">Interactivo</span><span class="interactivo-enlace__info"><strong>La sala: directo, reflexiones y cola</strong><span>Simulación 3D por fuentes imagen: ecograma y auralización. Se abre en una pestaña nueva.</span></span><span class="interactivo-enlace__flecha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
 
 Arrastrá el micrófono, cambiá la absorción de las paredes y escuchá el resultado. Compará la sala simulada con la **sala real** (respuesta medida) y con el **aire libre** (sin paredes: solo sonido directo).
 
@@ -75,10 +69,7 @@ Por **asociatividad y conmutatividad de la convolución**, toda la cadena equiva
 
     **ISO 3382 (T30):** *es el tiempo, expresado en segundos, que se requiere para que el nivel de presión sonora disminuya en 60 dB, calculado sobre una recta obtenida de la regresión lineal por mínimos cuadrados de una curva de caída medida desde un nivel 5 dB por debajo del nivel inicial, hasta un nivel de 30 dB inferior a dicho nivel* (UNE-EN ISO 3382, 2010).
 
-<div class="interactivo">
-<div class="interactivo__barra"><strong>Interactivo · De la curva de caída a T30</strong><a href="../interactivos/caida.html" target="_blank" rel="noopener">Abrir en pantalla completa</a></div>
-<iframe src="../interactivos/caida.html" loading="lazy" title="De la curva de caída a T30"></iframe>
-</div>
+<a class="interactivo-enlace" href="../interactivos/caida.html" target="_blank" rel="noopener"><span class="interactivo-enlace__tag">Interactivo</span><span class="interactivo-enlace__info"><strong>De la curva de caída a T30</strong><span>Integral de Schroeder, regresión y el efecto del ruido de fondo. Se abre en una pestaña nueva.</span></span><span class="interactivo-enlace__flecha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
 
 Subí el ruido de fondo: si el piso de ruido no queda al menos 10 dB por debajo del punto de −35 dB de la curva, la integral de Schroeder se "levanta" y **T30 deja de ser válido**. En M3 lo controlan recortando la RI antes de integrar; el método de Lundeby, que estima ese punto de corte automáticamente, es opcional.
 

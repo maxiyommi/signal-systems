@@ -57,11 +57,10 @@ not_in_nav: |
 
 extra_css:
   - stylesheets/extra.css
-  - stylesheets/pizarra.css
+  - stylesheets/presentacion.css
 
 extra_javascript:
   - javascripts/mathjax.js
-  - javascripts/interactivos.js
   - javascripts/presentacion.js
   - javascripts/pizarra.js
   - javascripts/agenda.js

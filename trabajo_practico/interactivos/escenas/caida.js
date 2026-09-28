@@ -1,9 +1,9 @@
 // Curva de caída interactiva: nivel instantáneo, integral de Schroeder, tramo −5…−35 dB,
 // recta de regresión y piso de ruido ajustable (muestra cuándo T30 deja de ser válido).
 import { riConRuido, evaluarT30, regresionLineal } from '../_comun/acustica.js';
-import { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho } from '../_comun/grafico.js';
+import { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho, paleta } from '../_comun/grafico.js';
 
-const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE', eje: '#5A5872', mal: '#B3261E' };
+const COL = paleta();           // colores del tema (oscuro como la landing, o claro si se eligió en el sitio)
 
 export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {}) {
   const raiz = seccion.querySelector('.curva');

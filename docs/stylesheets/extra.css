@@ -241,10 +241,24 @@ html {
 .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual strong,
 .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual::before { color: var(--md-accent-fg-color); }
 
-/* === Interactivos embebidos (trabajo_practico/interactivos/*.html) === */
-.md-typeset .interactivo { margin: 1rem 0 1.4rem 0; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 6px; overflow: hidden; }
-.md-typeset .interactivo__barra { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.4rem 0.8rem; font-size: 0.7rem; background: var(--md-default-bg-color--light, rgba(0, 0, 0, 0.03)); }
-.md-typeset .interactivo iframe { display: block; width: 100%; height: 520px; border: 0; background: #EEF3F7; }
+/* === Interactivos (trabajo_practico/interactivos/*.html): tarjeta que los abre en una pestaña nueva,
+       con el mismo diseño que las tarjetas de milestones de la landing === */
+.md-typeset a.interactivo-enlace {
+  display: flex; align-items: center; gap: 1rem; margin: 1rem 0 1.4rem; padding: 0.85rem 1.2rem;
+  background: var(--md-default-bg-color); border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.6rem; color: var(--md-default-fg-color); text-decoration: none; transition: all 0.2s ease;
+}
+.md-typeset a.interactivo-enlace:hover { border-color: var(--md-primary-fg-color); transform: translateX(4px); color: var(--md-default-fg-color); }
+.interactivo-enlace__tag {
+  flex-shrink: 0; padding: 0.2rem 0.6rem; border-radius: 0.3rem; font-size: 0.72rem; font-weight: 700;
+  background: #2d2256; color: #a78bfa;
+}
+[data-md-color-scheme="default"] .interactivo-enlace__tag { background: #ede9fe; color: #7c3aed; }
+.interactivo-enlace__info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.interactivo-enlace__info strong { font-size: 0.88rem; font-weight: 600; }
+.interactivo-enlace__info span { font-size: 0.78rem; color: var(--md-default-fg-color--light); }
+.interactivo-enlace__flecha { flex-shrink: 0; color: var(--md-default-fg-color--lighter); }
+@media (prefers-reduced-motion: reduce) { .md-typeset a.interactivo-enlace { transition: none; } .md-typeset a.interactivo-enlace:hover { transform: none; } }
 
 /* === Componentes de milestones === */
 .md-typeset .figura-tp { text-align: center; }
@@ -274,22 +288,12 @@ html {
   .md-typeset .md-typeset__table table:not([class]):has(th:nth-child(3)) { min-width: 34rem; }
   .md-typeset table:not([class]) td, .md-typeset table:not([class]) th { padding: 0.5em 0.7em; }
   .md-typeset table:not([class]) code { word-break: normal; white-space: nowrap; }
-  .md-typeset .interactivo__barra { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
 }
 .md-typeset .figura-tp a { display: block; }
 .md-typeset .figura-tp figcaption::after { content: " (tocá la figura para ampliarla)"; opacity: 0.6; }
 @media (min-width: 900px) { .md-typeset .figura-tp figcaption::after { content: none; } }
 
 /* === Modo presentación (docs/javascripts/presentacion.js): para proyectar desde un iPad o notebook === */
-.boton-presentacion {
-  position: fixed; right: 1rem; bottom: 1rem; z-index: 10;
-  display: flex; align-items: center; gap: 0.4rem;
-  padding: 0.55rem 0.9rem; border: 0; border-radius: 2rem; cursor: pointer;
-  font: 600 0.72rem var(--md-text-font-family, sans-serif);
-  color: var(--md-primary-bg-color); background: var(--md-accent-fg-color);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-}
-.boton-presentacion:focus-visible { outline: 3px solid var(--md-primary-fg-color); outline-offset: 2px; }
 body.modo-presentacion .md-header,
 body.modo-presentacion .md-tabs,
 body.modo-presentacion .md-sidebar,
@@ -305,9 +309,6 @@ body.modo-presentacion .md-typeset h2 { font-size: 1.6em; margin-top: 2.2em; }
 body.modo-presentacion .md-typeset .ruta-tp { font-size: 0.85em; }
 body.modo-presentacion .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa { font-size: 0.8em; }
 body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: auto; margin: 0 auto; }
-@media (max-width: 600px) { .boton-presentacion span { display: none; } }
-body.modo-presentacion .boton-presentacion { opacity: 0.45; transition: opacity 0.2s; }
-body.modo-presentacion .boton-presentacion:hover, body.modo-presentacion .boton-presentacion:focus-visible { opacity: 1; }
 
 
 /* ── Agenda de la sesión (modo presentación): contenido del día, visto en verde, pendiente en gris ── */
