@@ -1,4 +1,4 @@
-// Pizarra para el modo presentación: dibujar con el Apple Pencil (o el mouse) sobre la página.
+// Pizarra: dibujar con el Apple Pencil (o el mouse) sobre las páginas del TP y los interactivos.
 // Los trazos se guardan en coordenadas del documento, así acompañan al contenido al desplazar.
 // Con el dedo se desplaza la página; con el lápiz se dibuja. Al cambiar de página se borra todo.
 (function () {
@@ -30,11 +30,15 @@
     return herramienta === 'resaltador' ? 18 : 1.5 + 3.5 * p;
   }
 
-  // En el sitio aparece con el modo presentación; en un interactivo abierto solo (data-pizarra="siempre"),
-  // siempre. Embebido en un iframe nunca: ahí se dibuja con la pizarra de la página que lo contiene.
-  const debeMostrar = ({ siempre, enIframe, enPresentacion }) => !enIframe && (siempre || enPresentacion);
+  // Siempre visible, salvo embebida en un iframe: ahí se dibuja con la pizarra de la página que lo contiene.
+  const debeMostrar = ({ enIframe }) => !enIframe;
 
-  window.PizarraLogica = { borrarCerca, aPantalla, aDocumento, anchoTrazo, debeMostrar };
+  // Se dibuja en coordenadas de pantalla (las mismas del lápiz) y la transformación las lleva al lienzo
+  // según dónde está realmente en pantalla. Así no dependemos de innerWidth/innerHeight, que en Safari
+  // de iPad pueden no coincidir con el lienzo (barra del navegador, zoom).
+  const transformacion = (rect, dpr) => [dpr, 0, 0, dpr, -rect.left * dpr, -rect.top * dpr];
+
+  window.PizarraLogica = { borrarCerca, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
 
@@ -47,7 +51,6 @@
   const RESALTADOR = 'rgba(255, 214, 0, 0.38)';
 
   function iniciar() {
-    const siempre = document.documentElement.dataset.pizarra === 'siempre';
     let enIframe = true;
     try { enIframe = window.self !== window.top; } catch { /* iframe de otro origen */ }
     if (enIframe) return;
@@ -108,24 +111,29 @@
       bLapiz.setAttribute('aria-pressed', String(v));
     }
 
-    function mostrar(enPresentacion) {
-      barra.hidden = !enPresentacion;
-      lienzo.hidden = !enPresentacion;
-      if (!enPresentacion) activar(false);
+    function mostrar(visible) {
+      barra.hidden = !visible;
+      lienzo.hidden = !visible;
+      if (!visible) activar(false);
       else ajustar();
     }
 
     // ── Dibujo ───────────────────────────────────────────────────────────────────────────────
-    // El tamaño en pantalla se fija en px igual a la zona visible. Con 100vh, Safari de iPad
-    // estira el lienzo cuando se ve la barra del navegador y la tinta queda corrida del lápiz.
+    // El lienzo ocupa la zona visible por CSS; acá se mide cuánto ocupa de verdad y se ajusta la
+    // resolución a eso, con la transformación que lleva coordenadas de pantalla al lienzo.
+    let rect = { left: 0, top: 0, width: 0, height: 0 };
     function ajustar() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      lienzo.style.width = `${window.innerWidth}px`;
-      lienzo.style.height = `${window.innerHeight}px`;
-      lienzo.width = Math.round(window.innerWidth * dpr);
-      lienzo.height = Math.round(window.innerHeight * dpr);
-      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      rect = lienzo.getBoundingClientRect();
+      lienzo.width = Math.round(rect.width * dpr);
+      lienzo.height = Math.round(rect.height * dpr);
+      g.setTransform(...transformacion(rect, dpr));
       dibujarTodo();
+    }
+    // Si el lienzo cambió de lugar o de tamaño (zoom, barra de Safari, rotación), se vuelve a medir.
+    function verificarMedida() {
+      const r = lienzo.getBoundingClientRect();
+      if (r.left !== rect.left || r.top !== rect.top || r.width !== rect.width || r.height !== rect.height) ajustar();
     }
 
     function trazar(t, v, desde = 1) {
@@ -146,7 +154,7 @@
     }
 
     function dibujarTodo() {
-      g.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      g.clearRect(rect.left, rect.top, rect.width, rect.height);
       const v = vista();
       // El resaltador va debajo de los trazos de lápiz para no taparlos.
       for (const t of trazos) if (t.herramienta === 'resaltador') trazar(t, v);
@@ -157,13 +165,14 @@
     const redibujar = () => {
       if (pendiente || lienzo.hidden) return;
       pendiente = true;
-      requestAnimationFrame(() => { pendiente = false; dibujarTodo(); });
+      requestAnimationFrame(() => { pendiente = false; verificarMedida(); dibujarTodo(); });
     };
 
     // ── Entrada: el lápiz y el mouse dibujan; el dedo desplaza la página ─────────────────────
     lienzo.addEventListener('pointerdown', (e) => {
       if (!activo) return;
       e.preventDefault();
+      verificarMedida();
       try { lienzo.setPointerCapture(e.pointerId); } catch { /* puntero ya liberado */ }
       if (e.pointerType === 'touch') { dedoY = e.clientY; return; }
       const v = vista();
@@ -203,11 +212,7 @@
     window.visualViewport?.addEventListener('resize', reajustar);   // aparece o se oculta la barra de Safari
 
     // Se muestra solo en modo presentación (lo maneja presentacion.js con una clase en el body).
-    const actualizar = () => mostrar(debeMostrar({
-      siempre, enIframe, enPresentacion: document.body.classList.contains('modo-presentacion'),
-    }));
-    new MutationObserver(actualizar).observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    actualizar();
+    mostrar(debeMostrar({ enIframe }));
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();

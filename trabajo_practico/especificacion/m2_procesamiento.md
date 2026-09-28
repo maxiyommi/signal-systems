@@ -1,8 +1,8 @@
 # M2 · Procesamiento de la RI
 
 !!! info "Fechas y evaluación"
-    - **Presentación de la consigna:** miercoles 21 de octubre 2026
-    - **Fecha de entrega:** miercoles 4 de noviembre 2026 (sesión virtual)
+    - **Presentación de la consigna:** miércoles 21 de octubre 2026
+    - **Fecha de entrega:** miércoles 4 de noviembre 2026 (sesión virtual)
     - **Tag de versión:** `v0.2.0`
     - **Evaluación:** seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
 
