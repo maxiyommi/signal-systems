@@ -90,3 +90,40 @@ main.interactivo { max-width: 1200px; margin: 0 auto; padding: 1.6rem 1.2rem 2.4
   .escucha-fila .controles strong { min-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { .controles button { transition: none; } }
+
+/* Panel de parámetros: grupos de controles en tarjetas, como las de la landing */
+.parametros { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.8rem; margin: 1rem 0; }
+.parametros fieldset {
+  margin: 0; padding: 0.7rem 0.9rem 0.8rem; min-width: 0;
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 0.6rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
+}
+.parametros legend { padding: 0 0.3rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.02em; color: var(--texto-tenue); }
+.parametros label { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.2rem 0.6rem; font-size: 0.9rem; color: var(--texto); }
+.parametros label input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--primario); }
+.parametros label output { grid-row: 1; grid-column: 2; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--texto); }
+.parametros label.casilla { display: flex; gap: 0.5rem; }
+.parametros label.casilla input { accent-color: var(--primario); width: 1.05rem; height: 1.05rem; }
+.parametros [hidden] { display: none !important; }
+.parametros .small { margin: 0; }
+.segmentado { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.segmentado button, .boton-chico {
+  font: 500 0.85rem var(--f-texto); color: var(--texto); background: var(--fondo);
+  border: 1px solid var(--borde); border-radius: 2rem; padding: 0.35em 0.85em; cursor: pointer;
+}
+.segmentado button:hover, .boton-chico:hover { border-color: var(--primario); }
+.segmentado button[aria-pressed="true"] { background: var(--primario); border-color: var(--primario); color: #fff; }
+.boton-chico { align-self: flex-start; }
+
+/* Resultados */
+.resultados { margin-top: 0.4rem; }
+.resultados .resultado { margin: 0 0 0.3rem; font-size: 1.05rem; }
+.resultados .mal, .tabla-resultados .mal { color: var(--g-mal); }
+.tabla-resultados .ok { color: #3fb950; }
+[data-tema="claro"] .tabla-resultados .ok { color: #1a7f37; }
+.tabla-resultados { border-collapse: collapse; width: 100%; max-width: 40rem; margin-top: 0.6rem; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+.tabla-resultados th, .tabla-resultados td { padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--borde); text-align: left; }
+.tabla-resultados thead th { font-size: 0.75rem; color: var(--texto-tenue); font-weight: 700; }
+.tabla-resultados tr.actual { background: var(--superficie); }
+.tabla-resultados tr.actual th { color: var(--acento); }
+.curva canvas { cursor: default; }

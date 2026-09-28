@@ -67,3 +67,17 @@ test('llegadas: alpha=1 (aire libre) deja solo energía del directo', () => {
   const ll = llegadas(fuentesImagen(sala, [2, 3, 1.5], 2), [7, 5, 1.5], 1);
   assert.equal(ll.filter(l => l.amp > 0).length, 1);
 });
+
+test('Eyring: para α chico se parece a Sabine; para α grande da menos', async () => {
+  const { eyringT60, sabineT60 } = await import('../acustica.js');
+  const sala = { lx: 10, ly: 8, lz: 4 };
+  assert.ok(Math.abs(eyringT60(sala, 0.05) - sabineT60(sala, 0.05)) / sabineT60(sala, 0.05) < 0.03);
+  assert.ok(eyringT60(sala, 0.6) < 0.7 * sabineT60(sala, 0.6));
+});
+
+test('tiempo que conviene mostrar en el ecograma: crece con la sala, entre 0,2 y 0,5 s', async () => {
+  const { tiempoEcograma } = await import('../acustica.js');
+  assert.equal(tiempoEcograma({ lx: 10, ly: 8, lz: 4 }), 0.2);
+  assert.ok(tiempoEcograma({ lx: 25, ly: 20, lz: 10 }) > 0.3);
+  assert.equal(tiempoEcograma({ lx: 60, ly: 60, lz: 30 }), 0.5);
+});
