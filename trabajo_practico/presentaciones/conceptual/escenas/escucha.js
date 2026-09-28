@@ -45,6 +45,12 @@ function dibujarOnda(canvas, datos, fs, segundos, color, etiqueta) {
   g.clearRect(0, 0, W, H);
   g.strokeStyle = COLOR.grilla; g.lineWidth = 1;
   g.beginPath(); g.moveTo(0, mid); g.lineTo(W, mid); g.stroke();
+  g.font = '500 16px Archivo, sans-serif'; g.fillStyle = COLOR.eje;
+  for (let t = 0; t <= segundos; t += 5) {                 // marcas de tiempo compartidas
+    const x = (t / segundos) * (W - 1);
+    g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke();
+    g.fillText(`${t} s`, Math.min(x + 4, W - 34), H - 6);
+  }
   const columnas = Math.round(W * Math.min(1, datos.length / (fs * segundos)));
   const { min, max } = envolventeMinMax(datos, columnas);
   let pico = 1e-9;
@@ -63,14 +69,17 @@ function dibujarOnda(canvas, datos, fs, segundos, color, etiqueta) {
 
 function dibujarEspectros(canvas, curvas) {
   const g = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height, m = { l: 70, r: 20, t: 20, b: 50 };
+  const W = canvas.width, H = canvas.height, m = { l: 96, r: 20, t: 20, b: 70 };
   const fmin = 50, fmax = 20000, dbmin = -90;
   const xf = (f) => m.l + (Math.log10(f / fmin) / Math.log10(fmax / fmin)) * (W - m.l - m.r);
   const yd = (d) => m.t + (d / dbmin) * (H - m.t - m.b);
   g.clearRect(0, 0, W, H);
   g.font = '500 20px Archivo, sans-serif'; g.fillStyle = COLOR.eje; g.strokeStyle = COLOR.grilla; g.lineWidth = 1;
-  for (const f of [100, 1000, 10000]) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); g.fillText(f >= 1000 ? `${f / 1000} kHz` : `${f} Hz`, xf(f) - 24, H - 18); }
-  for (let d = 0; d >= dbmin; d -= 30) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d} dB`, 4, yd(d) + 6); }
+  for (const f of [100, 1000, 10000]) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); g.fillText(f >= 1000 ? `${f / 1000} kHz` : `${f} Hz`, xf(f) - 24, H - m.b + 26); }
+  for (let d = 0; d >= dbmin; d -= 30) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 44, yd(d) + 6); }
+  g.fillStyle = COLOR.eje; g.font = '600 20px Archivo, sans-serif';
+  g.fillText('Frecuencia (Hz, escala logarítmica)', m.l + (W - m.l - m.r) / 2 - 170, H - 8);
+  g.save(); g.translate(20, m.t + (H - m.t - m.b) / 2 + 90); g.rotate(-Math.PI / 2); g.fillText('Nivel relativo (dB)', 0, 0); g.restore();
   curvas.forEach(({ frecuencias, db, color, etiqueta }, i) => {
     g.strokeStyle = color; g.lineWidth = 3; g.beginPath();
     let empezado = false;
@@ -124,6 +133,10 @@ export function crearEscucha(seccion, { pares, modo }) {
     const etiqueta = (tipo) => `${Object.keys(asignacion[i]).find((k) => asignacion[i][k] === tipo)} · ${tipo === 'seco' ? 'sin sala (anecoica)' : 'en la sala'}`;
     cont.innerHTML = '';
     if (modo === 'temporal') {
+      const nota = document.createElement('p');
+      nota.className = 'small';
+      nota.textContent = 'Forma de onda (amplitud normalizada al pico) en función del tiempo; ambas con la misma escala de 0 a 15 s.';
+      cont.appendChild(nota);
       for (const [tipo, buf] of [['seco', seco], ['sala', sala]]) {
         const cv = document.createElement('canvas'); cv.width = 1000; cv.height = 110;
         cont.appendChild(cv);

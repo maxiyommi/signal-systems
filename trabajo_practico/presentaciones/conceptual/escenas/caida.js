@@ -10,7 +10,7 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
 
   function construir() {
     raiz.innerHTML = `
-      <canvas width="1100" height="440" aria-label="Curva de caída con integral de Schroeder"></canvas>
+      <canvas width="1100" height="500" aria-label="Curva de caída con integral de Schroeder"></canvas>
       <div class="controles">
         <label>Ruido de fondo
           <input type="range" min="-80" max="-20" step="5" value="${pisoDb}">
@@ -27,14 +27,20 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
     const edc = edcDb(ri);
     const r = evaluarT30(edc, fs, pisoDb);
     const cv = ui.cv, g = cv.getContext('2d');
-    const W = cv.width, H = cv.height, m = { l: 70, r: 20, t: 16, b: 40 }, dbMin = -80;
+    const W = cv.width, H = cv.height, m = { l: 90, r: 20, t: 44, b: 66 }, dbMin = -80;
     const xt = (t) => m.l + (t / duracion) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.max(dbMin, Math.min(0, d)) / dbMin) * (H - m.t - m.b);
     g.clearRect(0, 0, W, H);
     g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
     g.font = '500 18px Archivo, sans-serif'; g.fillStyle = COL.tenue; g.strokeStyle = COL.grilla; g.lineWidth = 1;
-    for (let t = 0; t <= duracion + 1e-9; t += 0.5) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${t} s`, xt(t) - 12, H - 12); }
-    for (let d = 0; d >= dbMin; d -= 20) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d} dB`, 4, yd(d) + 6); }
+    for (let t = 0; t <= duracion + 1e-9; t += 0.5) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${t}`, xt(t) - 8, H - m.b + 22); }
+    for (let d = 0; d >= dbMin; d -= 20) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 40, yd(d) + 6); }
+    g.font = '600 18px Archivo, sans-serif';
+    g.fillText('Tiempo (s)', m.l + (W - m.l - m.r) / 2 - 40, H - 8);
+    g.save(); g.translate(20, m.t + (H - m.t - m.b) / 2 + 60); g.rotate(-Math.PI / 2); g.fillText('Nivel (dB)', 0, 0); g.restore();
+    [[COL.tenue, 'Nivel instantáneo'], [COL.violeta, 'Integral de Schroeder'], [COL.tinta, 'Regresión −5…−35 dB'], [COL.senal, 'Ruido de fondo']]
+      .forEach(([c, t], i) => { const x = m.l + 8 + i * 245; g.fillStyle = c; g.fillRect(x, 16, 26, 10); g.fillStyle = COL.tinta; g.fillText(t, x + 34, 27); });
+    g.font = '500 18px Archivo, sans-serif';
 
     // nivel instantáneo suavizado (10 ms)
     const ventana = Math.round(fs * 0.01);
@@ -50,7 +56,6 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
     // piso de ruido
     g.setLineDash([8, 8]); g.strokeStyle = COL.senal; g.lineWidth = 2;
     g.beginPath(); g.moveTo(m.l, yd(pisoDb)); g.lineTo(W - m.r, yd(pisoDb)); g.stroke();
-    g.fillStyle = COL.senal; g.fillText('ruido de fondo', W - m.r - 130, yd(pisoDb) - 8);
 
     // referencias −5 y −35 dB
     g.strokeStyle = COL.tenue; g.lineWidth = 1;

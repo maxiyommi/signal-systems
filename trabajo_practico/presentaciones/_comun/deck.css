@@ -457,6 +457,16 @@ pre.tree {
 }
 .credito a { color: inherit; }
 
+/* ---------- Navegación entre presentaciones ---------- */
+
+.reveal ol.ruta { counter-reset: n; }
+.reveal ol.ruta li { padding: 0.35em 0 0.35em 1.8em; margin: 0; border-left: 3px solid var(--grilla); }
+.reveal ol.ruta li::before { left: 0.5em; top: 0.35em; color: var(--tenue); }
+.reveal ol.ruta li.actual { border-left-color: var(--violeta); background: var(--violeta-suave); }
+.reveal ol.ruta li.actual::before { color: var(--violeta); }
+.reveal ol.ruta .tema { display: block; font-size: 0.66em; color: var(--tenue); }
+.reveal a.siguiente { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.8em; line-height: 1.1; }
+
 /* ---------- Escenas interactivas ---------- */
 
 .escena {

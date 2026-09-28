@@ -2,6 +2,7 @@
 import Reveal from 'https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.esm.js';
 import Notes from 'https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.esm.js';
 import Highlight from 'https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.esm.js';
+import { htmlRuta, htmlSiguiente } from './ruta.js';
 
 const escenas = new Map();          // idSlide -> { iniciar, detener, activa }
 
@@ -18,7 +19,15 @@ export function registrarEscena(idSlide, { iniciar, detener }) {
   if (Reveal.isReady()) sincronizar(Reveal.getCurrentSlide());
 }
 
-export async function initDeck(opciones = {}) {
+// Completa las slides generadas (<section data-auto="ruta|siguiente">) a partir de ruta.js.
+function completarNavegacion(deck) {
+  if (!deck) return;
+  document.querySelectorAll('section[data-auto="ruta"]').forEach((s) => { s.innerHTML = htmlRuta(deck); });
+  document.querySelectorAll('section[data-auto="siguiente"]').forEach((s) => { s.innerHTML = htmlSiguiente(deck); });
+}
+
+export async function initDeck({ deck = document.body.dataset.deck, ...opciones } = {}) {
+  completarNavegacion(deck);
   await Reveal.initialize({
     width: 1920, height: 1080, margin: 0.03, minScale: 0.2, maxScale: 2.0,
     hash: true, center: false,

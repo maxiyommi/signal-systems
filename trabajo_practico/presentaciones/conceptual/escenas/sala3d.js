@@ -99,7 +99,7 @@ export function crearSala3D(seccion, {
 
   function construirUI() {
     raiz.innerHTML = `
-      <div class="escena sala-escena" style="height: 470px;"></div>
+      <div class="escena sala-escena" style="height: 430px;"></div>
       <div class="controles">
         <button type="button" data-modo="simulada">Sala simulada</button>
         <button type="button" data-modo="real">Sala real (Sports Centre)</button>
@@ -113,7 +113,7 @@ export function crearSala3D(seccion, {
         <output></output>
         <span class="t60" aria-live="polite"></span>
       </div>
-      <canvas class="ecograma" width="1100" height="190" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
+      <canvas class="ecograma" width="1100" height="230" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
       <p class="small aviso" hidden></p>`;
     ui = {
       escena: raiz.querySelector('.sala-escena'),
@@ -141,14 +141,20 @@ export function crearSala3D(seccion, {
 
   function dibujarEcograma() {
     const cv = ui.eco, g = cv.getContext('2d');
-    const W = cv.width, H = cv.height, m = { l: 64, r: 16, t: 12, b: 34 }, dbMin = -60;
+    const W = cv.width, H = cv.height, m = { l: 84, r: 16, t: 40, b: 56 }, dbMin = -60;
     const xt = (t) => m.l + (t / T_MAX) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.min(0, d) / dbMin) * (H - m.t - m.b);
     g.clearRect(0, 0, W, H);
     g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
     g.font = '500 18px Archivo, sans-serif'; g.fillStyle = COL.tenue; g.strokeStyle = COL.grilla; g.lineWidth = 1;
-    for (let t = 0; t <= T_MAX + 1e-9; t += 0.05) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${Math.round(t * 1000)} ms`, xt(t) - 20, H - 10); }
-    for (const d of [0, -30, -60]) g.fillText(`${d} dB`, 4, yd(d) + 6);
+    for (let t = 0; t <= T_MAX + 1e-9; t += 0.05) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${Math.round(t * 1000)}`, xt(t) - 12, H - m.b + 22); }
+    for (const d of [0, -30, -60]) g.fillText(`${d}`, m.l - 36, yd(d) + 6);
+    g.font = '600 18px Archivo, sans-serif';
+    g.fillText('Tiempo desde la emisión (ms)', m.l + (W - m.l - m.r) / 2 - 120, H - 6);
+    g.save(); g.translate(18, H - m.b + 4); g.rotate(-Math.PI / 2); g.fillText('dB rel. directo', 0, 0); g.restore();
+    const leyenda = estado.modo === 'real' ? [[COL.violeta, 'RI medida (envolvente)']] : [[COL.senal, 'Sonido directo'], [COL.violeta, 'Reflexiones']];
+    leyenda.forEach(([c, t], i) => { const x = m.l + 10 + i * 220; g.fillStyle = c; g.fillRect(x, 12, 26, 12); g.fillStyle = COL.tinta; g.fillText(t, x + 34, 24); });
+    g.font = '500 18px Archivo, sans-serif';
     if (estado.modo === 'real' && riRealInfo) {
       const { datos, fs } = riRealInfo;
       let pico = 1e-9; for (let i = 0; i < Math.min(datos.length, fs * T_MAX); i++) pico = Math.max(pico, Math.abs(datos[i]));
