@@ -10,6 +10,8 @@
 
 ## 1. Instalar Python 3.12+
 
+> 🎥 **Video paso a paso (Windows):** [Cómo instalar Python en Windows 10/11](https://www.youtube.com/watch?v=xd_0RN2SyfI) — EdTics Academy, 5 min
+
 ### Windows
 1. Descargar desde [python.org/downloads](https://www.python.org/downloads/)
 2. **IMPORTANTE**: Marcar "Add Python to PATH" durante la instalación
@@ -75,6 +77,8 @@ uv run pytest
 
 ## 3. Instalar VS Code
 
+> 🎥 **Video paso a paso (Windows):** [Instalar y configurar Visual Studio Code en Windows](https://www.youtube.com/watch?v=X_Z7d04x9-E) — Sistematts, 5 min
+
 1. Descargar desde [code.visualstudio.com](https://code.visualstudio.com/)
 2. Instalar las siguientes extensiones:
     - **Python** (Microsoft) — soporte Python
@@ -102,6 +106,8 @@ Agregar en `settings.json` (Ctrl+Shift+P → "Preferences: Open User Settings (J
 ---
 
 ## 4. Instalar Git
+
+> 🎥 **Video paso a paso (Windows):** [Cómo descargar e instalar Git en Windows](https://www.youtube.com/watch?v=jdXKwLNUfmg) — UskoKruM2010, 5 min
 
 ### Windows
 Descargar desde [git-scm.com](https://git-scm.com/download/win)
@@ -233,5 +239,5 @@ Si todo funciona, estás listo para la cursada.
 
 ## Soporte
 - Canal de Slack del curso
-- Consultas en clase (martes 15-18h)
+- Consultas en las sesiones de la cursada (ver el [cronograma](../cronograma.md))
 - Issues en el repo del curso
