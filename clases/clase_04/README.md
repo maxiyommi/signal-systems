@@ -23,7 +23,7 @@
 
 1. Contenido de la clase 4 (NumPy, senales, SciPy) con `contenido.py` y `ejercicios.py`.
 2. Abrir la presentacion del TP (`trabajo_practico/presentaciones/tp/`) para presentar el TP en general.
-   - El slide 2 linkea a la [presentacion conceptual en Google Slides](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit) — recorrerla en vivo.
+   - El slide 2 linkea a la [presentacion conceptual](../../trabajo_practico/presentaciones/conceptual/index.html) — recorrerla en vivo.
    - Volver a la presentacion HTML para el detalle de milestones, evaluacion y politicas.
 3. Abrir la presentacion de M0 (`trabajo_practico/presentaciones/m0/`) para aterrizar M0 (la entrega de la proxima clase).
 

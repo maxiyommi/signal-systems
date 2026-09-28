@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentación conceptual del TP — Señales y Sistemas UNTREF</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="../_comun/deck.css">
+  <style>
+    /* Layouts propios de la presentación conceptual */
+    .portada-sub { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.5em; line-height: 1.05; color: var(--violeta); max-width: 26ch; margin: 0 0 0.4em 0; }
+    .portada-nota { font-size: 0.8em; color: var(--tenue); }
+    .dos-col { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 2.4em; align-items: start; }
+    .dos-col > * { min-width: 0; }
+    .personaje { position: absolute; right: 3.5rem; bottom: 2.5rem; width: 17%; pointer-events: none; }
+    .personaje.grande { width: 20%; }
+    .regla { position: absolute; left: 50%; top: 54%; width: 30%; transform: translate(-50%, -50%); opacity: 0.85; }
+    .reveal .frase-arriba { position: absolute; left: 4.6rem; top: 20%; max-width: 16ch; font-size: 2em; }
+    .reveal .frase-abajo { position: absolute; right: 4.6rem; bottom: 12%; max-width: 16ch; font-size: 2em; text-align: right; color: var(--senal); }
+    .cita { font-size: 0.72em; line-height: 1.45; color: var(--tinta); max-width: 70ch; }
+    .cita q { color: var(--violeta); font-weight: 600; quotes: "“" "”"; }
+    .llave { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 0.7fr); gap: 1.4em; align-items: center; margin-top: 1.2em; }
+    .llave .magnitudes { border-left: 4px solid var(--violeta); padding-left: 0.8em; line-height: 1.35; font-size: 0.95em; }
+    .llave .magnitudes span:first-child { font-weight: 700; color: var(--violeta); }
+    .mapa { position: relative; height: 760px; margin-top: 0.5em; }
+    .mapa .nodo { position: absolute; font-family: var(--f-titulo); text-transform: uppercase; line-height: 1.12; color: var(--tinta); }
+    .mapa .nodo.sm { font-size: 0.72em; }
+    .mapa svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .mapa path { fill: none; stroke: var(--violeta); stroke-width: 3; stroke-dasharray: 2 10; stroke-linecap: round; }
+    .roadmap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.6em; margin-top: 0.4em; }
+    .roadmap .paso h3 { font-family: var(--f-titulo); font-size: 1.6em; font-weight: 400; color: var(--violeta); margin: 0; }
+    .roadmap .paso p { font-size: 0.56em; line-height: 1.45; max-width: none; color: var(--tinta); }
+    .etapas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 0.55fr); gap: 1.2em; margin-top: 0.6em; }
+    .etapa h3 { font-size: 0.66em; }
+    .bloque { font-family: var(--f-mono); font-size: 0.62em; padding: 0.55em 0.7em; margin-bottom: 0.45em; border: 2px solid var(--grilla); border-radius: 4px; background: var(--papel-alto); color: var(--tenue); transition: border-color 0.3s, color 0.3s; }
+    .fragment.visible .bloque.m1, .bloque.m1.activo { border-color: var(--m1); color: var(--tinta); }
+    .fragment.visible .bloque.m2, .bloque.m2.activo { border-color: var(--m2); color: var(--tinta); }
+    .fragment.visible .bloque.m3, .bloque.m3.activo { border-color: var(--m3); color: var(--tinta); }
+    .leyenda { display: flex; gap: 1.4em; font-size: 0.6em; color: var(--tenue); margin-top: 0.6em; }
+    .leyenda span::before { content: ""; display: inline-block; width: 1em; height: 0.6em; margin-right: 0.4em; border-radius: 2px; background: var(--c); vertical-align: middle; }
+    .cierre-link { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.6em; }
+  </style>
+</head>
+
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1 · Portada -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top"><div>Señales y Sistemas · UNTREF</div><div>Trabajo práctico · laboratorio</div></div>
+    <div class="titulo-main">
+      <h1>Señales y<br>sistemas</h1>
+      <p class="portada-sub">Desarrollo de software para el cálculo de parámetros acústicos ISO 3382</p>
+      <p class="portada-nota">(más de 20 preguntas)</p>
+    </div>
+    <div class="titulo-bottom"><div>Presentación conceptual del TP</div><div>Ingeniería de Sonido</div></div>
+  </div>
+  <aside class="notes">Se propone una dinámica de preguntas y respuestas.</aside>
+</section>
+
+<!-- 2 · Escuchemos: dominio temporal -->
+<section id="escucha-temporal">
+  <div class="kicker">Escuchemos y observemos</div>
+  <h2>Dominio temporal</h2>
+  <div class="dos-col">
+    <div class="escucha" data-escena="escucha"></div>
+    <div>
+      <p class="pregunta fragment">¿Qué diferencias escuchamos y/o observamos?</p>
+    </div>
+  </div>
+  <p class="credito">Audios: OpenAIR Library (openairlib.net) — grabación anecoica y Sports Centre, University of York.</p>
+  <aside class="notes">Vamos a usar nuestros sentidos (oídos y ojos) para identificar un fenómeno físico. Primero escuchar A y B sin mirar; después revelar.</aside>
+</section>
+
+<!-- 3 · Escuchemos: dominio espectral -->
+<section id="escucha-espectral">
+  <div class="kicker">Escuchemos y observemos</div>
+  <h2>Dominio espectral</h2>
+  <div class="dos-col">
+    <div class="escucha" data-escena="escucha"></div>
+    <div>
+      <p class="pregunta chica fragment">Marcar diferencia entre espectros</p>
+      <p class="pregunta chica fragment">¿Qué sentido nos brinda más información?</p>
+      <p class="pregunta chica fragment">¿Qué dominio nos brinda más información?</p>
+      <p class="pregunta fragment">¿Qué fenómeno físico escuchamos y/o observamos?</p>
+    </div>
+  </div>
+  <img class="personaje" src="img/rick_pensando.png" alt="">
+  <p class="credito">Espectros calculados en el navegador (FFT) a partir de los audios de OpenAIR.</p>
+  <aside class="notes">Tomemos una señal en particular y veamos el dominio espectral.</aside>
+</section>
+
+<!-- 4 · Reverberación: fenómeno físico y señal adquirida -->
+<section id="sala3d">
+  <div class="kicker">Reverberación · del fenómeno físico a la señal adquirida</div>
+  <h2>Reverberación</h2>
+  <div class="dos-col">
+    <div class="sala" data-escena="sala3d"></div>
+    <div>
+      <p class="pregunta chica fragment">¿En qué tipo de recintos se da el fenómeno?</p>
+      <p class="pregunta chica fragment">¿Qué pasa al aire libre?</p>
+      <p class="pregunta chica fragment">¿Cómo afectan los materiales, personas, objetos y todos los elementos dentro del recinto?</p>
+      <p class="pregunta chica fragment">¿Cómo podemos adquirir una señal de este tipo para estudiarla (visualizarla)?</p>
+    </div>
+  </div>
+  <p class="credito">Basado en acusticadecorativa.com — ¿Qué es la reverberación?</p>
+  <aside class="notes">Fuente, recepción, cambio de impedancia en las superficies. Mostrar sonido directo, primeras reflexiones y cola.</aside>
+</section>
+
+<!-- 5 · Review -->
+<section>
+  <div class="kicker">Reverberación · review</div>
+  <h2>Hasta el momento tenemos</h2>
+  <div class="mapa">
+    <svg viewBox="0 0 1780 760" aria-hidden="true">
+      <path class="fragment" data-fragment-index="1" d="M430 45 C 540 5, 640 10, 760 45"/>
+      <path class="fragment" data-fragment-index="2" d="M1000 95 C 1010 130, 980 150, 930 170"/>
+      <path class="fragment" data-fragment-index="3" d="M420 270 C 330 285, 220 300, 180 335"/>
+      <path class="fragment" data-fragment-index="4" d="M470 395 C 560 360, 650 360, 740 385"/>
+      <path class="fragment" data-fragment-index="5" d="M150 440 C 150 470, 160 495, 180 515"/>
+      <path class="fragment" data-fragment-index="6" d="M780 610 C 850 600, 900 590, 960 575"/>
+      <path class="fragment" data-fragment-index="7" d="M1300 515 C 1340 470, 1380 420, 1450 300"/>
+      <path class="fragment" data-fragment-index="7" d="M1120 650 C 1110 690, 1090 710, 1060 730"/>
+    </svg>
+    <div class="nodo" style="left:0; top:10px; font-size:1.2em;">Fenómeno físico</div>
+    <div class="nodo fragment" data-fragment-index="1" style="left:780px; top:15px; font-size:1.2em;">Recintos cerrados</div>
+    <div class="nodo sm fragment" data-fragment-index="2" style="left:430px; top:170px; max-width:820px;">Suma del sonido directo y las reflexiones por las distintas superficies dentro del recinto</div>
+    <div class="nodo fragment" data-fragment-index="3" style="left:0; top:350px; font-size:1.1em; color: var(--violeta);">Reverberación</div>
+    <div class="nodo sm fragment" data-fragment-index="4" style="left:760px; top:360px; max-width:640px;">Somos capaces de percibirlo auditivamente (con “buena” sensibilidad)</div>
+    <div class="nodo sm fragment" data-fragment-index="5" style="left:0; top:520px; max-width:760px;">Auditivamente difícilmente podamos cuantificar el fenómeno o identificar los elementos que lo componen</div>
+    <div class="nodo sm fragment" data-fragment-index="6" style="left:970px; top:520px; max-width:560px;">Necesitamos de un transductor electroacústico para captarlo, visualizarlo y estudiarlo</div>
+    <div class="nodo sm fragment" data-fragment-index="7" style="left:1460px; top:250px; color: var(--senal);">Dominio espectral</div>
+    <div class="nodo sm fragment" data-fragment-index="7" style="left:840px; top:725px; color: var(--senal);">Dominio temporal</div>
+  </div>
+  <img class="personaje grande" src="img/rick_morty_review.png" alt="">
+</section>
+
+<!-- 6 · ¿Para qué medir? -->
+<section>
+  <div class="kicker">Reverberación</div>
+  <img class="regla" src="img/regla.png" alt="">
+  <p class="pregunta frase-arriba fragment">Pero … ¿Para qué queremos medir la reverberación?</p>
+  <p class="pregunta frase-abajo fragment">O … ¿Cómo señales y sistemas me ayudaría a resolver este problema?</p>
+</section>
+
+<!-- 7 · Cuantificar -->
+<section>
+  <div class="kicker">Reverberación</div>
+  <h2>Cuantificar su efecto</h2>
+  <p class="lead" style="max-width: 60ch;">La reverberación modifica el sonido original de una fuente (como se observó en la primera experiencia), otorgándole nuevas características propias del recinto.</p>
+  <p class="pregunta chica fragment">¿Este fenómeno es siempre beneficioso?</p>
+  <p class="pregunta chica fragment">¿En qué casos nos perjudicaría?</p>
+  <div class="llave fragment">
+    <p class="pregunta" style="margin:0;">Entonces … debemos cuantificar su efecto para poder evaluarlo.</p>
+    <svg width="60" height="220" viewBox="0 0 60 220" aria-hidden="true"><path d="M50 5 C 20 5, 30 110, 5 110 C 30 110, 20 215, 50 215" fill="none" stroke="#6B2FA3" stroke-width="4"/></svg>
+    <div class="magnitudes"><span>Energía</span><br>Potencia<br>Valor máximo<br>Valor mínimo<br>Otros</div>
+  </div>
+</section>
+
+<!-- 8 · Tiempo de reverberación -->
+<section id="caida">
+  <div class="kicker">Tiempo de reverberación (TR o RT, reverberation time)</div>
+  <h2>Tiempo de reverberación</h2>
+  <p class="cita">El tiempo de reverberación está definido en la Norma ISO 354: <q>Es el tiempo necesario para que el nivel de presión sonora disminuya 60 dB después del cese de la fuente</q>. En la actualidad, la mayoría de los equipos empleados para cuantificarlo entregan el parámetro T30, definido en la Norma ISO 3382: <q>Es el tiempo, expresado en segundos, que se requiere para que el nivel de presión sonora disminuya en 60 dB, calculado sobre una recta obtenida de la regresión lineal por mínimos cuadrados de una curva de caída medida desde un nivel 5 dB por debajo del nivel inicial, hasta un nivel de 30 dB inferior a dicho nivel</q> (UNE-EN ISO 3382, 2010).</p>
+  <div class="dos-col">
+    <div class="curva" data-escena="caida"></div>
+    <div class="small">
+      <p class="pregunta chica fragment">¿Cómo estandarizamos el procedimiento? (reproducibilidad y repetibilidad)</p>
+      <p class="pregunta chica fragment">¿Qué fuente usamos?</p>
+      <p class="pregunta chica fragment">¿Cómo procesamos la señal?</p>
+      <p class="pregunta chica fragment">¿A qué niveles de SPL trabajamos?</p>
+      <p class="pregunta chica fragment">¿Cómo afecta el ruido a nuestras mediciones?</p>
+      <p class="pregunta chica fragment">¿Qué características debe tener el transductor?</p>
+      <p class="pregunta chica fragment">¿Los transductores son ideales? ¿Qué pasa con sus distorsiones?</p>
+      <p class="pregunta chica fragment">¿Qué señal reproducimos?</p>
+    </div>
+  </div>
+  <p class="credito">Gráfico basado en NTi Audio (nti-audio.com). Curva calculada en el navegador.</p>
+</section>
+
+<!-- 9 · Trabajo práctico -->
+<section>
+  <div class="kicker">Trabajo práctico</div>
+  <h2>Desarrollo de software para el cálculo de parámetros acústicos ISO 3382</h2>
+  <div class="grid-2">
+    <div>
+      <h3>Objetivo general</h3>
+      <p class="small" style="max-width:none;">Desarrollar un software modular que permita el cálculo de parámetros acústicos propuestos en la normativa ISO 3382 (UNE-EN ISO 3382, 2010). Un sistema íntegro que contemple todos los elementos necesarios para una medición in situ.</p>
+      <p><a class="url-box" href="https://maxiyommi.github.io/signal-systems/trabajo_practico/">Consigna completa del TP</a></p>
+    </div>
+    <div>
+      <h3>Objetivos particulares</h3>
+      <ul class="small">
+        <li>Desarrollo de funciones para: generación y reproducción de ruido rosa; generación y reproducción de sine sweep; adquisición de la RI; procesamiento de las RI.</li>
+        <li>Adquirir las capacidades de interpretar los lineamientos de una normativa.</li>
+        <li>Autonomía en la lectura del material dispuesto por los docentes.</li>
+        <li>Autoevaluación de todo el material desarrollado.</li>
+        <li>Presentación de avances.</li>
+        <li><strong>Los resultados obtenidos no deben diferir en más de ±0,5 s de los arrojados por algún software comercial.</strong></li>
+        <li>Documentar el procedimiento de medición y el diseño del software en el repositorio.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · Roadmap de medición -->
+<section id="roadmap-medicion">
+  <div class="kicker">Desarrollo de software para el cálculo de parámetros acústicos ISO 3382</div>
+  <h2>Roadmap de medición <span style="font-family: var(--f-texto); font-size: 0.4em; text-transform: none; color: var(--tenue);">(no contemplado en el TP)</span></h2>
+  <div class="roadmap">
+    <div class="paso fragment">
+      <h3>1</h3>
+      <div class="cadena" data-paso="1"></div>
+      <p><strong>Evaluar el ruido de fondo de la sala</strong>, con la ayuda de un sonómetro clase 1 previamente ajustado: medir el nivel equivalente (Leq) de ruido de fondo en 2 puntos de la sala con 3 repeticiones por punto, en ponderación Z, slow, con un tiempo de integración de 30 s.</p>
+    </div>
+    <div class="paso fragment">
+      <h3>2</h3>
+      <div class="cadena" data-paso="2"></div>
+      <p>Con el valor de ruido de fondo promediado, configurar la fuente a +45 dB utilizando un sonómetro calibrado a 1 metro de la fuente, empleando la función de ruido rosa. Esta medición permite establecer el valor RMS de la fuente de excitación del recinto. Además, ajustar los niveles del sistema de adquisición y reproducción (contemplar la posibilidad de saturación).</p>
+    </div>
+    <div class="paso fragment">
+      <h3>3</h3>
+      <div class="cadena" data-paso="3"></div>
+      <p>Establecer los 3 puntos de medición (micrófono) para una posición de fuente, acorde a las recomendaciones de la normativa, teniendo en cuenta las distancias mínimas (dmin) y la separación entre puntos que establece. Repetir 5 veces la medición por cada punto elegido, con la función de sine sweep logarítmico + filtro inverso y la de adquisición y reproducción.</p>
+    </div>
+  </div>
+  <p class="credito">En el gráfico solo se consideran los elementos fundamentales. En una medición in situ es necesario contemplar toda la cadena de audio, por ejemplo un DAC o ADC.</p>
+</section>
+
+<!-- 11 · Roadmap de procesamiento -->
+<section id="roadmap-procesamiento">
+  <div class="kicker">Desarrollo de software para el cálculo de parámetros acústicos ISO 3382</div>
+  <h2>Roadmap de procesamiento</h2>
+  <div class="etapas">
+    <div class="etapa fragment">
+      <h3>Generación y adquisición</h3>
+      <div class="bloque m1">generar_ruido_rosa</div>
+      <div class="bloque m1">generar_sine_sweep</div>
+      <div class="bloque m1">reproducir_y_grabar</div>
+    </div>
+    <div class="etapa fragment">
+      <h3>Preprocesamiento y filtrado</h3>
+      <div class="bloque m2">cargar_audio</div>
+      <div class="bloque m2">sintetizar_ri</div>
+      <div class="bloque m2">obtener_ri_desde_sweep</div>
+      <div class="bloque m2">a_escala_log</div>
+      <div class="bloque m2">filtro_octava</div>
+    </div>
+    <div class="etapa fragment">
+      <h3>Suavizado y cálculo</h3>
+      <div class="bloque m3">suavizar_signal</div>
+      <div class="bloque m3">integral_schroeder</div>
+      <div class="bloque m3">metodo_lundeby</div>
+      <div class="bloque m3">regresion_lineal</div>
+      <div class="bloque m3">calcular_parametros_acusticos</div>
+    </div>
+    <div class="etapa fragment">
+      <h3>Producto</h3>
+      <div class="bloque m3">API REST</div>
+    </div>
+  </div>
+  <div class="leyenda">
+    <span style="--c: var(--m1)">M1 · Generación</span>
+    <span style="--c: var(--m2)">M2 · Procesamiento</span>
+    <span style="--c: var(--m3)">M3 · Producto</span>
+  </div>
+</section>
+
+<!-- 12 · Cierre -->
+<section>
+  <div class="kicker">¿Y ahora?</div>
+  <h2>A construirlo</h2>
+  <p class="lead">Consigna, milestones y evaluación del trabajo práctico:</p>
+  <p><a class="cierre-link" href="../tp/">Ir a la presentación del TP</a></p>
+  <img class="personaje grande" src="img/rick_morty_cierre.png" alt="">
+</section>
+
+</div>
+</div>
+
+<script type="module">
+  import { initDeck } from '../_comun/deck.js';
+  initDeck();
+</script>
+</body>
+</html>
