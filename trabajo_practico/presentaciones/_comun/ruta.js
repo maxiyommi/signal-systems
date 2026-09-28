@@ -12,34 +12,45 @@ export const DOCS = {
   slack: ['Consultas en Slack', 'https://senalesysistemas.slack.com'],
 };
 
+// Hilo conductor del TP: de un fenómeno físico a una medición automatizada.
+export const HILO = [
+  { id: 'fenomeno', titulo: 'Fenómeno físico', detalle: 'la reverberación en un recinto' },
+  { id: 'modelo', titulo: 'Modelo', detalle: 'la sala como sistema LTI: y = x ∗ h' },
+  { id: 'modulos', titulo: 'Módulos', detalle: 'la medición como cadena de sistemas' },
+  { id: 'excitacion', titulo: 'Excitación', detalle: 'diseñar x(t): ruido rosa y sine sweep' },
+  { id: 'identificacion', titulo: 'Identificación', detalle: 'obtener h(t): deconvolución y bandas' },
+  { id: 'dato', titulo: 'Del sistema al dato', detalle: 'envolvente, Schroeder y regresión' },
+  { id: 'automatizacion', titulo: 'Automatización', detalle: 'una API que mide y entrega datos' },
+];
+
 export const RUTA = [
   {
-    id: 'conceptual', titulo: 'Conceptual', tema: 'El fenómeno: reverberación y tiempo de reverberación',
+    id: 'conceptual', etapas: ['fenomeno', 'modelo', 'modulos'], titulo: 'Conceptual', tema: 'El fenómeno: reverberación y tiempo de reverberación',
     antes: [],
     docs: [DOCS.consigna],
   },
   {
-    id: 'tp', titulo: 'Trabajo práctico', tema: 'Consigna, milestones y evaluación',
+    id: 'tp', etapas: [], titulo: 'Trabajo práctico', tema: 'Consigna, milestones y evaluación',
     antes: [],
     docs: [DOCS.consigna, DOCS.rubrica, DOCS.cronograma],
   },
   {
-    id: 'm0', titulo: 'M0 · El plano', tema: 'Arquitectura, repositorio, issues y /health',
+    id: 'm0', etapas: ['modulos'], titulo: 'M0 · El plano', tema: 'Arquitectura, repositorio, issues y /health',
     antes: [clase(1, 'entorno, Git y GitHub'), clase(3, 'módulos y testing'), clase(7, 'sistemas y respuesta al impulso')],
     docs: [['Especificación de M0', `${SITIO}trabajo_practico/especificacion/m0_arquitectura/`], ['Template del repositorio', `${REPO}trabajo_practico/template_repo`], DOCS.rubrica],
   },
   {
-    id: 'm1', titulo: 'M1 · Generación', tema: 'Ruido rosa, sine sweep y grabación',
+    id: 'm1', etapas: ['excitacion'], titulo: 'M1 · Generación', tema: 'Ruido rosa, sine sweep y grabación',
     antes: [clase(6, 'audio digital, ruido y sweep'), clase(4, 'generación de señales con NumPy')],
     docs: [['Especificación de M1', `${SITIO}trabajo_practico/especificacion/m1_generacion/`], DOCS.rubrica],
   },
   {
-    id: 'm2', titulo: 'M2 · Procesamiento', tema: 'Deconvolución, bandas de octava y escala en dB',
+    id: 'm2', etapas: ['identificacion'], titulo: 'M2 · Procesamiento', tema: 'Deconvolución, bandas de octava y escala en dB',
     antes: [clase(8, 'convolución y deconvolución'), clase(9, 'FFT, filtros y bandas de octava')],
     docs: [['Especificación de M2', `${SITIO}trabajo_practico/especificacion/m2_procesamiento/`], DOCS.rubrica],
   },
   {
-    id: 'm3', titulo: 'M3 · Producto', tema: 'Schroeder, parámetros ISO 3382 y API REST',
+    id: 'm3', etapas: ['dato', 'automatizacion'], titulo: 'M3 · Producto', tema: 'Schroeder, parámetros ISO 3382 y API REST',
     antes: [clase(10, 'envolvente, Schroeder y parámetros'), clase(13, 'API REST'), clase(11, 'calidad y CI'), clase(12, 'documentación'), clase(14, 'pulido')],
     docs: [['Especificación de M3', `${SITIO}trabajo_practico/especificacion/m3_producto_final/`], DOCS.rubrica],
   },
@@ -60,6 +71,8 @@ export function htmlRuta(id) {
   const antes = d.antes.length
     ? `<h3>Material de apoyo (leer antes)</h3><ul class="small">${d.antes.map(enlace).join('')}</ul>`
     : '<h3>Material de apoyo</h3><p class="small">Esta presentación no requiere lectura previa.</p>';
+  const hilo = HILO.map((h) => `
+      <li class="etapa-hilo${d.etapas.includes(h.id) ? ' actual' : ''}"><strong>${h.titulo}</strong><span>${h.detalle}</span></li>`).join('');
   return `
     <div class="kicker">Ruta de lectura · ${i + 1} de ${RUTA.length}</div>
     <h2>Dónde estamos</h2>
@@ -70,6 +83,10 @@ export function htmlRuta(id) {
         <h3>Para consultar durante el trabajo</h3>
         <ul class="small">${sinRepetir([...d.docs, DOCS.cronograma]).map(enlace).join('')}</ul>
       </div>
+    </div>
+    <div class="hilo">
+      <h3>El hilo conductor: de un fenómeno físico a una medición automatizada</h3>
+      <ol class="hilo-etapas">${hilo}</ol>
     </div>`;
 }
 

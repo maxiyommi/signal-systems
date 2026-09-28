@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css">
   <link rel="stylesheet" href="../_comun/deck.css">
+  <script>
+    MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
 </head>
 
 <body data-deck="tp">
@@ -108,6 +112,29 @@
 </section>
 
 <!-- ========================================================= -->
+<!-- ========================================================= -->
+<!-- Caso de aplicación de Señales y Sistemas -->
+<!-- ========================================================= -->
+<section>
+  <div class="kicker">El espíritu del TP</div>
+  <h2>Un caso de aplicación de Señales y Sistemas.</h2>
+  <p class="lead" style="max-width: 60ch;">RIR-API no es un ejercicio de programación: es resolver un problema real de acústica de salas con las herramientas de la materia.</p>
+  <ol class="small" style="columns: 2; column-gap: 3em;">
+    <li><strong>Fenómeno físico</strong> — la reverberación en un recinto.</li>
+    <li><strong>Modelo</strong> — la sala es un sistema LTI: $y = x \ast h$. Medir la sala es medir $h(t)$.</li>
+    <li><strong>Módulos</strong> — la medición es una cadena de sistemas: PC, DAC, amplificador, parlante, sala, micrófono, ADC.</li>
+    <li><strong>Excitación</strong> <span class="pill pill-m1">M1</span> — diseñar $x(t)$: ruido rosa y sine sweep.</li>
+    <li><strong>Identificación</strong> <span class="pill pill-m2">M2</span> — obtener $h(t)$ por deconvolución y separarla en bandas.</li>
+    <li><strong>Del sistema al dato</strong> <span class="pill pill-m3">M3</span> — envolvente, Schroeder y regresión: T30, EDT, C80.</li>
+    <li><strong>Automatización</strong> <span class="pill pill-m3">M3</span> — una API que mide y entrega datos normalizados.</li>
+  </ol>
+  <p class="small">El desarrollo completo de esta idea está en la <a href="../conceptual/#/modelo-lti">presentación conceptual</a>.</p>
+  <aside class="notes">
+    - Idea fuerza de toda la cursada: partir de lo físico, modelarlo como señales y sistemas, descomponer en módulos y encadenarlos.
+    - Cada milestone es una etapa de ese hilo.
+  </aside>
+</section>
+
 <!-- SLIDE 4 — Objetivos de aprendizaje -->
 <!-- ========================================================= -->
 <section>

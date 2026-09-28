@@ -5,7 +5,7 @@
 **Días**: miércoles, a partir de la semana 7 (30 de septiembre — 18 de noviembre de 2026)
 **Modalidad**: 4 sesiones presenciales + 3 virtuales
 
-Las semanas 1 a 6 (teoría + Prácticas 1 a 3) están a cargo de la Prof. Trina Adrián de Pérez. Desde la semana 7, la práctica se dedica al **Trabajo Práctico RIR-API**. Cada presentación de milestone ocupa ~2 de las 3 horas; el resto es taller y consultas. Los notebooks del material de apoyo **no se dictan en vivo**: se trabajan durante la semana, con acompañamiento por Slack.
+Las semanas 1 a 6 (teoría + Prácticas 1 a 3) están a cargo de la Prof. Trina Adrián de Pérez. Desde la semana 7, la práctica se dedica al **Trabajo Práctico RIR-API**: un caso de aplicación de Señales y Sistemas que va del fenómeno físico (la reverberación) a una medición automatizada, modelando la sala como un sistema LTI y la medición como una cadena de sistemas. Cada presentación de milestone ocupa ~2 de las 3 horas; el resto es taller y consultas. Los notebooks del material de apoyo **no se dictan en vivo**: se trabajan durante la semana, con acompañamiento por Slack.
 
 | # | Fecha | Modalidad | En vivo | Material de apoyo |
 |---|-------|-----------|---------|-------------------|

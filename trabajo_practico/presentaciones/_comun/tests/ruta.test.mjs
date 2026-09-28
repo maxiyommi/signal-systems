@@ -33,3 +33,19 @@ test('htmlRuta/htmlSiguiente: ningún link se repite en la misma slide', () => {
     }
   }
 });
+
+test('HILO: del fenómeno físico a la automatización, en orden', async () => {
+  const { HILO } = await import('../ruta.js');
+  assert.deepEqual(HILO.map((h) => h.id), ['fenomeno', 'modelo', 'modulos', 'excitacion', 'identificacion', 'dato', 'automatizacion']);
+});
+
+test('htmlRuta: muestra el hilo conductor y resalta la etapa de cada deck', () => {
+  assert.match(htmlRuta('m1'), /class="etapa-hilo actual"[^>]*>[\s\S]*?Excitación/);
+  assert.match(htmlRuta('m2'), /class="etapa-hilo actual"[^>]*>[\s\S]*?Identificación/);
+  assert.match(htmlRuta('m3'), /class="etapa-hilo actual"[^>]*>[\s\S]*?Automatización/);
+  assert.match(htmlRuta('conceptual'), /class="etapa-hilo actual"[^>]*>[\s\S]*?Modelo/);
+  const actuales = (id) => (htmlRuta(id).match(/etapa-hilo actual/g) || []).length;
+  assert.equal(actuales('m1'), 1);
+  assert.equal(actuales('m3'), 2);
+  assert.equal(actuales('tp'), 0);   // la presentación del TP muestra el hilo completo, sin resaltar
+});

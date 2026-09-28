@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="../_comun/deck.css">
+  <script>
+    MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
   <script type="importmap">
     { "imports": {
         "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
@@ -42,6 +46,19 @@
     .reveal .paso p { font-size: 0.56em; line-height: 1.45; max-width: none; }
     .bloque { font-family: var(--f-mono); font-size: 0.56em; padding: 0.5em 0.7em; margin-bottom: 0.4em; border: 2px solid var(--grilla); border-left-width: 6px; border-radius: 4px; background: var(--papel-alto); }
     .bloque.m1 { border-left-color: var(--m1); } .bloque.m2 { border-left-color: var(--m2); } .bloque.m3 { border-left-color: var(--m3); }
+    .bloque-sis { font-family: var(--f-texto); font-weight: 700; }
+    .cadena-sis { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 0 1.2em; margin: 0.6em 0 0.4em 0; }
+    .cadena-sis .caja { position: relative; text-align: center; padding: 0.7em 0.3em; font-size: 0.7em; font-weight: 700; background: var(--papel-alto); border: 2px solid var(--grilla); border-radius: 4px; }
+    .cadena-sis .caja small { display: block; font-weight: 500; color: var(--tenue); margin-top: 0.2em; }
+    .cadena-sis .caja.sala { border-color: var(--violeta); background: var(--violeta-suave); color: var(--violeta); }
+    .cadena-sis .caja.pc { border-color: var(--senal); }
+    .cadena-sis .caja + .caja::before { content: "→"; position: absolute; left: -1.05em; top: 50%; transform: translateY(-50%); color: var(--tenue); font-size: 1.2em; }
+    .sistema { display: flex; align-items: center; justify-content: center; gap: 1.2em; margin: 0.8em 0 1em 0; font-size: 1.15em; }
+    .sistema .caja-grande { padding: 0.7em 1.2em; border: 3px solid var(--violeta); border-radius: 6px; background: var(--violeta-suave); font-weight: 700; color: var(--violeta); text-align: center; }
+    .sistema .flecha { font-size: 1.4em; color: var(--tenue); }
+    .reveal table.mapa-conceptos { font-size: 0.74em; }
+    .reveal table.mapa-conceptos td { padding: 0.5em 0.7em; }
+    .reveal table.mapa-conceptos code { font-size: 0.9em; }
   </style>
 </head>
 
@@ -56,7 +73,7 @@
     <div class="titulo-main">
       <div class="tag-ms">Presentación conceptual</div>
       <h1>Reverberación.</h1>
-      <p class="bajada">El fenómeno que el TP mide: de lo que escuchamos a un número normalizado por la ISO 3382.</p>
+      <p class="bajada">Un caso de aplicación de Señales y Sistemas: de un fenómeno físico a una medición automatizada, normalizada por la ISO 3382.</p>
     </div>
     <div class="titulo-bottom"><div>Dinámica de preguntas y respuestas</div><div>Ingeniería de Sonido</div></div>
   </div>
@@ -152,6 +169,58 @@
   </div>
 </section>
 
+<!-- La sala como sistema -->
+<section id="modelo-lti">
+  <div class="kicker">Señales y Sistemas · el modelo</div>
+  <h2>La sala es un sistema</h2>
+  <div class="sistema">
+    <div><strong>$x(t)$</strong><br><span class="small">lo que emite la fuente</span></div>
+    <div class="flecha">→</div>
+    <div class="caja-grande">Sala<br>$h(t)$</div>
+    <div class="flecha">→</div>
+    <div><strong>$y(t)$</strong><br><span class="small">lo que capta el micrófono</span></div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="formula">$$ y(t) = (x \ast h)(t) \quad\Longleftrightarrow\quad Y(f) = X(f)\,H(f) $$</div>
+      <p class="lead fragment" style="max-width: none;">Si el sistema es LTI, la <strong>respuesta al impulso</strong> $h(t)$ lo caracteriza por completo: <strong>medir la sala es medir su respuesta al impulso</strong>. Todos los parámetros de la ISO 3382 se calculan a partir de $h(t)$.</p>
+    </div>
+    <div>
+      <h3>Las propiedades que vimos en clase, aplicadas a la sala</h3>
+      <ul>
+        <li class="fragment"><strong>Linealidad</strong> — vale la superposición mientras no saturemos: por eso se ajustan los niveles de la cadena.</li>
+        <li class="fragment"><strong>Invariancia en el tiempo</strong> — la sala no cambia durante la medición: se puede repetir y promediar.</li>
+        <li class="fragment"><strong>Causalidad</strong> — $h(t) = 0$ para $t &lt; 0$: ninguna reflexión llega antes que el sonido directo.</li>
+        <li class="fragment"><strong>Estabilidad</strong> — $h(t)$ decae: las superficies absorben energía. Cómo decae es el tiempo de reverberación.</li>
+      </ul>
+    </div>
+  </div>
+  <aside class="notes">Este es el paso clave: pasamos de un fenómeno físico a un modelo de Señales y Sistemas. A partir de acá, el problema de acústica se vuelve un problema de identificar un sistema.</aside>
+</section>
+
+<!-- La medición como cadena -->
+<section id="cadena-sistemas">
+  <div class="kicker">Señales y Sistemas · los módulos</div>
+  <h2>La medición es una cadena de sistemas</h2>
+  <p class="lead" style="max-width: none;">Entre la señal que generamos y la que grabamos hay varios sistemas en cascada. Cada uno es un módulo que podemos estudiar por separado.</p>
+  <div class="cadena-sis">
+    <div class="caja pc fragment">PC<small>genera $x[n]$</small></div>
+    <div class="caja fragment">DAC<small>$h_\text{DAC}$</small></div>
+    <div class="caja fragment">Amplificador<small>$h_\text{amp}$</small></div>
+    <div class="caja fragment">Parlante<small>$h_\text{parl}$</small></div>
+    <div class="caja sala fragment">Sala<small>$h_\text{sala}$</small></div>
+    <div class="caja fragment">Micrófono<small>$h_\text{mic}$</small></div>
+    <div class="caja fragment">ADC<small>$h_\text{ADC}$</small></div>
+    <div class="caja pc fragment">PC<small>graba $y[n]$</small></div>
+  </div>
+  <div class="formula fragment">$$ y = x \ast h_\text{DAC} \ast h_\text{amp} \ast h_\text{parl} \ast h_\text{sala} \ast h_\text{mic} \ast h_\text{ADC} = x \ast h_\text{total} $$</div>
+  <div class="grid-2 fragment">
+    <p style="max-width: none; font-size: 0.8em; line-height: 1.4;"><strong>Asociatividad y conmutatividad de la convolución:</strong> toda la cadena equivale a un único sistema $h_\text{total}$. Si los transductores son aproximadamente ideales en la banda de interés ($h_i \approx \delta$), entonces $h_\text{total} \approx h_\text{sala}$.</p>
+    <p style="max-width: none; font-size: 0.8em; line-height: 1.4;"><strong>Lo que no es ideal también se resuelve con Señales y Sistemas:</strong> la distorsión del parlante queda separada en el tiempo con el sine sweep y su filtro inverso (M1-M2), y el ruido de fondo se controla en el cálculo (M3).</p>
+  </div>
+  <aside class="notes">Descomponer en módulos es lo que hace abordable un problema complejo. Cada caja es un sistema con una propiedad conocida.</aside>
+</section>
+
 <!-- Tiempo de reverberación -->
 <section id="caida">
   <div class="kicker">Tiempo de reverberación (TR o RT, reverberation time)</div>
@@ -239,39 +308,40 @@
   <p class="credito">Se omiten elementos de la cadena de audio como el DAC y el ADC.</p>
 </section>
 
-<!-- Procesamiento -->
-<section id="roadmap-procesamiento">
-  <div class="kicker">Lo que construye el TP</div>
-  <h2>Del audio al parámetro</h2>
-  <div class="grid-3" style="grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 0.6fr);">
-    <div class="etapa fragment">
-      <h3><span class="pill pill-m1">M1</span> Generación y adquisición</h3>
-      <div class="bloque m1">generar_ruido_rosa</div>
-      <div class="bloque m1">generar_sine_sweep</div>
-      <div class="bloque m1">reproducir_y_grabar</div>
-    </div>
-    <div class="etapa fragment">
-      <h3><span class="pill pill-m2">M2</span> Procesamiento de la RI</h3>
-      <div class="bloque m2">cargar_audio</div>
-      <div class="bloque m2">sintetizar_ri</div>
-      <div class="bloque m2">obtener_ri_desde_sweep</div>
-      <div class="bloque m2">filtro_octava</div>
-      <div class="bloque m2">a_escala_log</div>
-    </div>
-    <div class="etapa fragment">
-      <h3><span class="pill pill-m3">M3</span> Cálculo de parámetros</h3>
-      <div class="bloque m3">suavizar_signal</div>
-      <div class="bloque m3">integral_schroeder</div>
-      <div class="bloque m3">metodo_lundeby</div>
-      <div class="bloque m3">regresion_lineal</div>
-      <div class="bloque m3">calcular_parametros_acusticos</div>
-    </div>
-    <div class="etapa fragment">
-      <h3><span class="pill pill-m3">M3</span> Producto</h3>
-      <div class="bloque m3">API REST</div>
-    </div>
-  </div>
-  <p class="small" style="margin-top: 0.8em; max-width: none;">El detalle de cada función está en la especificación de su milestone (links en la última slide).</p>
+<!-- Del concepto al código -->
+<section id="concepto-codigo">
+  <div class="kicker">Del concepto a lo aplicado</div>
+  <h2>Cada módulo, una técnica de Señales y Sistemas</h2>
+  <table class="mapa-conceptos">
+    <thead><tr><th>Concepto de la materia</th><th>Qué resuelve en la medición</th><th>Función del TP</th><th style="width: 7%;"></th></tr></thead>
+    <tbody>
+      <tr><td>Señales aleatorias · densidad espectral $1/f$</td><td>Excitar todas las bandas con energía pareja por octava</td><td><code>generar_ruido_rosa</code></td><td><span class="pill pill-m1">M1</span></td></tr>
+      <tr><td>Frecuencia instantánea · filtro inverso</td><td>Una excitación que separa la respuesta lineal de la distorsión</td><td><code>generar_sine_sweep</code></td><td><span class="pill pill-m1">M1</span></td></tr>
+      <tr><td>Muestreo · DAC/ADC · sistemas en cascada</td><td>Emitir y grabar a la vez, sincronizados</td><td><code>reproducir_y_grabar</code></td><td><span class="pill pill-m1">M1</span></td></tr>
+      <tr><td>Convolución · delta · asociatividad</td><td>Recuperar $h(t)$ a partir de la grabación</td><td><code>obtener_ri_desde_sweep</code></td><td><span class="pill pill-m2">M2</span></td></tr>
+      <tr><td>Filtros LTI (Butterworth, IEC 61260)</td><td>Analizar la sala banda por banda</td><td><code>filtro_octava</code></td><td><span class="pill pill-m2">M2</span></td></tr>
+      <tr><td>Escala logarítmica</td><td>Expresar niveles en dB</td><td><code>a_escala_log</code></td><td><span class="pill pill-m2">M2</span></td></tr>
+      <tr><td>Señal analítica · transformada de Hilbert</td><td>Obtener la envolvente de $h(t)$</td><td><code>suavizar_signal</code></td><td><span class="pill pill-m3">M3</span></td></tr>
+      <tr><td>Energía · integración</td><td>Curva de decaimiento sin fluctuaciones</td><td><code>integral_schroeder</code></td><td><span class="pill pill-m3">M3</span></td></tr>
+      <tr><td>Mínimos cuadrados</td><td>Pendiente de la curva → T30, T20, EDT</td><td><code>regresion_lineal</code></td><td><span class="pill pill-m3">M3</span></td></tr>
+      <tr><td>El sistema completo</td><td>Automatizar la medición y obtener datos</td><td>API REST</td><td><span class="pill pill-m3">M3</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- El método -->
+<section id="metodo">
+  <div class="kicker">La idea que atraviesa el TP</div>
+  <h2>Cómo se baja un problema complejo</h2>
+  <ol>
+    <li class="fragment"><strong>Observar</strong> el fenómeno físico: la reverberación.</li>
+    <li class="fragment"><strong>Modelarlo</strong> con Señales y Sistemas: la sala es un sistema LTI, $y = x \ast h$.</li>
+    <li class="fragment"><strong>Descomponer</strong> la medición en módulos: una cadena de sistemas.</li>
+    <li class="fragment"><strong>Resolver cada módulo</strong> con una técnica de procesamiento digital de señales.</li>
+    <li class="fragment"><strong>Encadenar</strong> los módulos en un software.</li>
+    <li class="fragment"><strong>Automatizar</strong> la medición para obtener datos normalizados (ISO 3382).</li>
+  </ol>
+  <blockquote class="fragment">El TP es un caso de aplicación: el mismo método sirve para cualquier problema de ingeniería de sonido que se pueda modelar como señales que atraviesan sistemas.</blockquote>
 </section>
 
 <section data-auto="siguiente"></section>

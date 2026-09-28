@@ -465,6 +465,16 @@ pre.tree {
 .reveal ol.ruta li.actual { border-left-color: var(--violeta); background: var(--violeta-suave); }
 .reveal ol.ruta li.actual::before { color: var(--violeta); }
 .reveal ol.ruta .tema { display: block; font-size: 0.66em; color: var(--tenue); }
+.hilo { margin-top: 0.9em; }
+.hilo h3 { margin-bottom: 0.4em; }
+.reveal ol.hilo-etapas { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0 1.1em; margin: 0; }
+.reveal ol.hilo-etapas li.etapa-hilo { position: relative; margin: 0; padding: 0.45em 0.55em 0.5em 0.55em; font-size: 0.56em; line-height: 1.25; background: var(--papel-alto); border: 2px solid var(--grilla); border-radius: 4px; }
+.reveal ol.hilo-etapas li.etapa-hilo::before { content: counter(n); position: static; display: inline-block; margin-right: 0.35em; color: var(--tenue); font-weight: 700; }
+.reveal ol.hilo-etapas li.etapa-hilo + li.etapa-hilo::after { content: ""; position: absolute; left: -1.1em; top: 50%; width: 1.1em; height: 2px; background: var(--tenue); }
+.reveal ol.hilo-etapas li.etapa-hilo span { display: block; margin-top: 0.2em; color: var(--tenue); }
+.reveal ol.hilo-etapas li.etapa-hilo.actual { border-color: var(--violeta); background: var(--violeta-suave); }
+.reveal ol.hilo-etapas li.etapa-hilo.actual strong, .reveal ol.hilo-etapas li.etapa-hilo.actual::before { color: var(--violeta); }
+.reveal ol.ruta li { padding-top: 0.25em; padding-bottom: 0.25em; }
 .reveal a.siguiente { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.8em; line-height: 1.1; }
 
 /* ---------- Componentes de las presentaciones de milestones ---------- */

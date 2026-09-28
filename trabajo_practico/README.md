@@ -8,10 +8,36 @@ El proyecto se desarrolla de forma incremental en **4 milestones** (M0-M3), util
 
 > **API de referencia**: La catedra desarrolló una implementacion de referencia desplegada en produccion. Pueden explorar la documentacion interactiva (Swagger UI) en [https://rir-api.onrender.com/docs](https://rir-api.onrender.com/docs) para entender la estructura de endpoints, schemas y respuestas esperadas. Esta API sirve como guia, no como solucion — cada grupo debe desarrollar su propia implementacion.
 
+## El TP como caso de aplicación de Señales y Sistemas
+
+RIR-API es el ejemplo de cómo resolver un problema complejo aplicando los conceptos de la materia. El hilo conductor va de lo conceptual a lo aplicado:
+
+1. **Fenómeno físico.** La reverberación: el sonido de una fuente se suma a sus reflexiones en las superficies del recinto.
+2. **Modelo.** La sala se modela como un **sistema lineal e invariante en el tiempo (LTI)**: si $x(t)$ es lo que emite la fuente y $y(t)$ lo que capta el micrófono, $y(t) = (x * h)(t)$. La **respuesta al impulso** $h(t)$ caracteriza por completo a la sala; medir la sala es medir $h(t)$. Las propiedades vistas en clase tienen consecuencias concretas: linealidad (no saturar la cadena), invariancia (repetir y promediar), causalidad (nada llega antes que el sonido directo) y estabilidad ($h(t)$ decae, y cómo decae es el tiempo de reverberación).
+3. **Módulos.** La medición es una **cadena de sistemas en cascada**: PC → DAC → amplificador → parlante → sala → micrófono → ADC → PC. Por asociatividad de la convolución, toda la cadena equivale a un único sistema; si los transductores son aproximadamente ideales en la banda de interés, ese sistema es la sala.
+4. **Cada módulo, una técnica de procesamiento digital de señales:**
+
+| Concepto de la materia | Qué resuelve en la medición | Función del TP | Milestone |
+|------------------------|-----------------------------|----------------|-----------|
+| Señales aleatorias, densidad espectral $1/f$ | Excitar todas las bandas con energía pareja por octava | `generar_ruido_rosa` | M1 |
+| Frecuencia instantánea, filtro inverso | Una excitación que separa la respuesta lineal de la distorsión | `generar_sine_sweep` | M1 |
+| Muestreo, DAC/ADC, sistemas en cascada | Emitir y grabar a la vez | `reproducir_y_grabar` | M1 |
+| Convolución, delta, asociatividad | Recuperar $h(t)$ a partir de la grabación | `obtener_ri_desde_sweep` | M2 |
+| Filtros LTI (Butterworth, IEC 61260) | Analizar la sala por bandas de octava | `filtro_octava` | M2 |
+| Escala logarítmica | Expresar niveles en dB | `a_escala_log` | M2 |
+| Señal analítica, transformada de Hilbert | Envolvente de $h(t)$ | `suavizar_signal` | M3 |
+| Energía, integración | Curva de decaimiento (Schroeder) | `integral_schroeder` | M3 |
+| Mínimos cuadrados | Pendiente de la curva: T30, T20, EDT | `regresion_lineal`, `calcular_parametros_acusticos` | M3 |
+
+5. **Automatización.** Los módulos se encadenan en un software y se exponen como una **API REST**: la medición se automatiza y entrega datos normalizados por la ISO 3382.
+
+El mismo método (observar, modelar, descomponer, resolver cada módulo, encadenar y automatizar) sirve para cualquier problema de ingeniería de sonido que se pueda plantear como señales que atraviesan sistemas. Las [presentaciones del TP](presentaciones/README.md) desarrollan este recorrido, empezando por la conceptual.
+
 ## Objetivos de aprendizaje
 
 Al completar este trabajo practico, los alumnos habran adquirido las siguientes habilidades:
 
+- **Modelado con Señales y Sistemas**: plantear un fenómeno físico (la reverberación) como un sistema LTI y descomponer la medición en una cadena de sistemas.
 - **Desarrollo de software**: disenar e implementar una API REST modular en Python con FastAPI, con buenas practicas de codigo, testing y documentacion.
 - **Arquitectura de APIs**: disenar endpoints, schemas de validacion (Pydantic), manejo de errores HTTP y documentacion OpenAPI.
 - **Procesamiento de senales**: implementar algoritmos de generacion, filtrado, deconvolucion y analisis de senales de audio.
