@@ -44,13 +44,6 @@ test('visibilidad: solo en modo presentación y nunca embebida en un iframe', ()
   assert.equal(P.debeMostrar({ enIframe: true, enPresentacion: true }), false);
 });
 
-test('un interactivo abierto desde el modo presentación trae ?presentacion en la URL', () => {
-  assert.equal(P.presentacionEnUrl('?presentacion=1'), true);
-  assert.equal(P.presentacionEnUrl('?sin3d&presentacion=1'), true);
-  assert.equal(P.presentacionEnUrl(''), false);
-  assert.equal(P.presentacionEnUrl('?sin3d'), false);
-});
-
 test('transformación del lienzo: dibuja en coordenadas de pantalla aunque el lienzo esté corrido', () => {
   // Lienzo que empieza en (10, 20) de la pantalla, con densidad 2: un punto de pantalla (10, 20)
   // tiene que caer en el píxel (0, 0) del lienzo.

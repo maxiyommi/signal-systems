@@ -14,11 +14,11 @@ Las fechas de cada presentación y entrega están en el [cronograma](../cronogra
 
 ## Material interactivo
 
-Algunas ideas se entienden mejor escuchando y manipulando. Están embebidas en el [marco conceptual](marco_conceptual.md) y también se pueden abrir a pantalla completa:
+Algunas ideas se entienden mejor escuchando y manipulando. Se abren en una pestaña aparte desde el [marco conceptual](marco_conceptual.md) o desde acá:
 
-- [Escucha a ciegas](interactivos/escucha.html): la misma fuente con y sin sala, en tiempo y en frecuencia.
-- [La sala: directo, reflexiones y cola](interactivos/sala.html): simulación 3D por fuentes imagen, ecograma y auralización.
-- [De la curva de caída a T30](interactivos/caida.html): integral de Schroeder, regresión y el efecto del ruido de fondo.
+- [Escucha a ciegas](interactivos/escucha.html){target=_blank rel=noopener}: la misma fuente con y sin sala, en tiempo y en frecuencia.
+- [La sala: directo, reflexiones y cola](interactivos/sala.html){target=_blank rel=noopener}: simulación 3D por fuentes imagen, ecograma y auralización.
+- [De la curva de caída a T30](interactivos/caida.html){target=_blank rel=noopener}: integral de Schroeder, regresión y el efecto del ruido de fondo.
 
 ## Dónde consultar
 

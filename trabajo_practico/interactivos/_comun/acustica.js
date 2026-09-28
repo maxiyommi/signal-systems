@@ -6,6 +6,20 @@ export function sabineT60({ lx, ly, lz }, alpha) {
   return (0.161 * V) / (alpha * S);
 }
 
+// Eyring: corrige a Sabine cuando la absorción es alta (−ln(1−α) en lugar de α).
+export function eyringT60({ lx, ly, lz }, alpha) {
+  const V = lx * ly * lz;
+  const S = 2 * (lx * ly + lx * lz + ly * lz);
+  return (0.161 * V) / (-S * Math.log(1 - alpha));
+}
+
+// Cuánto tiempo mostrar en el ecograma: 0,2 s para la sala de referencia (diagonal ≈ 13,4 m),
+// proporcional a la diagonal para salas más grandes, hasta 0,5 s.
+export function tiempoEcograma({ lx, ly, lz }) {
+  const t = 0.2 * Math.hypot(lx, ly, lz) / Math.hypot(10, 8, 4);
+  return Math.round(Math.min(0.5, Math.max(0.2, t)) * 100) / 100;
+}
+
 const ruidoUniforme = () => 2 * Math.random() - 1;   // uniforme en [−1, 1], media 0
 
 export function riSintetica({ fs, t60, duracion, rng = ruidoUniforme }) {
@@ -179,4 +193,71 @@ export function evaluarT30(ri, fs) {
     return { t30: null, valido: false, edc, motivo: 'T30 no válido: en −35 dB el ruido de fondo está a menos de 10 dB de la curva' };
   }
   return { t30: tiempoReverberacion(edc, fs), valido: true, edc, motivo: '' };
+}
+
+// Tramos de evaluación de la ISO 3382-1 (dB por debajo del nivel inicial de la curva de Schroeder).
+export const RANGOS = {
+  EDT: { desde: 0, hasta: -10 },
+  T10: { desde: -5, hasta: -15 },
+  T20: { desde: -5, hasta: -25 },
+  T30: { desde: -5, hasta: -35 },
+};
+
+// Nivel en dB (energía media en bloques de 10 ms) con el tiempo del centro de cada bloque.
+function nivelesPorBloque(ri, fs, ms = 0.01) {
+  const largo = Math.max(1, Math.round(fs * ms));
+  const t = [], db = [];
+  for (let i = 0; i + largo <= ri.length; i += largo) {
+    let e = 0;
+    for (let k = i; k < i + largo; k++) e += ri[k] * ri[k];
+    t.push((i + largo / 2) / fs); db.push(10 * Math.log10(e / largo + 1e-20));
+  }
+  return { t, db };
+}
+
+// Ruido de fondo (dB) estimado en el último 10 % de la RI, y nivel inicial (máximo de los bloques).
+function ruidoYPico(ri, fs) {
+  const cola = Math.floor(ri.length * 0.9);
+  let ms = 0;
+  for (let i = cola; i < ri.length; i++) ms += ri[i] * ri[i];
+  const ruido = 10 * Math.log10(ms / (ri.length - cola) + 1e-20);
+  return { ruido, pico: Math.max(...nivelesPorBloque(ri, fs).db) };
+}
+
+// Punto de corte (muestra) donde el decaimiento se cruza con el ruido de fondo. Versión de una sola
+// pasada de la idea de Lundeby: recta de regresión del nivel entre el máximo y 10 dB por encima
+// del ruido, prolongada hasta el nivel del ruido.
+export function puntoDeCorte(ri, fs) {
+  const { t, db } = nivelesPorBloque(ri, fs);
+  const { ruido } = ruidoYPico(ri, fs);
+  const iMax = db.indexOf(Math.max(...db));
+  let iFin = db.findIndex((d, i) => i > iMax && d <= ruido + 10);
+  if (iFin < 0) iFin = db.length - 1;
+  if (iFin - iMax < 3) return ri.length;
+  const { pendiente, ordenada } = regresionLineal(t.slice(iMax, iFin), db.slice(iMax, iFin));
+  if (!(pendiente < 0)) return ri.length;
+  const tCruce = (ruido - ordenada) / pendiente;
+  return Math.max(2, Math.min(ri.length, Math.round(tCruce * fs)));
+}
+
+// Tiempo de reverberación sobre la integral de Schroeder en el tramo [desdeDb, hastaDb], con la
+// integral recortada en `corte` (muestras) si se indica. Validez según la ISO 3382-1: el ruido de
+// fondo tiene que quedar al menos 10 dB por debajo del final del tramo (rango dinámico ≥ |hasta| + 10).
+export function evaluarDecaimiento(ri, fs, { desdeDb = -5, hastaDb = -35, corte = null } = {}) {
+  const n = corte ? Math.max(2, Math.min(ri.length, Math.round(corte))) : ri.length;
+  const edc = edcDb(ri.subarray(0, n));
+  const { ruido, pico } = ruidoYPico(ri, fs);
+  const rangoDinamico = pico - ruido;
+  const requerido = -hastaDb + 10;
+  const base = { edc, rangoDinamico, requerido, tr: null, pendiente: null, ordenada: null };
+  const x = [], y = [];
+  for (let i = 0; i < edc.length; i++) if (edc[i] <= desdeDb && edc[i] >= hastaDb) { x.push(i / fs); y.push(edc[i]); }
+  if (x.length < 3 || !edc.some((d) => d <= hastaDb)) {
+    return { ...base, valido: false, motivo: `La curva no llega a ${hastaDb} dB: no se puede calcular.` };
+  }
+  const { pendiente, ordenada } = regresionLineal(x, y);
+  const tr = -60 / pendiente;
+  const valido = rangoDinamico >= requerido;
+  const motivo = valido ? '' : `No válido: rango dinámico de ${Math.round(rangoDinamico)} dB; este tramo pide al menos ${requerido} dB (ISO 3382-1).`;
+  return { ...base, tr, pendiente, ordenada, valido, motivo };
 }

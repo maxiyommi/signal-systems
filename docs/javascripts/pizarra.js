@@ -1,5 +1,5 @@
 // Pizarra del modo presentación: dibujar con el Apple Pencil (o el mouse) sobre las páginas del TP
-// y sobre los interactivos abiertos desde el modo presentación.
+// y sobre los interactivos (que también tienen modo presentación).
 // Los trazos se guardan en coordenadas del documento, así acompañan al contenido al desplazar.
 // Con el dedo se desplaza la página; con el lápiz se dibuja. Al cambiar de página se borra todo.
 (function () {
@@ -33,15 +33,13 @@
 
   // Solo en modo presentación, y nunca embebida en un iframe: ahí se dibuja con la pizarra de la página.
   const debeMostrar = ({ enIframe, enPresentacion }) => !enIframe && enPresentacion;
-  // Un interactivo abierto desde el modo presentación llega con ?presentacion en la URL.
-  const presentacionEnUrl = (search) => /[?&]presentacion(=|&|$)/.test(search);
 
   // Se dibuja en coordenadas de pantalla (las mismas del lápiz) y la transformación las lleva al lienzo
   // según dónde está realmente en pantalla. Así no dependemos de innerWidth/innerHeight, que en Safari
   // de iPad pueden no coincidir con el lienzo (barra del navegador, zoom).
   const transformacion = (rect, dpr) => [dpr, 0, 0, dpr, -rect.left * dpr, -rect.top * dpr];
 
-  window.PizarraLogica = { borrarCerca, aPantalla, aDocumento, anchoTrazo, debeMostrar, presentacionEnUrl, transformacion };
+  window.PizarraLogica = { borrarCerca, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
 
@@ -215,11 +213,7 @@
     window.visualViewport?.addEventListener('resize', reajustar);   // aparece o se oculta la barra de Safari
 
     // Se muestra solo en modo presentación (lo maneja presentacion.js con una clase en el body).
-    const enInteractivo = document.documentElement.dataset.pizarra === 'interactivo';
-    const actualizar = () => mostrar(debeMostrar({
-      enIframe,
-      enPresentacion: enInteractivo ? presentacionEnUrl(location.search) : document.body.classList.contains('modo-presentacion'),
-    }));
+    const actualizar = () => mostrar(debeMostrar({ enIframe, enPresentacion: document.body.classList.contains('modo-presentacion') }));
     new MutationObserver(actualizar).observe(document.body, { attributes: true, attributeFilter: ['class'] });
     actualizar();
   }

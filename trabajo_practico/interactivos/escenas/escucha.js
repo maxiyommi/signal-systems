@@ -1,9 +1,10 @@
 // Escucha a ciegas: A/B entre audio seco y en sala; después se revelan forma de onda o espectro.
 import { espectroPromedioDb, envolventeMinMax } from '../_comun/acustica.js';
 import { cargarBuffer, crearCanal } from '../_comun/audio.js';
-import { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho } from '../_comun/grafico.js';
+import { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho, paleta } from '../_comun/grafico.js';
 
-const COLOR = { seco: '#1B1830', sala: '#6B2FA3', eje: '#5A5872', grilla: '#C9D6E2', fondo: '#F7FAFC' };
+const P = paleta();             // colores del tema (oscuro como la landing, o claro si se eligió en el sitio)
+const COLOR = { seco: P.tinta, sala: P.violeta, eje: P.eje, grilla: P.grilla, fondo: P.papel };
 
 function dibujarOnda(canvas, datos, fs, segundos, color, etiqueta) {
   const { g, W, H, compacto } = prepararCanvas(canvas, { aspecto: 0.12, min: 84, max: 120 });
@@ -29,8 +30,9 @@ function dibujarOnda(canvas, datos, fs, segundos, color, etiqueta) {
     g.fillRect(x, y0, 1, Math.max(1, y1 - y0));
   }
   g.font = `600 ${tt + 1}px ${FUENTE}`;
-  g.fillStyle = 'rgba(247, 250, 252, 0.9)';
+  g.fillStyle = COLOR.fondo; g.globalAlpha = 0.9;
   g.fillRect(3, 3, g.measureText(etiqueta).width + 10, tt + 8);
+  g.globalAlpha = 1;
   g.fillStyle = color;
   g.fillText(etiqueta, 8, tt + 6);
 }
