@@ -129,3 +129,22 @@ export function envolventeMinMax(senal, columnas) {
   }
   return { min, max };
 }
+
+// Recorrido físico (dentro de la sala) de una reflexión: la recta imagen → mic "plegada" en las paredes.
+// Devuelve la polilínea [fuente, rebote1, …, mic].
+export function caminoPlegado({ lx, ly, lz }, imagen, mic) {
+  const L = [lx, ly, lz];
+  const plegar = (v, l) => { const m = ((v % (2 * l)) + 2 * l) % (2 * l); return m > l ? 2 * l - m : m; };
+  const ts = new Set([0, 1]);
+  for (let k = 0; k < 3; k++) {
+    const a = imagen[k], b = mic[k];
+    if (a === b) continue;
+    const lo = Math.min(a, b), hi = Math.max(a, b);
+    for (let n = Math.ceil(lo / L[k]); n * L[k] <= hi; n++) {
+      const t = (n * L[k] - a) / (b - a);
+      if (t > 1e-12 && t < 1 - 1e-12) ts.add(t);
+    }
+  }
+  return [...ts].sort((p, q) => p - q).map((t) =>
+    [0, 1, 2].map((k) => plegar(imagen[k] + t * (mic[k] - imagen[k]), L[k])));
+}

@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="../_comun/deck.css">
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }
+  </script>
   <style>
     /* Layouts propios de la presentación conceptual */
     .portada-sub { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.5em; line-height: 1.05; color: var(--violeta); max-width: 26ch; margin: 0 0 0.4em 0; }
@@ -44,6 +49,9 @@
     .escucha-fila .controles { margin: 0 0 0.5em 0; }
     .escucha-fila .controles strong { min-width: 5.5em; font-size: 1.1em; }
     .graficos canvas { display: block; width: 100%; height: auto; margin-bottom: 0.4em; background: var(--papel-alto); border: 1px solid var(--grilla); border-radius: 4px; }
+    .sala .controles { margin: 0.5em 0 0 0; }
+    .sala .ecograma { display: block; width: 100%; height: auto; margin-top: 0.5em; border: 1px solid var(--grilla); border-radius: 4px; }
+    .sala .t60 { font-weight: 700; color: var(--tinta); }
     .cierre-link { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.6em; }
   </style>
 </head>
@@ -289,6 +297,7 @@
 <script type="module">
   import { initDeck, registrarEscena } from '../_comun/deck.js';
   import { crearEscucha } from './escenas/escucha.js';
+  import { crearSala3D } from './escenas/sala3d.js';
 
   const pares = [
     { nombre: 'Canto', seco: 'audio/seco_canto.mp3', sala: 'audio/sala_canto.mp3' },
@@ -298,6 +307,7 @@
     const sec = document.getElementById(id);
     registrarEscena(id, crearEscucha(sec, { pares: modo === 'espectral' ? pares.slice(1) : pares, modo }));
   }
+  registrarEscena('sala3d', crearSala3D(document.getElementById('sala3d')));
   initDeck();
 </script>
 </body>
