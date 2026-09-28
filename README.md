@@ -144,9 +144,6 @@ Las consultas están centralizadas en [Slack](https://slack.com/intl/es-ar/). Ve
 
 ## Docentes
 
-- **Prof. Trina Adrián de Pérez** — Profesora titular
-- **Lic. [Miriam Sassano](https://www.linkedin.com/in/miryam-patricia-sassano-7878189)** — miryam.sassano@gmail.com
-- **Ing. Antonio Greco** — antogreco2015@gmail.com
 - **Ing. [Maximiliano Yommi](https://maxiyommi.github.io/portfolio_insight/)** — myommi@untref.edu.ar
 - **[Jerónimo Scafati](https://www.linkedin.com/in/jeronimo-scafati/)**
 
