@@ -312,13 +312,15 @@
     @media (max-width: 480px) {
       .nav-grid { grid-template-columns: 1fr; }
       .start-here__steps { flex-direction: column; align-items: stretch; }
-      .class-item { gap: 0.6rem; padding: 0.7rem 0.8rem; }
+      .class-item { gap: 0.6rem; padding: 0.7rem 0.8rem; flex-wrap: wrap; }
       .class-item__date { display: block; margin-left: 0; }
+      .class-item__info { flex-basis: calc(100% - 2.4rem); }
+      .class-item__entrega, .class-item__status { margin-left: 2.2rem; }
     }
   </style>
 
   <!-- ===== SVG ICON DEFS (Lucide icons) ===== -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
     <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
     <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
     <symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
@@ -344,7 +346,8 @@
       <img src="{{ config.theme.logo | url }}" alt="Logo" class="hero__logo">
       <h1 class="hero__title">Señales y Sistemas</h1>
       <p class="hero__subtitle">Ingeniería de Sonido — UNTREF</p>
-      <span class="hero__badge">2.º Cuatrimestre 2026 — Miércoles</span>
+      <span class="hero__badge">2.º cuatrimestre 2026 — Miércoles</span>
+      <p class="hero__subtitle">Práctica: Maximiliano Yommi y Jerónimo Scafati</p>
     </div>
   </section>
 
@@ -353,11 +356,11 @@
     <!-- ===== POR DONDE ARRANCO ===== -->
     <div class="start-here">
       <span class="start-here__icon">
-        <svg class="icon"><use href="#i-compass"/></svg>
+        <svg aria-hidden="true" class="icon"><use href="#i-compass"/></svg>
       </span>
       <div class="start-here__content">
         <h2 class="start-here__title">¿Primera vez? Arrancá por acá</h2>
-        <p class="start-here__desc">Seguí estos 3 pasos antes de la primera clase y vas a llegar listo.</p>
+        <p class="start-here__desc">Antes del 30/9: instalá el entorno, repasá Git, sumate al Slack y leé la ruta del TP.</p>
         <div class="start-here__steps">
           <a href="{{ 'guias/setup_entorno/' | url }}" class="start-here__step start-here__step--1">
             <span class="start-here__num">1</span> Instalar el entorno
@@ -365,8 +368,11 @@
           <a href="{{ 'guias/git_basico/' | url }}" class="start-here__step start-here__step--2">
             <span class="start-here__num">2</span> Aprender Git básico
           </a>
-          <a href="{{ 'guias/marimo_intro/' | url }}" class="start-here__step start-here__step--3">
-            <span class="start-here__num">3</span> Conocer Marimo
+          <a href="https://join.slack.com/t/senalesysistemas/shared_invite/zt-o44s05m8-Yhw_W10tEch6fBy~e8mo2w" class="start-here__step start-here__step--3">
+            <span class="start-here__num">3</span> Sumarse al Slack
+          </a>
+          <a href="{{ 'trabajo_practico/ruta/' | url }}" class="start-here__step start-here__step--3">
+            <span class="start-here__num">4</span> Leer la ruta del TP
           </a>
         </div>
       </div>
@@ -375,17 +381,17 @@
     <!-- ===== PILARES ===== -->
     <section class="pillars">
       <div class="pillar-card">
-        <div class="pillar-card__icon"><svg class="icon icon--xl"><use href="#i-code"/></svg></div>
+        <div class="pillar-card__icon"><svg aria-hidden="true" class="icon icon--xl"><use href="#i-code"/></svg></div>
         <h3 class="pillar-card__title">Lógica y programación</h3>
         <p class="pillar-card__desc">Python, NumPy, SciPy. Desde cero hasta procesar señales de audio.</p>
       </div>
       <div class="pillar-card">
-        <div class="pillar-card__icon"><svg class="icon icon--xl"><use href="#i-bot"/></svg></div>
+        <div class="pillar-card__icon"><svg aria-hidden="true" class="icon icon--xl"><use href="#i-bot"/></svg></div>
         <h3 class="pillar-card__title">Vibecoding y Agentes IA</h3>
         <p class="pillar-card__desc">Claude, ChatGPT, Copilot. IA como herramienta real de desarrollo.</p>
       </div>
       <div class="pillar-card">
-        <div class="pillar-card__icon"><svg class="icon icon--xl"><use href="#i-rocket"/></svg></div>
+        <div class="pillar-card__icon"><svg aria-hidden="true" class="icon icon--xl"><use href="#i-rocket"/></svg></div>
         <h3 class="pillar-card__title">De idea a MVP</h3>
         <p class="pillar-card__desc">Git, testing, CI/CD, FastAPI. Construir una API de acústica real.</p>
       </div>
@@ -393,9 +399,9 @@
 
     <!-- ===== CURSADA ACTUAL ===== -->
     <div class="section-header">
-      <svg class="icon icon--lg"><use href="#i-book-open"/></svg>
+      <svg aria-hidden="true" class="icon icon--lg"><use href="#i-book-open"/></svg>
       <h2 class="section-header__title">Cursada 2C 2026 — Trabajo Práctico</h2>
-      <a href="{{ 'trabajo_practico/ruta/' | url }}" class="section-header__link">Ruta del TP <svg class="icon"><use href="#i-arrow-right"/></svg></a>
+      <a href="{{ 'trabajo_practico/ruta/' | url }}" class="section-header__link">Ruta del TP <svg aria-hidden="true" class="icon"><use href="#i-arrow-right"/></svg></a>
     </div>
     <p class="class-list__note">Las 7 sesiones de la práctica, a partir de la semana 7. Los notebooks del material de apoyo no se dictan en vivo: se trabajan durante la semana, con consultas por Slack.</p>
 
@@ -416,21 +422,21 @@
       </div>
       <div class="class-item" data-date="2026-10-14">
         <span class="class-item__num">2</span>
-        <span class="class-item__info"><span class="class-item__title">Presentación M1 — Generación</span><span class="class-item__date">Mié 14/10 · Presencial</span>
-          <span class="class-item__links"><a href="{{ 'trabajo_practico/especificacion/m1_generacion/' | url }}">M1</a> — Material de apoyo: <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_06">Clase 6</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_04">Clase 4</a></span>
+        <span class="class-item__info"><span class="class-item__title">Presentación M1 — Generación de señales</span><span class="class-item__date">Mié 14/10 · Presencial</span>
+          <span class="class-item__links"><a href="{{ 'trabajo_practico/especificacion/m1_generacion/' | url }}">M1</a> — Material de apoyo: <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_04">Clase 4</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_06">Clase 6</a></span>
         </span>
         <span class="class-item__status"></span>
       </div>
       <div class="class-item" data-date="2026-10-21">
         <span class="class-item__num">3</span>
-        <span class="class-item__info"><span class="class-item__title">Presentación M2 — Procesamiento + taller M1</span><span class="class-item__date">Mié 21/10 · Virtual</span>
+        <span class="class-item__info"><span class="class-item__title">Presentación M2 — Procesamiento de la RI + taller M1</span><span class="class-item__date">Mié 21/10 · Virtual</span>
           <span class="class-item__links"><a href="{{ 'trabajo_practico/especificacion/m2_procesamiento/' | url }}">M2</a> — Material de apoyo: <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_08">Clase 8</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_09">Clase 9</a></span>
         </span>
         <span class="class-item__status"></span>
       </div>
       <div class="class-item" data-date="2026-10-28">
         <span class="class-item__num">4</span>
-        <span class="class-item__info"><span class="class-item__title">Entrega M1 + Presentación M3 — Producto</span><span class="class-item__date">Mié 28/10 · Presencial</span>
+        <span class="class-item__info"><span class="class-item__title">Entrega M1 + Presentación M3 — Producto final</span><span class="class-item__date">Mié 28/10 · Presencial</span>
           <span class="class-item__links"><a href="{{ 'trabajo_practico/especificacion/m3_producto_final/' | url }}">M3</a> — Material de apoyo: <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_10">Clase 10</a></span>
         </span>
         <span class="class-item__entrega class-item__entrega--m1">M1</span>
@@ -439,7 +445,7 @@
       <div class="class-item" data-date="2026-11-04">
         <span class="class-item__num">5</span>
         <span class="class-item__info"><span class="class-item__title">Entrega M2 + taller del producto (API, deploy)</span><span class="class-item__date">Mié 4/11 · Virtual</span>
-          <span class="class-item__links">Material de apoyo: <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_13">Clase 13</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_11">Clase 11</a></span>
+          <span class="class-item__links">Material de apoyo: <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_11">Clase 11</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_13">Clase 13</a></span>
         </span>
         <span class="class-item__entrega class-item__entrega--m2">M2</span>
         <span class="class-item__status"></span>
@@ -463,76 +469,76 @@
 
     <!-- ===== TRABAJO PRACTICO ===== -->
     <div class="section-header">
-      <svg class="icon icon--lg"><use href="#i-target"/></svg>
+      <svg aria-hidden="true" class="icon icon--lg"><use href="#i-target"/></svg>
       <h2 class="section-header__title">Trabajo Práctico — RIR-API</h2>
-      <a href="{{ 'trabajo_practico/' | url }}" class="section-header__link">Ver consigna completa <svg class="icon"><use href="#i-arrow-right"/></svg></a>
+      <a href="{{ 'trabajo_practico/' | url }}" class="section-header__link">Ver consigna completa <svg aria-hidden="true" class="icon"><use href="#i-arrow-right"/></svg></a>
     </div>
 
     <div class="milestones">
       <a href="{{ 'trabajo_practico/especificacion/m0_arquitectura/' | url }}" class="milestone">
         <span class="milestone__tag">M0</span>
         <div class="milestone__info">
-          <div class="milestone__title">Arquitectura</div>
-          <div class="milestone__date">Presenta 30/9 → entrega 7/10 (Slack/GitHub) — seguimiento, sin nota</div>
+          <div class="milestone__title">El plano (arquitectura)</div>
+          <div class="milestone__date">Consigna 30/9 → entrega 7/10 (Slack/GitHub) — seguimiento, sin nota</div>
         </div>
-        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+        <span class="milestone__arrow"><svg aria-hidden="true" class="icon"><use href="#i-chevron-right"/></svg></span>
       </a>
       <a href="{{ 'trabajo_practico/especificacion/m1_generacion/' | url }}" class="milestone">
         <span class="milestone__tag">M1</span>
         <div class="milestone__info">
           <div class="milestone__title">Generación de señales</div>
-          <div class="milestone__date">Presenta 14/10 → entrega 28/10 — seguimiento, sin nota</div>
+          <div class="milestone__date">Consigna 14/10 → entrega 28/10 — seguimiento, sin nota</div>
         </div>
-        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+        <span class="milestone__arrow"><svg aria-hidden="true" class="icon"><use href="#i-chevron-right"/></svg></span>
       </a>
       <a href="{{ 'trabajo_practico/especificacion/m2_procesamiento/' | url }}" class="milestone">
         <span class="milestone__tag">M2</span>
         <div class="milestone__info">
-          <div class="milestone__title">Procesamiento de RI</div>
-          <div class="milestone__date">Presenta 21/10 → entrega 4/11 — seguimiento, sin nota</div>
+          <div class="milestone__title">Procesamiento de la RI</div>
+          <div class="milestone__date">Consigna 21/10 → entrega 4/11 — seguimiento, sin nota</div>
         </div>
-        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+        <span class="milestone__arrow"><svg aria-hidden="true" class="icon"><use href="#i-chevron-right"/></svg></span>
       </a>
       <a href="{{ 'trabajo_practico/especificacion/m3_producto_final/' | url }}" class="milestone">
         <span class="milestone__tag">M3</span>
         <div class="milestone__info">
           <div class="milestone__title">Producto final + Demo Day</div>
-          <div class="milestone__date">Presenta 28/10 → entrega 18/11 + oral — con nota</div>
+          <div class="milestone__date">Consigna 28/10 → entrega 18/11 + oral — con nota</div>
         </div>
-        <span class="milestone__arrow"><svg class="icon"><use href="#i-chevron-right"/></svg></span>
+        <span class="milestone__arrow"><svg aria-hidden="true" class="icon"><use href="#i-chevron-right"/></svg></span>
       </a>
     </div>
 
     <!-- ===== GUIAS Y RECURSOS ===== -->
     <div class="section-header">
-      <svg class="icon icon--lg"><use href="#i-map"/></svg>
+      <svg aria-hidden="true" class="icon icon--lg"><use href="#i-map"/></svg>
       <h2 class="section-header__title">Guías y recursos</h2>
     </div>
 
     <div class="nav-grid">
       <a href="{{ 'guias/setup_entorno/' | url }}" class="nav-item">
-        <svg class="icon"><use href="#i-settings"/></svg> Setup del entorno
+        <svg aria-hidden="true" class="icon"><use href="#i-settings"/></svg> Setup del entorno
       </a>
       <a href="{{ 'guias/git_basico/' | url }}" class="nav-item">
-        <svg class="icon"><use href="#i-git-branch"/></svg> Git básico
+        <svg aria-hidden="true" class="icon"><use href="#i-git-branch"/></svg> Git básico
       </a>
       <a href="{{ 'guias/marimo_intro/' | url }}" class="nav-item">
-        <svg class="icon"><use href="#i-notebook"/></svg> Intro a Marimo
+        <svg aria-hidden="true" class="icon"><use href="#i-notebook"/></svg> Intro a Marimo
       </a>
       <a href="{{ 'guias/quarto_informe/' | url }}" class="nav-item">
-        <svg class="icon"><use href="#i-file-text"/></svg> Quarto (informes)
+        <svg aria-hidden="true" class="icon"><use href="#i-file-text"/></svg> Quarto (opcional)
       </a>
       <a href="{{ 'cronograma/' | url }}" class="nav-item">
-        <svg class="icon"><use href="#i-calendar"/></svg> Cronograma completo
+        <svg aria-hidden="true" class="icon"><use href="#i-calendar"/></svg> Cronograma completo
       </a>
       <a href="{{ 'trabajo_practico/rubrica/' | url }}" class="nav-item">
-        <svg class="icon"><use href="#i-clipboard-check"/></svg> Rúbrica de evaluación
+        <svg aria-hidden="true" class="icon"><use href="#i-clipboard-check"/></svg> Rúbrica de evaluación
       </a>
       <a href="{{ 'reglas_slack/' | url }}" class="nav-item">
-        <svg class="icon"><use href="#i-message-circle"/></svg> Slack y consultas
+        <svg aria-hidden="true" class="icon"><use href="#i-message-circle"/></svg> Slack y consultas
       </a>
       <a href="https://github.com/maxiyommi/signal-systems" class="nav-item">
-        <svg class="icon"><use href="#i-package"/></svg> Repositorio GitHub
+        <svg aria-hidden="true" class="icon"><use href="#i-package"/></svg> Repositorio GitHub
       </a>
     </div>
 
@@ -551,7 +557,9 @@
         var nextDate = items[i + 1] ? new Date(items[i + 1].getAttribute('data-date') + 'T00:00:00') : null;
         var status = item.querySelector('.class-item__status');
 
-        if (nextDate && today >= nextDate) {
+        // La última sesión queda como "esta semana" solo 7 días; después, "vista".
+        var fin = nextDate || new Date(classDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+        if (today >= fin) {
           item.classList.add('class-item--past');
           status.textContent = 'Vista';
         } else if (today >= classDate && !currentFound) {
@@ -559,14 +567,14 @@
           status.textContent = 'Esta semana';
           currentFound = true;
           setTimeout(function() {
-            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            var quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            item.scrollIntoView({ behavior: quieto ? 'auto' : 'smooth', block: 'center' });
           }, 300);
         } else {
           item.classList.add('class-item--future');
           var diff = Math.ceil((classDate - today) / (1000 * 60 * 60 * 24));
-          if (diff <= 14) {
-            status.textContent = 'En ' + diff + ' días';
-          }
+          if (diff === 1) status.textContent = 'Mañana';
+          else if (diff <= 14) status.textContent = 'En ' + diff + ' días';
         }
       });
     })();

@@ -56,11 +56,23 @@ env/
 .DS_Store
 Thumbs.db
 
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Variables de entorno locales (settings)
+.env
+
 # Audio files (mediciones)
 *.wav
 *.flac
 *.ogg
 *.mp3
+# ...salvo los WAV chicos de prueba para los tests
+!tests/data/*.wav
 
-# Datos de medicion
-data/
+# Datos de medicion (se versiona solo la carpeta vacia)
+/data/*
+!/data/.gitkeep

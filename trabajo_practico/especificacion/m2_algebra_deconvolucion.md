@@ -43,9 +43,9 @@ $$
 
 $\delta(t)$ tiene **amplitud infinita** en $t = 0$ y duración cero. Energía total finita pero potencia instantánea infinita. Los parlantes reales:
 
-- No pueden mover la membrana infinitamente rápido (limite de slew rate).
+- No pueden mover la membrana infinitamente rápido (límite de slew rate).
 - Distorsionan groseramente cerca del nivel máximo.
-- Tienen su propia respuesta en frecuencia (no plana, especialmente en graves).
+- Tienen su propia respuestá en frecuencia (no plana, especialmente en graves).
 
 ### Lo más cercano: la palmada
 
@@ -99,7 +99,7 @@ Antes del sweep + filtro inverso, lo estándar era:
 
 La gran ventaja del sweep logarítmico es que **la distorsión armónica queda separada en el tiempo** del impulso principal. El armónico $n$-ésimo aparece a un tiempo $\Delta t_n < 0$ (negativo) respecto del pico, así que podés ventanearlo y descartarlo. Resultado: medición **lineal** aunque tu cadena tenga distorsión.
 
-**Referencia**: Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. [PDF](http://pcfarina.eng.unipr.it/Public/Papers/134-AES00.PDF)
+**Referencia**: Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. [PDF](https://www.angelofarina.it/Public/Papers/134-AES00.PDF)
 
 ---
 
@@ -280,7 +280,7 @@ Si el álgebra está bien implementada, la correlación queda > 0.95 fácil. Si 
 
 ## 7. Lecturas recomendadas
 
-- **Farina, A. (2000).** "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. [PDF](http://pcfarina.eng.unipr.it/Public/Papers/134-AES00.PDF) — el paper original que estableció este método.
+- **Farina, A. (2000).** "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. [PDF](https://www.angelofarina.it/Public/Papers/134-AES00.PDF) — el paper original que estableció este método.
 
 - **Müller, S. & Massarani, P. (2001).** "Transfer-function measurement with sweeps." *Journal of the Audio Engineering Society*, 49(6). — generalización y discusión de tradeoffs vs MLS.
 

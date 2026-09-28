@@ -9,11 +9,12 @@ Uso:
 from fastapi import FastAPI
 
 from app.routers import health
+from app.settings import settings
 
 app = FastAPI(
-    title="RIR-API",
+    title=settings.app_name,
     description="API para procesamiento y analisis de respuestas al impulso segun ISO 3382.",
-    version="0.1.0",
+    version=settings.version,
 )
 
 # Routers
@@ -31,8 +32,8 @@ app.include_router(health.router)
 async def root():
     """Informacion basica de la API."""
     return {
-        "name": "RIR-API",
-        "version": "0.1.0",
+        "name": settings.app_name,
+        "version": settings.version,
         "description": "Room Impulse Response API",
         "docs": "/docs",
     }

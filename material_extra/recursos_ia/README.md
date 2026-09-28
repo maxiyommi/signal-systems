@@ -112,7 +112,7 @@ En particular no entiendo [la parte específica].
 
 ### Requisito del TP
 
-En el informe final se debe incluir una sección "Desarrollo asistido por IA" que documente:
+Cada grupo mantiene un archivo **`AI_LOG.md` en la raíz del repositorio del TP**. Es **obligatorio y sin nota**: sin `AI_LOG.md`, M3 no se considera completo (ver la [consigna](../../trabajo_practico/README.md#log-de-desarrollo-con-ia)). Conviene ir completándolo durante todo el proyecto y documentar:
 
 1. **Qué herramientas se usaron** (Claude, ChatGPT, Ollama, etc.)
 2. **Para qué tareas** (generación, debugging, documentación, explicación)
@@ -120,10 +120,10 @@ En el informe final se debe incluir una sección "Desarrollo asistido por IA" qu
 4. **Qué falló** (código incorrecto generado, cómo se detectó y corrigió)
 5. **Reflexión**: ¿Cómo cambió tu flujo de trabajo?
 
-### Formato sugerido para el log
+### Formato sugerido para `AI_LOG.md`
 
 ```markdown
-## Log de Desarrollo con IA
+# Log de Desarrollo con IA
 
 ### Herramientas utilizadas
 - Claude.ai: generación de funciones, debugging
@@ -158,9 +158,9 @@ En el informe final se debe incluir una sección "Desarrollo asistido por IA" qu
 
 ### No está bien:
 - Copiar código IA sin entenderlo
-- No mencionar el uso de IA en el informe
+- No registrar el uso de IA en el `AI_LOG.md`
 - Depender 100% de IA sin aprender los conceptos
-- Usar IA para generar el informe completo sin revisión
+- Usar IA para generar el README o el `AI_LOG.md` completos sin revisión
 
 ### Regla de oro
 > Si no podés explicar cada línea del código que entregás, no es tu código.

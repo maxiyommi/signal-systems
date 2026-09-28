@@ -5,17 +5,23 @@ export function montar(escena) {
   if (embebido) document.documentElement.classList.add('embebido');
 
   let activa = false;
-  const cambiar = (visible) => {
-    if (visible && !activa) { activa = true; escena.iniciar(); }
-    else if (!visible && activa) { activa = false; escena.detener(); }
+  const cambiar = (v) => {
+    document.documentElement.dataset.visible = v ? '1' : '0';
+    if (v && !activa) { activa = true; escena.iniciar(); }
+    else if (!v && activa) { activa = false; escena.detener(); }
   };
-  new IntersectionObserver((e) => cambiar(e[0].isIntersecting), { threshold: 0.15 }).observe(document.querySelector('main'));
-  document.addEventListener('visibilitychange', () => { if (document.hidden) cambiar(false); });
+  // Cualquier fracción visible cuenta (umbrales bajos): así un cambio de altura del iframe
+  // no deja la escena detenida por no volver a cruzar un umbral alto.
+  const main = document.querySelector('main');
+  let enPantalla = false;
+  new IntersectionObserver((es) => { enPantalla = es[es.length - 1].isIntersecting; cambiar(enPantalla && !document.hidden); }, { threshold: [0, 0.01] }).observe(main);
+  document.addEventListener('visibilitychange', () => cambiar(enPantalla && !document.hidden));
   window.addEventListener('pagehide', () => cambiar(false));
 
   if (embebido) {
-    const informar = () => window.parent.postMessage({ tipo: 'interactivo-altura', altura: document.documentElement.scrollHeight }, '*');
-    new ResizeObserver(informar).observe(document.body);
+    // Altura del contenido (no del documento: scrollHeight nunca baja del alto actual del iframe).
+    const informar = () => window.parent.postMessage({ tipo: 'interactivo-altura', altura: Math.ceil(main.getBoundingClientRect().height) }, '*');
+    new ResizeObserver(informar).observe(main);
     informar();
   }
 }

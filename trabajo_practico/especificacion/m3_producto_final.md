@@ -1,16 +1,16 @@
-# Milestone 3: Producto Final
+# M3 · Producto final
 
 !!! info "Fechas y evaluación"
     - **Presentación de la consigna:** miercoles 28 de octubre 2026
-    - **Fecha de entrega:** miercoles 18 de noviembre 2026, junto con la presentacion oral (Demo Day)
-    - **Tag de version:** `v1.0.0`
-    - **Evaluación:** **con nota** — Nota del TP = 60% M3 + 40% presentacion oral (ver [rubrica](../rubrica.md))
+    - **Fecha de entrega:** miercoles 18 de noviembre 2026, junto con la presentación oral (Demo Day)
+    - **Tag de versión:** `v1.0.0`
+    - **Evaluación:** **con nota** — Nota del TP = 60% M3 + 40% presentación oral (ver [rubrica](../rubrica.md))
 
 ## Objetivo
 
-Completar el sistema RIR-API implementando las funciones de analisis acustico (suavizado de senal, integral de Schroeder, regresion lineal, calculo de parametros acusticos segun ISO 3382) y exponiendo **toda la funcionalidad de M1, M2 y M3 como una API REST** con FastAPI. Al finalizar este milestone, la API debe ser capaz de recibir una respuesta al impulso via HTTP, procesarla y devolver todos los parametros acusticos relevantes, con resultados validados contra software comercial.
+Completar el sistema RIR-API implementando las funciones de análisis acústico (suavizado de señal, integral de Schroeder, regresión lineal, cálculo de parámetros acústicos según ISO 3382) y exponiendo **toda la funcionalidad de M1, M2 y M3 como una API REST** con FastAPI. Al finalizar este milestone, la API debe ser capaz de recibir una respuesta al impulso vía HTTP, procesarla y devolver todos los parámetros acústicos relevantes, con resultados validados contra software comercial.
 
-> **Referencia**: Explorar la [documentacion interactiva de la API de la catedra](https://rir-api.onrender.com/docs) para entender la estructura de endpoints, schemas y respuestas esperadas.
+> **Referencia**: Explorar la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) para entender la estructura de endpoints, schemas y respuestas esperadas.
 
 ---
 
@@ -50,7 +50,7 @@ La clave de M3: **no reescriben el DSP**. Envuelven lo que ya tienen. Un router 
     | `POST /api/v1/analysis/impulse-response` | análisis completo de la RI |
     | `POST /api/v1/utils/*` | schroeder · smoothing · log-scale |
 
-    Con validación Pydantic, errores HTTP (400/422/500), Swagger en `/docs` y ReDoc en `/redoc` generados solos.
+    Con validación Pydantic, errores HTTP (400/422/500), Swagger en `/docs` y ReDoc en `/redoc` generados automáticamente.
 
 ## Conceptos y figuras
 
@@ -59,7 +59,7 @@ Lo que hay que entender antes de implementar, con los gráficos de la implementa
 ### Función 01 · de la RI al decaimiento
 
 <figure class="figura-tp" markdown>
-![Respuesta al impulso cruda superpuesta con su envolvente de Hilbert](../img/m3/rir_vs_envolvente.png)
+[![Respuesta al impulso cruda superpuesta con su envolvente de Hilbert](../img/m3/rir_vs_envolvente.png)](../img/m3/rir_vs_envolvente.png)
 <figcaption markdown="span">RI **sintética** (T60 conocido) · `suavizar_signal` con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
 </figure>
 
@@ -69,19 +69,19 @@ $$
 \text{env}(t) = \big|\, h(t) + j\,\mathcal{H}\{h(t)\} \,\big| \qquad \text{(módulo de la señal analítica)}
 $$
 
-**Tip de comunicación:** en el README y en la demo, muestren la *envolvente / curva de decaimiento*, nunca el audio crudo. El waveform cru­do "lleno" no comunica nada; la envolvente muestra exactamente cómo cae la energía.
+**Tip de comunicación:** en el README y en la demo, muestren la *envolvente / curva de decaimiento*, nunca el audio crudo. El waveform crudo "lleno" no comunica nada; la envolvente muestra exactamente cómo cae la energía.
 
 <small>Especificación (m3_producto_final) §1 — `scipy.signal.hilbert` devuelve la señal analítica; su módulo es la envolvente.</small>
 
 ### Dos miradas a la misma curva
 
 <figure class="figura-tp" markdown>
-![Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito](../img/m3/schroeder_completo.png)
+[![Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito](../img/m3/schroeder_completo.png)](../img/m3/schroeder_completo.png)
 <figcaption markdown="span">Completa · sin truncar — el decaimiento entra en el ruido (codo) y, al agotarse la energía, la curva cae a −∞. Por eso NO se integra hasta el final.</figcaption>
 </figure>
 
 <figure class="figura-tp" markdown>
-![Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal](../img/m3/schroeder_regresiones.png)
+[![Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal](../img/m3/schroeder_regresiones.png)](../img/m3/schroeder_regresiones.png)
 <figcaption markdown="span">Acotada · sobre el tramo lineal se ajusta la recta (mínimos cuadrados) y se extrapola a −60 dB → T20, T30, EDT.</figcaption>
 </figure>
 
@@ -91,7 +91,7 @@ $$
 E[n] = \sum_{k=n}^{N-1} h^2[k], \qquad L[n] = 10\,\log_{10}\!\frac{E[n]}{E[0]}, \qquad T_{60} = \frac{-60}{m}
 $$
 
-<small>Nunca se integra hasta el final (izquierda: la curva se desploma a −∞). Se trunca en el cruce con el ruido usando `metodo_lundeby` y se mide sobre el tramo lineal (derecha). RI sintética con T60 conocido · Especificación (m3_producto_final) §2–3 · Schroeder 1965.</small>
+<small>Nunca se integra hasta el final (primera figura: la curva se desploma a −∞). Se trunca en el cruce con el ruido —con el método de Lundeby (opcional) o donde la curva deja de ser lineal— y se mide sobre el tramo lineal (segunda figura). RI sintética con T60 conocido · Especificación (m3_producto_final) §2–3 · Schroeder 1965.</small>
 
 ### Tres tramos, tres parámetros
 
@@ -99,8 +99,8 @@ Cada parámetro es una regresión sobre un tramo distinto de la curva de Schroed
 
 | Parámetro | Tramo de la curva | Qué mide |
 |---|---|---|
-| **EDT**  
-Early Decay Time | 0 a −10 dB | Percepción *subjetiva* de la reverberación. Sensible a las primeras reflexiones. |
+| **EDT** (Early Decay Time) | 0 a −10 dB | Percepción *subjetiva* de la reverberación. Sensible a las primeras reflexiones. |
+| **T10** | −5 a −15 dB | Tiempo de reverberación con muy poco rango dinámico. |
 | **T20** | −5 a −25 dB | Tiempo de reverberación con menos rango dinámico requerido. Útil con SNR limitado. |
 | **T30** | −5 a −35 dB | **El estándar.** Preferido cuando SNR > 45 dB. Es el que se reporta como T60. |
 
@@ -109,7 +109,7 @@ Early Decay Time | 0 a −10 dB | Percepción *subjetiva* de la reverberación. 
 ### El eje frecuencial · filtrado por bandas
 
 <figure class="figura-tp" markdown>
-![Respuesta en frecuencia del banco de filtros de octava IEC 61260](../img/m3/filtros_octava.png)
+[![Respuestá en frecuencia del banco de filtros de octava IEC 61260](../img/m3/filtros_octava.png)](../img/m3/filtros_octava.png)
 <figcaption markdown="span">Banco de filtros Butterworth de octava · IEC 61260 · cada banda cruza a −3 dB en sus flancos</figcaption>
 </figure>
 
@@ -122,20 +122,20 @@ Los parámetros acústicos se calculan **banda por banda**: primero se filtra la
 ### El output final
 
 <figure class="figura-tp" markdown>
-![EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte](../img/m3/parametros_por_banda.png)
-<figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** de la Usina del Arte (sala sinfónica, Buenos Aires) · fuente: OpenAIR (York)</figcaption>
+[![EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte](../img/m3/parametros_por_banda.png)](../img/m3/parametros_por_banda.png)
+<figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** medida en la Usina del Arte (sala sinfónica, Buenos Aires)</figcaption>
 </figure>
 
 Este es el **producto final del análisis**: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve `calcular_parametros_acusticos` y lo que su API expone en `/api/v1/acoustics/parameters/by-bands`.
 
-Acá se ve una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de esta página 6–7 (donde `EDT ≈ T20 ≈ T30`), acá los parámetros **se separan**: cuando `EDT` supera a `T30` hay reflexiones tempranas fuertes; las diferencias entre bandas son información acústica real de la sala.
+Acá se ve una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de las figuras anteriores (donde `EDT ≈ T20 ≈ T30`), acá los parámetros **se separan**: cuando `EDT` es menor que `T30` domina la energía temprana (cerca de la fuente o con reflexiones tempranas fuertes); cuando es mayor, la energía temprana es débil (lejos de la fuente o con volúmenes acoplados). Las diferencias entre bandas son información acústica real de la sala.
 
 <small>ISO 3382 · el mismo gráfico que van a ver en el frontend de cátedra cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</small>
 
 ### Validación · lo que separa un TP de un producto
 
 <figure class="figura-tp" markdown>
-![Comparacion de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)
+[![Comparación de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
 <figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real) · RIR-API vs. software de referencia — el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
 </figure>
 
@@ -146,7 +146,7 @@ No alcanza con que los tests pasen. Hay que demostrar que los números **coincid
 - Bandas 125, 250, 500, 1000, 2000, 4000 Hz
 
 !!! note "Criterio de aceptación"
-    Los tiempos de reverberación (**EDT, T20, T30**) no deben diferir en más de **±0.5 s** respecto de la referencia.
+    Los tiempos de reverberación (**EDT, T20, T30**) no deben diferir en más de **±0,5 s** respecto de la referencia, y **C80** no más de **±1 dB**.
 
     Si su pendiente da la mitad que la de REW, hay un bug — probablemente en el filtrado o en los límites de Schroeder.
 
@@ -175,23 +175,26 @@ def suavizar_signal(
     Returns
     -------
     np.ndarray
-        Senal suavizada (envolvente de energia).
+        Envolvente de amplitud de la señal (misma unidad que `signal`).
+        Para llevarla a dB usar 20·log10.
     """
 ```
 
-**Fundamento matematico:**
+**Fundamento matemático:**
 
-**Opcion A - Media movil:**
+**Opción A - Media movil:**
 
-La media movil de una senal $x[n]$ con ventana de tamano $M$ es:
+La media movil de una señal $x[n]$ con ventana de tamaño $M$ es:
 
-$$y[n] = \frac{1}{M} \sum_{k=0}^{M-1} x^2[n-k]$$
+$$y[n] = \sqrt{\frac{1}{M} \sum_{k=0}^{M-1} x^2[n-k]}$$
 
-Notar que se trabaja con la energia ($x^2$) y no con la amplitud directamente, ya que los parametros acusticos se definen en terminos de energia.
+Se promedia la energía ($x^2$) y se toma la raíz: así la salida es una envolvente de **amplitud** (valor eficaz local), comparable con la de Hilbert. Ambas opciones devuelven amplitud; en dB, usar $20\log_{10}$.
 
-**Opcion B - Envolvente de Hilbert (recomendada):**
+**Importante:** `suavizar_signal` se usa para **visualizar** el decaimiento. La integral de Schroeder (función 2) se calcula sobre la **RI** filtrada por banda ($h^2$), no sobre la envolvente.
 
-La envolvente de Hilbert proporciona la envolvente instantanea de la senal mediante la senal analitica:
+**Opción B - Envolvente de Hilbert (recomendada):**
+
+La envolvente de Hilbert proporciona la envolvente instantanea de la señal mediante la señal analítica:
 
 $$z(t) = x(t) + j \hat{x}(t)$$
 
@@ -209,7 +212,7 @@ analitica = scipy.signal.hilbert(signal)
 envolvente = np.abs(analitica)
 ```
 
-La envolvente de Hilbert es preferible porque no requiere elegir un tamano de ventana y preserva mejor la estructura temporal del decaimiento.
+La envolvente de Hilbert es preferible porque no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal del decaimiento.
 
 ---
 
@@ -233,25 +236,25 @@ def integral_schroeder(ri: np.ndarray) -> np.ndarray:
     """
 ```
 
-**Fundamento matematico:**
+**Fundamento matemático:**
 
-La integral de Schroeder representa la curva de decaimiento de la energia acustica en un recinto. Se obtiene mediante la integracion inversa (de atras hacia adelante) de la energia de la respuesta al impulso:
+La integral de Schroeder representa la curva de decaimiento de la energía acústica en un recinto. Se obtiene mediante la integración inversa (de atrás hacia adelante) de la energía de la respuesta al impulso:
 
 $$E(t) = \int_{t}^{\infty} h^2(\tau) \, d\tau$$
 
-En la practica, con senales discretas de duracion finita $T$:
+En la práctica, con señales discretas de duración finita $T$:
 
 $$E[n] = \sum_{k=n}^{N-1} h^2[k]$$
 
-donde $N$ es el numero total de muestras.
+donde $N$ es el número total de muestras.
 
-La curva de decaimiento en dB, normalizada respecto a la energia total:
+La curva de decaimiento en dB, normalizada respecto a la energía total:
 
 $$L(t) = 10 \log_{10}\left(\frac{E(t)}{E(0)}\right) = 10 \log_{10}\left(\frac{\sum_{k=n}^{N-1} h^2[k]}{\sum_{k=0}^{N-1} h^2[k]}\right)$$
 
-**Implementacion eficiente:**
+**Implementación eficiente:**
 
-La integral se calcula eficientemente usando `np.cumsum` sobre la senal invertida:
+La integral se calcula eficientemente usando `np.cumsum` sobre la señal invertida:
 
 ```python
 energia = ri ** 2
@@ -259,11 +262,11 @@ integral_inversa = np.cumsum(energia[::-1])[::-1]
 integral_db = 10 * np.log10(integral_inversa / integral_inversa[0] + eps)
 ```
 
-donde `eps` es un valor pequeno para evitar logaritmo de cero.
+donde `eps` es un valor pequeño para evitar logaritmo de cero.
 
-**Nota importante:** La calidad de la integral de Schroeder depende fuertemente de que la RI tenga suficiente relacion senal a ruido (SNR). Si el ruido de fondo es significativo, la curva de decaimiento se aplana al final en lugar de seguir decayendo. Esto afecta directamente el calculo de $T_{60}$.
+**Nota importante:** La calidad de la integral de Schroeder depende fuertemente de que la RI tenga suficiente relación señal a ruido (SNR). Si el ruido de fondo es significativo, la curva de decaimiento se aplana al final en lugar de seguir decayendo. Esto afecta directamente el cálculo de $T_{60}$.
 
-**Referencia:** Schroeder, M. R. (1965). "New method of measuring reverberation time." *Journal of the Acoustical Society of America*, 37(3), 409-412.
+**Referencia:** Schroeder, M. R. (1965). "New method of measuring reverberation time." *Journal of the Acoustical Society of América*, 37(3), 409-412.
 
 ---
 
@@ -292,29 +295,29 @@ def regresion_lineal(
     """
 ```
 
-**Fundamento matematico:**
+**Fundamento matemático:**
 
-La regresion lineal por minimos cuadrados ajusta una recta $y = mx + b$ minimizando la suma de errores cuadraticos:
+La regresión lineal por mínimos cuadrados ajusta una recta $y = mx + b$ minimizando la suma de errores cuadráticos:
 
 $$m = \frac{N \sum x_i y_i - \sum x_i \sum y_i}{N \sum x_i^2 - (\sum x_i)^2}$$
 
 $$b = \frac{\sum y_i - m \sum x_i}{N}$$
 
-El coeficiente de determinacion $R^2$ indica la calidad del ajuste:
+El coeficiente de determinación $R^2$ indica la calidad del ajuste:
 
 $$R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$$
 
 donde $\hat{y}_i = m x_i + b$ es el valor predicho e $\bar{y}$ es el promedio de $y$.
 
-**Uso en el contexto acustico:**
+**Uso en el contexto acústico:**
 
-La pendiente $m$ de la recta ajustada a la curva de Schroeder se usa para calcular el tiempo de reverberacion:
+La pendiente $m$ de la recta ajustada a la curva de Schroeder se usa para calcular el tiempo de reverberación:
 
 $$T_{60} = \frac{-60}{m}$$
 
-Un $R^2 > 0.99$ indica un decaimiento bien definido. Valores menores sugieren problemas con la medicion o la senal.
+Un $R^2 > 0.99$ indica un decaimiento bien definido. Valores menores sugieren problemas con la medición o la señal.
 
-**Implementacion:** Se puede usar `np.polyfit(x, y, 1)` o implementarlo manualmente con las formulas anteriores. Se recomienda la implementacion manual para demostrar comprension del metodo.
+**Implementación:** Se puede usar `np.polyfit(x, y, 1)` o implementarlo manualmente con las formulas anteriores. Se recomienda la implementación manual para demostrar comprensión del método.
 
 ---
 
@@ -344,7 +347,7 @@ def calcular_parametros_acusticos(
     """
 ```
 
-**Parametros a calcular:**
+**Parámetros a calcular:**
 
 #### a) EDT (Early Decay Time)
 
@@ -352,11 +355,11 @@ El EDT se calcula a partir de la pendiente de la curva de Schroeder entre **0 dB
 
 $$\text{EDT} = \frac{-60}{m_{0,-10}}$$
 
-donde $m_{0,-10}$ es la pendiente de la regresion lineal entre los puntos de 0 dB y -10 dB.
+donde $m_{0,-10}$ es la pendiente de la regresión lineal entre los puntos de 0 dB y -10 dB.
 
-El EDT es un indicador de la percepcion subjetiva de la reverberacion, mas relevante para la experiencia auditiva que el $T_{60}$.
+El EDT es un indicador de la percepción subjetiva de la reverberación, más relevante para la experiencia auditiva que el $T_{60}$.
 
-#### b) $T_{10}$, $T_{20}$, $T_{30}$ (Tiempos de reverberacion)
+#### b) $T_{10}$, $T_{20}$, $T_{30}$ (Tiempos de reverberación)
 
 Se calculan a partir de diferentes rangos de la curva de Schroeder:
 
@@ -369,20 +372,20 @@ Se calculan a partir de diferentes rangos de la curva de Schroeder:
 - **$T_{30}$**: pendiente entre **-5 dB y -35 dB**, extrapolada a -60 dB:
   $$T_{30} = \frac{-60}{m_{-5,-35}}$$
 
-La norma ISO 3382 establece que **$T_{30}$ es el parametro preferido** cuando la relacion senal a ruido lo permite (SNR > 45 dB).
+La norma ISO 3382 establece que **$T_{30}$ es el parámetro preferido** cuando la relación señal a ruido lo permite (SNR > 45 dB).
 
-#### c) $T_{60}$ (Tiempo de reverberacion)
+#### c) $T_{60}$ (Tiempo de reverberación)
 
-El $T_{60}$ se reporta tipicamente como $T_{30}$ (extrapolado) o $T_{20}$ si la SNR es insuficiente para $T_{30}$:
+El $T_{60}$ se reporta típicamente como $T_{30}$ (extrapolado) o $T_{20}$ si la SNR es insuficiente para $T_{30}$:
 
 $$T_{60} \approx T_{30} \quad \text{(preferido)}$$
 $$T_{60} \approx T_{20} \quad \text{(alternativa)}$$
 
-En ningun caso se mide directamente el decaimiento de 60 dB, ya que requeriria una SNR impracticable.
+En ningún caso se mide directamente el decaimiento de 60 dB, ya que requeriria una SNR impracticable.
 
-#### d) $D_{50}$ (Definicion / Deutlichkeit)
+#### d) $D_{50}$ (Definición / Deutlichkeit)
 
-La Definicion $D_{50}$ es la relacion entre la energia en los primeros 50 ms y la energia total:
+La Definición $D_{50}$ es la relación entre la energía en los primeros 50 ms y la energía total:
 
 $$D_{50} = \frac{\int_0^{50\text{ms}} h^2(t) \, dt}{\int_0^{\infty} h^2(t) \, dt} \times 100\%$$
 
@@ -390,13 +393,13 @@ En forma discreta:
 
 $$D_{50} = \frac{\sum_{n=0}^{N_{50}} h^2[n]}{\sum_{n=0}^{N-1} h^2[n]} \times 100\%$$
 
-donde $N_{50} = \lfloor 0.050 \cdot f_s \rfloor$ es el numero de muestras correspondiente a 50 ms.
+donde $N_{50} = \lfloor 0.050 \cdot f_s \rfloor$ es el número de muestras correspondiente a 50 ms.
 
-$D_{50}$ es un parametro relacionado con la **inteligibilidad de la palabra**. Valores altos indican buena claridad del habla.
+$D_{50}$ es un parámetro relacionado con la **inteligibilidad de la palabra**. Valores altos indican buena claridad del habla.
 
 #### e) $C_{80}$ (Claridad / Clarity)
 
-La Claridad $C_{80}$ es la relacion en dB entre la energia temprana (primeros 80 ms) y la energia tardia (despues de 80 ms):
+La Claridad $C_{80}$ es la relación en dB entre la energía temprana (primeros 80 ms) y la energía tardia (después de 80 ms):
 
 $$C_{80} = 10 \log_{10}\left(\frac{\int_0^{80\text{ms}} h^2(t) \, dt}{\int_{80\text{ms}}^{\infty} h^2(t) \, dt}\right) \text{ [dB]}$$
 
@@ -406,16 +409,16 @@ $$C_{80} = 10 \log_{10}\left(\frac{\sum_{n=0}^{N_{80}} h^2[n]}{\sum_{n=N_{80}+1}
 
 donde $N_{80} = \lfloor 0.080 \cdot f_s \rfloor$.
 
-$C_{80}$ es un parametro fundamental para la **calidad musical**. Valores tipicos:
-- Musica sinfonica: -2 a +2 dB
-- Musica de camara: +2 a +5 dB
+$C_{80}$ es un parámetro fundamental para la **calidad musical**. Valores típicos:
+- Música sinfónica: -2 a +2 dB
+- Música de camara: +2 a +5 dB
 - Palabra hablada: > +5 dB
 
 ---
 
-### 5. API REST - Integracion completa con FastAPI
+### 5. API REST - Integración completa con FastAPI
 
-Toda la funcionalidad desarrollada en M1, M2 y M3 debe exponerse como endpoints de una API REST. La API debe seguir la arquitectura de capas: **routers** (endpoints) → **services** (logica de negocio) → **schemas** (validacion con Pydantic).
+Toda la funcionalidad desarrollada en M1, M2 y M3 debe exponerse como endpoints de una API REST. La API debe seguir la arquitectura de capas: **routers** (endpoints) → **services** (lógica de negocio) → **schemas** (validación con Pydantic).
 
 **Estructura de la API:**
 
@@ -435,6 +438,7 @@ app/
 │   ├── filters.py             # Modelos para filtrado
 │   └── responses.py           # Modelos de respuesta para analisis
 └── services/
+    ├── audio_io.py            # Reproducción y grabación (M1)
     ├── pink_noise.py          # Generacion de ruido rosa
     ├── sine_sweep.py          # Generacion de sine sweep
     ├── filter.py              # Filtros de banda
@@ -442,35 +446,37 @@ app/
     └── acoustic_parameters.py # Calculo de parametros acusticos
 ```
 
-**Endpoints minimos requeridos:**
+**Endpoints mínimos requeridos:**
 
-| Grupo | Endpoint | Metodo | Descripcion |
+| Grupo | Endpoint | Método | Descripción |
 |-------|----------|--------|-------------|
 | Base | `/health` | GET | Health check |
 | Signals | `/api/v1/signals/pink-noise` | POST | Genera ruido rosa |
-| Signals | `/api/v1/signals/sine-sweep` | POST | Genera sine sweep logaritmico |
-| Signals | `/api/v1/signals/synthetic-ir` | POST | Genera RI sintetica |
+| Signals | `/api/v1/signals/sine-sweep` | POST | Genera sine sweep logarítmico |
+| Signals | `/api/v1/signals/synthetic-ir` | POST | Genera RI sintética |
 | Filters | `/api/v1/filters/band` | POST | Filtra audio por bandas de octava |
 | Filters | `/api/v1/filters/frequencies` | GET | Lista frecuencias centrales |
-| Acoustics | `/api/v1/acoustics/parameters` | POST | Calcula parametros acusticos |
-| Acoustics | `/api/v1/acoustics/parameters/by-bands` | POST | Parametros por bandas |
-| Analysis | `/api/v1/analysis/impulse-response` | POST | Analisis completo de RI |
+| Acoustics | `/api/v1/acoustics/parameters` | POST | Calcula parámetros acústicos |
+| Acoustics | `/api/v1/acoustics/parameters/by-bands` | POST | Parámetros por bandas |
+| Analysis | `/api/v1/analysis/impulse-response` | POST | Análisis completo de RI |
 | Utils | `/api/v1/utils/schroeder` | POST | Integral de Schroeder |
-| Utils | `/api/v1/utils/smoothing` | POST | Suavizado de senal |
-| Utils | `/api/v1/utils/log-scale` | POST | Conversion a escala dB |
+| Utils | `/api/v1/utils/smoothing` | POST | Suavizado de señal |
+| Utils | `/api/v1/utils/log-scale` | POST | Conversión a escala dB |
 
 **Requisitos de la API:**
-- Documentacion automatica via Swagger UI (`/docs`) y ReDoc (`/redoc`).
-- Validacion de entrada con schemas Pydantic (tipos, rangos, formatos).
-- Manejo de errores con codigos HTTP apropiados (400, 422, 500).
-- Configuracion via variables de entorno (CORS, limites de archivo, etc.).
-- Los endpoints de archivos de audio deben aceptar uploads via `multipart/form-data`.
-- Los endpoints de generacion deben devolver archivos WAV descargables.
+- Documentación automática vía Swagger UI (`/docs`) y ReDoc (`/redoc`).
+- Validación de entrada con schemas Pydantic (tipos, rangos, formatos).
+- Manejo de errores con códigos HTTP apropiados (400, 422, 500).
+- Configuración vía variables de entorno (CORS, límites de archivo, etc.).
+- Los endpoints de archivos de audio deben aceptar uploads vía `multipart/form-data`.
+- Los endpoints de generación deben devolver archivos WAV descargables.
 - Debe poder ejecutarse con `uvicorn app.main:app --reload`.
 
 ---
 
-## Funcion extra (opcional, suma puntos)
+## Función extra (opcional)
+
+No es obligatoria. Si la implementan, se valora dentro del criterio **Funcionalidad** de la rúbrica (resultados robustos frente al ruido de fondo).
 
 ### `metodo_lundeby(ri, fs)`
 
@@ -497,22 +503,22 @@ def metodo_lundeby(
     """
 ```
 
-**Fundamento matematico:**
+**Fundamento matemático:**
 
-El metodo de Lundeby busca iterativamente el punto donde la curva de decaimiento de la RI se encuentra con el nivel de ruido de fondo. Esto permite definir limites de integracion mas precisos para la integral de Schroeder.
+El método de Lundeby busca iterativamente el punto donde la curva de decaimiento de la RI se encuentra con el nivel de ruido de fondo. Esto permite definir límites de integración más precisos para la integral de Schroeder.
 
 **Algoritmo:**
 
 1. Calcular la curva de decaimiento promediada en intervalos (por ejemplo, intervalos de 10-30 ms).
-2. Estimar el nivel de ruido de fondo como el promedio de los ultimos 10% de la senal.
+2. Estimar el nivel de ruido de fondo como el promedio de los últimos 10% de la señal.
 3. Encontrar el punto de cruce preliminar entre la curva de decaimiento y el nivel de ruido + 10 dB.
-4. Realizar una regresion lineal desde el inicio hasta el punto de cruce.
-5. Iterar: recalcular el nivel de ruido, el punto de cruce y la regresion hasta convergencia.
-6. El punto de truncamiento final es donde la recta de regresion cruza el nivel de ruido.
+4. Realizar una regresión lineal desde el inicio hasta el punto de cruce.
+5. Iterar: recalcular el nivel de ruido, el punto de cruce y la regresión hasta convergencia.
+6. El punto de truncamiento final es donde la recta de regresión cruza el nivel de ruido.
 
-**Uso:** El punto de truncamiento se usa para corregir la integral de Schroeder. Las muestras despues del punto de truncamiento se reemplazan por la extrapolacion de la recta de regresion antes de integrar.
+**Uso:** El punto de truncamiento se usa para corregir la integral de Schroeder. Las muestras después del punto de truncamiento se reemplazan por la extrapolación de la recta de regresión antes de integrar.
 
-**Referencia:** Lundeby, A., et al. (1995). "Uncertainties of measurements in room acoustics." *Acustica*, 81(4), 344-355.
+**Referencia:** Lundeby, A., et al. (1995). "Uncertainties of measurements in room acoustics." *Acústica*, 81(4), 344-355.
 
 ---
 
@@ -545,7 +551,7 @@ def test_schroeder_ri_sintetizada():
     """
 ```
 
-### Test 3: Regresion lineal
+### Test 3: Regresión lineal
 
 ```python
 def test_regresion_lineal_exacta():
@@ -555,7 +561,7 @@ def test_regresion_lineal_pendiente():
     """Verificar pendiente con datos conocidos."""
 ```
 
-### Test 4: Parametros acusticos con RI sintetizada
+### Test 4: Parámetros acústicos con RI sintetizada
 
 ```python
 def test_parametros_ri_sintetizada():
@@ -591,24 +597,24 @@ def test_invalid_file_returns_422():
 
 ---
 
-## Validacion final
+## Validación final
 
-### Comparacion con software comercial
+### Comparación con software comercial
 
 Los resultados de RIR-API deben compararse con al menos **uno** de los siguientes softwares de referencia:
 
 - **REW (Room EQ Wizard)** - gratuito
-- **ARTA** - version de evaluacion disponible
+- **ARTA** - versión de evaluación disponible
 - **Aurora Plugins** (para Audacity)
 - **Dirac** (Bruel & Kjaer)
 
-**Criterio de aceptacion:**
+**Criterio de aceptación:**
 
-> Los resultados obtenidos no deben diferir en mas de **+-0.5 s** de los arrojados por el software comercial para los tiempos de reverberacion ($T_{20}$, $T_{30}$, EDT), y no mas de **+-1 dB** para $C_{80}$.
+> Los resultados obtenidos no deben diferir en más de **+-0.5 s** de los arrojados por el software comercial para los tiempos de reverberación ($T_{20}$, $T_{30}$, EDT), y no más de **+-1 dB** para $C_{80}$.
 
-**Tabla de validacion requerida** (incluir en el README y mostrar en la presentacion oral):
+**Tabla de validación requerida** (incluir en el README y mostrar en la presentación oral):
 
-| Parametro | Banda (Hz) | RIR-API | Software ref. | Diferencia | Dentro de tolerancia |
+| Parámetro | Banda (Hz) | RIR-API | Software ref. | Diferencia | Dentro de tolerancia |
 |-----------|-----------|-----------|---------------|------------|---------------------|
 | EDT       | 125       |           |               |            |                     |
 | EDT       | 250       |           |               |            |                     |
@@ -621,45 +627,27 @@ Completar la tabla para al menos las bandas de 125, 250, 500, 1000, 2000 y 4000 
 
 ---
 
-## Validacion y resultados en el README
+## Validación y resultados en el README
 
-Este cuatrimestre **no hay informe escrito**. En su lugar, el README del repositorio debe incluir una seccion **Validacion** con:
+Este cuatrimestre **no hay informe escrito**. En su lugar, el README del repositorio debe incluir una sección **Validación** con:
 
 - La tabla comparativa RIR-API vs. software de referencia (ver arriba).
-- Al menos 3 graficas: (1) curva de decaimiento, (2) comparacion de filtros, (3) validacion con software comercial.
+- Al menos 3 gráficas: (1) curva de decaimiento, (2) comparación de filtros, (3) validación con software comercial.
 - El diagrama de arquitectura actualizado.
 
-Estos mismos resultados se muestran en la presentacion oral.
+Estos mismos resultados se muestran en la presentación oral.
 
 ---
 
-## Presentacion oral final
 
-- **Duracion**: 20 minutos de presentacion + 5 minutos de preguntas.
-- **Formato**: virtual (sesion del miercoles 18/11), con apoyo de material visual.
-- **Demostracion en vivo obligatoria**: mostrar la API corriendo, enviar requests y mostrar las respuestas.
+## Calidad de código (requisitos acumulativos)
 
-### Estructura recomendada
+Todos los requisitos de M1 y M2 aplican, más:
 
-1. **Introduccion** (3 min): contexto, equipo, arquitectura de la API.
-2. **Desarrollo tecnico** (8 min): demo en vivo de la API (Swagger UI, requests con curl/httpx), decisiones de diseno, integracion de capas.
-3. **Resultados y validacion** (6 min): comparacion con software comercial, analisis de precision.
-4. **Reflexiones** (3 min): dificultades, aprendizajes, mejoras posibles.
-
-### Pregunta de reflexion obligatoria
-
-Cada grupo debe prepararse para responder: *"Que fue lo mas valioso que aprendieron desarrollando este proyecto y como lo aplicarian en su carrera profesional?"*
-
----
-
-## Calidad de codigo (requisitos acumulativos)
-
-Todos los requisitos de M1 y M2 aplican, mas:
-
-- **Cobertura de tests**: minimo 80% en funciones de analisis y tests de API.
+- **Cobertura de tests**: objetivo 80 % en funciones de análisis y tests de API (es el nivel "Excelente" del criterio Testing de la rúbrica).
 - **CI funcionando**: GitHub Actions ejecutando tests y linting en cada push.
-- **Documentacion de API**: Swagger UI y ReDoc generados automaticamente. Docstrings completos en funciones publicas.
-- **README actualizado** con instrucciones de ejecucion de la API y ejemplos de uso con `curl`.
+- **Documentación de API**: Swagger UI y ReDoc generados automáticamente. Docstrings completos en funciones públicas.
+- **README actualizado** con instrucciones de ejecución de la API y ejemplos de uso con `curl`.
 - **Tag `v1.0.0`** en la rama `main` al entregar.
 - **Release en GitHub** con changelog resumido.
 
@@ -679,31 +667,31 @@ Guion sugerido de la demo (≈ 8 min):
 1. Mostrar la respuesta JSON con los parámetros por banda
 1. Un `curl` desde la terminal para el mismo endpoint
 
-Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. No debuggeen en vivo.
+Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. Durante la demo no depuren código.
 
 !!! note "La referencia de cátedra"
-    Su API tiene que hacer lo mismo que esta. Compárense contra ella hasta el final:
+    Úsenla como **referencia de resultados** (no como contrato de endpoints: los paths que pide esta especificación mandan). Compárense contra ella hasta el final:
 
-    rir-api.onrender.com/docs
+    [rir-api.onrender.com/docs](https://rir-api.onrender.com/docs)
 
-    Suban la misma RI a su API y a la de cátedra. Si los números coinciden, están listos.
+    Suban la misma RI a su API y a la de cátedra. Si los números coinciden (dentro de las tolerancias), están listos.
 
 ### Tres gráficas obligatorias
 
 Son el corazón de la validación en el README y de la presentación oral — las mismas que vieron en esta página.
 
 <figure class="figura-tp" markdown>
-![Curva de decaimiento de Schroeder](../img/m3/schroeder_regresiones.png)
+[![Curva de decaimiento de Schroeder](../img/m3/schroeder_regresiones.png)](../img/m3/schroeder_regresiones.png)
 <figcaption markdown="span">1 · Curva de decaimiento (Schroeder + regresiones)</figcaption>
 </figure>
 
 <figure class="figura-tp" markdown>
-![Comparacion de filtros de octava](../img/m3/filtros_octava.png)
+[![Comparación de filtros de octava](../img/m3/filtros_octava.png)](../img/m3/filtros_octava.png)
 <figcaption markdown="span">2 · Comparación de filtros por banda</figcaption>
 </figure>
 
 <figure class="figura-tp" markdown>
-![Validacion contra software comercial](../img/m3/validacion_comercial.png)
+[![Validación contra software comercial](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
 <figcaption markdown="span">3 · Validación vs. software comercial</figcaption>
 </figure>
 
@@ -716,7 +704,7 @@ Son el corazón de la validación en el README y de la presentación oral — la
 ### Lo que tiene que estar el 18 de noviembre
 
 - [ ] Las 4 funciones de análisis + la API con los endpoints mínimos
-- [ ] `pytest` en verde · cobertura > 80% en análisis y API
+- [ ] `pytest` en verde · cobertura objetivo 80 % en análisis y API
 - [ ] CI de GitHub Actions **verde** en cada push
 - [ ] Swagger (`/docs`) y ReDoc (`/redoc`) funcionando
 - [ ] README con instrucciones de ejecución y ejemplos `curl`
@@ -727,10 +715,10 @@ Son el corazón de la validación en el README y de la presentación oral — la
 - [ ] Release en GitHub con changelog resumido
 - [ ] Demo lista: WAV de prueba + API levantada
 
-!!! note ""
-    **CI que engaña:** si `ruff` corta antes de `pytest`, los tests nunca corren en CI aunque pasen local. Y si el workflow lintea la carpeta equivocada (`src/` en vez de `app/`), no valida nada. Revisen el YAML.
+!!! warning "CI que engaña"
+    si `ruff` corta antes de `pytest`, los tests nunca corren en CI aunque pasen local. Y si el workflow lintea la carpeta equivocada (`src/` en vez de `app/`), no valida nada. Revisen el YAML.
 
-### Errores que no se repiten
+### Errores frecuentes de cohortes anteriores
 
 Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP — todos son de proceso.
 
@@ -746,14 +734,15 @@ Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP — tod
     - `NotImplementedError` olvidado arriba de la función real
     - Archivos basura versionados (rutas locales, `output.txt`, scripts de prueba)
 
-> **La lección transversal:** lo que rompe las entregas casi nunca es el procesamiento de señales — es Git, CI y prolijidad. Dediquen tiempo real a eso esta semana.
+> **La lección transversal:** lo que rompe las entregas casi nunca es el procesamiento de señales — es Git, CI y prolijidad. Resérvenle tiempo en las semanas previas a la entrega.
 
-### 20 minutos + 5 de preguntas
+### Presentación oral (18/11): 20 minutos + 5 de preguntas
 
-Estructura recomendada:
+Es **virtual**, en la sesión del miércoles 18/11, con **demo en vivo obligatoria** de la API (Swagger UI o requests). La evaluación de la oral (40 % de la nota del TP) está en la [rúbrica](../rubrica.md).
 
-| **Introducción** | 3 min | contexto, equipo, arquitectura |
+| Parte | Tiempo | Contenido |
 |---|---|---|
+| **Introducción** | 3 min | contexto, equipo, arquitectura |
 | **Desarrollo técnico** | 8 min | demo en vivo de la API |
 | **Resultados** | 6 min | validación, precisión |
 | **Reflexiones** | 3 min | dificultades, aprendizajes |
@@ -769,12 +758,12 @@ Material visual legible al proyectar. Gráficos grandes, con ejes y unidades.
 
 ## Recursos
 
-- [API de referencia de la catedra (Swagger UI)](https://rir-api.onrender.com/docs)
-- [FastAPI: documentacion oficial](https://fastapi.tiangolo.com/)
-- [Pydantic: validacion de datos](https://docs.pydantic.dev/)
+- [API de referencia de la cátedra (Swagger UI)](https://rir-api.onrender.com/docs)
+- [FastAPI: documentación oficial](https://fastapi.tiangolo.com/)
+- [Pydantic: validación de datos](https://docs.pydantic.dev/)
 - [FastAPI TestClient](https://fastapi.tiangolo.com/tutorial/testing/)
 - [ISO 3382-1:2009 - Measurement of room acoustic parameters](https://www.iso.org/standard/40979.html)
 - [Schroeder, M. R. (1965) - New method of measuring reverberation time](https://asa.scitation.org/doi/10.1121/1.1909343)
-- [Lundeby, A. et al. (1995) - Uncertainties of measurements in room acoustics](https://doi.org/10.1155/1995/37816)
+- Lundeby, A., Vigran, T. E., Bietz, H. y Vorländer, M. (1995). "Uncertainties of measurements in room acoustics." *Acta Acústica united with Acústica*, 81(4), 344–355.
 - [scipy.signal.hilbert](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html)
 - [REW - Room EQ Wizard](https://www.roomeqwizard.com/)

@@ -1,6 +1,6 @@
 # Ruta del TP
 
-El Trabajo Práctico **RIR-API** es un **caso de aplicación de Señales y Sistemas**: partimos de un fenómeno físico, la reverberación de una sala, lo modelamos con las herramientas de la materia, lo descomponemos en módulos, resolvemos cada módulo con una técnica de procesamiento digital de señales y los encadenamos en un software que automatiza la medición y entrega datos normalizados por la ISO 3382.
+El Trabajo Práctico **RIR-API** es un **caso de aplicación de Señales y Sistemas**: partimos de un fenómeno físico, la reverberación de una sala, lo modelamos con las herramientas de la materia, lo descomponemos en módulos, resolvemos cada módulo con una técnica de procesamiento digital de señales y los encadenamos en un software que automatiza la medición y entrega los parámetros de la ISO 3382.
 
 ## El hilo conductor y el orden de lectura
 

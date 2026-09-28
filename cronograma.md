@@ -7,14 +7,14 @@
 
 Las semanas 1 a 6 (teoría + Prácticas 1 a 3) están a cargo de la Prof. Trina Adrián de Pérez. Desde la semana 7, la práctica se dedica al **Trabajo Práctico RIR-API** ([ruta del TP](trabajo_practico/ruta.md)): un caso de aplicación de Señales y Sistemas que va del fenómeno físico (la reverberación) a una medición automatizada, modelando la sala como un sistema LTI y la medición como una cadena de sistemas. Cada presentación de milestone ocupa ~2 de las 3 horas; el resto es taller y consultas. Los notebooks del material de apoyo **no se dictan en vivo**: se trabajan durante la semana, con acompañamiento por Slack.
 
-| # | Fecha | Modalidad | En vivo | Material de apoyo |
+| # | Fecha | Modalidad | En clase | Material de apoyo |
 |---|-------|-----------|---------|-------------------|
-| 1 | Mié 30/9 | Presencial | [Marco conceptual](https://maxiyommi.github.io/signal-systems/trabajo_practico/marco_conceptual/) + [Consigna del TP](https://maxiyommi.github.io/signal-systems/trabajo_practico/) + [M0](https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m0_arquitectura/) + setup del repo | [Clase 1](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_01) · [Clase 3](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_03) · [Clase 7](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_07) |
+| 1 | Mié 30/9 | Presencial | [Marco conceptual](trabajo_practico/marco_conceptual.md) + [Consigna del TP](trabajo_practico/README.md) + [M0](trabajo_practico/especificacion/m0_arquitectura.md) + setup del repo | [Clase 1](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_01) · [Clase 3](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_03) · [Clase 7](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_07) |
 | — | Mié 7/10 | Asincrónica | **Entrega M0** por Slack/GitHub (no hay clase) | — |
-| 2 | Mié 14/10 | Presencial | [M1](https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m1_generacion/) (generación) | [Clase 6](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_06) · [Clase 4](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_04) |
-| 3 | Mié 21/10 | Virtual | [M2](https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m2_procesamiento/) (procesamiento) + taller M1 | [Clase 8](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_08) · [Clase 9](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_09) |
-| 4 | Mié 28/10 | Presencial | **Entrega M1** + [M3](https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m3_producto_final/) (producto) | [Clase 10](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_10) |
-| 5 | Mié 4/11 | Virtual | **Entrega M2** + taller del producto (API, deploy) | [Clase 13](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_13) · [Clase 11](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_11) |
+| 2 | Mié 14/10 | Presencial | [M1](trabajo_practico/especificacion/m1_generacion.md) (generación de señales) | [Clase 4](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_04) · [Clase 6](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_06) |
+| 3 | Mié 21/10 | Virtual | [M2](trabajo_practico/especificacion/m2_procesamiento.md) (procesamiento de la RI) + taller M1 | [Clase 8](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_08) · [Clase 9](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_09) |
+| 4 | Mié 28/10 | Presencial | **Entrega M1** + [M3](trabajo_practico/especificacion/m3_producto_final.md) (producto final) | [Clase 10](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_10) |
+| 5 | Mié 4/11 | Virtual | **Entrega M2** + taller del producto (API, deploy) | [Clase 11](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_11) · [Clase 13](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_13) |
 | 6 | Mié 11/11 | Presencial | Taller de cierre + consultas (semana de Parcial 2) | [Clase 12](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_12) · [Clase 14](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_14) |
 | 7 | Mié 18/11 | Virtual | **Entrega final M3** + **Presentación oral (Demo Day)** | [Clase 15](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_15) |
 
@@ -22,12 +22,12 @@ Las semanas 1 a 6 (teoría + Prácticas 1 a 3) están a cargo de la Prof. Trina 
 
 | Milestone | Presentación | Entrega | Tag | Evaluación |
 |-----------|--------------|---------|-----|------------|
-| M0: Arquitectura | 30/9 | 7/10 (Slack/GitHub) | — | Seguimiento, sin nota |
-| M1: Generación de señales | 14/10 | 28/10 | `v0.1.0` | Seguimiento, sin nota |
-| M2: Procesamiento de RI | 21/10 | 4/11 | `v0.2.0` | Seguimiento, sin nota |
-| M3: Producto final + oral | 28/10 | 18/11 | `v1.0.0` | **Con nota**: 60 % M3 + 40 % oral |
+| [M0 · El plano (arquitectura)](trabajo_practico/especificacion/m0_arquitectura.md) | 30/9 | 7/10 (Slack/GitHub) | — | Seguimiento, sin nota |
+| [M1 · Generación de señales](trabajo_practico/especificacion/m1_generacion.md) | 14/10 | 28/10 | `v0.1.0` | Seguimiento, sin nota |
+| [M2 · Procesamiento de la RI](trabajo_practico/especificacion/m2_procesamiento.md) | 21/10 | 4/11 | `v0.2.0` | Seguimiento, sin nota |
+| [M3 · Producto final](trabajo_practico/especificacion/m3_producto_final.md) + oral | 28/10 | 18/11 | `v1.0.0` | **Con nota**: 60 % M3 + 40 % oral |
 
-El TP pesa el 20 % de la nota de la materia. Ver la [rúbrica](trabajo_practico/rubrica.md).
+El TP pesa el 20 % de la nota de la materia. No hay informe escrito: la validación va en el README del repositorio. Ver la [rúbrica](trabajo_practico/rubrica.md).
 
 ---
 

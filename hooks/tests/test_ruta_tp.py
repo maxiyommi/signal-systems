@@ -45,6 +45,9 @@ class TestRuta(unittest.TestCase):
         self.assertIn("(especificacion/m0_arquitectura.md)", ruta_tp.pie("trabajo_practico/README.md"))
         self.assertIn("(README.md)", ruta_tp.pie("trabajo_practico/marco_conceptual.md"))
 
+    def test_leer_antes_interno_usa_link_relativo(self):
+        self.assertIn("[Marco conceptual](marco_conceptual.md)", ruta_tp.encabezado("trabajo_practico/README.md"))
+
     def test_ultima_pagina_cierra(self):
         self.assertIn("Fin del recorrido", ruta_tp.pie("trabajo_practico/especificacion/m3_producto_final.md"))
 

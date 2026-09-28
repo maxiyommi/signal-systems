@@ -263,7 +263,7 @@ sf.write("guitar_catedral.wav", y, fs_x)
 ```
 
 !!! tip "IRs gratuitas"
-    Existen bases de datos de IRs de salas famosas grabadas con globos o pistolas de salva. Una de las más completas es [OpenAIR](https://www.openairlib.net/).
+    Existen bases de datos de IRs de salas famosas grabadas con globos o pistolas de salva. Una de las más conocidas es OpenAIR (University of York; su sitio está fuera de línea desde septiembre de 2026); otra, abierta, es el [MIT IR Survey](https://mcdermottlab.mit.edu/Reverb/IR_Survey.html).
 
 ---
 

@@ -1,52 +1,61 @@
 // Escucha a ciegas: A/B entre audio seco y en sala; después se revelan forma de onda o espectro.
 import { espectroPromedioDb, envolventeMinMax } from '../_comun/acustica.js';
 import { cargarBuffer, crearCanal } from '../_comun/audio.js';
+import { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho } from '../_comun/grafico.js';
 
-const COLOR = { seco: '#1B1830', sala: '#6B2FA3', eje: '#9A98AE', grilla: '#C9D6E2' };
+const COLOR = { seco: '#1B1830', sala: '#6B2FA3', eje: '#5A5872', grilla: '#C9D6E2', fondo: '#F7FAFC' };
 
 function dibujarOnda(canvas, datos, fs, segundos, color, etiqueta) {
-  const g = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height, mid = H / 2;
-  g.clearRect(0, 0, W, H);
+  const { g, W, H, compacto } = prepararCanvas(canvas, { aspecto: 0.12, min: 84, max: 120 });
+  const tt = compacto ? 11 : 13, mid = (H - tt - 4) / 2;
+  g.fillStyle = COLOR.fondo; g.fillRect(0, 0, W, H);
   g.strokeStyle = COLOR.grilla; g.lineWidth = 1;
   g.beginPath(); g.moveTo(0, mid); g.lineTo(W, mid); g.stroke();
-  g.font = '500 16px Archivo, sans-serif'; g.fillStyle = COLOR.eje;
+  g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COLOR.eje;
   for (let t = 0; t <= segundos; t += 5) {                 // marcas de tiempo compartidas
     const x = (t / segundos) * (W - 1);
-    g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke();
-    g.fillText(`${t} s`, Math.min(x + 4, W - 34), H - 6);
+    g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H - tt - 4); g.stroke();
+    g.textAlign = t === 0 ? 'left' : t === segundos ? 'right' : 'center';
+    g.fillText(`${t} s`, x, H - 3);
   }
-  const columnas = Math.round(W * Math.min(1, datos.length / (fs * segundos)));
+  g.textAlign = 'left';
+  const columnas = Math.max(1, Math.round(W * Math.min(1, datos.length / (fs * segundos))));
   const { min, max } = envolventeMinMax(datos, columnas);
   let pico = 1e-9;
   for (let i = 0; i < columnas; i++) pico = Math.max(pico, Math.abs(min[i]), Math.abs(max[i]));
   g.fillStyle = color;
   for (let x = 0; x < columnas; x++) {
-    const y0 = mid - (max[x] / pico) * (mid - 4), y1 = mid - (min[x] / pico) * (mid - 4);
+    const y0 = mid - (max[x] / pico) * (mid - 3), y1 = mid - (min[x] / pico) * (mid - 3);
     g.fillRect(x, y0, 1, Math.max(1, y1 - y0));
   }
-  g.font = '600 22px Archivo, sans-serif';
+  g.font = `600 ${tt + 1}px ${FUENTE}`;
   g.fillStyle = 'rgba(247, 250, 252, 0.9)';
-  g.fillRect(4, 4, g.measureText(etiqueta).width + 12, 30);
+  g.fillRect(3, 3, g.measureText(etiqueta).width + 10, tt + 8);
   g.fillStyle = color;
-  g.fillText(etiqueta, 10, 26);
+  g.fillText(etiqueta, 8, tt + 6);
 }
 
 function dibujarEspectros(canvas, curvas) {
-  const g = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height, m = { l: 96, r: 20, t: 20, b: 70 };
+  const { g, W, H, compacto } = prepararCanvas(canvas, { aspecto: 0.5, min: 240, max: 380 });
+  const tt = compacto ? 11 : 13;
+  g.fillStyle = COLOR.fondo; g.fillRect(0, 0, W, H);
+  const altoLeyenda = dibujarLeyenda(g, curvas.map(({ color, etiqueta }) => [color, etiqueta]),
+    { x0: compacto ? 40 : 56, y0: tt + 6, maxAncho: W - 60, tamano: tt });
+  const m = { l: compacto ? 40 : 56, r: 10, t: altoLeyenda + 12, b: compacto ? 38 : 44 };
   const fmin = 50, fmax = 20000, dbmin = -90;
   const xf = (f) => m.l + (Math.log10(f / fmin) / Math.log10(fmax / fmin)) * (W - m.l - m.r);
   const yd = (d) => m.t + (d / dbmin) * (H - m.t - m.b);
-  g.clearRect(0, 0, W, H);
-  g.font = '500 20px Archivo, sans-serif'; g.fillStyle = COLOR.eje; g.strokeStyle = COLOR.grilla; g.lineWidth = 1;
-  for (const f of [100, 1000, 10000]) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); g.fillText(f >= 1000 ? `${f / 1000} kHz` : `${f} Hz`, xf(f) - 24, H - m.b + 26); }
-  for (let d = 0; d >= dbmin; d -= 30) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 44, yd(d) + 6); }
-  g.fillStyle = COLOR.eje; g.font = '600 20px Archivo, sans-serif';
-  g.fillText('Frecuencia (Hz, escala logarítmica)', m.l + (W - m.l - m.r) / 2 - 170, H - 8);
-  g.save(); g.translate(20, m.t + (H - m.t - m.b) / 2 + 90); g.rotate(-Math.PI / 2); g.fillText('Nivel relativo (dB)', 0, 0); g.restore();
-  curvas.forEach(({ frecuencias, db, color, etiqueta }, i) => {
-    g.strokeStyle = color; g.lineWidth = 3; g.beginPath();
+  g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COLOR.eje; g.strokeStyle = COLOR.grilla; g.lineWidth = 1;
+  g.textAlign = 'center';
+  for (const f of [100, 1000, 10000]) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); g.fillText(f >= 1000 ? `${f / 1000} kHz` : `${f} Hz`, xf(f), H - m.b + tt + 4); }
+  g.textAlign = 'right';
+  for (let d = 0; d >= dbmin; d -= 30) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 5, yd(d) + 4); }
+  g.textAlign = 'center'; g.font = `600 ${tt}px ${FUENTE}`;
+  g.fillText('Frecuencia (escala logarítmica)', m.l + (W - m.l - m.r) / 2, H - 4);
+  g.save(); g.translate(tt, m.t + (H - m.t - m.b) / 2); g.rotate(-Math.PI / 2); g.fillText('Nivel relativo (dB)', 0, 0); g.restore();
+  g.textAlign = 'left';
+  curvas.forEach(({ frecuencias, db, color }) => {
+    g.strokeStyle = color; g.lineWidth = compacto ? 1.5 : 2; g.beginPath();
     let empezado = false;
     for (let k = 1; k < frecuencias.length; k++) {
       const f = frecuencias[k]; if (f < fmin || f > fmax) continue;
@@ -54,8 +63,6 @@ function dibujarEspectros(canvas, curvas) {
       if (!empezado) { g.moveTo(x, y); empezado = true; } else g.lineTo(x, y);
     }
     g.stroke();
-    g.fillStyle = color; g.font = '600 22px Archivo, sans-serif';
-    g.fillText(etiqueta, W - m.r - 260, m.t + 30 + i * 30);
   });
 }
 
@@ -107,18 +114,26 @@ export function crearEscucha(seccion, { pares, modo }) {
       nota.textContent = 'Forma de onda (amplitud normalizada al pico) en función del tiempo; ambas con la misma escala de 0 a 15 s.';
       cont.appendChild(nota);
     }
+    cont.hidden = false;                                  // visible antes de dibujar: se mide su ancho
     if (modo === 'temporal') {
       for (const [tipo, buf] of [['seco', seco], ['sala', sala]]) {
-        const cv = document.createElement('canvas'); cv.width = 1000; cv.height = 110;
+        const cv = document.createElement('canvas');
+        cv.setAttribute('role', 'img');
+        cv.setAttribute('aria-label', `Forma de onda: ${etiqueta(tipo)}`);
         cont.appendChild(cv);
-        dibujarOnda(cv, buf.getChannelData(0), buf.sampleRate, 15, COLOR[tipo], etiqueta(tipo));
+        const dibujar = () => dibujarOnda(cv, buf.getChannelData(0), buf.sampleRate, 15, COLOR[tipo], etiqueta(tipo));
+        dibujar(); alCambiarAncho(cv, dibujar);
       }
     } else {
-      const cv = document.createElement('canvas'); cv.width = 1000; cv.height = 460;
+      const cv = document.createElement('canvas');
+      cv.setAttribute('role', 'img');
+      cv.setAttribute('aria-label', 'Espectros promedio de las dos grabaciones, en dB');
       cont.appendChild(cv);
-      dibujarEspectros(cv, [['seco', seco], ['sala', sala]].map(([tipo, buf]) => ({
+      const curvas = [['seco', seco], ['sala', sala]].map(([tipo, buf]) => ({
         ...espectroPromedioDb(buf.getChannelData(0), buf.sampleRate, 8192), color: COLOR[tipo], etiqueta: etiqueta(tipo),
-      })));
+      }));
+      const dibujar = () => dibujarEspectros(cv, curvas);
+      dibujar(); alCambiarAncho(cv, dibujar);
     }
     cont.hidden = false;
   }

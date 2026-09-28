@@ -1,72 +1,97 @@
 """Servicio de calculo de parametros acusticos segun ISO 3382.
 
-Milestone 3: Analisis de parametros acusticos.
+Milestone 3: Producto final.
 """
 
 import numpy as np
 
 
-def suavizar_signal(signal: np.ndarray, ventana: int) -> np.ndarray:
-    """Aplica un suavizado por media movil a la senal.
+def suavizar_signal(signal: np.ndarray, ventana: int | str = "hilbert") -> np.ndarray:
+    """Suaviza una senal y devuelve su envolvente en **amplitud**.
+
+    - ``ventana='hilbert'`` (recomendado): envolvente de Hilbert,
+      ``np.abs(scipy.signal.hilbert(signal))``.
+    - ``ventana`` entero: media movil de ``ventana`` muestras. Para que la
+      salida quede en amplitud (comparable con Hilbert), devolver la raiz de la
+      media movil de ``signal**2`` (envolvente RMS) o, alternativamente, la
+      media movil de ``|signal|``. Documentar cual se eligio.
 
     Parameters
     ----------
     signal : np.ndarray
-        Senal de entrada (array 1D).
-    ventana : int
-        Tamano de la ventana de suavizado en muestras.
+        Senal de entrada (tipicamente una RI filtrada por banda, array 1D).
+    ventana : int | str, optional
+        ``'hilbert'`` (por defecto) o el tamano de la ventana de media movil
+        en muestras.
 
     Returns
     -------
     np.ndarray
-        Senal suavizada, de la misma longitud que ``signal``.
+        Envolvente en amplitud (no negativa), de la misma longitud que ``signal``.
+
+    Raises
+    ------
+    ValueError
+        Si ``ventana`` no es ``'hilbert'`` ni un entero positivo.
     """
     raise NotImplementedError("Implementar en Milestone 3")
 
 
 def integral_schroeder(ri: np.ndarray) -> np.ndarray:
-    """Calcula la integral de Schroeder (Energy Decay Curve).
+    """Calcula la integral de Schroeder (Energy Decay Curve) en dB.
+
+    ``E[n] = sum_{k=n}^{N-1} h[k]**2`` (integracion inversa, por ejemplo con
+    ``np.cumsum`` sobre la senal invertida) y ``L[n] = 10*log10(E[n] / E[0])``.
 
     Parameters
     ----------
     ri : np.ndarray
-        Respuesta al impulso (array 1D).
+        Respuesta al impulso (o RI filtrada por banda, array 1D).
 
     Returns
     -------
     np.ndarray
-        Curva de decaimiento energetico (EDC), normalizada.
+        Curva de decaimiento en dB, normalizada a 0 dB en la primera muestra,
+        de la misma longitud que ``ri``.
 
     References
     ----------
     .. [1] Schroeder, M. R. (1965). "New method of measuring reverberation
-       time." The Journal of the Acoustical Society of America.
+       time." JASA 37(3), 409-412.
     """
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def regresion_lineal(x: np.ndarray, y: np.ndarray) -> tuple[float, float]:
+def regresion_lineal(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
     """Calcula la regresion lineal por minimos cuadrados.
+
+    Se recomienda implementarla a mano (formulas de minimos cuadrados) en lugar
+    de ``np.polyfit``, para demostrar comprension del metodo.
 
     Parameters
     ----------
     x : np.ndarray
-        Variable independiente (array 1D).
+        Variable independiente (tipicamente tiempo en segundos).
     y : np.ndarray
-        Variable dependiente (array 1D).
+        Variable dependiente (tipicamente curva de Schroeder en dB).
 
     Returns
     -------
     pendiente : float
-        Pendiente de la recta ajustada (m).
+        Pendiente de la recta ajustada ``m`` (dB/s en el contexto acustico).
     ordenada : float
-        Ordenada al origen de la recta ajustada (b).
+        Ordenada al origen ``b`` (dB).
+    r_cuadrado : float
+        Coeficiente de determinacion R^2.
     """
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def calcular_parametros_acusticos(ri: np.ndarray, fs: int) -> dict:
-    """Calcula los parametros acusticos de una sala a partir de su RI.
+def calcular_parametros_acusticos(ri: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
+    """Calcula los parametros acusticos ISO 3382 por banda de octava.
+
+    Parametros: EDT (0 a -10 dB), T10 (-5 a -15 dB), T20 (-5 a -25 dB),
+    T30 (-5 a -35 dB), D50 (%) y C80 (dB).
 
     Parameters
     ----------
@@ -77,8 +102,10 @@ def calcular_parametros_acusticos(ri: np.ndarray, fs: int) -> dict:
 
     Returns
     -------
-    dict
-        Diccionario con los parametros acusticos por banda.
+    dict[str, dict[float, float]]
+        ``{parametro: {frecuencia_central: valor}}``.
+        Ejemplo: ``{'T30': {125: 1.5, 250: 1.3, ...}, 'EDT': {...}, 'D50': {...},
+        'C80': {...}}``.
 
     References
     ----------
@@ -88,7 +115,7 @@ def calcular_parametros_acusticos(ri: np.ndarray, fs: int) -> dict:
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def metodo_lundeby(ri: np.ndarray, fs: int) -> int:
+def metodo_lundeby(ri: np.ndarray, fs: int) -> tuple[int, float]:
     """Estima el punto de truncamiento de la RI (metodo de Lundeby).
 
     Parameters
@@ -100,16 +127,18 @@ def metodo_lundeby(ri: np.ndarray, fs: int) -> int:
 
     Returns
     -------
-    int
-        Indice de la muestra donde se estima el punto de truncamiento.
+    indice_truncamiento : int
+        Indice de la muestra donde la RI se cruza con el ruido de fondo.
+    nivel_ruido_db : float
+        Nivel estimado del ruido de fondo en dB.
 
     Notes
     -----
-    Esta funcion es **opcional** (extra credit).
+    Esta funcion es **opcional** (extra).
 
     References
     ----------
     .. [1] Lundeby, A. et al. (1995). "Uncertainties of measurements in
-       room acoustics." Acta Acustica.
+       room acoustics." Acustica 81(4), 344-355.
     """
     raise NotImplementedError("Implementar en Milestone 3 (opcional)")
