@@ -2,13 +2,13 @@
 
 ## Qué es este repositorio
 
-Material práctico de la asignatura **Señales y Sistemas** de Ingeniería de Sonido (UNTREF). Cursada marzo-julio 2026, 15 clases, martes 15-18hs.
+Material práctico de la asignatura **Señales y Sistemas** de Ingeniería de Sonido (UNTREF). El curso completo son 15 clases (dictadas en el 1C 2026, martes). En el **2C 2026** la práctica son 7 sesiones los miércoles (30/9 — 18/11) dedicadas al TP; las semanas 1-6 las da la titular (Trina Adrián de Pérez). Ver `cronograma.md`.
 
 ### Estructura
 
 ```
 signal-systems/
-├── clases/              # 15 clases con notebooks Marimo (.py)
+├── clases/              # 15 clases con notebooks Marimo (.py) — curso completo
 ├── trabajo_practico/    # TP: RIR-API (Room Impulse Response API)
 │   ├── README.md        # Consigna completa
 │   ├── especificacion/  # Milestones M0-M3
@@ -16,7 +16,7 @@ signal-systems/
 │   └── template_repo/   # Template FastAPI para que los alumnos forkeen
 ├── guias/               # Setup entorno, Git, Marimo, Quarto
 ├── material_extra/      # GGWave, GameOfLife, recursos IA
-└── cronograma.md        # Cronograma detallado
+└── cronograma.md        # Cursada actual (arriba) + curso completo (referencia)
 ```
 
 ### Tres pilares del curso
@@ -45,16 +45,18 @@ signal-systems/
 
 El TP pide a los alumnos desarrollar una API REST para cálculo de parámetros acústicos ISO 3382:
 
-| Milestone | Fecha | Contenido |
-|-----------|-------|-----------|
-| M0 | 28 Abr | Arquitectura, repo, /health endpoint |
-| M1 | 19 May | Ruido rosa, sine sweep (services) |
-| M2 | 16 Jun | Filtros, RI, deconvolución (services) |
-| M3 | 7 Jul | API REST completa, endpoints, informe, demo |
+| Milestone | Presentación → Entrega (2C 2026) | Contenido |
+|-----------|----------------------------------|-----------|
+| M0 | 30/9 → 7/10 (async, Slack/GitHub) | Arquitectura, repo, /health endpoint |
+| M1 | 14/10 → 28/10 | Ruido rosa, sine sweep (services) |
+| M2 | 21/10 → 4/11 | Filtros, RI, deconvolución (services) |
+| M3 | 28/10 → 18/11 | API REST completa, endpoints, validación, demo + oral |
+
+Evaluación 2C 2026: M0-M2 seguimiento sin nota; nota del TP = 60 % M3 + 40 % oral (`AI_LOG.md` obligatorio sin nota; sin informe escrito). La landing (`docs/overrides/home.html`) lista las sesiones de la cursada actual a mano.
 
 La cátedra tiene una implementación de referencia:
-- **Backend**: `/home/maxi/Escritorio/RIR-API` (desplegado en https://rir-api.onrender.com)
-- **Frontend**: `/home/maxi/Escritorio/RIR-API_frontend` (privado, se muestra en clase)
+- **Backend**: repo `RIR-API` (desplegado en https://rir-api.onrender.com)
+- **Frontend**: repo `RIR-API_frontend` (desplegado en https://rir-api-frontend.onrender.com)
 
 ## Comandos útiles
 

@@ -1,8 +1,9 @@
 # Milestone 1: Generacion de Senales
 
-**Fecha de entrega**: Semana 8 (19 de mayo 2026)
+**Presentacion de la consigna**: miercoles 14 de octubre 2026
+**Fecha de entrega**: miercoles 28 de octubre 2026 (en clase)
 **Tag de version**: `v0.1.0`
-**Peso en la nota**: 15%
+**Evaluacion**: seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
 
 ## Objetivo
 
@@ -254,7 +255,7 @@ Ademas de los tests automatizados, cada grupo debe realizar las siguientes valid
 2. **Verificacion de la convolucion:**
    - Graficar el resultado de la convolucion sweep * filtro inverso.
    - El resultado debe parecerse a un impulso con lobulos laterales minimos.
-   - Incluir esta grafica en el informe.
+   - Incluir esta grafica en el README del repositorio.
 
 3. **Prueba de reproduccion y grabacion:**
    - Realizar una prueba real con un altavoz y un microfono (puede ser con la PC).

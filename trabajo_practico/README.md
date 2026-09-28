@@ -27,33 +27,35 @@ Al completar este trabajo practico, los alumnos habran adquirido las siguientes 
 
 ## Estructura del TP: Milestones
 
-| Milestone | Titulo | Fecha de entrega | Tag | Peso |
-|-----------|--------|-----------------|-----|------|
-| [M0](especificacion/m0_arquitectura.md) | El Plano (arquitectura) | Semana 5 - 28/04/2026 | - | 5% |
-| [M1](especificacion/m1_generacion.md) | Generacion de senales | Semana 8 - 19/05/2026 | `v0.1.0` | 15% |
-| [M2](especificacion/m2_procesamiento.md) | Procesamiento de la RI | Semana 12 - 16/06/2026 | `v0.2.0` | 20% |
-| [M3](especificacion/m3_producto_final.md) | Producto final | Semana 15 - 07/07/2026 | `v1.0.0` | 30% |
+| Milestone | Titulo | Presentacion | Entrega | Tag | Evaluacion |
+|-----------|--------|--------------|---------|-----|------------|
+| [M0](especificacion/m0_arquitectura.md) | El Plano (arquitectura) | Mie 30/09/2026 | Mie 07/10/2026 (asincronica, Slack/GitHub) | - | Seguimiento, sin nota |
+| [M1](especificacion/m1_generacion.md) | Generacion de senales | Mie 14/10/2026 | Mie 28/10/2026 | `v0.1.0` | Seguimiento, sin nota |
+| [M2](especificacion/m2_procesamiento.md) | Procesamiento de la RI | Mie 21/10/2026 | Mie 04/11/2026 | `v0.2.0` | Seguimiento, sin nota |
+| [M3](especificacion/m3_producto_final.md) | Producto final + oral | Mie 28/10/2026 | Mie 18/11/2026 | `v1.0.0` | **Con nota** (60% M3 + 40% oral) |
 
-Completar la [rubrica de evaluacion](rubrica.md) para conocer los criterios detallados de calificacion.
+En cada **presentacion** la catedra presenta la consigna del milestone; en cada **entrega** los grupos muestran su avance (~15 minutos) y reciben feedback por Slack.
+
+Ver la [rubrica de evaluacion](rubrica.md) para conocer los criterios detallados de calificacion.
 
 ---
 
 ## Resumen de entregas por milestone
 
-### M0 - El Plano (Semana 5)
+### M0 - El Plano (entrega 07/10)
 - README del repositorio con integrantes, instrucciones y estructura.
 - Diagrama de arquitectura (Mermaid o draw.io).
 - Al menos 10 GitHub Issues con labels y asignaciones.
 - Proyecto instalable con `pip` o `uv`.
 
-### M1 - Generacion de senales (Semana 8)
+### M1 - Generacion de senales (entrega 28/10)
 | Funcion | Descripcion |
 |---------|-------------|
 | `generar_ruido_rosa(duracion, fs)` | Ruido rosa via algoritmo Voss-McCartney. Espectro -3 dB/octava. |
 | `generar_sine_sweep(f1, f2, duracion, fs)` | Sine sweep logaritmico + filtro inverso. |
 | `reproducir_y_grabar(signal, fs, duracion_grabacion)` | Reproduccion y grabacion simultanea con `sounddevice`. |
 
-### M2 - Procesamiento de la RI (Semana 12)
+### M2 - Procesamiento de la RI (entrega 04/11)
 | Funcion | Descripcion |
 |---------|-------------|
 | `cargar_audio(ruta)` | Carga archivos WAV/FLAC, devuelve array + sr. |
@@ -62,7 +64,7 @@ Completar la [rubrica de evaluacion](rubrica.md) para conocer los criterios deta
 | `filtro_octava(signal, fc, fs, orden)` | Filtro de banda de octava segun IEC 61260 (Butterworth). |
 | `a_escala_log(signal)` | Conversion a escala logaritmica normalizada (dB). |
 
-### M3 - Producto final: API REST (Semana 15)
+### M3 - Producto final: API REST (entrega 18/11)
 | Componente | Descripcion |
 |------------|-------------|
 | `suavizar_signal(signal, ventana)` | Media movil o envolvente de Hilbert. |
@@ -90,7 +92,6 @@ Completar la [rubrica de evaluacion](rubrica.md) para conocer los criterios deta
 | **Git / GitHub** | Control de versiones y colaboracion |
 | **GitHub Actions** | Integracion continua (CI) |
 | **uv** | Gestion de entornos y dependencias (recomendado) |
-| **Quarto / LaTeX** | Informe final |
 
 ---
 
@@ -115,40 +116,11 @@ Este flujo (modulos de procesamiento → API → frontend → deploy) es un ejem
 
 ---
 
-## Informe final
-
-El informe final es **obligatorio** y se realiza en **Quarto** o **LaTeX** (formato UNTREF para memorias cuatrimestrales).
-
-### Distribucion de contenido
-
-| Resumen | Introduccion | Marco teorico | Desarrollo experimental | Resultados | Conclusiones |
-|---------|-------------|---------------|------------------------|------------|-------------|
-| 5% | 10% | 10% | 25% | 30% | 20% |
-
-### Pautas del informe
-
-- Extension maxima: **5 paginas** (sin apendices).
-- Debe incluir diagrama de arquitectura, graficas de resultados y tabla de validacion con software comercial.
-- Remitir a detalles relevantes, no ahondar en teoria (usar referencias).
-- Documentar como se conectan todos los modulos.
-- Validacion del algoritmo con software comercial.
-- Los informes entregados fuera de fecha no se evaluan (pasan a recuperatorio).
-
-### Herramientas de escritura
-
-- **LaTeX online**: [Overleaf](https://www.overleaf.com/)
-- **LaTeX offline**: [Texmaker](https://www.xm1math.net/texmaker/) + [MiKTeX](https://miktex.org/)
-- **Alternativa moderna**: [Quarto](https://quarto.org/) (soporta Jupyter notebooks, Markdown y LaTeX)
-
-> Para la elaboracion del informe en LaTeX recomendamos la lectura del documento [Curso introductorio a escritura en LaTeX](https://drive.google.com/file/d/1yaJD1QCCDyI8oMFzS0ZVzFg-8cyGPZCA/view?usp=share_link), desarrollado por [Nahuel Passano](https://www.linkedin.com/in/nahuelpassano) y [Paula Ortega Riera](https://www.linkedin.com/in/paulaortegariera) de [Infiniem Labs](https://www.infiniemlabs.com.ar/).
-
----
-
 ## Presentacion oral
 
 - **Duracion**: 20 minutos de presentacion + 5 minutos de preguntas.
 - **Audiencia**: toda la clase (estudiantes y docentes).
-- **Formato**: presencial con apoyo visual y **demostracion en vivo de la API**.
+- **Formato**: virtual (sesion del miercoles 18/11), con apoyo visual y **demostracion en vivo de la API**.
 
 ### Estructura recomendada
 
@@ -169,7 +141,7 @@ El informe final es **obligatorio** y se realiza en **Quarto** o **LaTeX** (form
 
 ## Log de desarrollo con IA
 
-Cada grupo debe mantener un archivo **`AI_LOG.md`** en la raiz del repositorio que documente el uso de herramientas de IA (ChatGPT, Claude, Copilot, etc.) durante el proyecto.
+Cada grupo debe mantener un archivo **`AI_LOG.md`** (**obligatorio**, sin nota propia: sin `AI_LOG.md`, M3 no se considera completo) en la raiz del repositorio que documente el uso de herramientas de IA (ChatGPT, Claude, Copilot, etc.) durante el proyecto.
 
 ### Que documentar en cada entrada
 
@@ -205,11 +177,6 @@ Cada grupo debe mantener un archivo **`AI_LOG.md`** en la raiz del repositorio q
 
 ### Datasets
 - [OpenAIR Library - Respuestas al impulso](https://www.openairlib.net/)
-
-### Documentacion y escritura
-- [Overleaf - Editor LaTeX online](https://www.overleaf.com/)
-- [Quarto - Publicacion tecnica](https://quarto.org/)
-- [Generador de tablas en LaTeX](https://www.tablesgenerator.com/)
 
 ### Lectura recomendada
 - [How to read a paper (Stanford)](https://web.stanford.edu/class/ee384m/Handouts/HowtoReadPaper.pdf)
