@@ -1,6 +1,7 @@
 // Audio compartido por las escenas: un AudioContext por página y "canales" por escena.
 // Cada canal reproduce una sola cosa a la vez; detener() cancela también las cargas en curso
 // (contador de generación), así nunca quedan dos fuentes sonando ni audio fuera de su slide.
+import { gananciasMezcla } from './mezcla.js';
 
 let ctx = null;
 const buffers = new Map();
@@ -43,9 +44,10 @@ export function crearCanal() {
   return {
     get sonando() { return Boolean(actual); },
 
-    // Reproduce url; si se pasa riBuffer, la convoluciona con esa respuesta al impulso.
+    // Reproduce url; si se pasa riBuffer, la convoluciona con esa respuesta al impulso. `mezcla` (0–1)
+    // reparte entre sonido directo y convolucionado (1 = solo convolucionado, como antes).
     // Devuelve una promesa que resuelve al terminar (o al detenerse). Rechaza si el navegador bloquea el audio.
-    async reproducir(url, { riBuffer = null, alTerminar = null } = {}) {
+    async reproducir(url, { riBuffer = null, alTerminar = null, mezcla = 1 } = {}) {
       const mio = ++gen;
       limpiar(actual); actual = null;
       const c = obtenerContexto();
@@ -58,16 +60,22 @@ export function crearCanal() {
       src.buffer = buf;
       const salida = c.createGain();
       const nodos = [src, salida];
+      let seco = null, humedo = null;
       if (ri) {
         const conv = c.createConvolver();
         conv.normalize = true;
         conv.buffer = ri;
-        src.connect(conv); conv.connect(salida); nodos.push(conv);
+        seco = c.createGain(); humedo = c.createGain();
+        const g = gananciasMezcla(mezcla);
+        seco.gain.value = g.seco; humedo.gain.value = g.humedo;
+        src.connect(seco); seco.connect(salida);
+        src.connect(conv); conv.connect(humedo); humedo.connect(salida);
+        nodos.push(conv, seco, humedo);
       } else {
         src.connect(salida);
       }
       salida.connect(c.destination);
-      const n = { src, nodos, salida, viva: true };
+      const n = { src, nodos, salida, seco, humedo, viva: true };
       actual = n;
       marcarVivas(1);
       src.onended = () => {
@@ -76,6 +84,14 @@ export function crearCanal() {
         setTimeout(() => nodos.forEach((x) => { try { x.disconnect(); } catch { /* nada */ } }), cola + 300);
       };
       src.start();
+    },
+
+    // Cambia la mezcla directo/convolucionado mientras suena (sin cortar).
+    ajustarMezcla(m) {
+      if (!actual?.seco) return;
+      const c = obtenerContexto(), g = gananciasMezcla(m);
+      actual.seco.gain.setTargetAtTime(g.seco, c.currentTime, 0.03);
+      actual.humedo.gain.setTargetAtTime(g.humedo, c.currentTime, 0.03);
     },
 
     detener() {
