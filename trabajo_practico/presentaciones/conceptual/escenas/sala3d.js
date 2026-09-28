@@ -1,7 +1,7 @@
 // Sala 3D: rayos por fuentes imagen, ecograma sincronizado y auralización con el T60 de la sala.
 // Si no hay WebGL (o three.js no carga) cae a una planta 2D con los mismos controles.
 import { fuentesImagen, llegadas, caminoPlegado, sabineT60, riSintetica, edcDb, tiempoReverberacion } from '../../_comun/acustica.js';
-import { obtenerContexto, cargarBuffer, reproducir, detenerAudio } from './escucha.js';
+import { obtenerContexto, cargarBuffer, crearCanal } from '../../_comun/audio.js';
 
 const C = 343;
 const T_MAX = 0.2;                 // s simulados: con orden 16 el ecograma está completo hasta ~190 ms en esta sala
@@ -9,11 +9,15 @@ const LENTITUD = 0.05;             // 1 s real = 50 ms simulados
 const MAX_RAYOS = 60;
 const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE' };
 
-window.__sala3dLoops = window.__sala3dLoops || 0;
+const QUIETO = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function hayWebGL() {
   if (new URLSearchParams(location.search).has('sin3d')) return false;   // forzar la planta 2D
-  try { const c = document.createElement('canvas'); return Boolean(c.getContext('webgl2') || c.getContext('webgl')); }
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2') || document.createElement('canvas').getContext('webgl');
+    if (gl) gl.getExtension('WEBGL_lose_context')?.loseContext();   // liberar el contexto de prueba
+    return Boolean(gl);
+  }
   catch { return false; }
 }
 
@@ -22,8 +26,9 @@ export function crearSala3D(seccion, {
   audioSeco = 'audio/seco_canto.mp3', riReal = 'audio/sala_ri.mp3',
 } = {}) {
   const raiz = seccion.querySelector('.sala');
-  const estado = { alpha: 0.3, modo: 'simulada', mic: [...mic], ts: 0, pausa: 0, activa: false, sonando: false };
-  let ui = null, vista = null, rayos = [], ecoLlegadas = [], riRealInfo = null, ultimo = 0, rafId = 0;
+  const estado = { alpha: 0.3, modo: 'simulada', mic: [...mic], ts: 0, pausa: 0, activa: false };
+  const canal = crearCanal();
+  let ui = null, vista = null, rayos = [], ecoLlegadas = [], riRealInfo = null, ultimo = 0, rafId = 0, preparando = null;
 
   // ---------- Datos acústicos ----------
 
@@ -71,28 +76,34 @@ export function crearSala3D(seccion, {
 
   // ---------- Audio ----------
 
+  function botonEscuchar(texto) { if (ui) ui.escuchar.textContent = texto; }
+
   async function escuchar() {
-    const ctx = obtenerContexto();
-    await ctx.resume();
-    if (estado.sonando) { detenerAudio(); estado.sonando = false; ui.escuchar.textContent = 'Escuchar'; return; }
-    let destino = null;
-    if (estado.modo !== 'libre') {
-      const conv = ctx.createConvolver();
-      conv.normalize = true;
-      if (estado.modo === 'real') conv.buffer = (await prepararRiReal()).buf;
-      else {
+    if (canal.sonando || ui.escuchar.dataset.cargando) {
+      canal.detener(); delete ui.escuchar.dataset.cargando; botonEscuchar('Escuchar'); return;
+    }
+    ui.escuchar.dataset.cargando = '1';
+    botonEscuchar('Detener');
+    let riBuffer = null;
+    if (estado.modo === 'real') riBuffer = async () => (await prepararRiReal()).buf;
+    else if (estado.modo === 'simulada') {
+      riBuffer = () => {
+        const ctx = obtenerContexto();
         const t60 = sabineT60(sala, estado.alpha);
         const ri = riSintetica({ fs: ctx.sampleRate, t60, duracion: Math.min(t60 * 1.2, 6) });
         const b = ctx.createBuffer(1, ri.length, ctx.sampleRate);
         b.copyToChannel(ri, 0);
-        conv.buffer = b;
-      }
-      conv.connect(ctx.destination);
-      destino = conv;
+        return b;
+      };
     }
-    const src = await reproducir(audioSeco, destino);
-    estado.sonando = true; ui.escuchar.textContent = 'Detener';
-    src.addEventListener('ended', () => { estado.sonando = false; ui.escuchar.textContent = 'Escuchar'; });
+    try {
+      await canal.reproducir(audioSeco, { riBuffer, alTerminar: () => botonEscuchar('Escuchar') });
+    } catch (e) {
+      ui.t60.textContent = e.message;
+    } finally {
+      delete ui.escuchar.dataset.cargando;
+      if (!canal.sonando) botonEscuchar('Escuchar');
+    }
   }
 
   // ---------- Interfaz ----------
@@ -128,7 +139,7 @@ export function crearSala3D(seccion, {
     ui.alpha.addEventListener('input', () => { estado.alpha = Number(ui.alpha.value); recalcular(); });
     ui.modos.forEach((b) => b.addEventListener('click', async () => {
       estado.modo = b.dataset.modo;
-      if (estado.sonando) { detenerAudio(); estado.sonando = false; ui.escuchar.textContent = 'Escuchar'; }
+      canal.detener(); botonEscuchar('Escuchar');
       recalcular();
       if (estado.modo === 'real') {
         try { await prepararRiReal(); actualizarTexto(); } catch (e) { ui.t60.textContent = e.message; }
@@ -141,7 +152,7 @@ export function crearSala3D(seccion, {
 
   function dibujarEcograma() {
     const cv = ui.eco, g = cv.getContext('2d');
-    const W = cv.width, H = cv.height, m = { l: 84, r: 16, t: 40, b: 56 }, dbMin = -60;
+    const W = cv.width, H = cv.height, m = { l: 84, r: 40, t: 40, b: 56 }, dbMin = -60;
     const xt = (t) => m.l + (t / T_MAX) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.min(0, d) / dbMin) * (H - m.t - m.b);
     g.clearRect(0, 0, W, H);
@@ -191,15 +202,23 @@ export function crearSala3D(seccion, {
 
   // ---------- Vista 3D (three.js) ----------
 
-  async function crearVista3D() {
+  async function crearVista3D(control) {
     const THREE = await import('three');
     const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+    if (control.abandonado) throw new Error('three.js tardó demasiado');
     const aT = ([x, y, z]) => new THREE.Vector3(x - sala.lx / 2, z, y - sala.ly / 2);   // sala (x,y,z-altura) → three
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setClearColor(COL.papel);
     ui.escena.appendChild(renderer.domElement);
+    renderer.domElement.addEventListener('webglcontextlost', (ev) => {   // GPU débil: caer a la planta 2D
+      ev.preventDefault();
+      renderer.domElement.remove();
+      vista = crearVista2D();
+      ui.escena.dataset.vista = vista.tipo;
+      ui.aviso.hidden = false; ui.aviso.textContent = 'Se perdió el contexto 3D; se muestra la planta.';
+    });
     const escena = new THREE.Scene();
     const camara = new THREE.PerspectiveCamera(42, 16 / 9, 0.1, 200);
     camara.position.set(sala.lx * 0.95, sala.lz * 2.6, sala.ly * 1.35);
@@ -219,7 +238,7 @@ export function crearSala3D(seccion, {
     const esfera = (color, r) => new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), new THREE.MeshBasicMaterial({ color }));
     const mFuente = esfera(COL.violeta, 0.22); mFuente.position.copy(aT(fuente)); escena.add(mFuente);
     const mMic = esfera(COL.tinta, 0.2); mMic.position.copy(aT(estado.mic)); escena.add(mMic);
-    const frente = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 20), new THREE.MeshBasicMaterial({ color: COL.senal, wireframe: true, transparent: true, opacity: 0.12 }));
+    const frente = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 20), new THREE.MeshBasicMaterial({ color: COL.senal, wireframe: true, transparent: true, opacity: 0.06 }));
     frente.position.copy(aT(fuente)); escena.add(frente);
 
     let objetos = [];
@@ -243,7 +262,7 @@ export function crearSala3D(seccion, {
     function actualizar() {
       const s = estado.ts * C;
       frente.scale.setScalar(Math.max(0.01, s));
-      frente.visible = s < Math.hypot(sala.lx, sala.ly, sala.lz) * 1.2;
+      frente.visible = s < Math.max(sala.lx, sala.ly) * 0.75;      // solo mientras el frente está dentro de la sala
       for (const o of objetos) {
         const p = puntoEn(o.r, s);
         let n = 0;
@@ -341,35 +360,48 @@ export function crearSala3D(seccion, {
   function cuadro(ahora) {
     const dt = ultimo ? Math.min(0.1, (ahora - ultimo) / 1000) : 0;
     ultimo = ahora;
-    if (estado.ts < T_MAX) estado.ts = Math.min(T_MAX, estado.ts + dt * LENTITUD);
+    if (QUIETO) estado.ts = T_MAX;                              // sin animación: estado final
+    else if (estado.ts < T_MAX) estado.ts = Math.min(T_MAX, estado.ts + dt * LENTITUD);
     else if ((estado.pausa += dt) > 1.5) { estado.ts = 0; estado.pausa = 0; }
     vista.actualizar();
     dibujarEcograma();
     rafId = requestAnimationFrame(cuadro);
   }
 
+  async function preparar() {
+    construirUI();
+    recalcular();
+    if (hayWebGL()) {
+      const control = { abandonado: false };
+      try {
+        vista = await Promise.race([
+          crearVista3D(control),
+          new Promise((_, rechazar) => setTimeout(() => { control.abandonado = true; rechazar(new Error('three.js no cargó en 6 s')); }, 6000)),
+        ]);
+      } catch (e) {
+        ui.aviso.hidden = false; ui.aviso.textContent = `Vista 3D no disponible (${e.message}); se muestra la planta.`;
+      }
+    }
+    if (!vista) vista = crearVista2D();
+    ui.escena.dataset.vista = vista.tipo;
+  }
+
   return {
     async iniciar() {
       estado.activa = true;
-      if (!ui) {
-        construirUI();
-        recalcular();
-        if (hayWebGL()) {
-          try { vista = await crearVista3D(); }
-          catch (e) { ui.aviso.hidden = false; ui.aviso.textContent = `Vista 3D no disponible (${e.message}); se muestra la planta.`; }
-        }
-        if (!vista) vista = crearVista2D();
-        ui.escena.dataset.vista = vista.tipo;
-      }
-      if (!estado.activa || rafId) return;          // se salió de la slide mientras cargaba
+      if (!preparando) preparando = preparar();
+      await preparando;
+      if (!estado.activa || rafId || !vista) return;           // se salió mientras cargaba, o ya está corriendo
       ultimo = 0;
-      window.__sala3dLoops++;
+      raiz.dataset.animando = '1';
       rafId = requestAnimationFrame(cuadro);
     },
     detener() {
       estado.activa = false;
-      if (rafId) { cancelAnimationFrame(rafId); rafId = 0; window.__sala3dLoops--; }
-      if (estado.sonando) { detenerAudio(); estado.sonando = false; if (ui) ui.escuchar.textContent = 'Escuchar'; }
+      if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+      raiz.dataset.animando = '0';
+      canal.detener();
+      if (ui) { delete ui.escuchar.dataset.cargando; botonEscuchar('Escuchar'); }
     },
   };
 }

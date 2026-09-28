@@ -6,7 +6,9 @@ export function sabineT60({ lx, ly, lz }, alpha) {
   return (0.161 * V) / (alpha * S);
 }
 
-export function riSintetica({ fs, t60, duracion, rng = Math.random }) {
+const ruidoUniforme = () => 2 * Math.random() - 1;   // uniforme en [−1, 1], media 0
+
+export function riSintetica({ fs, t60, duracion, rng = ruidoUniforme }) {
   const n = Math.round(fs * duracion);
   const ri = new Float32Array(n);
   const k = -3 / (t60 * fs);                // 10^(-3 t / t60) → -60 dB en t60
@@ -66,7 +68,7 @@ export function fuentesImagen({ lx, ly, lz }, [sx, sy, sz], orden) {
 export function llegadas(imagenes, [mx, my, mz], alpha, c = 343) {
   const lista = imagenes.map(({ pos, orden }) => {
     const d = Math.hypot(pos[0] - mx, pos[1] - my, pos[2] - mz);
-    return { t: d / c, amp: Math.pow(1 - alpha, orden) / d, orden, pos };
+    return { t: d / c, amp: Math.pow(1 - alpha, orden / 2) / d, orden, pos };   // α es de energía: presión × √(1−α)
   });
   lista.sort((a, b) => a.t - b.t);
   const ref = lista.find(l => l.orden === 0).amp;
@@ -150,19 +152,31 @@ export function caminoPlegado({ lx, ly, lz }, imagen, mic) {
 }
 
 // RI sintética + ruido de fondo uniforme con pico en pisoDb (dB respecto del sonido directo).
-export function riConRuido({ fs, t60, duracion, pisoDb, rng = Math.random }) {
+export function riConRuido({ fs, t60, duracion, pisoDb, rng = ruidoUniforme }) {
   const ri = riSintetica({ fs, t60, duracion, rng });
   const a = Math.pow(10, pisoDb / 20);
   for (let i = 0; i < ri.length; i++) ri[i] += rng() * a;
   return ri;
 }
 
-// T30 con el criterio de la figura de NTi: el tramo −5…−35 dB debe quedar ≥ 10 dB sobre el ruido de fondo.
-export function evaluarT30(edc, fs, pisoDb) {
-  if (-35 < pisoDb + 10) {
-    return { t30: null, valido: false, motivo: 'T30 no válido: el tramo de −35 dB está a menos de 10 dB del ruido de fondo' };
+// T30 sobre la integral de Schroeder, con control de validez frente al ruido de fondo:
+// el ruido (estimado en el último 10 % de la RI) debe quedar al menos 10 dB por debajo
+// de la energía de la curva en el tramo de −35 dB (criterio de la figura de NTi Audio).
+export function evaluarT30(ri, fs) {
+  const n = ri.length;
+  const edc = edcDb(ri);
+  const cola = Math.floor(n * 0.9);
+  let ms = 0;
+  for (let i = cola; i < n; i++) ms += ri[i] * ri[i];
+  ms /= n - cola;
+  let total = 0;
+  for (let i = 0; i < n; i++) total += ri[i] * ri[i];
+  const i35 = edc.findIndex((d) => d <= -35);
+  if (i35 < 0) return { t30: null, valido: false, edc, motivo: 'T30 no válido: la curva no llega a −35 dB' };
+  const energiaCurva = total * Math.pow(10, edc[i35] / 10);
+  const energiaRuido = ms * (n - i35);
+  if (10 * Math.log10(energiaCurva / energiaRuido) < 10) {
+    return { t30: null, valido: false, edc, motivo: 'T30 no válido: en −35 dB el ruido de fondo está a menos de 10 dB de la curva' };
   }
-  const t30 = tiempoReverberacion(edc, fs);
-  if (t30 === null) return { t30: null, valido: false, motivo: 'T30 no válido: la curva no llega a −35 dB' };
-  return { t30, valido: true, motivo: '' };
+  return { t30: tiempoReverberacion(edc, fs), valido: true, edc, motivo: '' };
 }

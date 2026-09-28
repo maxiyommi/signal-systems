@@ -165,7 +165,7 @@ Cada grupo debe mantener un archivo **`AI_LOG.md`** (**obligatorio**, sin nota p
 ### Normativas y referencias tecnicas
 - [ISO 3382-1:2009 - Measurement of room acoustic parameters](https://www.iso.org/standard/40979.html)
 - [IEC 61260-1:2014 - Octave-band and fractional-octave-band filters](https://www.iso.org/standard/69056.html)
-- [Consigna de TP version Matlab (referencia historica)](consigna_TP_matlab%20(desactualizado).pdf)
+- [Consigna de TP version Matlab (referencia historica)](https://github.com/maxiyommi/signal-systems/blob/master/trabajo_practico/consigna_TP_matlab%20(desactualizado).pdf)
 
 ### Herramientas de desarrollo
 - [FastAPI: documentacion oficial](https://fastapi.tiangolo.com/)

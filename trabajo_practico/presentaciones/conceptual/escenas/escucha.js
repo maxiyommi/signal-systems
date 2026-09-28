@@ -1,41 +1,6 @@
 // Escucha a ciegas: A/B entre audio seco y en sala; después se revelan forma de onda o espectro.
 import { espectroPromedioDb, envolventeMinMax } from '../../_comun/acustica.js';
-
-let ctx = null;
-let fuenteActual = null;
-const buffers = new Map();
-
-export function obtenerContexto() {
-  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-  return ctx;
-}
-
-export async function cargarBuffer(url) {
-  if (!buffers.has(url)) {
-    buffers.set(url, fetch(url)
-      .then((r) => { if (!r.ok) throw new Error(`No se pudo cargar ${url} (${r.status})`); return r.arrayBuffer(); })
-      .then((ab) => obtenerContexto().decodeAudioData(ab)));
-  }
-  return buffers.get(url);
-}
-
-export function detenerAudio() {
-  if (fuenteActual) { try { fuenteActual.stop(); } catch { /* ya detenida */ } fuenteActual = null; }
-}
-
-export async function reproducir(url, destino = null) {
-  const c = obtenerContexto();
-  await c.resume();                       // el navegador exige un gesto del usuario
-  detenerAudio();
-  const buf = await cargarBuffer(url);
-  const src = c.createBufferSource();
-  src.buffer = buf;
-  src.connect(destino || c.destination);
-  src.onended = () => { if (fuenteActual === src) fuenteActual = null; };
-  src.start();
-  fuenteActual = src;
-  return src;
-}
+import { cargarBuffer, crearCanal } from '../../_comun/audio.js';
 
 const COLOR = { seco: '#1B1830', sala: '#6B2FA3', eje: '#9A98AE', grilla: '#C9D6E2' };
 
@@ -96,6 +61,7 @@ function dibujarEspectros(canvas, curvas) {
 
 export function crearEscucha(seccion, { pares, modo }) {
   const raiz = seccion.querySelector('.escucha');
+  const canal = crearCanal();
   let construido = false;
   let asignacion = [];                    // por par: { A: 'seco'|'sala', B: ... }
   const filas = [];
@@ -117,9 +83,12 @@ export function crearEscucha(seccion, { pares, modo }) {
       const estado = fila.querySelector('.estado');
       fila.querySelectorAll('button[data-cual]').forEach((b) => b.addEventListener('click', async () => {
         const tipo = asignacion[i][b.dataset.cual];
+        filas.forEach((f) => { f.querySelector('.estado').textContent = ''; });
         estado.textContent = 'Cargando…';
-        try { await reproducir(par[tipo]); estado.textContent = `Sonando ${b.dataset.cual}`; }
-        catch (e) { estado.textContent = e.message; }
+        try {
+          await canal.reproducir(par[tipo], { alTerminar: () => { estado.textContent = ''; } });
+          if (canal.sonando) estado.textContent = `Sonando ${b.dataset.cual}`;
+        } catch (e) { estado.textContent = e.message; }
       }));
       fila.querySelector('[data-accion="revelar"]').addEventListener('click', () => revelar(i).catch((e) => { estado.textContent = e.message; }));
       filas.push(fila);
@@ -158,6 +127,6 @@ export function crearEscucha(seccion, { pares, modo }) {
       asignacion = pares.map(() => (Math.random() < 0.5 ? { A: 'seco', B: 'sala' } : { A: 'sala', B: 'seco' }));
       filas.forEach((f) => { const c = f.querySelector('.graficos'); c.hidden = true; c.innerHTML = ''; f.querySelector('.estado').textContent = ''; });
     },
-    detener() { detenerAudio(); },
+    detener() { canal.detener(); filas.forEach((f) => { f.querySelector('.estado').textContent = ''; }); },
   };
 }

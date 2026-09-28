@@ -14,7 +14,11 @@ function sincronizar(actual) {
   }
 }
 
+// La vista del orador (tecla S) carga el deck en iframes con ?receiver: ahí no se corren escenas.
+const ES_VISTA_ORADOR = new URLSearchParams(location.search).has('receiver');
+
 export function registrarEscena(idSlide, { iniciar, detener }) {
+  if (ES_VISTA_ORADOR) return;
   escenas.set(idSlide, { iniciar, detener, activa: false });
   if (Reveal.isReady()) sincronizar(Reveal.getCurrentSlide());
 }
@@ -48,6 +52,8 @@ function activarVisor() {
 export async function initDeck({ deck = document.body.dataset.deck, ...opciones } = {}) {
   completarNavegacion(deck);
   activarVisor();
+  // Tras usar un botón de una escena, Espacio no debe volver a activarlo: devolver el foco al deck.
+  document.addEventListener('click', (e) => { const b = e.target.closest('.controles button'); if (b) setTimeout(() => b.blur(), 0); });
   await Reveal.initialize({
     width: 1920, height: 1080, margin: 0.03, minScale: 0.2, maxScale: 2.0,
     hash: true, center: false,

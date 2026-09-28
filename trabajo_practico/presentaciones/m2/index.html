@@ -266,7 +266,7 @@ git push origin v0.2.0</code></pre>
 <section>
   <div class="kicker"><span class="m">M2</span> · función 03 · deconvolución</div>
   <figure class="figure-hero">
-    <img src="img/deconvolucion_ri.png" alt="Tres paneles: control sweep × inverso = delta; grabación en el recinto; RI recuperada por deconvolución">
+    <img src="img/deconvolucion_ri.png" style="max-height: 300px;" alt="Tres paneles: control sweep × inverso = delta; grabación en el recinto; RI recuperada por deconvolución">
     <figcaption>(a) control · sweep $\ast$ inverso $\approx \delta(t)$ &nbsp;·&nbsp; (b) grabación del recinto &nbsp;·&nbsp; (c) <code>obtener_ri_desde_sweep(grabacion, filtro_inverso)</code></figcaption>
   </figure>
   <div class="audio-row">
@@ -289,7 +289,7 @@ git push origin v0.2.0</code></pre>
     </p>
     <p>Algebra del flujo: si $y(t) = x(t) * h(t)$ es la grabación, convolucionando con $x_{\text{inv}}$:</p>
     <div class="formula">$$ y(t) * x_{\text{inv}}(t) = (x * h) * x_{\text{inv}} = h(t) * (x * x_{\text{inv}}) \approx h(t) * \delta(t) = h(t) $$</div>
-    <p>
+    <p class="small">
       La firma de la spec es <code>obtener_ri_desde_sweep(grabacion, filtro_inverso)</code>. Implementación: <code>scipy.signal.fftconvolve(grabacion, filtro_inverso, mode='full')</code>, ubicar el pico con <code>np.argmax(np.abs(...))</code> y recortar la cola. <code>fftconvolve</code> es órdenes de magnitud más rápido que <code>convolve</code> para señales largas (la grabación típica son ~3-5 s a 48 kHz).
     </p>
     <p class="src">Spec · m2_procesamiento.md §3 — Farina (2000). Test: correlación cruzada con la RI original &gt; 0.9. En el panel (b) la $h_\text{sala}$ está simulada con el modelo de la spec (ruido $\times$ envolvente) para poder mostrar el flujo completo sin grabar realmente.</p>
@@ -630,8 +630,8 @@ def a_escala_log(signal):
 <section>
   <div class="kicker"><span class="m">M2</span> · validación automática</div>
   <h2>Los cinco tests.</h2>
-  <p class="lead">El contrato de M2 son los tests. Si pasan los 5, hay nota base. Si no, no.</p>
-  <div class="grid-2" style="gap: 1.2em;">
+  <p class="lead">El contrato de M2 son los tests. Si pasan los 5, el milestone está en regla. Si no, no.</p>
+  <div class="grid-3" style="gap: 1em;">
     <div class="panel">
       <h3>Test 1 · cargar_audio</h3>
       <p class="small">Carga WAV válido sin romperse · acepta mono y estéreo · lanza error informativo si el formato es inválido.<br><strong>Criterio:</strong> normalizado entre -1 y 1.</p>
@@ -655,7 +655,7 @@ def a_escala_log(signal):
   </div>
   <p class="muted small" style="margin-top: 0.7rem;">La spec recomienda llegar a <strong>80% de cobertura</strong> en M2. <code>pytest --cov=app tests/</code> les da el reporte.</p>
   <aside class="notes">
-    - Si pasan los 5, nota base. El resto (calidad de código, docs, validación manual) suma.
+    - Si pasan los 5, esta en regla. El resto (calidad de codigo, docs, validacion manual) es lo que mira el feedback.
     - El test 3 es el mas dificil: requiere encadenar M1 con M2. Coordinar con quien hizo M1 del grupo.
     - Timing: 3 min.
   </aside>

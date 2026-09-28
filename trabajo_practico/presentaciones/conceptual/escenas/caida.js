@@ -1,6 +1,6 @@
 // Curva de caída interactiva: nivel instantáneo, integral de Schroeder, tramo −5…−35 dB,
 // recta de regresión y piso de ruido ajustable (muestra cuándo T30 deja de ser válido).
-import { riConRuido, edcDb, evaluarT30, regresionLineal } from '../../_comun/acustica.js';
+import { riConRuido, evaluarT30, regresionLineal } from '../../_comun/acustica.js';
 
 const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE', mal: '#B3261E' };
 
@@ -13,7 +13,7 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
       <canvas width="1100" height="500" aria-label="Curva de caída con integral de Schroeder"></canvas>
       <div class="controles">
         <label>Ruido de fondo
-          <input type="range" min="-80" max="-20" step="5" value="${pisoDb}">
+          <input type="range" min="-80" max="-20" step="5" value="${pisoDb}" aria-label="Nivel del ruido de fondo">
         </label>
         <output></output>
         <span class="resultado" aria-live="polite"></span>
@@ -24,8 +24,9 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
 
   function dibujar() {
     const ri = riConRuido({ fs, t60, duracion, pisoDb, rng: semilla(11) });
-    const edc = edcDb(ri);
-    const r = evaluarT30(edc, fs, pisoDb);
+    const r = evaluarT30(ri, fs);
+    const { edc } = r;
+    const pisoRms = pisoDb - 10 * Math.log10(3);          // ruido uniforme: rms = pico / √3
     const cv = ui.cv, g = cv.getContext('2d');
     const W = cv.width, H = cv.height, m = { l: 90, r: 20, t: 44, b: 66 }, dbMin = -80;
     const xt = (t) => m.l + (t / duracion) * (W - m.l - m.r);
@@ -55,7 +56,7 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
 
     // piso de ruido
     g.setLineDash([8, 8]); g.strokeStyle = COL.senal; g.lineWidth = 2;
-    g.beginPath(); g.moveTo(m.l, yd(pisoDb)); g.lineTo(W - m.r, yd(pisoDb)); g.stroke();
+    g.beginPath(); g.moveTo(m.l, yd(pisoRms)); g.lineTo(W - m.r, yd(pisoRms)); g.stroke();
 
     // referencias −5 y −35 dB
     g.strokeStyle = COL.tenue; g.lineWidth = 1;
@@ -77,7 +78,7 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
       g.beginPath(); g.moveTo(xt(0), yd(ordenada)); g.lineTo(xt(Math.min(tFin, duracion)), yd(ordenada + pendiente * Math.min(tFin, duracion))); g.stroke();
     }
 
-    ui.out.textContent = `${pisoDb} dB`;
+    ui.out.textContent = `${Math.round(pisoRms)} dB`;
     ui.res.textContent = r.valido ? `T30 = ${r.t30.toFixed(2)} s (la sala simulada tiene T60 = ${t60.toFixed(1)} s)` : r.motivo;
     ui.res.style.color = r.valido ? COL.tinta : COL.mal;
   }
