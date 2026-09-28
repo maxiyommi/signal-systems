@@ -40,6 +40,10 @@
     .fragment.visible .bloque.m3, .bloque.m3.activo { border-color: var(--m3); color: var(--tinta); }
     .leyenda { display: flex; gap: 1.4em; font-size: 0.6em; color: var(--tenue); margin-top: 0.6em; }
     .leyenda span::before { content: ""; display: inline-block; width: 1em; height: 0.6em; margin-right: 0.4em; border-radius: 2px; background: var(--c); vertical-align: middle; }
+    .escucha-fila { margin-bottom: 1.1em; }
+    .escucha-fila .controles { margin: 0 0 0.5em 0; }
+    .escucha-fila .controles strong { min-width: 5.5em; font-size: 1.1em; }
+    .graficos canvas { display: block; width: 100%; height: auto; margin-bottom: 0.4em; background: var(--papel-alto); border: 1px solid var(--grilla); border-radius: 4px; }
     .cierre-link { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.6em; }
   </style>
 </head>
@@ -283,7 +287,17 @@
 </div>
 
 <script type="module">
-  import { initDeck } from '../_comun/deck.js';
+  import { initDeck, registrarEscena } from '../_comun/deck.js';
+  import { crearEscucha } from './escenas/escucha.js';
+
+  const pares = [
+    { nombre: 'Canto', seco: 'audio/seco_canto.mp3', sala: 'audio/sala_canto.mp3' },
+    { nombre: 'Batería', seco: 'audio/seco_bateria.mp3', sala: 'audio/sala_bateria.mp3' },
+  ];
+  for (const [id, modo] of [['escucha-temporal', 'temporal'], ['escucha-espectral', 'espectral']]) {
+    const sec = document.getElementById(id);
+    registrarEscena(id, crearEscucha(sec, { pares: modo === 'espectral' ? pares.slice(1) : pares, modo }));
+  }
   initDeck();
 </script>
 </body>

@@ -72,3 +72,60 @@ export function llegadas(imagenes, [mx, my, mz], alpha, c = 343) {
   const ref = lista.find(l => l.orden === 0).amp;
   return lista.map(({ t, amp, orden, pos }) => ({ t, amp: amp / ref, orden, pos }));
 }
+
+// FFT radix-2 in place (re, im de largo potencia de 2).
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; }
+  }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) {
+      let cr = 1, ci = 0;
+      for (let k = 0; k < len / 2; k++) {
+        const a = i + k, b = a + len / 2;
+        const tr = re[b] * cr - im[b] * ci, ti = re[b] * ci + im[b] * cr;
+        re[b] = re[a] - tr; im[b] = im[a] - ti; re[a] += tr; im[a] += ti;
+        [cr, ci] = [cr * wr - ci * wi, cr * wi + ci * wr];
+      }
+    }
+  }
+}
+
+// Espectro de magnitud promedio (Welch: Hann, 50 % de solapamiento), normalizado a 0 dB en el máximo.
+export function espectroPromedioDb(senal, fs, n = 8192) {
+  const mitad = n / 2 + 1;
+  const acc = new Float64Array(mitad);
+  const hann = Float64Array.from({ length: n }, (_, i) => 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (n - 1)));
+  const re = new Float64Array(n), im = new Float64Array(n);
+  let frames = 0;
+  for (let ini = 0; ini === 0 || ini + n <= senal.length; ini += n / 2) {
+    for (let i = 0; i < n; i++) { re[i] = (senal[ini + i] || 0) * hann[i]; im[i] = 0; }
+    fft(re, im);
+    for (let k = 0; k < mitad; k++) acc[k] += re[k] * re[k] + im[k] * im[k];
+    frames++;
+  }
+  let max = 0;
+  for (let k = 0; k < mitad; k++) max = Math.max(max, acc[k]);
+  const db = new Float32Array(mitad);
+  for (let k = 0; k < mitad; k++) db[k] = max > 0 ? Math.max(10 * Math.log10(acc[k] / max), -120) : -120;
+  const frecuencias = Float32Array.from({ length: mitad }, (_, k) => k * fs / n);
+  return { frecuencias, db, frames };
+}
+
+// Envolvente mínimo/máximo por columna (para dibujar formas de onda largas).
+export function envolventeMinMax(senal, columnas) {
+  const min = new Float32Array(columnas), max = new Float32Array(columnas);
+  const paso = senal.length / columnas;
+  for (let c = 0; c < columnas; c++) {
+    let lo = Infinity, hi = -Infinity;
+    const a = Math.floor(c * paso), b = Math.max(a + 1, Math.floor((c + 1) * paso));
+    for (let i = a; i < b && i < senal.length; i++) { if (senal[i] < lo) lo = senal[i]; if (senal[i] > hi) hi = senal[i]; }
+    min[c] = lo === Infinity ? 0 : lo; max[c] = hi === -Infinity ? 0 : hi;
+  }
+  return { min, max };
+}
