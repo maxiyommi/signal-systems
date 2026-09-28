@@ -57,6 +57,7 @@ not_in_nav: |
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/pizarra.css
 
 extra_javascript:
   - javascripts/mathjax.js

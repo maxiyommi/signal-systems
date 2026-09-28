@@ -37,3 +37,11 @@ test('el grosor crece con la presión del lápiz y el resaltador es más ancho',
   assert.ok(P.anchoTrazo('resaltador', 0.5) > P.anchoTrazo('lapiz', 1));
   assert.ok(P.anchoTrazo('lapiz', 0) > 0);   // mouse sin presión: igual se ve
 });
+
+test('visibilidad: en el sitio solo en modo presentación; en un interactivo suelto, siempre; embebido, nunca', () => {
+  assert.equal(P.debeMostrar({ siempre: false, enIframe: false, enPresentacion: false }), false);
+  assert.equal(P.debeMostrar({ siempre: false, enIframe: false, enPresentacion: true }), true);
+  assert.equal(P.debeMostrar({ siempre: true, enIframe: false, enPresentacion: false }), true);
+  // Embebido en la página, dibuja la pizarra de la página: el iframe no muestra la suya.
+  assert.equal(P.debeMostrar({ siempre: true, enIframe: true, enPresentacion: true }), false);
+});
