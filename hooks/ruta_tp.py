@@ -46,25 +46,25 @@ RUTA = [
         "titulo": "Consigna",
         "tema": "Qué se construye, milestones y evaluación",
         "etapas": [],
-        "antes": [],
+        "antes": [("Marco conceptual", "trabajo_practico/marco_conceptual.md")],
     },
     {
         "src": "trabajo_practico/especificacion/m0_arquitectura.md",
-        "titulo": "M0 · El plano",
+        "titulo": "M0 · El plano (arquitectura)",
         "tema": "Arquitectura, repositorio, issues y /health",
         "etapas": ["modulos"],
         "antes": [_clase(1, "entorno, Git y GitHub"), _clase(3, "módulos y testing"), _clase(7, "sistemas y respuesta al impulso")],
     },
     {
         "src": "trabajo_practico/especificacion/m1_generacion.md",
-        "titulo": "M1 · Generación",
+        "titulo": "M1 · Generación de señales",
         "tema": "Ruido rosa, sine sweep y grabación",
         "etapas": ["excitacion"],
-        "antes": [_clase(6, "audio digital, ruido y sweep"), _clase(4, "generación de señales con NumPy")],
+        "antes": [_clase(4, "generación de señales con NumPy"), _clase(6, "audio digital, ruido y sweep")],
     },
     {
         "src": "trabajo_practico/especificacion/m2_procesamiento.md",
-        "titulo": "M2 · Procesamiento",
+        "titulo": "M2 · Procesamiento de la RI",
         "tema": "Deconvolución, bandas de octava y escala en dB",
         "etapas": ["identificacion"],
         "antes": [_clase(8, "convolución y deconvolución"), _clase(9, "FFT, filtros y bandas de octava")],
@@ -74,8 +74,8 @@ RUTA = [
         "titulo": "M3 · Producto final",
         "tema": "Schroeder, parámetros ISO 3382 y API REST",
         "etapas": ["dato", "automatizacion"],
-        "antes": [_clase(10, "envolvente, Schroeder y parámetros"), _clase(13, "API REST"), _clase(11, "calidad y CI"),
-                  _clase(12, "documentación"), _clase(14, "pulido")],
+        "antes": [_clase(10, "envolvente, Schroeder y parámetros"), _clase(11, "calidad y CI"),
+                  _clase(12, "documentación"), _clase(13, "API REST"), _clase(14, "pulido")],
     },
 ]
 
@@ -101,7 +101,9 @@ def _hilo(etapas):
 def encabezado(src):
     i = _POR_SRC[src]
     p = RUTA[i]
-    antes = " · ".join(f"[{t}]({u})" for t, u in p["antes"]) or "no requiere lectura previa."
+    antes = " · ".join(
+        f"[{t}]({u if u.startswith('http') else _rel(src, u)})" for t, u in p["antes"]
+    ) or "no requiere lectura previa."
     return (
         '<div class="ruta-tp" markdown>\n\n'
         f'**Ruta del TP · {i + 1} de {len(RUTA)} — {p["titulo"]}** · [Ver la ruta completa]({_rel(src, PAGINA_RUTA)})\n\n'

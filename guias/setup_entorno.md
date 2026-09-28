@@ -84,6 +84,7 @@ uv run pytest
     - **Python** (Microsoft) — soporte Python
     - **Pylance** (Microsoft) — autocompletado inteligente
     - **Marimo** (marimo-team) — soporte para notebooks Marimo
+    - **Ruff** (Astral Software) — linter y formateador (lo usa la configuración de abajo)
 
 ### Configuración recomendada de VS Code
 Agregar en `settings.json` (Ctrl+Shift+P → "Preferences: Open User Settings (JSON)"):
@@ -164,9 +165,9 @@ marimo convert notebook.ipynb > notebook.py
 
 ---
 
-## 6. Instalar Quarto (opcional, para informes)
+## 6. Instalar Quarto (opcional)
 
-Quarto permite escribir informes técnicos en Markdown con LaTeX math.
+Quarto permite escribir documentos técnicos en Markdown con LaTeX math. **Es opcional y no se usa para el TP este cuatrimestre**: no hay informe escrito y la validación va en el README del repositorio del grupo. Instalalo solo si querés usarlo por tu cuenta (ver la [guía de Quarto](quarto_informe.md)).
 
 ### Instalación
 Descargar desde [quarto.org/docs/get-started](https://quarto.org/docs/get-started/)

@@ -3,7 +3,6 @@ name = "rir-api"
 version = "0.1.0"
 description = "API REST para procesamiento y analisis de respuestas al impulso segun ISO 3382"
 readme = "README.md"
-license = "MIT"
 requires-python = ">=3.12"
 authors = [
     { name = "Estudiante", email = "estudiante@example.com" },
@@ -21,9 +20,11 @@ dependencies = [
     "python-multipart",
 ]
 
-[project.optional-dependencies]
+# Dependencias de desarrollo: `uv sync` las instala por defecto (grupo "dev").
+[dependency-groups]
 dev = [
     "pytest",
+    "pytest-cov",
     "httpx",
     "ruff",
 ]
@@ -45,4 +46,5 @@ select = [
 ]
 
 [tool.pytest.ini_options]
+pythonpath = ["."]
 testpaths = ["tests"]

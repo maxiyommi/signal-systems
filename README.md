@@ -22,7 +22,7 @@ El curso se estructura en **3 pilares**:
 
 ---
 
-## Como comenzar
+## Cómo comenzar
 
 ### 1. Configurar el entorno
 
@@ -66,9 +66,12 @@ signal-systems/
 │   ├── clase_02/ ... clase_15/
 │   └── README.md            # Índice de clases
 ├── trabajo_practico/        # Trabajo práctico: RIR-API (ISO 3382)
-│   ├── especificacion/      # Specs por milestone (M0-M3)
-│   ├── template_repo/       # Template para forkear
-│   └── README.md            # Consigna completa
+│   ├── README.md            # Consigna completa
+│   ├── ruta.md              # Ruta del TP (orden de lectura)
+│   ├── marco_conceptual.md  # El fenómeno y su modelo (con interactivos)
+│   ├── especificacion/      # Especificaciones por milestone (M0-M3)
+│   ├── interactivos/        # Escenas HTML embebidas en el sitio
+│   └── template_repo/       # Punto de partida del repositorio de cada grupo
 ├── material_extra/          # Material complementario
 │   ├── ggwave/              # Transmisión de datos por sonido
 │   ├── GameOfLife/           # Autómata celular
@@ -78,7 +81,7 @@ signal-systems/
 │   ├── setup_entorno.md     # Instalación y configuración
 │   ├── git_basico.md        # Cheatsheet de Git
 │   ├── marimo_intro.md      # Cómo usar Marimo
-│   └── quarto_informe.md    # Informes con Quarto
+│   └── quarto_informe.md    # Informes con Quarto (opcional)
 ├── cronograma.md            # Cronograma de la cursada + curso completo
 └── guia_ejercicios.pdf      # Guía de ejercicios teóricos
 ```
@@ -89,14 +92,14 @@ La distribución del material clase a clase se encuentra en el [índice de clase
 
 ## Trabajo práctico
 
-**RIR-API** — API REST (FastAPI) para cálculo de parámetros acústicos ISO 3382. Ver la [consigna completa](trabajo_practico/README.md).
+**RIR-API** — API REST (FastAPI) para cálculo de parámetros acústicos ISO 3382. Empezar por la [ruta del TP](trabajo_practico/ruta.md) (orden de lectura) y la [consigna](trabajo_practico/README.md).
 
 | Milestone | Entrega | Contenido |
 |-----------|---------|-----------|
-| M0: Arquitectura | Mié 7/10 | Plan, diagrama, repo, endpoint /health |
-| M1: Generación | Mié 28/10 | Ruido rosa, sine sweep |
-| M2: Procesamiento | Mié 4/11 | Filtros, RI, deconvolución |
-| M3: API REST + Producto final | Mié 18/11 | Endpoints, integración, validación, presentación oral |
+| M0 · El plano (arquitectura) | Mié 7/10 (Slack/GitHub) | Plan, diagrama, repo, endpoint /health |
+| M1 · Generación de señales | Mié 28/10 | Ruido rosa, sine sweep, grabación |
+| M2 · Procesamiento de la RI | Mié 4/11 | Deconvolución, bandas de octava, escala en dB |
+| M3 · Producto final | Mié 18/11 | Parámetros ISO 3382, API REST, validación, presentación oral |
 
 M0, M1 y M2 son de seguimiento (sin nota). La nota del TP es 60 % M3 + 40 % presentación oral — ver la [rúbrica](trabajo_practico/rubrica.md).
 
@@ -105,7 +108,7 @@ M0, M1 y M2 son de seguimiento (sin nota). La nota del TP es 60 % M3 + 40 % pres
 - [Configuración del entorno](guias/setup_entorno.md) — Python, uv, VS Code, Git, Marimo
 - [Git básico](guias/git_basico.md) — Cheatsheet para la cursada
 - [Marimo](guias/marimo_intro.md) — Notebooks interactivos
-- [Quarto](guias/quarto_informe.md) — Informes técnicos
+- [Quarto](guias/quarto_informe.md) — Informes técnicos (opcional; el TP no pide informe escrito)
 - [Recursos de IA](material_extra/recursos_ia/README.md) — Herramientas y prompting
 
 ## Contenido teórico

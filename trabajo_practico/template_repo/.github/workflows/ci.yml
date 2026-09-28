@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
-  pull_request:
     branches: [main]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   lint-and-test:
@@ -14,23 +14,20 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Instalar Python 3.12
-        uses: actions/setup-python@v5
+      - name: Instalar uv y Python 3.12
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.12"
+          enable-cache: true
 
-      - name: Instalar uv
-        uses: astral-sh/setup-uv@v4
+      - name: Instalar dependencias (incluye el grupo dev)
+        run: uv sync
 
-      - name: Instalar dependencias del proyecto
-        run: |
-          uv venv
-          uv pip install -e ".[dev]"
+      - name: Linter (ruff check)
+        run: uv run ruff check app/ tests/
 
-      - name: Ejecutar linter (ruff)
-        run: |
-          uv run ruff check src/ tests/
+      - name: Formato (ruff format --check)
+        run: uv run ruff format --check app/ tests/
 
-      - name: Ejecutar tests (pytest)
-        run: |
-          uv run pytest -v
+      - name: Tests (pytest + cobertura)
+        run: uv run pytest -q --cov=app

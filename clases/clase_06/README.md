@@ -1,4 +1,7 @@
 # Clase 6: Audio en Python + Generacion de Senales
+
+> **Material de apoyo del curso completo.** Las fechas y entregables de esta página corresponden al 1.er cuatrimestre 2026. En el 2.º cuatrimestre valen el [cronograma](../../cronograma.md) y la [ruta del TP](../../trabajo_practico/ruta.md).
+
 **Fecha**: 5 de mayo de 2026
 **Pilares**: P1 (principal), P3 (principal)
 

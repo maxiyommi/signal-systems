@@ -1,10 +1,13 @@
-# Guía de Quarto — Informes Técnicos
+# Guía de Quarto — Documentos técnicos
+
+!!! warning "2.º cuatrimestre 2026"
+    Este cuatrimestre **no hay informe escrito**. La validación y los resultados del TP van en el README del repositorio del grupo (ver [Validación y resultados en el README](../trabajo_practico/especificacion/m3_producto_final.md#validacion-y-resultados-en-el-readme)). Esta guía queda como **referencia opcional** por si querés usar Quarto para documentar resultados o notebooks.
 
 ## ¿Qué es Quarto?
 
 Quarto es un sistema de publicación científica que permite escribir documentos técnicos en Markdown con soporte completo de LaTeX math, bloques de código, y múltiples formatos de salida (PDF, HTML, Word).
 
-**Es la opción principal para el informe del TP.** Si preferís LaTeX puro, también es válido.
+Es una herramienta **opcional**: sirve, por ejemplo, para documentar resultados de mediciones, armar un reporte a partir de un notebook o publicar un análisis en HTML. No es un entregable del TP.
 
 ---
 
@@ -24,7 +27,7 @@ quarto install tinytex
 
 ## Estructura básica de un documento
 
-Crear un archivo `informe.qmd`:
+Crear un archivo `resultados.qmd` (ejemplo de documento técnico):
 
 ```markdown
 ---
@@ -34,7 +37,7 @@ author:
     affiliation: "UNTREF — Ingeniería de Sonido"
   - name: "Nombre Apellido"
     affiliation: "UNTREF — Ingeniería de Sonido"
-date: "2026-07-07"
+date: today
 format:
   pdf:
     documentclass: article
@@ -131,13 +134,13 @@ inferior a ±0.5 s respecto al software comercial de referencia...
 
 ```bash
 # Generar PDF
-quarto render informe.qmd --to pdf
+quarto render resultados.qmd --to pdf
 
 # Generar HTML
-quarto render informe.qmd --to html
+quarto render resultados.qmd --to html
 
 # Preview en vivo (se actualiza al guardar)
-quarto preview informe.qmd
+quarto preview resultados.qmd
 ```
 
 ---
@@ -154,7 +157,7 @@ El tiempo de reverberación $T_{60}$ se define como...
 $$T_{60} = \frac{-60}{\text{pendiente (dB/s)}}$$
 ```
 
-### Fórmulas comunes para el TP
+### Fórmulas comunes del TP
 
 ```markdown
 Sine sweep logarítmico:
@@ -249,11 +252,13 @@ Los resultados se resumen en la @tbl-resultados.
 
 ---
 
-## Estructura recomendada para el informe del TP
+## Estructura sugerida (uso opcional)
+
+Si querés documentar resultados o notebooks con Quarto, una organización posible es:
 
 ```
-informe/
-├── informe.qmd          # Documento principal
+docs_quarto/
+├── resultados.qmd       # Documento principal
 ├── referencias.bib      # Bibliografía
 ├── figuras/             # Imágenes exportadas
 │   ├── arquitectura.png
@@ -276,7 +281,7 @@ informe/
 | Editor | Cualquier editor de texto | Overleaf, Texmaker |
 | Calidad PDF | Alta (usa LaTeX internamente) | Alta |
 
-**Ambas opciones son válidas para el TP.** Quarto es la opción recomendada por su simplicidad, pero si ya tenés experiencia con LaTeX y preferís usarlo directamente, es perfectamente aceptable.
+Ambas herramientas sirven para documentos técnicos (por ejemplo, informes de otras materias o de un proyecto final). Quarto suele ser más simple para empezar; si ya tenés experiencia con LaTeX, usarlo directamente es igual de válido.
 
 ---
 

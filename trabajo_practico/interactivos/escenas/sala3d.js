@@ -8,7 +8,7 @@ const C = 343;
 const T_MAX = 0.2;                 // s simulados: con orden 16 el ecograma está completo hasta ~190 ms en esta sala
 const LENTITUD = 0.05;             // 1 s real = 50 ms simulados
 const MAX_RAYOS = 60;
-const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE' };
+const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE', eje: '#5A5872' };
 
 const QUIETO = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -62,7 +62,7 @@ export function crearSala3D(seccion, {
     ui.alphaOut.textContent = estado.alpha.toFixed(2);
     ui.alpha.disabled = estado.modo !== 'simulada';
     if (estado.modo === 'simulada') ui.t60.textContent = `T60 ≈ ${sabineT60(sala, estado.alpha).toFixed(2)} s (Sabine)`;
-    else if (estado.modo === 'real') ui.t60.textContent = riRealInfo ? `T60 medido ≈ ${riRealInfo.t30.toFixed(2)} s (RI de OpenAIR)` : 'Cargando la RI medida…';
+    else if (estado.modo === 'real') ui.t60.textContent = !riRealInfo ? 'Cargando la RI medida…' : riRealInfo.t30 == null ? 'RI medida (T30 no calculable)' : `T60 medido ≈ ${riRealInfo.t30.toFixed(2)} s (RI de OpenAIR)`;
     else ui.t60.textContent = 'Sin paredes: solo sonido directo';
     ui.modos.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modo === estado.modo)));
   }
@@ -125,7 +125,7 @@ export function crearSala3D(seccion, {
         <output></output>
         <span class="t60" aria-live="polite"></span>
       </div>
-      <canvas class="ecograma" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
+      <canvas class="ecograma" role="img" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
       <p class="small aviso" hidden></p>`;
     ui = {
       escena: raiz.querySelector('.sala-escena'),
@@ -163,7 +163,7 @@ export function crearSala3D(seccion, {
     const m = { l: compacto ? 36 : 52, r: 12, t: altoLeyenda + 12, b: compacto ? 36 : 42 }, dbMin = -60;
     const xt = (t) => m.l + (t / T_MAX) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.min(0, d) / dbMin) * (H - m.t - m.b);
-    g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COL.tenue; g.strokeStyle = COL.grilla; g.lineWidth = 1;
+    g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COL.eje; g.strokeStyle = COL.grilla; g.lineWidth = 1;
     g.textAlign = 'center';
     for (let t = 0; t <= T_MAX + 1e-9; t += 0.05) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${Math.round(t * 1000)}`, xt(t), H - m.b + tt + 4); }
     g.textAlign = 'right';
@@ -305,7 +305,8 @@ export function crearSala3D(seccion, {
         mMic.position.copy(aT(estado.mic));
       }
     });
-    renderer.domElement.addEventListener('pointerup', () => { if (arrastrando) { arrastrando = false; controles.enabled = true; recalcular(); } });
+    const soltar3D = () => { if (arrastrando) { arrastrando = false; controles.enabled = true; recalcular(); } };
+    for (const tipo of ['pointerup', 'pointercancel', 'lostpointercapture']) renderer.domElement.addEventListener(tipo, soltar3D);
 
     function ajustar() {
       const w = ui.escena.clientWidth, h = ui.escena.clientHeight;
@@ -324,6 +325,9 @@ export function crearSala3D(seccion, {
 
   function crearVista2D() {
     const cv = document.createElement('canvas');
+    cv.style.touchAction = 'none';                        // arrastrar el micrófono sin desplazar la página
+    cv.setAttribute('role', 'img');
+    cv.setAttribute('aria-label', 'Planta de la sala: fuente, micrófono y fuentes imagen');
     ui.escena.appendChild(cv);
     const g = cv.getContext('2d');
     let W = 0, H = 0, esc = 1, ox = 0, oy = 0;
@@ -341,7 +345,8 @@ export function crearSala3D(seccion, {
     const aSala = (ev) => { const r = cv.getBoundingClientRect(); return [(ev.clientX - r.left - ox) / esc, (ev.clientY - r.top - oy) / esc]; };
     cv.addEventListener('pointerdown', (ev) => { const [x, y] = aSala(ev); if (Math.hypot(x - estado.mic[0], y - estado.mic[1]) < 0.8) { arrastrando = true; cv.setPointerCapture(ev.pointerId); } });
     cv.addEventListener('pointermove', (ev) => { if (!arrastrando) return; const [x, y] = aSala(ev); estado.mic[0] = Math.min(sala.lx - 0.3, Math.max(0.3, x)); estado.mic[1] = Math.min(sala.ly - 0.3, Math.max(0.3, y)); });
-    cv.addEventListener('pointerup', () => { if (arrastrando) { arrastrando = false; recalcular(); } });
+    const soltar2D = () => { if (arrastrando) { arrastrando = false; recalcular(); } };
+    for (const tipo of ['pointerup', 'pointercancel', 'lostpointercapture']) cv.addEventListener(tipo, soltar2D);
 
     function actualizar() {
       medir();

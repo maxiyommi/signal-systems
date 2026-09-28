@@ -3,7 +3,7 @@
 import { riConRuido, evaluarT30, regresionLineal } from '../_comun/acustica.js';
 import { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho } from '../_comun/grafico.js';
 
-const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE', mal: '#B3261E' };
+const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE', eje: '#5A5872', mal: '#B3261E' };
 
 export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {}) {
   const raiz = seccion.querySelector('.curva');
@@ -11,7 +11,7 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
 
   function construir() {
     raiz.innerHTML = `
-      <canvas aria-label="Curva de caída con integral de Schroeder"></canvas>
+      <canvas role="img" aria-label="Curva de caída con integral de Schroeder"></canvas>
       <div class="controles">
         <label>Ruido de fondo
           <input type="range" min="-80" max="-20" step="5" value="${pisoDb}" aria-label="Nivel del ruido de fondo">
@@ -37,7 +37,7 @@ export function crearCaida(seccion, { fs = 8000, t60 = 1.2, duracion = 2.5 } = {
     const m = { l: compacto ? 36 : 56, r: 10, t: altoLeyenda + 14, b: compacto ? 38 : 44 }, dbMin = -80;
     const xt = (t) => m.l + (t / duracion) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.max(dbMin, Math.min(0, d)) / dbMin) * (H - m.t - m.b);
-    g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COL.tenue; g.strokeStyle = COL.grilla; g.lineWidth = 1;
+    g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COL.eje; g.strokeStyle = COL.grilla; g.lineWidth = 1;
     g.textAlign = 'center';
     for (let t = 0; t <= duracion + 1e-9; t += 0.5) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${t}`, xt(t), H - m.b + tt + 4); }
     g.textAlign = 'right';

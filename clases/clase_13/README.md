@@ -1,4 +1,7 @@
 # Clase 13: De Funciones a Producto
+
+> **Material de apoyo del curso completo.** Las fechas y entregables de esta página corresponden al 1.er cuatrimestre 2026. En el 2.º cuatrimestre valen el [cronograma](../../cronograma.md) y la [ruta del TP](../../trabajo_practico/ruta.md).
+
 **Fecha**: 23 de junio de 2026
 **Pilares**: P3 (principal), P2 (secundario), P1 (secundario)
 

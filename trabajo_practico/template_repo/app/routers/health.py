@@ -4,6 +4,8 @@ from datetime import datetime
 
 from fastapi import APIRouter
 
+from app.settings import settings
+
 router = APIRouter()
 
 
@@ -12,6 +14,6 @@ async def health_check():
     """Verifica que la API esta funcionando correctamente."""
     return {
         "status": "healthy",
-        "version": "0.1.0",
+        "version": settings.version,
         "timestamp": datetime.now().isoformat(),
     }

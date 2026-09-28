@@ -27,7 +27,7 @@ a { color: var(--violeta); }
 .controles output { font-weight: 700; font-variant-numeric: tabular-nums; }
 button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--senal); outline-offset: 3px; }
 .small { font-size: 0.85rem; color: var(--tenue); }
-.credito { font-size: 0.78rem; color: var(--muy-tenue); margin-top: 0.8rem; }
+.credito { font-size: 0.78rem; color: var(--tenue); margin-top: 0.8rem; }
 
 /* escenas */
 .escucha-fila { margin-bottom: 1em; }

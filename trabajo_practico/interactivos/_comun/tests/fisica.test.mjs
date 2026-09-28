@@ -8,7 +8,9 @@ test('riSintetica con el rng por defecto no tiene componente de continua (media 
   const ri = riSintetica({ fs: 8000, t60: 1, duracion: 1 });
   let suma = 0, energia = 0;
   for (let i = 1; i < ri.length; i++) { suma += ri[i]; energia += Math.abs(ri[i]); }
-  assert.ok(Math.abs(suma / energia) < 0.05, `media relativa ${suma / energia}`);
+  // Con ruido de media cero el cociente ronda 0 (máximo observado ≈ 0,08 en 2000 corridas);
+  // con un rng en [0, 1) daría ≈ 1. El umbral 0,2 separa los dos casos sin fallar al azar.
+  assert.ok(Math.abs(suma / energia) < 0.2, `media relativa ${suma / energia}`);
 });
 
 test('evaluarT30: no declara válido un T30 que se aparta más de 10 % del real (pisos −45 y −50 dB)', () => {

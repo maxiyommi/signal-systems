@@ -80,7 +80,7 @@ Por **asociatividad y conmutatividad de la convolución**, toda la cadena equiva
 <iframe src="../interactivos/caida.html" loading="lazy" title="De la curva de caída a T30"></iframe>
 </div>
 
-Subí el ruido de fondo: cuando el ruido queda a menos de 10 dB de la curva en el tramo de −35 dB, la integral de Schroeder se "levanta" y **T30 deja de ser válido**. Controlar ese efecto es parte de M3 (método de Lundeby).
+Subí el ruido de fondo: si el piso de ruido no queda al menos 10 dB por debajo del punto de −35 dB de la curva, la integral de Schroeder se "levanta" y **T30 deja de ser válido**. En M3 lo controlan recortando la RI antes de integrar; el método de Lundeby, que estima ese punto de corte automáticamente, es opcional.
 
 ## 7. Qué hay que decidir para medir, y dónde lo resuelve el TP
 
@@ -90,7 +90,7 @@ Subí el ruido de fondo: cuando el ruido queda a menos de 10 dB de la curva en e
 | ¿Los transductores son ideales? ¿Qué pasa con sus distorsiones? | M1: sine sweep + filtro inverso |
 | ¿Qué fuente usamos y a qué nivel de SPL? | Medición in situ (paso 2) |
 | ¿Cómo procesamos la señal? | M2: deconvolución y bandas de octava |
-| ¿Cómo afecta el ruido a nuestras mediciones? | M3: Schroeder y Lundeby |
+| ¿Cómo afecta el ruido a nuestras mediciones? | M3: Schroeder y recorte de la RI (Lundeby, opcional) |
 | ¿Cómo estandarizamos el procedimiento (repetibilidad y reproducibilidad)? | ISO 3382: posiciones y repeticiones |
 
 ## 8. Cómo se mide en una sala real
@@ -108,12 +108,15 @@ La medición in situ no forma parte del TP, pero da contexto a cada función que
 | Señales aleatorias, densidad espectral $1/f$ | Excitar todas las bandas con energía pareja por octava | `generar_ruido_rosa` | [M1](especificacion/m1_generacion.md) |
 | Frecuencia instantánea, filtro inverso | Una excitación que separa la respuesta lineal de la distorsión | `generar_sine_sweep` | [M1](especificacion/m1_generacion.md) |
 | Muestreo, DAC/ADC, sistemas en cascada | Emitir y grabar a la vez | `reproducir_y_grabar` | [M1](especificacion/m1_generacion.md) |
+| Señales discretas, cuantización | Leer una grabación como un arreglo normalizado | `cargar_audio` | [M2](especificacion/m2_procesamiento.md) |
+| Sistemas LTI, respuesta al impulso | Una RI sintética con $T_{60}$ conocido para validar | `sintetizar_ri` | [M2](especificacion/m2_procesamiento.md) |
 | Convolución, delta, asociatividad | Recuperar $h(t)$ a partir de la grabación | `obtener_ri_desde_sweep` | [M2](especificacion/m2_procesamiento.md) |
 | Filtros LTI (Butterworth, IEC 61260) | Analizar la sala por bandas de octava | `filtro_octava` | [M2](especificacion/m2_procesamiento.md) |
 | Escala logarítmica | Expresar niveles en dB | `a_escala_log` | [M2](especificacion/m2_procesamiento.md) |
 | Señal analítica, transformada de Hilbert | Envolvente de $h(t)$ | `suavizar_signal` | [M3](especificacion/m3_producto_final.md) |
 | Energía, integración | Curva de decaimiento (Schroeder) | `integral_schroeder` | [M3](especificacion/m3_producto_final.md) |
 | Mínimos cuadrados | Pendiente de la curva: T30, T20, EDT | `regresion_lineal` | [M3](especificacion/m3_producto_final.md) |
+| Energía en ventanas temporales | Parámetros por banda: EDT, T20, T30, D50, C80 | `calcular_parametros_acusticos` | [M3](especificacion/m3_producto_final.md) |
 | El sistema completo | Automatizar la medición y obtener datos | API REST | [M3](especificacion/m3_producto_final.md) |
 
 ## 10. Cómo se baja un problema complejo
@@ -123,8 +126,8 @@ La medición in situ no forma parte del TP, pero da contexto a cada función que
 3. **Descomponer** la medición en módulos: una cadena de sistemas.
 4. **Resolver cada módulo** con una técnica de procesamiento digital de señales.
 5. **Encadenar** los módulos en un software.
-6. **Automatizar** la medición para obtener datos normalizados (ISO 3382).
+6. **Automatizar** la medición para obtener datos según la norma (ISO 3382).
 
 El TP es un caso de aplicación: el mismo método sirve para cualquier problema de ingeniería de sonido que se pueda modelar como señales que atraviesan sistemas.
 
-<small>Audios: [OpenAIR Library](https://www.openairlib.net/) (grabación anecoica y Sports Centre, University of York). Criterio del piso de ruido: NTi Audio. Contenido basado en la presentación conceptual de la cátedra.</small>
+<small>Audios: OpenAIR Library (grabación anecoica y Sports Centre, University of York). Criterio del piso de ruido: NTi Audio. Contenido basado en la presentación conceptual de la cátedra.</small>

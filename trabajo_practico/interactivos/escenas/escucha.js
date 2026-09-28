@@ -118,12 +118,16 @@ export function crearEscucha(seccion, { pares, modo }) {
     if (modo === 'temporal') {
       for (const [tipo, buf] of [['seco', seco], ['sala', sala]]) {
         const cv = document.createElement('canvas');
+        cv.setAttribute('role', 'img');
+        cv.setAttribute('aria-label', `Forma de onda: ${etiqueta(tipo)}`);
         cont.appendChild(cv);
         const dibujar = () => dibujarOnda(cv, buf.getChannelData(0), buf.sampleRate, 15, COLOR[tipo], etiqueta(tipo));
         dibujar(); alCambiarAncho(cv, dibujar);
       }
     } else {
       const cv = document.createElement('canvas');
+      cv.setAttribute('role', 'img');
+      cv.setAttribute('aria-label', 'Espectros promedio de las dos grabaciones, en dB');
       cont.appendChild(cv);
       const curvas = [['seco', seco], ['sala', sala]].map(([tipo, buf]) => ({
         ...espectroPromedioDb(buf.getChannelData(0), buf.sampleRate, 8192), color: COLOR[tipo], etiqueta: etiqueta(tipo),

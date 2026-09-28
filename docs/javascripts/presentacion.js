@@ -20,11 +20,17 @@
     };
     aplicar(leer());
     boton.addEventListener('click', () => aplicar(!document.body.classList.contains(CLAVE)));
-    document.addEventListener('keydown', (e) => {
-      if (e.target.closest('input, textarea, [contenteditable]')) return;
-      if (e.key === 'p' || e.key === 'P') aplicar(!document.body.classList.contains(CLAVE));
-      if (e.key === 'Escape' && document.body.classList.contains(CLAVE)) aplicar(false);
-    });
+    // En captura sobre window: Material usa la P para ir a la página anterior y hay que ganarle.
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable]')) return;
+      const activo = document.body.classList.contains(CLAVE);
+      if (e.key === 'p' || e.key === 'P') aplicar(!activo);
+      else if (e.key === 'Escape' && activo) aplicar(false);
+      else return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }, true);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
 })();

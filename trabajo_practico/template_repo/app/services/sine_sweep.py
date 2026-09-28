@@ -11,8 +11,10 @@ def generar_sine_sweep(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Genera un barrido senoidal logaritmico (sine sweep) y su filtro inverso.
 
-    El sine sweep logaritmico es la senal de excitacion preferida para
-    la medicion de respuestas al impulso segun la tecnica de Farina (2000).
+    El sweep es ``x(t) = sin[2*pi*f1*T / ln(f2/f1) * (exp(t*ln(f2/f1)/T) - 1)]``
+    y el filtro inverso es el sweep invertido en el tiempo con correccion de
+    amplitud ``A(t) = exp(-t*ln(f2/f1)/T)`` (tecnica de Farina, 2000). La
+    convolucion ``sweep * filtro_inverso`` debe aproximar un impulso.
 
     Parameters
     ----------
@@ -28,13 +30,13 @@ def generar_sine_sweep(
     Returns
     -------
     sweep : np.ndarray
-        Senal del barrido senoidal.
+        Senal del barrido senoidal, normalizada, de longitud ``int(duracion * fs)``.
     filtro_inverso : np.ndarray
-        Filtro inverso correspondiente.
+        Filtro inverso correspondiente, normalizado, de la misma longitud.
 
     References
     ----------
     .. [1] Farina, A. (2000). "Simultaneous measurement of impulse response
-       and distortion with a swept-sine technique."
+       and distortion with a swept-sine technique." 108th AES Convention.
     """
     raise NotImplementedError("Implementar en Milestone 1")

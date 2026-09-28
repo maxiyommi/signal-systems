@@ -1,15 +1,13 @@
-# Milestone 0: El Plano
+# M0 · El plano (arquitectura)
 
 !!! info "Fechas y evaluación"
-    - **Presentación de la consigna:** miercoles 30 de septiembre 2026
-    - **Fecha de entrega:** miercoles 7 de octubre 2026 (asincronica, por Slack/GitHub — no hay clase)
+    - **Presentación de la consigna:** miércoles 30 de septiembre de 2026 (presencial)
+    - **Entrega:** miércoles 7 de octubre de 2026, asincrónica por Slack/GitHub (ese día no hay clase)
     - **Evaluación:** seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
 
 ## Objetivo
 
-Planificar la arquitectura del software antes de escribir una sola linea de codigo. Este milestone busca que el grupo defina la estructura del proyecto, distribuya responsabilidades y establezca las bases para un desarrollo organizado y colaborativo.
-
-Un buen plano es la diferencia entre un proyecto que se sostiene y uno que colapsa en la tercera entrega.
+Planificar la arquitectura del software antes de escribir una sola línea de código. Este milestone busca que el grupo defina la estructura del proyecto, distribuya responsabilidades y establezca las bases para un desarrollo organizado y colaborativo.
 
 ## Por qué importa
 
@@ -30,8 +28,8 @@ curl https://rir-api.onrender.com/health
 | Concepto | Qué es |
 |----------|--------|
 | **Endpoint** | Una URL que hace una cosa. `GET /health` devuelve "estoy vivo". |
-| **Request / response** | El cliente manda audio y parámetros; la API responde con T60, C80, etc. |
-| **JSON** | El formato para pasar datos: `{"t60": 1.2, "c80": 5.4}`. |
+| **Request / response** | El cliente manda audio y parámetros; la API responde con T30, C80, etc. |
+| **JSON** | El formato para pasar datos: `{"t30": 1.2, "c80": 5.4}`. |
 
 ## Tres capas
 
@@ -45,7 +43,7 @@ Cliente HTTP ──▶ Routers (endpoints) ──▶ Services (lógica) ──�
 
 === "Routers · puerta de entrada"
 
-    Reciben el request, llaman al service y devuelven JSON. **No calculan.**
+    Reciben el request, validan con un schema, llaman al service y devuelven JSON. **No calculan.**
 
     ```python
     @router.post("/pink-noise")
@@ -67,7 +65,7 @@ Cliente HTTP ──▶ Routers (endpoints) ──▶ Services (lógica) ──�
 
 === "Schemas · aduana"
 
-    Validan que los datos entren y salgan con la forma correcta.
+    Modelos Pydantic que validan que los datos entren y salgan con la forma correcta.
 
     ```python
     class PinkNoiseReq(BaseModel):
@@ -79,46 +77,48 @@ Cliente HTTP ──▶ Routers (endpoints) ──▶ Services (lógica) ──�
 
 ### 1. README.md del repositorio
 
-El archivo `README.md` en la raiz del repositorio debe contener:
+El archivo `README.md` en la raíz del repositorio debe contener:
 
-- **Nombre del proyecto** y descripcion breve (1-2 parrafos).
-- **Integrantes del grupo** con nombre completo, legajo y rol asignado (por ejemplo: responsable de generacion de senales, responsable de procesamiento, responsable de testing/CI, responsable de documentacion).
-- **Instrucciones de instalacion**: como clonar el repo, crear el entorno virtual y ejecutar el proyecto. Debe funcionar copiando y pegando los comandos.
-- **Estructura del proyecto**: arbol de directorios con una breve explicacion de cada carpeta y archivo principal.
+- **Nombre del proyecto** y descripción breve (1-2 párrafos).
+- **Integrantes del grupo** con nombre completo, legajo y rol asignado (por ejemplo: responsable de generación de señales, de procesamiento, de testing/CI, de documentación).
+- **Instrucciones de instalación**: cómo clonar el repo, instalar dependencias y ejecutar el proyecto. Deben funcionar copiando y pegando los comandos.
+- **Estructura del proyecto**: árbol de directorios con una breve explicación de cada carpeta y archivo principal.
+
+El template ya trae un README base con estas secciones: complétenlo.
 
 ### 2. Diagrama de arquitectura
 
-El diagrama debe realizarse en **Mermaid** (embebido en el README) o en **draw.io** (exportado a PNG e incluido en el README). Debe mostrar:
+El diagrama se hace en **Mermaid** (embebido en el README; GitHub lo dibuja solo) o en **draw.io** (exportado a PNG e incluido en el README). Debe mostrar:
 
-- **Capas del sistema**: routers (endpoints) → services (logica de negocio) → schemas (validacion).
-- **Modulos principales** y sus responsabilidades (generacion, procesamiento, analisis).
-- **Flujo de datos** entre capas: request HTTP → validacion Pydantic → servicio → respuesta.
-- **Inputs y outputs del sistema completo**: desde el archivo de audio hasta los parametros acusticos calculados.
+- **Capas del sistema**: routers (endpoints) → services (lógica) y schemas (validación).
+- **Módulos principales** y sus responsabilidades (generación, procesamiento, análisis).
+- **Flujo de datos** entre capas: request HTTP → validación Pydantic → service → respuesta.
+- **Entradas y salidas del sistema completo**: desde el archivo de audio hasta los parámetros acústicos calculados.
 - **Dependencias externas** relevantes (fastapi, numpy, scipy, pydantic, etc.).
 
-Ejemplo de estructura minima en Mermaid:
+Ejemplo de estructura mínima en Mermaid:
 
 ```mermaid
 graph LR
     Client[Cliente HTTP] --> R[Routers / Endpoints]
     R --> S[Services]
-    S --> G[Generacion de senales]
+    S --> G[Generación de señales]
     S --> P[Procesamiento de RI]
-    S --> A[Analisis acustico]
+    S --> A[Análisis acústico]
     R --> Sch[Schemas Pydantic]
 ```
 
-El diagrama debe reflejar **todos los modulos de M1, M2 y M3**.
+El diagrama debe reflejar **todos los módulos de M1, M2 y M3** (las funciones de cada uno están en las especificaciones de [M1](m1_generacion.md), [M2](m2_procesamiento.md) y [M3](m3_producto_final.md)).
 
 ### 3. GitHub Issues
 
 Crear al menos **10 issues** en el repositorio de GitHub, cada uno con:
 
-- **Titulo descriptivo**: por ejemplo, "Implementar generacion de ruido rosa con algoritmo Voss-McCartney".
-- **Descripcion** con los requisitos funcionales y criterios de aceptacion.
+- **Título descriptivo**: por ejemplo, "Implementar generación de ruido rosa con algoritmo Voss-McCartney".
+- **Descripción** con los requisitos funcionales y criterios de aceptación.
 - **Labels** que indiquen el milestone correspondiente: `milestone-1`, `milestone-2`, `milestone-3`.
-- **Asignacion** a uno o mas integrantes del grupo.
-- **Estimacion** de complejidad (opcional pero recomendado): usar labels como `complejidad-baja`, `complejidad-media`, `complejidad-alta`.
+- **Asignación** a uno o más integrantes del grupo.
+- **Estimación** de complejidad (opcional pero recomendada): labels como `complejidad-baja`, `complejidad-media`, `complejidad-alta`.
 
 | Malo | Bueno |
 |------|-------|
@@ -128,81 +128,109 @@ Crear al menos **10 issues** en el repositorio de GitHub, cada uno con:
 
 ### 4. Estructura del repositorio
 
-El repositorio debe tener la siguiente estructura minima funcional, orientada a una API REST con FastAPI:
+El repositorio debe tener esta estructura mínima funcional, orientada a una API REST con FastAPI:
 
 ```
 rir-api/
-├── pyproject.toml          # o requirements.txt
+├── pyproject.toml
 ├── README.md
-├── LICENSE
 ├── app/
 │   ├── __init__.py
 │   ├── main.py             # Punto de entrada FastAPI
-│   ├── settings.py         # Configuracion (pydantic-settings)
+│   ├── settings.py         # Configuración (pydantic-settings)
 │   ├── routers/
 │   │   ├── __init__.py
-│   │   └── health.py       # Endpoint /health (placeholder)
+│   │   └── health.py       # Endpoint /health
 │   ├── schemas/
 │   │   └── __init__.py
-│   └── services/
+│   └── services/           # Un módulo por tema: stubs de M1, M2 y M3
 │       └── __init__.py
 ├── tests/
-│   └── test_placeholder.py
-├── docs/
-│   └── (vacio por ahora)
+│   ├── test_placeholder.py
+│   └── ...                 # Tests de M1-M3, marcados como xfail hasta implementarlos
+├── docs/                   # Evidencia de validación (gráficos, capturas)
 ├── data/
 │   └── .gitkeep
 └── .github/
     └── workflows/
-        └── ci.yml (opcional en M0)
+        └── ci.yml          # Lint + tests en cada push
 ```
 
-**Requisitos especificos:**
+**Requisitos específicos:**
 
-- `pyproject.toml` (o `requirements.txt`) con dependencias minimas: fastapi, uvicorn, numpy, scipy, pydantic, sounddevice, matplotlib, y dependencias de desarrollo (pytest, httpx, ruff).
-- `app/main.py` con una aplicacion FastAPI minima que responda en `/` y `/health`.
-- `tests/test_placeholder.py` con al menos un test que pase (puede ser trivial).
-- El proyecto debe poder ejecutarse con `uvicorn app.main:app --reload` o `python -m app.main`.
+- `pyproject.toml` con las dependencias mínimas (fastapi, uvicorn, numpy, scipy, pydantic, sounddevice, matplotlib) y las de desarrollo (pytest, httpx, ruff).
+- `app/main.py` con una aplicación FastAPI mínima que responda en `/` y `/health`.
+- `tests/test_placeholder.py` con al menos un test que pase.
+- El proyecto se ejecuta con `uv run uvicorn app.main:app --reload`.
 
-**Buena noticia: la estructura ya está hecha.** Forkeen el [template del repositorio](https://github.com/maxiyommi/signal-systems/tree/master/trabajo_practico/template_repo), no lo reescriban:
+**Buena noticia: la estructura ya está hecha.** El [template del repositorio](https://github.com/maxiyommi/signal-systems/tree/master/trabajo_practico/template_repo) trae todo lo anterior. No se forkea: cada grupo crea un repositorio **vacío** propio (por ejemplo `rir-api`) y copia adentro el contenido del template:
 
 ```bash
-git clone https://github.com/<grupo>/rir-api.git && cd rir-api
+# 1. Bajar el repositorio de la materia (solo la última versión)
+git clone --depth 1 https://github.com/maxiyommi/signal-systems.git
+
+# 2. Clonar el repositorio (vacío) del grupo y copiar el template, con los archivos ocultos
+git clone https://github.com/<usuario>/rir-api.git
+cp -r signal-systems/trabajo_practico/template_repo/. rir-api/
+
+# 3. Primer commit
+cd rir-api
+git add .
+git commit -m "chore: estructura inicial desde el template de la cátedra"
+git branch -M main
+git push -u origin main
+
+# 4. Probar que anda
 uv sync
 uv run uvicorn app.main:app --reload     # abrir http://localhost:8000/docs
 uv run pytest -v
 ```
 
-Si todo esto funciona (el endpoint `/health` responde `200 OK` y hay un test que pasa), cumplieron los requisitos técnicos de M0.
+Si el endpoint `/health` responde `200 OK` y `pytest` termina sin fallas (los tests de M1-M3 aparecen como `xfailed` hasta que implementen cada función), cumplieron los requisitos técnicos de M0. El paso a paso completo está en el README del template.
 
 !!! tip "No olvidar"
-    Agregar a los docentes como **colaboradores** del repositorio (*Settings → Collaborators → Add people*). Sin esto no podemos ver ni dar feedback.
+    Agregar a los docentes como **colaboradores** del repositorio: **@maxiyommi** y **@jero-scafati** (*Settings → Collaborators → Add people*). Sin esto no podemos ver el repo ni dar feedback.
 
-> **Referencia**: Explorar la [documentacion interactiva de la API de la catedra](https://rir-api.onrender.com/docs) para entender la estructura de una API REST con FastAPI.
+> **Referencia**: explorar la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) para entender la estructura de una API REST con FastAPI.
 
-**Branching strategy documentada** (en el README o en un archivo `CONTRIBUTING.md`):
+### 5. Branching strategy documentada
 
-- Rama `main` protegida (solo merge via pull request).
-- Ramas de feature con convencion de nombres: `feature/nombre-descriptivo`.
-- Convencion de commits (recomendado: [Conventional Commits](https://www.conventionalcommits.org/)).
+En el README o en un archivo `CONTRIBUTING.md`:
+
+- Rama `main` protegida (solo merge vía pull request).
+- Ramas de feature con convención de nombres: `feature/nombre-descriptivo`.
+- Convención de commits (recomendada: [Conventional Commits](https://www.conventionalcommits.org/)).
+
+La [guía de Git](../../guias/git_basico.md) explica el flujo `main` + feature + pull request.
+
+## Cómo entregar M0
+
+El miércoles 7 de octubre no hay clase. Antes del final del día, cada grupo publica en Slack un único mensaje con:
+
+1. El **link al repositorio** (con los docentes ya agregados como colaboradores).
+2. Una **captura** de `http://localhost:8000/health` respondiendo, o del CI en verde.
+3. Los **integrantes** y el rol de cada uno.
+
+El feedback llega en el hilo de ese mensaje. Si algo no les anda, pregunten antes en Slack, en hilos (ver las [reglas](../../reglas_slack.md)).
 
 ## Checklist de entrega
 
-- [ ] Repositorio accesible por los docentes (agregar como colaboradores)
+- [ ] Repositorio accesible por los docentes (@maxiyommi y @jero-scafati como colaboradores)
 - [ ] README completo, claro y con instrucciones que funcionan
-- [ ] Diagrama de arquitectura que muestre todos los modulos de M1, M2 y M3
+- [ ] Diagrama de arquitectura que muestre todos los módulos de M1, M2 y M3
 - [ ] Al menos 10 issues creados con labels y asignaciones
-- [ ] Estructura de proyecto funcional: se puede ejecutar con `uvicorn app.main:app --reload`
+- [ ] El proyecto se ejecuta con `uv run uvicorn app.main:app --reload`
 - [ ] Endpoint `/health` responde correctamente
-- [ ] Al menos un test que pase con `pytest`
+- [ ] `pytest` termina sin fallas
 - [ ] Branching strategy documentada
+- [ ] Mensaje de entrega publicado en Slack
 
 ## Recursos recomendados
 
-- [API de referencia de la catedra (Swagger UI)](https://rir-api.onrender.com/docs)
-- [FastAPI: documentacion oficial](https://fastapi.tiangolo.com/)
-- [Pydantic: validacion de datos](https://docs.pydantic.dev/)
-- [uv: gestor de paquetes rapido para Python](https://docs.astral.sh/uv/)
+- [API de referencia de la cátedra (Swagger UI)](https://rir-api.onrender.com/docs)
+- [FastAPI: documentación oficial](https://fastapi.tiangolo.com/)
+- [Pydantic: validación de datos](https://docs.pydantic.dev/)
+- [uv: gestor de paquetes rápido para Python](https://docs.astral.sh/uv/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Mermaid: diagramas en Markdown](https://mermaid.js.org/)
-- [GitHub Issues: buenas practicas](https://docs.github.com/en/issues)
+- [GitHub Issues: documentación](https://docs.github.com/en/issues)
