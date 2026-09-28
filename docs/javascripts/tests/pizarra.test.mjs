@@ -38,9 +38,17 @@ test('el grosor crece con la presión del lápiz y el resaltador es más ancho',
   assert.ok(P.anchoTrazo('lapiz', 0) > 0);   // mouse sin presión: igual se ve
 });
 
-test('visibilidad: siempre, salvo embebido en un iframe (ahí dibuja la pizarra de la página)', () => {
-  assert.equal(P.debeMostrar({ enIframe: false }), true);
-  assert.equal(P.debeMostrar({ enIframe: true }), false);
+test('visibilidad: solo en modo presentación y nunca embebida en un iframe', () => {
+  assert.equal(P.debeMostrar({ enIframe: false, enPresentacion: false }), false);
+  assert.equal(P.debeMostrar({ enIframe: false, enPresentacion: true }), true);
+  assert.equal(P.debeMostrar({ enIframe: true, enPresentacion: true }), false);
+});
+
+test('un interactivo abierto desde el modo presentación trae ?presentacion en la URL', () => {
+  assert.equal(P.presentacionEnUrl('?presentacion=1'), true);
+  assert.equal(P.presentacionEnUrl('?sin3d&presentacion=1'), true);
+  assert.equal(P.presentacionEnUrl(''), false);
+  assert.equal(P.presentacionEnUrl('?sin3d'), false);
 });
 
 test('transformación del lienzo: dibuja en coordenadas de pantalla aunque el lienzo esté corrido', () => {
