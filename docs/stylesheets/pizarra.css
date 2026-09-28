@@ -1,6 +1,6 @@
 /* Pizarra: dibujar con el lápiz sobre la página (modo presentación del sitio e interactivos abiertos solos).
    La usan docs/javascripts/pizarra.js y los HTML de trabajo_practico/interactivos/. */
-.pizarra-lienzo { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 9; pointer-events: none; }
+.pizarra-lienzo { position: fixed; top: 0; left: 0; z-index: 9; pointer-events: none; }   /* tamaño en px: lo fija pizarra.js */
 .pizarra-lienzo[hidden], .pizarra-barra[hidden] { display: none; }
 body.pizarra-activa .pizarra-lienzo { pointer-events: auto; touch-action: none; cursor: crosshair; }
 .pizarra-barra {

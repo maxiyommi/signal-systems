@@ -116,8 +116,12 @@
     }
 
     // ── Dibujo ───────────────────────────────────────────────────────────────────────────────
+    // El tamaño en pantalla se fija en px igual a la zona visible. Con 100vh, Safari de iPad
+    // estira el lienzo cuando se ve la barra del navegador y la tinta queda corrida del lápiz.
     function ajustar() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      lienzo.style.width = `${window.innerWidth}px`;
+      lienzo.style.height = `${window.innerHeight}px`;
       lienzo.width = Math.round(window.innerWidth * dpr);
       lienzo.height = Math.round(window.innerHeight * dpr);
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -194,7 +198,9 @@
     for (const tipo of ['pointerup', 'pointercancel', 'lostpointercapture']) lienzo.addEventListener(tipo, soltar);
 
     window.addEventListener('scroll', redibujar, { passive: true });
-    window.addEventListener('resize', () => { if (!lienzo.hidden) ajustar(); });
+    const reajustar = () => { if (!lienzo.hidden) ajustar(); };
+    window.addEventListener('resize', reajustar);
+    window.visualViewport?.addEventListener('resize', reajustar);   // aparece o se oculta la barra de Safari
 
     // Se muestra solo en modo presentación (lo maneja presentacion.js con una clase en el body).
     const actualizar = () => mostrar(debeMostrar({
