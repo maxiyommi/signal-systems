@@ -1,0 +1,37 @@
+/* Páginas interactivas del TP (escucha a ciegas, sala, curva de caída).
+   Se ven sueltas (pantalla completa, para proyectar) o embebidas con iframe en el sitio. */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap");
+
+:root {
+  --papel: #EEF3F7; --papel-alto: #F7FAFC; --tinta: #1B1830; --tenue: #5A5872; --muy-tenue: #9A98AE;
+  --violeta: #6B2FA3; --violeta-suave: rgba(107, 47, 163, 0.08); --senal: #1E88C9; --grilla: #C9D6E2; --mal: #B3261E;
+  --f-texto: "Archivo", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--papel); color: var(--tinta); font: 400 17px/1.45 var(--f-texto); }
+main.interactivo { max-width: 1200px; margin: 0 auto; padding: 1.2rem 1.2rem 1.6rem; }
+.encabezado h1 { font-size: 1.5rem; margin: 0 0 0.3rem 0; }
+.encabezado p { margin: 0 0 1rem 0; color: var(--tenue); max-width: 70ch; }
+html.embebido .encabezado { display: none; }
+html.embebido main.interactivo { padding: 0.6rem; }
+a { color: var(--violeta); }
+
+.escena { position: relative; width: 100%; background: var(--papel-alto); border: 1px solid var(--grilla); border-radius: 4px; overflow: hidden; }
+.escena canvas { display: block; width: 100%; height: 100%; }
+.controles { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em 0.8em; margin: 0.6em 0; font-size: 0.92rem; }
+.controles button { font: 600 1em var(--f-texto); color: var(--violeta); background: var(--papel-alto); border: 2px solid var(--violeta); border-radius: 4px; padding: 0.4em 0.8em; cursor: pointer; }
+.controles button:hover { background: var(--violeta-suave); }
+.controles button[aria-pressed="true"] { background: var(--violeta); color: #fff; }
+.controles label { display: flex; align-items: center; gap: 0.5em; color: var(--tenue); font-weight: 600; }
+.controles input[type="range"] { accent-color: var(--violeta); width: 12em; max-width: 45vw; }
+.controles output { font-weight: 700; font-variant-numeric: tabular-nums; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--senal); outline-offset: 3px; }
+.small { font-size: 0.85rem; color: var(--tenue); }
+.credito { font-size: 0.78rem; color: var(--muy-tenue); margin-top: 0.8rem; }
+
+/* escenas */
+.escucha-fila { margin-bottom: 1em; }
+.escucha-fila .controles strong { min-width: 5em; }
+.graficos canvas, .sala .ecograma, .curva canvas { display: block; width: 100%; height: auto; border: 1px solid var(--grilla); border-radius: 4px; background: var(--papel-alto); margin-bottom: 0.4em; }
+.sala-escena { aspect-ratio: 16 / 7; }
+.sala .t60, .curva .resultado { font-weight: 700; }

@@ -1,6 +1,6 @@
 // Curva de caída interactiva: nivel instantáneo, integral de Schroeder, tramo −5…−35 dB,
 // recta de regresión y piso de ruido ajustable (muestra cuándo T30 deja de ser válido).
-import { riConRuido, evaluarT30, regresionLineal } from '../../_comun/acustica.js';
+import { riConRuido, evaluarT30, regresionLineal } from '../_comun/acustica.js';
 
 const COL = { tinta: '#1B1830', violeta: '#6B2FA3', senal: '#1E88C9', grilla: '#C9D6E2', papel: '#F7FAFC', tenue: '#9A98AE', mal: '#B3261E' };
 

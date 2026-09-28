@@ -1,6 +1,6 @@
 // Escucha a ciegas: A/B entre audio seco y en sala; después se revelan forma de onda o espectro.
-import { espectroPromedioDb, envolventeMinMax } from '../../_comun/acustica.js';
-import { cargarBuffer, crearCanal } from '../../_comun/audio.js';
+import { espectroPromedioDb, envolventeMinMax } from '../_comun/acustica.js';
+import { cargarBuffer, crearCanal } from '../_comun/audio.js';
 
 const COLOR = { seco: '#1B1830', sala: '#6B2FA3', eje: '#9A98AE', grilla: '#C9D6E2' };
 
@@ -101,11 +101,13 @@ export function crearEscucha(seccion, { pares, modo }) {
     const [seco, sala] = await Promise.all([cargarBuffer(par.seco), cargarBuffer(par.sala)]);
     const etiqueta = (tipo) => `${Object.keys(asignacion[i]).find((k) => asignacion[i][k] === tipo)} · ${tipo === 'seco' ? 'sin sala (anecoica)' : 'en la sala'}`;
     cont.innerHTML = '';
-    if (modo === 'temporal') {
+    if (modo === 'temporal' && i === 0) {
       const nota = document.createElement('p');
       nota.className = 'small';
       nota.textContent = 'Forma de onda (amplitud normalizada al pico) en función del tiempo; ambas con la misma escala de 0 a 15 s.';
       cont.appendChild(nota);
+    }
+    if (modo === 'temporal') {
       for (const [tipo, buf] of [['seco', seco], ['sala', sala]]) {
         const cv = document.createElement('canvas'); cv.width = 1000; cv.height = 110;
         cont.appendChild(cv);

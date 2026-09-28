@@ -14,18 +14,17 @@
 - `contenido.py` — Notebook Marimo: NumPy, senales discretas, SciPy intro
 - `ejercicios.py` — Notebook Marimo: ejercicios practicos
 - `soluciones.py` — Notebook Marimo: soluciones (post-clase)
-- [Presentacion del TP](https://maxiyommi.github.io/signal-systems/trabajo_practico/presentaciones/tp/) — consigna, milestones, evaluacion. Abrir primero.
-- [Presentacion de M0](https://maxiyommi.github.io/signal-systems/trabajo_practico/presentaciones/m0/) — ~30 min sobre M0: El Plano. Se abre despues de la presentacion del TP.
+- [Ruta del TP](https://maxiyommi.github.io/signal-systems/trabajo_practico/ruta/) — orden de lectura, marco conceptual, consigna y milestones.
+- [M0 · El plano](https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m0_arquitectura/) — arquitectura, repositorio, issues y /health.
 
-> El material del TP (presentaciones) vive en `trabajo_practico/presentaciones/` y se publica en el sitio del curso.
+> Todo el material del TP está en la sección Trabajo Práctico del sitio del curso.
 
 ### Flujo sugerido de la clase
 
 1. Contenido de la clase 4 (NumPy, senales, SciPy) con `contenido.py` y `ejercicios.py`.
-2. Abrir la presentacion del TP (`trabajo_practico/presentaciones/tp/`) para presentar el TP en general.
-   - El slide 2 linkea a la [presentacion conceptual](https://maxiyommi.github.io/signal-systems/trabajo_practico/presentaciones/conceptual/) — recorrerla en vivo.
+2. Recorrer el [marco conceptual](https://maxiyommi.github.io/signal-systems/trabajo_practico/marco_conceptual/) (con los interactivos) y la [consigna](https://maxiyommi.github.io/signal-systems/trabajo_practico/).
    - Volver a la presentacion HTML para el detalle de milestones, evaluacion y politicas.
-3. Abrir la presentacion de M0 (`trabajo_practico/presentaciones/m0/`) para aterrizar M0 (la entrega de la proxima clase).
+3. Abrir la página de [M0](https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m0_arquitectura/) para aterrizar M0 (la entrega de la proxima clase).
 
 ## Tarea
 - Generar y graficar al menos 5 tipos de senales distintas usando NumPy

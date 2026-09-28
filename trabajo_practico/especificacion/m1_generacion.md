@@ -1,15 +1,106 @@
 # Milestone 1: Generacion de Senales
 
-**Presentacion de la consigna**: miercoles 14 de octubre 2026
-**Fecha de entrega**: miercoles 28 de octubre 2026 (en clase)
-**Tag de version**: `v0.1.0`
-**Evaluacion**: seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
+!!! info "Fechas y evaluación"
+    - **Presentación de la consigna:** miercoles 14 de octubre 2026
+    - **Fecha de entrega:** miercoles 28 de octubre 2026 (en clase)
+    - **Tag de version:** `v0.1.0`
+    - **Evaluación:** seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
 
 ## Objetivo
 
 Implementar las funciones de generacion de senales de excitacion necesarias para mediciones acusticas segun ISO 3382, asi como la funcion de reproduccion y grabacion simultanea. Al finalizar este milestone, el sistema debe ser capaz de generar ruido rosa, sine sweep logaritmico con su filtro inverso, y realizar adquisicion de audio en tiempo real.
 
 ---
+
+## Del plano al primer cálculo
+
+En M0 dibujaron las tres capas. En M1 le ponen **código real** a una sola de ellas: `services/`.
+
+Los routers no se tocan todavía. Los schemas tampoco. Solo:
+
+- `services/pink_noise.py`
+- `services/sine_sweep.py`
+- `services/audio_io.py` (reproducir/grabar)
+
+Cada uno es una *función pura de DSP*: entra `numpy`, sale `numpy`. No saben de HTTP. No saben de JSON. No saben de FastAPI.
+
+!!! note "Por qué importa"
+    - Si la función es pura, los tests son triviales
+    - Si la función es pura, en M3 la enchufan a una ruta y listo
+    - Si la función mezcla cosas, en M2 van a sufrir
+
+    **Regla:** el service no abre archivos, no llama a la red, no imprime. Recibe arrays, devuelve arrays.
+
+## Conceptos y figuras
+
+Lo que hay que entender antes de implementar, con los gráficos de la implementación de referencia de la cátedra.
+
+### Función 01 · ruido rosa
+
+<figure class="figura-tp" markdown>
+![PSD del ruido rosa generado con la API de referencia](../img/m1/psd_ruido_rosa.png)
+<figcaption markdown="span">PSD medida (Welch) vs. teórico -3 dB/oct · pendiente medida sobre la API de cátedra: -3.02 dB/oct</figcaption>
+</figure>
+
+El ruido rosa (también llamado ruido $1/f$) se caracteriza por tener una densidad espectral de potencia inversamente proporcional a la frecuencia: $S(f) = k/f$, donde $k$ es una constante. En escala logarítmica esto corresponde a una caída de **-3 dB/octava** (o equivalentemente, -10 dB/década), porque $\Delta L = 10 \log_{10}(1/2) \approx -3{,}01$ dB.
+
+Algoritmo recomendado **Voss-McCartney**: suma de múltiples generadores de ruido blanco que se actualizan a tasas $2^i$. El generador $i$ se actualiza cuando el bit $i$ del índice $n$ cambia. La suma produce una señal cuyo espectro se aproxima a $1/f$. Alternativa aceptable: ruido blanco filtrado en frecuencia con $H(f) = 1/\sqrt{f}$.
+
+<small>Especificación (m1_generacion) §1 — *Voss, R. F. & Clarke, J. (1978). "1/f noise" in music. JASA 63(1).*</small>
+
+### Función 02 · sine sweep logarítmico
+
+<figure class="figura-tp" markdown>
+![Waveform y espectrograma del sine sweep 20 Hz a 20 kHz](../img/m1/sweep_waveform_spec.png)
+<figcaption markdown="span">Sweep 20 Hz → 20 kHz, 5 s · línea blanca discontinua = f(t) teórica</figcaption>
+</figure>
+
+El sine sweep logarítmico (también llamado exponencial) se define como: $\;x(t) = \sin\!\left[\tfrac{2\pi f_1 T}{\ln(f_2/f_1)}\!\left(e^{t \ln(f_2/f_1)/T} - 1\right)\right]$, con $f_1$ frecuencia inicial, $f_2$ final, $T$ duración total, $0 \leq t \leq T$.
+
+La frecuencia instantánea es $f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}$, que crece exponencialmente de $f_1$ a $f_2$. Logarítmico (no lineal) porque buscamos *igual energía por octava* — coincide con la escala de los filtros de bandas IEC 61260 que van a usar en M2.
+
+<small>Especificación (m1_generacion) §2 — *Farina, A. (2000). Simultaneous measurement of impulse response and distortion with a swept-sine technique. 108th AES Convention.*</small>
+
+### Función 02 · filtro inverso
+
+<figure class="figura-tp" markdown>
+![Convolucion del sweep con su filtro inverso resultando en un pico tipo impulso](../img/m1/convolucion_impulso.png)
+<figcaption markdown="span">Convolución sweep × inverso · pico vs. piso ≈ 98 dB de relación (test pide ≥ 40 dB)</figcaption>
+</figure>
+
+El filtro inverso se obtiene invirtiendo temporalmente el sweep y aplicando una corrección de amplitud que compensa la distribución no uniforme de energía por frecuencia del sweep logarítmico: $\;x_{\text{inv}}(t) = x(T - t) / A(t)$, con envolvente $A(t) = e^{-t \ln(f_2/f_1)/T}$.
+
+La corrección es necesaria porque el sweep logarítmico permanece **más tiempo en las frecuencias bajas** y concentra más energía allí. El filtro inverso compensa atenuando esa banda. La convolución del sweep con su filtro inverso debe producir un impulso ideal: $\;x(t) * x_{\text{inv}}(t) \approx \delta(t)$. En la práctica, un pulso estrecho con lóbulos laterales pequeños.
+
+<small>Especificación (m1_generacion) §2 (filtro inverso) — *esto es lo que en M2 usan para deconvolucionar la respuesta al impulso de la sala.*</small>
+
+### Reproducir y grabar en simultáneo
+
+!!! note "Backend · `sounddevice`"
+    ```python
+    import sounddevice as sd
+    recorded = sd.playrec(signal, samplerate=fs, channels=1, blocking=True)
+    sd.wait()
+    ```
+
+    Hace play + record a la vez sobre el mismo dispositivo, muestra contra muestra. Documenten en el README la config: dispositivo, canales, fs, buffer size.
+
+!!! note "Detalles que rompen mediciones"
+    - **Pre-roll** 0.5-1 s — compensa latencia del driver
+    - **Grabación > señal** — capturar la cola de reverberación
+    - Manejar **mono y estéreo** sin asumir shape
+    - Error **informativo** si no hay device
+
+!!! note "Cliente · cómo se hace lo mismo en el navegador (frontend de cátedra)"
+    `sd.playrec()` no existe en el browser. La analogía es la **Web Audio API**:
+
+    - `navigator.mediaDevices.getUserMedia({audio: {sampleRate: {ideal: fs}}})` — permiso + micrófono
+    - `new AudioContext({sampleRate})` + `AudioBufferSourceNode` — reproduce la señal de excitación
+    - `new MediaRecorder(stream, {mimeType: 'audio/webm;codecs=opus'})` — captura el stream
+    - Conversión a WAV en cliente con `OfflineAudioContext` antes de subir al backend
+    - `setSinkId()` para elegir salida cuando hay múltiples dispositivos
+
+    **Mismos cuidados**: sample rate explícito, manejo de permisos denegados, latencia entre play y record (acá la introduce el browser, no el driver de audio). Grabar en mono para no duplicar el tamaño del archivo subido al backend.
 
 ## Funciones a implementar
 
@@ -275,6 +366,94 @@ Incluir capturas de pantalla o graficas de todas las validaciones en la document
 - **Tag**: al completar el milestone, crear el tag `v0.1.0` en la rama `main`.
 
 ---
+
+## Guía de entrega
+
+### Evidencia en el repositorio
+
+Además de los tests automatizados, cada grupo entrega evidencia visual:
+
+- Espectro del ruido rosa abierto en **Audacity** o REW, con la pendiente visible
+- Espectrograma del sweep mostrando el barrido $f_1 \to f_2$
+- Gráfica de la convolución sweep × inverso (debe parecer un impulso)
+- Prueba real con altavoz + micrófono (puede ser la PC)
+
+Capturas o PNGs van en `docs/m1/` del repo.
+
+!!! note "Referencia visual"
+    Comparen contra los gráficos de las funciones 01 y 02 de esta página. Las pendientes y SNRs deberían estar en el mismo orden.
+
+    - Ruido rosa: -3 ± 1 dB/oct
+    - Sweep: barrido monótono visible
+    - Convolución: pico claro > 40 dB sobre el piso
+
+    Si su resultado se ve muy distinto a las imágenes de cátedra, hay un bug — empiecen por ahí.
+
+### Buenas prácticas que ya vimos funcionar
+
+Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les ahorran trabajo en M2 y M3.
+
+!!! note "01 · Devolver dict, no solo el array"
+    Junto al `audio_data`, devolver `file_path`, `sample_rate`, `num_samples`, `max_amplitude`. Mismo dict se serializa como JSON en M3 sin retrabajo.
+
+!!! note "02 · Normalizar al 90% del máximo"
+    `signal = signal / max(|signal|) * 0.9`  
+     Deja headroom para evitar clipping al guardar WAV o reproducir. Multiplicar por `1.0` y rezar no es estrategia.
+
+!!! note "03 · Descartar el transitorio del filtro IIR"
+    Si usan `scipy.signal.lfilter`, generar `N + nt60` muestras y tirar las primeras `nt60`. Si no, los primeros milisegundos están sucios.
+
+!!! note "04 · Generación ≠ Plotting"
+    `pink_noise.py` genera. `signal_utils.py` grafica. Funciones distintas, archivos distintos. Si mañana cambian el plot, no rompen el generador.
+
+!!! note "05 · `output_path` opcional"
+    Default a `tempfile`, no al cwd del que llama. Tests no ensucian el repo; M3 puede generar WAV efímeros para la response.
+
+!!! note "06 · Dos implementaciones, mismo test"
+    Voss-McCartney y filtro IIR son ambos válidos. El test es el contrato — no la implementación. Esto les da margen de optimizar después sin romper nada.
+
+### Lo que mira el docente
+
+**Código**
+
+- [ ] Docstrings NumPy en toda función pública
+- [ ] Type hints en parámetros y retorno
+- [ ] Tests en `tests/` que pasen al correr `pytest -v`
+- [ ] Imports limpios, sin código muerto
+
+**Git**
+
+- [ ] Cada función en una rama propia
+- [ ] Merge a `main` vía PR con review de otro integrante
+- [ ] Historial coherente (no un commit gigante "M1")
+- [ ] Tag `v0.1.0` anotado y empujado al remote
+
+!!! note "Recordatorio · cómo correr los tests"
+    ```bash
+    # desde la raiz del repo
+    uv sync                              # asegurar dependencias instaladas
+    uv run pytest -v                     # correr todos los tests con output verboso
+    uv run pytest -v tests/test_pink.py  # correr solo un archivo
+    uv run pytest -v -k "ruido_rosa"     # correr tests que matchean el nombre
+    ```
+
+    `-v` (verbose) muestra cada test con su nombre y si pasó; sin `-v` solo ven puntos. `-k` filtra tests por substring del nombre — útil para correr solo lo que estás tocando. Si un test falla, `pytest --pdb` abre el debugger en el punto exacto de la falla, y `pytest -x` detiene la corrida en el primer fallo.
+
+### Checklist de entrega
+
+Lo que tiene que estar en el tag `v0.1.0` el 28/10.
+
+- [ ] `generar_ruido_rosa` con test pasando
+- [ ] `generar_sine_sweep` + filtro inverso con tests pasando
+- [ ] `reproducir_y_grabar` con test de forma
+- [ ] Las 3 gráficas de validación en `docs/m1/`
+
+- [ ] `pytest -v` en verde — los 4 tests requeridos
+- [ ] Docstrings y type hints en las 3 funciones públicas
+- [ ] PRs mergeados, no commits directos a `main`
+- [ ] Tag `v0.1.0` anotado y empujado al remote
+
+Ocho checks. Si están, presentan tranquilos.
 
 ## Recursos
 

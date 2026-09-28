@@ -1,7 +1,7 @@
 // Sala 3D: rayos por fuentes imagen, ecograma sincronizado y auralización con el T60 de la sala.
 // Si no hay WebGL (o three.js no carga) cae a una planta 2D con los mismos controles.
-import { fuentesImagen, llegadas, caminoPlegado, sabineT60, riSintetica, edcDb, tiempoReverberacion } from '../../_comun/acustica.js';
-import { obtenerContexto, cargarBuffer, crearCanal } from '../../_comun/audio.js';
+import { fuentesImagen, llegadas, caminoPlegado, sabineT60, riSintetica, edcDb, tiempoReverberacion } from '../_comun/acustica.js';
+import { obtenerContexto, cargarBuffer, crearCanal } from '../_comun/audio.js';
 
 const C = 343;
 const T_MAX = 0.2;                 // s simulados: con orden 16 el ecograma está completo hasta ~190 ms en esta sala
@@ -110,7 +110,7 @@ export function crearSala3D(seccion, {
 
   function construirUI() {
     raiz.innerHTML = `
-      <div class="escena sala-escena" style="height: 430px;"></div>
+      <div class="escena sala-escena"></div>
       <div class="controles">
         <button type="button" data-modo="simulada">Sala simulada</button>
         <button type="button" data-modo="real">Sala real (Sports Centre)</button>
