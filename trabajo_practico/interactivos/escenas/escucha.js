@@ -13,15 +13,17 @@ function dibujarOnda(canvas, datos, fs, segundos, color, etiqueta) {
   g.strokeStyle = COLOR.grilla; g.lineWidth = 1;
   g.beginPath(); g.moveTo(0, mid); g.lineTo(W, mid); g.stroke();
   g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COLOR.eje;
-  for (let t = 0; t <= segundos; t += 5) {                 // marcas de tiempo compartidas
+  const paso = segundos <= 3 ? 0.5 : segundos <= 8 ? 1 : 5;
+  for (let t = 0; t <= segundos + 1e-9; t += paso) {        // marcas de tiempo compartidas
     const x = (t / segundos) * (W - 1);
     g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H - tt - 4); g.stroke();
-    g.textAlign = t === 0 ? 'left' : t === segundos ? 'right' : 'center';
+    g.textAlign = t === 0 ? 'left' : Math.abs(t - segundos) < 1e-9 ? 'right' : 'center';
     g.fillText(`${t} s`, x, H - 3);
   }
   g.textAlign = 'left';
-  const columnas = Math.max(1, Math.round(W * Math.min(1, datos.length / (fs * segundos))));
-  const { min, max } = envolventeMinMax(datos, columnas);
+  const visible = datos.subarray(0, Math.min(datos.length, Math.round(fs * segundos)));   // solo la ventana elegida
+  const columnas = Math.max(1, Math.round(W * (visible.length / (fs * segundos))));
+  const { min, max } = envolventeMinMax(visible, columnas);
   let pico = 1e-9;
   for (let i = 0; i < columnas; i++) pico = Math.max(pico, Math.abs(min[i]), Math.abs(max[i]));
   g.fillStyle = color;
@@ -74,6 +76,7 @@ export function crearEscucha(seccion, { pares, modo }) {
   let construido = false;
   let asignacion = [];                    // por par: { A: 'seco'|'sala', B: ... }
   const filas = [];
+  const ajustes = { segundos: 15, nfft: 8192 };   // ventana de la forma de onda y tamaño de la FFT
 
   function construir() {
     pares.forEach((par, i) => {
@@ -110,42 +113,52 @@ export function crearEscucha(seccion, { pares, modo }) {
     const [seco, sala] = await Promise.all([cargarBuffer(par.seco), cargarBuffer(par.sala)]);
     const etiqueta = (tipo) => `${Object.keys(asignacion[i]).find((k) => asignacion[i][k] === tipo)} · ${tipo === 'seco' ? 'sin sala (anecoica)' : 'en la sala'}`;
     cont.innerHTML = '';
-    if (modo === 'temporal' && i === 0) {
-      const nota = document.createElement('p');
-      nota.className = 'small';
-      nota.textContent = 'Forma de onda (amplitud normalizada al pico) en función del tiempo; ambas con la misma escala de 0 a 15 s.';
-      cont.appendChild(nota);
-    }
+    const nota = document.createElement('p');
+    nota.className = 'small';
+    cont.appendChild(nota);
     cont.hidden = false;                                  // visible antes de dibujar: se mide su ancho
     if (modo === 'temporal') {
-      for (const [tipo, buf] of [['seco', seco], ['sala', sala]]) {
+      const dibujos = [['seco', seco], ['sala', sala]].map(([tipo, buf]) => {
         const cv = document.createElement('canvas');
         cv.setAttribute('role', 'img');
         cv.setAttribute('aria-label', `Forma de onda: ${etiqueta(tipo)}`);
         cont.appendChild(cv);
-        const dibujar = () => dibujarOnda(cv, buf.getChannelData(0), buf.sampleRate, 15, COLOR[tipo], etiqueta(tipo));
-        dibujar(); alCambiarAncho(cv, dibujar);
-      }
+        const dibujar = () => dibujarOnda(cv, buf.getChannelData(0), buf.sampleRate, ajustes.segundos, COLOR[tipo], etiqueta(tipo));
+        alCambiarAncho(cv, dibujar);
+        return dibujar;
+      });
+      fila.redibujar = () => {
+        nota.textContent = `Forma de onda (amplitud normalizada al pico) en función del tiempo; ambas con la misma escala, de 0 a ${ajustes.segundos} s.`;
+        dibujos.forEach((d) => d());
+      };
     } else {
       const cv = document.createElement('canvas');
       cv.setAttribute('role', 'img');
       cv.setAttribute('aria-label', 'Espectros promedio de las dos grabaciones, en dB');
       cont.appendChild(cv);
-      const curvas = [['seco', seco], ['sala', sala]].map(([tipo, buf]) => ({
-        ...espectroPromedioDb(buf.getChannelData(0), buf.sampleRate, 8192), color: COLOR[tipo], etiqueta: etiqueta(tipo),
-      }));
+      let curvas = null;
       const dibujar = () => dibujarEspectros(cv, curvas);
-      dibujar(); alCambiarAncho(cv, dibujar);
+      alCambiarAncho(cv, dibujar);
+      fila.redibujar = () => {
+        curvas = [['seco', seco], ['sala', sala]].map(([tipo, buf]) => ({
+          ...espectroPromedioDb(buf.getChannelData(0), buf.sampleRate, ajustes.nfft), color: COLOR[tipo], etiqueta: etiqueta(tipo),
+        }));
+        const fsr = seco.sampleRate;
+        nota.textContent = `Espectro promedio (Welch, ventana de Hann) con FFT de ${ajustes.nfft} muestras: resolución Δf = fs/N = ${(fsr / ajustes.nfft).toFixed(1)} Hz, ventanas de ${((1000 * ajustes.nfft) / fsr).toFixed(0)} ms.`;
+        dibujar();
+      };
     }
-    cont.hidden = false;
+    fila.redibujar();
   }
 
   return {
     iniciar() {
       if (!construido) construir();
       asignacion = pares.map(() => (Math.random() < 0.5 ? { A: 'seco', B: 'sala' } : { A: 'sala', B: 'seco' }));
-      filas.forEach((f) => { const c = f.querySelector('.graficos'); c.hidden = true; c.innerHTML = ''; f.querySelector('.estado').textContent = ''; });
+      filas.forEach((f) => { const c = f.querySelector('.graficos'); c.hidden = true; c.innerHTML = ''; f.redibujar = null; f.querySelector('.estado').textContent = ''; });
     },
+    // Cambia la ventana de tiempo o el tamaño de la FFT y redibuja lo que ya está revelado.
+    ajustar(nuevos) { Object.assign(ajustes, nuevos); filas.forEach((f) => f.redibujar?.()); },
     detener() { canal.detener(); filas.forEach((f) => { f.querySelector('.estado').textContent = ''; }); },
   };
 }

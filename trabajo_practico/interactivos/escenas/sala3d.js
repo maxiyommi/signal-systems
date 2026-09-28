@@ -1,12 +1,11 @@
 // Sala 3D: rayos por fuentes imagen, ecograma sincronizado y auralización con el T60 de la sala.
 // Si no hay WebGL (o three.js no carga) cae a una planta 2D con los mismos controles.
-import { fuentesImagen, llegadas, caminoPlegado, sabineT60, riSintetica, edcDb, tiempoReverberacion } from '../_comun/acustica.js';
+import { fuentesImagen, llegadas, caminoPlegado, sabineT60, eyringT60, tiempoEcograma, riSintetica, edcDb, tiempoReverberacion } from '../_comun/acustica.js';
 import { obtenerContexto, cargarBuffer, crearCanal } from '../_comun/audio.js';
 import { FUENTE, prepararCanvas, dibujarLeyenda, paleta } from '../_comun/grafico.js';
 
 const C = 343;
-const T_MAX = 0.2;                 // s simulados: con orden 16 el ecograma está completo hasta ~190 ms en esta sala
-const LENTITUD = 0.05;             // 1 s real = 50 ms simulados
+const LENTITUD = 0.05;             // a velocidad 1: 1 s real = 50 ms simulados
 const MAX_RAYOS = 60;
 const COL = paleta();             // colores del tema (oscuro como la landing, o claro si se eligió en el sitio)
 
@@ -23,11 +22,17 @@ function hayWebGL() {
 }
 
 export function crearSala3D(seccion, {
-  sala = { lx: 10, ly: 8, lz: 4 }, fuente = [2.5, 4, 1.6], mic = [7.5, 3, 1.6],
-  audioSeco = 'audio/seco_canto.mp3', riReal = 'audio/sala_ri.mp3',
+  sala: salaInicial = { lx: 10, ly: 8, lz: 4 }, fuente: fuenteInicial = [2.5, 4, 1.6], mic = [7.5, 3, 1.6],
+  audios = { canto: 'audio/seco_canto.mp3', bateria: 'audio/seco_bateria.mp3' }, riReal = 'audio/sala_ri.mp3',
 } = {}) {
   const raiz = seccion.querySelector('.sala');
-  const estado = { alpha: 0.3, modo: 'simulada', mic: [...mic], ts: 0, pausa: 0, activa: false };
+  const sala = { ...salaInicial };                          // se modifica con los controles (mismo objeto)
+  const fuente = [...fuenteInicial];
+  const estado = {
+    alpha: 0.3, modo: 'simulada', mic: [...mic], ts: 0, pausa: 0, activa: false,
+    ordenMax: 3, velocidad: 1, pausado: false, audio: 'canto',
+  };
+  let tMax = tiempoEcograma(sala);                          // s de ecograma (crece con la sala)
   const canal = crearCanal();
   let ui = null, vista = null, rayos = [], ecoLlegadas = [], riRealInfo = null, ultimo = 0, rafId = 0, preparando = null;
 
@@ -36,7 +41,7 @@ export function crearSala3D(seccion, {
   function recalcular() {
     const alpha = estado.modo === 'libre' ? 1 : estado.alpha;
     rayos = llegadas(fuentesImagen(sala, fuente, 3), estado.mic, alpha)
-      .filter((l) => l.amp > 0)
+      .filter((l) => l.amp > 0 && l.orden <= estado.ordenMax)
       .sort((a, b) => b.amp - a.amp)
       .slice(0, MAX_RAYOS)
       .map((l) => {
@@ -50,8 +55,10 @@ export function crearSala3D(seccion, {
         }
         return { ...l, camino, tramos, largo: acum };
       });
-    ecoLlegadas = llegadas(fuentesImagen(sala, fuente, estado.modo === 'libre' ? 0 : 16), estado.mic, alpha)
-      .filter((l) => l.amp > 0 && l.t <= T_MAX);
+    // Orden de reflexiones suficiente para cubrir todo el ecograma (acotado para que no se ponga lento).
+    const ordenEco = Math.min(18, Math.ceil((tMax * C) / Math.min(sala.lx, sala.ly, sala.lz)) + 1);
+    ecoLlegadas = llegadas(fuentesImagen(sala, fuente, estado.modo === 'libre' ? 0 : ordenEco), estado.mic, alpha)
+      .filter((l) => l.amp > 0 && l.t <= tMax);
     estado.ts = 0; estado.pausa = 0;
     actualizarTexto();
     if (vista) vista.reconstruir();
@@ -61,10 +68,33 @@ export function crearSala3D(seccion, {
     if (!ui) return;
     ui.alphaOut.textContent = estado.alpha.toFixed(2);
     ui.alpha.disabled = estado.modo !== 'simulada';
-    if (estado.modo === 'simulada') ui.t60.textContent = `T60 ≈ ${sabineT60(sala, estado.alpha).toFixed(2)} s (Sabine)`;
+    if (estado.modo === 'simulada') ui.t60.textContent = `T60 ≈ ${sabineT60(sala, estado.alpha).toFixed(2)} s (Sabine) · ${eyringT60(sala, estado.alpha).toFixed(2)} s (Eyring)`;
     else if (estado.modo === 'real') ui.t60.textContent = !riRealInfo ? 'Cargando la RI medida…' : riRealInfo.t30 == null ? 'RI medida (T30 no calculable)' : `T60 medido ≈ ${riRealInfo.t30.toFixed(2)} s (RI de OpenAIR)`;
     else ui.t60.textContent = 'Sin paredes: solo sonido directo';
     ui.modos.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modo === estado.modo)));
+    ui.audios.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.audio === estado.audio)));
+    ui.pausa.textContent = estado.pausado ? 'Reanudar' : 'Pausar';
+    ui.pausa.setAttribute('aria-pressed', String(estado.pausado));
+    for (const k of ['lx', 'ly', 'lz']) { ui.dim[k].value = String(sala[k]); ui.dimOut[k].textContent = `${sala[k]} m`; ui.dim[k].disabled = estado.modo !== 'simulada'; }
+    ui.ordenOut.textContent = estado.ordenMax === 0 ? 'solo directo' : `hasta orden ${estado.ordenMax}`;
+    ui.velOut.textContent = `×${estado.velocidad}`;
+    // Datos de la geometría: sonido directo y primera reflexión
+    const directo = ecoLlegadas.find((l) => l.orden === 0), primera = ecoLlegadas.find((l) => l.orden > 0);
+    const d = Math.hypot(...fuente.map((v, k) => v - estado.mic[k]));
+    ui.datos.innerHTML = `Volumen <strong>${(sala.lx * sala.ly * sala.lz).toFixed(0)} m³</strong> · distancia fuente–micrófono <strong>${d.toFixed(1)} m</strong>`
+      + (directo ? ` · directo a <strong>${(directo.t * 1000).toFixed(1)} ms</strong>` : '')
+      + (primera && estado.modo !== 'libre' ? ` · primera reflexión <strong>${((primera.t - directo.t) * 1000).toFixed(1)} ms</strong> después, a ${(20 * Math.log10(primera.amp)).toFixed(1)} dB` : '')
+      + ` · ecograma de ${Math.round(tMax * 1000)} ms`;
+  }
+
+  // Cambió el tamaño de la sala: fuente y micrófono quedan adentro, y se rehace la vista.
+  function cambiarSala() {
+    const L = [sala.lx, sala.ly, sala.lz];
+    for (const p of [fuente, estado.mic]) for (let k = 0; k < 2; k++) p[k] = Math.min(L[k] - 0.3, Math.max(0.3, p[k]));
+    for (const p of [fuente, estado.mic]) p[2] = Math.min(L[2] - 0.3, p[2]);
+    tMax = tiempoEcograma(sala);
+    if (vista?.reconstruirSala) vista.reconstruirSala();
+    recalcular();
   }
 
   async function prepararRiReal() {
@@ -98,7 +128,7 @@ export function crearSala3D(seccion, {
       };
     }
     try {
-      await canal.reproducir(audioSeco, { riBuffer, alTerminar: () => botonEscuchar('Escuchar') });
+      await canal.reproducir(audios[estado.audio], { riBuffer, alTerminar: () => botonEscuchar('Escuchar') });
     } catch (e) {
       ui.t60.textContent = e.message;
     } finally {
@@ -110,34 +140,77 @@ export function crearSala3D(seccion, {
   // ---------- Interfaz ----------
 
   function construirUI() {
+    const rango = (clave, texto, min, max, paso, valor) =>
+      `<label>${texto} <input type="range" data-p="${clave}" min="${min}" max="${max}" step="${paso}" value="${valor}"><output data-o="${clave}"></output></label>`;
     raiz.innerHTML = `
       <div class="escena sala-escena"></div>
       <div class="controles">
-        <button type="button" data-modo="simulada">Sala simulada</button>
-        <button type="button" data-modo="real">Sala real (Sports Centre)</button>
-        <button type="button" data-modo="libre">Aire libre</button>
-        <button type="button" data-accion="escuchar">Escuchar</button>
+        <div class="segmentado" role="group" aria-label="Qué se escucha y se ve">
+          <button type="button" data-modo="simulada">Sala simulada</button>
+          <button type="button" data-modo="real">Sala real (Sports Centre)</button>
+          <button type="button" data-modo="libre">Aire libre</button>
+        </div>
+        <div class="segmentado" role="group" aria-label="Animación">
+          <button type="button" data-accion="pausa">Pausar</button>
+          <button type="button" data-accion="reiniciar">Reiniciar</button>
+        </div>
       </div>
       <div class="controles">
-        <label>Absorción de las paredes (α)
-          <input type="range" min="0.05" max="0.95" step="0.05" value="${estado.alpha}">
-        </label>
-        <output></output>
+        <button type="button" data-accion="escuchar">Escuchar</button>
+        <div class="segmentado" role="group" aria-label="Fuente sonora">
+          <button type="button" data-audio="canto">Canto</button>
+          <button type="button" data-audio="bateria">Batería</button>
+        </div>
         <span class="t60" aria-live="polite"></span>
       </div>
+      <p class="small datos"></p>
       <canvas class="ecograma" role="img" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
+      <div class="parametros">
+        <fieldset>
+          <legend>Sala simulada</legend>
+          ${rango('lx', 'Largo', 4, 30, 0.5, sala.lx)}
+          ${rango('ly', 'Ancho', 3, 25, 0.5, sala.ly)}
+          ${rango('lz', 'Alto', 2.5, 12, 0.5, sala.lz)}
+          ${rango('alpha', 'Absorción de las paredes (α)', 0.05, 0.95, 0.05, estado.alpha)}
+        </fieldset>
+        <fieldset>
+          <legend>Visualización</legend>
+          ${rango('orden', 'Reflexiones que se dibujan', 0, 3, 1, estado.ordenMax)}
+          ${rango('velocidad', 'Velocidad de la animación', 0, 4, 1, 2)}
+          <p class="small">El micrófono se arrastra sobre la escena. Orden 1: rebota en una pared; orden 2: en dos; y así.</p>
+        </fieldset>
+      </div>
       <p class="small aviso" hidden></p>`;
+    const $ = (sel) => raiz.querySelector(sel);
     ui = {
-      escena: raiz.querySelector('.sala-escena'),
+      escena: $('.sala-escena'),
       modos: [...raiz.querySelectorAll('button[data-modo]')],
-      escuchar: raiz.querySelector('[data-accion="escuchar"]'),
-      alpha: raiz.querySelector('input[type="range"]'),
-      alphaOut: raiz.querySelector('output'),
-      t60: raiz.querySelector('.t60'),
-      eco: raiz.querySelector('.ecograma'),
-      aviso: raiz.querySelector('.aviso'),
+      audios: [...raiz.querySelectorAll('button[data-audio]')],
+      escuchar: $('[data-accion="escuchar"]'),
+      pausa: $('[data-accion="pausa"]'),
+      alpha: $('input[data-p="alpha"]'),
+      alphaOut: $('output[data-o="alpha"]'),
+      dim: { lx: $('input[data-p="lx"]'), ly: $('input[data-p="ly"]'), lz: $('input[data-p="lz"]') },
+      dimOut: { lx: $('output[data-o="lx"]'), ly: $('output[data-o="ly"]'), lz: $('output[data-o="lz"]') },
+      ordenOut: $('output[data-o="orden"]'),
+      velOut: $('output[data-o="velocidad"]'),
+      t60: $('.t60'),
+      datos: $('.datos'),
+      eco: $('.ecograma'),
+      aviso: $('.aviso'),
     };
+    const VELOCIDADES = [0.25, 0.5, 1, 2, 4];
     ui.alpha.addEventListener('input', () => { estado.alpha = Number(ui.alpha.value); recalcular(); });
+    for (const k of ['lx', 'ly', 'lz']) ui.dim[k].addEventListener('input', () => { sala[k] = Number(ui.dim[k].value); cambiarSala(); });
+    $('input[data-p="orden"]').addEventListener('input', (e) => { estado.ordenMax = Number(e.target.value); recalcular(); });
+    $('input[data-p="velocidad"]').addEventListener('input', (e) => { estado.velocidad = VELOCIDADES[Number(e.target.value)]; actualizarTexto(); });
+    ui.pausa.addEventListener('click', () => { estado.pausado = !estado.pausado; actualizarTexto(); });
+    $('[data-accion="reiniciar"]').addEventListener('click', () => { estado.ts = 0; estado.pausa = 0; });
+    ui.audios.forEach((b) => b.addEventListener('click', () => {
+      estado.audio = b.dataset.audio;
+      if (canal.sonando) { canal.detener(); botonEscuchar('Escuchar'); }
+      actualizarTexto();
+    }));
     ui.modos.forEach((b) => b.addEventListener('click', async () => {
       estado.modo = b.dataset.modo;
       canal.detener(); botonEscuchar('Escuchar');
@@ -161,11 +234,11 @@ export function crearSala3D(seccion, {
     const leyenda = estado.modo === 'real' ? [[COL.violeta, 'RI medida (envolvente)']] : [[COL.senal, 'Sonido directo'], [COL.violeta, 'Reflexiones']];
     const altoLeyenda = dibujarLeyenda(g, leyenda, { x0: compacto ? 36 : 52, y0: tt + 6, maxAncho: W - 60, tamano: tt });
     const m = { l: compacto ? 36 : 52, r: 12, t: altoLeyenda + 12, b: compacto ? 36 : 42 }, dbMin = -60;
-    const xt = (t) => m.l + (t / T_MAX) * (W - m.l - m.r);
+    const xt = (t) => m.l + (t / tMax) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.min(0, d) / dbMin) * (H - m.t - m.b);
     g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COL.eje; g.strokeStyle = COL.grilla; g.lineWidth = 1;
     g.textAlign = 'center';
-    for (let t = 0; t <= T_MAX + 1e-9; t += 0.05) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${Math.round(t * 1000)}`, xt(t), H - m.b + tt + 4); }
+    for (let t = 0; t <= tMax + 1e-9; t += 0.05) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${Math.round(t * 1000)}`, xt(t), H - m.b + tt + 4); }
     g.textAlign = 'right';
     for (const d of [0, -30, -60]) g.fillText(`${d}`, m.l - 5, yd(d) + 4);
     g.textAlign = 'center'; g.font = `600 ${tt}px ${FUENTE}`;
@@ -174,11 +247,11 @@ export function crearSala3D(seccion, {
     g.textAlign = 'left';
     if (estado.modo === 'real' && riRealInfo) {
       const { datos, fs } = riRealInfo;
-      let pico = 1e-9; for (let i = 0; i < Math.min(datos.length, fs * T_MAX); i++) pico = Math.max(pico, Math.abs(datos[i]));
+      let pico = 1e-9; for (let i = 0; i < Math.min(datos.length, fs * tMax); i++) pico = Math.max(pico, Math.abs(datos[i]));
       g.strokeStyle = COL.violeta; g.lineWidth = 1;
-      const hasta = Math.min(estado.ts, T_MAX);
+      const hasta = Math.min(estado.ts, tMax);
       for (let x = xt(0); x < xt(hasta); x++) {
-        const t0 = ((x - m.l) / (W - m.l - m.r)) * T_MAX, i0 = Math.floor(t0 * fs), i1 = Math.floor((t0 + T_MAX / (W - m.l - m.r)) * fs);
+        const t0 = ((x - m.l) / (W - m.l - m.r)) * tMax, i0 = Math.floor(t0 * fs), i1 = Math.floor((t0 + tMax / (W - m.l - m.r)) * fs);
         let v = 0; for (let i = i0; i < i1 && i < datos.length; i++) v = Math.max(v, Math.abs(datos[i]));
         const d = 20 * Math.log10(v / pico + 1e-12);
         if (d > dbMin) { g.beginPath(); g.moveTo(x, H - m.b); g.lineTo(x, yd(d)); g.stroke(); }
@@ -226,31 +299,43 @@ export function crearSala3D(seccion, {
       ui.aviso.hidden = false; ui.aviso.textContent = 'Se perdió el contexto 3D; se muestra la planta.';
     });
     const escena = new THREE.Scene();
-    const camara = new THREE.PerspectiveCamera(42, 16 / 9, 0.1, 200);
-    camara.position.set(sala.lx * 0.95, sala.lz * 2.6, sala.ly * 1.35);
+    const camara = new THREE.PerspectiveCamera(42, 16 / 9, 0.1, 400);
     const controles = new OrbitControls(camara, renderer.domElement);
-    controles.target.set(0, sala.lz * 0.35, 0);
     controles.enableDamping = true;
 
-    const caja = new THREE.BoxGeometry(sala.lx, sala.lz, sala.ly);
-    const paredes = new THREE.Group();
-    paredes.add(new THREE.LineSegments(new THREE.EdgesGeometry(caja), new THREE.LineBasicMaterial({ color: COL.tinta, transparent: true, opacity: 0.55 })));
-    paredes.add(new THREE.Mesh(caja, new THREE.MeshBasicMaterial({ color: COL.violeta, transparent: true, opacity: 0.04, side: THREE.BackSide, depthWrite: false })));
-    paredes.position.y = sala.lz / 2;
-    escena.add(paredes);
-    const piso = new THREE.GridHelper(Math.max(sala.lx, sala.ly), Math.max(sala.lx, sala.ly), COL.grilla, COL.grilla);
-    escena.add(piso);
-
     const esfera = (color, r) => new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), new THREE.MeshBasicMaterial({ color }));
-    const mFuente = esfera(COL.violeta, 0.22); mFuente.position.copy(aT(fuente)); escena.add(mFuente);
-    const mMic = esfera(COL.tinta, 0.2); mMic.position.copy(aT(estado.mic)); escena.add(mMic);
+    const mFuente = esfera(COL.violeta, 0.22); escena.add(mFuente);
+    const mMic = esfera(COL.tinta, 0.2); escena.add(mMic);
     const frente = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 20), new THREE.MeshBasicMaterial({ color: COL.senal, wireframe: true, transparent: true, opacity: 0.06 }));
-    frente.position.copy(aT(fuente)); escena.add(frente);
+    escena.add(frente);
+
+    const plano = new THREE.Plane(new THREE.Vector3(0, 1, 0), -estado.mic[2]);   // arrastre del micrófono a su altura
+
+    // Paredes, piso y cámara según las dimensiones actuales (se rehacen al cambiar la sala).
+    let paredes = null, piso = null;
+    function reconstruirSala() {
+      for (const o of [paredes, piso]) if (o) { escena.remove(o); o.traverse((x) => { x.geometry?.dispose(); x.material?.dispose(); }); }
+      const caja = new THREE.BoxGeometry(sala.lx, sala.lz, sala.ly);
+      paredes = new THREE.Group();
+      paredes.add(new THREE.LineSegments(new THREE.EdgesGeometry(caja), new THREE.LineBasicMaterial({ color: COL.tinta, transparent: true, opacity: 0.55 })));
+      paredes.add(new THREE.Mesh(caja, new THREE.MeshBasicMaterial({ color: COL.violeta, transparent: true, opacity: 0.04, side: THREE.BackSide, depthWrite: false })));
+      paredes.position.y = sala.lz / 2;
+      paredes.visible = estado.modo !== 'libre';
+      escena.add(paredes);
+      const lado = Math.ceil(Math.max(sala.lx, sala.ly));
+      piso = new THREE.GridHelper(lado, lado, COL.grilla, COL.grilla);
+      escena.add(piso);
+      const e = Math.max(sala.lx, sala.ly, sala.lz * 2) / 10;            // encuadre proporcional al tamaño
+      camara.position.set(10 * 0.95 * e, 4 * 2.6 * e, 8 * 1.35 * e);
+      controles.target.set(0, sala.lz * 0.35, 0);
+      mFuente.position.copy(aT(fuente)); frente.position.copy(aT(fuente)); mMic.position.copy(aT(estado.mic));
+      plano.constant = -estado.mic[2];
+    }
 
     let objetos = [];
     function reconstruir() {
       objetos.forEach(({ linea, bola }) => { escena.remove(linea); escena.remove(bola); linea.geometry.dispose(); });
-      paredes.visible = estado.modo !== 'libre';
+      if (paredes) paredes.visible = estado.modo !== 'libre';
       mMic.position.copy(aT(estado.mic));
       objetos = rayos.map((r) => {
         const pos = new Float32Array((r.camino.length + 1) * 3);
@@ -291,7 +376,6 @@ export function crearSala3D(seccion, {
 
     // Arrastre del micrófono sobre el plano horizontal a su altura
     const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
-    const plano = new THREE.Plane(new THREE.Vector3(0, 1, 0), -estado.mic[2]);
     let arrastrando = false;
     const aPuntero = (ev) => { const r = renderer.domElement.getBoundingClientRect(); ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ptr, camara); };
     renderer.domElement.addEventListener('pointerdown', (ev) => { aPuntero(ev); if (ray.intersectObject(mMic).length) { arrastrando = true; controles.enabled = false; renderer.domElement.setPointerCapture(ev.pointerId); } });
@@ -317,8 +401,9 @@ export function crearSala3D(seccion, {
     }
     new ResizeObserver(ajustar).observe(ui.escena);
     ajustar();
+    reconstruirSala();
     reconstruir();
-    return { reconstruir, actualizar, tipo: '3d' };
+    return { reconstruir, reconstruirSala, actualizar, tipo: '3d' };
   }
 
   // ---------- Vista 2D (planta) ----------
@@ -370,7 +455,7 @@ export function crearSala3D(seccion, {
       g.fillText('Micrófono (arrastrable)', P(estado.mic)[0] + 10, P(estado.mic)[1] + 4);
       g.fillStyle = COL.violeta; g.fillText('Fuente', P(fuente)[0] + 10, P(fuente)[1] + 4);
     }
-    return { reconstruir() {}, actualizar, tipo: '2d' };
+    return { reconstruir() {}, reconstruirSala() { W = 0; H = 0; }, actualizar, tipo: '2d' };
   }
 
   // ---------- Ciclo de vida ----------
@@ -378,8 +463,9 @@ export function crearSala3D(seccion, {
   function cuadro(ahora) {
     const dt = ultimo ? Math.min(0.1, (ahora - ultimo) / 1000) : 0;
     ultimo = ahora;
-    if (QUIETO) estado.ts = T_MAX;                              // sin animación: estado final
-    else if (estado.ts < T_MAX) estado.ts = Math.min(T_MAX, estado.ts + dt * LENTITUD);
+    if (QUIETO) estado.ts = tMax;                              // sin animación: estado final
+    else if (estado.pausado) { /* quieto donde quedó */ }
+    else if (estado.ts < tMax) estado.ts = Math.min(tMax, estado.ts + dt * LENTITUD * estado.velocidad);
     else if ((estado.pausa += dt) > 1.5) { estado.ts = 0; estado.pausa = 0; }
     vista.actualizar();
     dibujarEcograma();
