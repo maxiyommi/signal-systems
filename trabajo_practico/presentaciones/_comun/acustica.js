@@ -148,3 +148,21 @@ export function caminoPlegado({ lx, ly, lz }, imagen, mic) {
   return [...ts].sort((p, q) => p - q).map((t) =>
     [0, 1, 2].map((k) => plegar(imagen[k] + t * (mic[k] - imagen[k]), L[k])));
 }
+
+// RI sintética + ruido de fondo uniforme con pico en pisoDb (dB respecto del sonido directo).
+export function riConRuido({ fs, t60, duracion, pisoDb, rng = Math.random }) {
+  const ri = riSintetica({ fs, t60, duracion, rng });
+  const a = Math.pow(10, pisoDb / 20);
+  for (let i = 0; i < ri.length; i++) ri[i] += rng() * a;
+  return ri;
+}
+
+// T30 con el criterio de la figura de NTi: el tramo −5…−35 dB debe quedar ≥ 10 dB sobre el ruido de fondo.
+export function evaluarT30(edc, fs, pisoDb) {
+  if (-35 < pisoDb + 10) {
+    return { t30: null, valido: false, motivo: 'T30 no válido: el tramo de −35 dB está a menos de 10 dB del ruido de fondo' };
+  }
+  const t30 = tiempoReverberacion(edc, fs);
+  if (t30 === null) return { t30: null, valido: false, motivo: 'T30 no válido: la curva no llega a −35 dB' };
+  return { t30, valido: true, motivo: '' };
+}

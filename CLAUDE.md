@@ -13,6 +13,7 @@ signal-systems/
 │   ├── README.md        # Consigna completa
 │   ├── especificacion/  # Milestones M0-M3
 │   ├── rubrica.md       # Criterios de evaluación
+│   ├── presentaciones/  # Decks HTML (reveal.js) publicados en el sitio: conceptual, tp, m0-m3
 │   └── template_repo/   # Template FastAPI para que los alumnos forkeen
 ├── guias/               # Setup entorno, Git, Marimo, Quarto
 ├── material_extra/      # GGWave, GameOfLife, recursos IA
@@ -52,7 +53,7 @@ El TP pide a los alumnos desarrollar una API REST para cálculo de parámetros a
 | M2 | 21/10 → 4/11 | Filtros, RI, deconvolución (services) |
 | M3 | 28/10 → 18/11 | API REST completa, endpoints, validación, demo + oral |
 
-Evaluación 2C 2026: M0-M2 seguimiento sin nota; nota del TP = 60 % M3 + 40 % oral (`AI_LOG.md` obligatorio sin nota; sin informe escrito). La landing (`docs/overrides/home.html`) lista las sesiones de la cursada actual a mano.
+Evaluación 2C 2026: M0-M2 seguimiento sin nota; nota del TP = 60 % M3 + 40 % oral (`AI_LOG.md` obligatorio sin nota; sin informe escrito). La landing (`docs/overrides/home.html`) lista las sesiones de la cursada actual a mano. Las presentaciones del TP viven en `trabajo_practico/presentaciones/<deck>/index.html` (sistema visual común en `_comun/`), se publican vía symlink en `docs/` y no tienen PDF.
 
 La cátedra tiene una implementación de referencia:
 - **Backend**: repo `RIR-API` (desplegado en https://rir-api.onrender.com)
@@ -67,6 +68,9 @@ marimo edit clases/clase_01/contenido.py
 # Linting
 ruff check .
 ruff format .
+
+# Tests de la lógica acústica de las presentaciones
+node --test trabajo_practico/presentaciones/_comun/tests/*.test.mjs
 
 # Tests del template
 cd trabajo_practico/template_repo && pytest -v

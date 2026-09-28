@@ -184,5 +184,5 @@ Cada grupo debe mantener un archivo **`AI_LOG.md`** (**obligatorio**, sin nota p
 - Schroeder, M. R. (1965). "New method of measuring reverberation time." JASA, 37(3), 409-412.
 
 ### Material de la catedra
-- [Presentacion con detalle de la consigna](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit?usp=sharing)
+- [Presentaciones del TP (conceptual, consigna y milestones)](presentaciones/README.md)
 - [Carpeta con material de apoyo](https://drive.google.com/drive/folders/1unNETr7js3hWZtuxa7-5uV9wns9KdTdT?usp=share_link)

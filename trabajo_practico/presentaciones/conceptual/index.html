@@ -52,6 +52,21 @@
     .sala .controles { margin: 0.5em 0 0 0; }
     .sala .ecograma { display: block; width: 100%; height: auto; margin-top: 0.5em; border: 1px solid var(--grilla); border-radius: 4px; }
     .sala .t60 { font-weight: 700; color: var(--tinta); }
+    .curva canvas { display: block; width: 100%; height: auto; border: 1px solid var(--grilla); border-radius: 4px; }
+    .curva .resultado { font-weight: 700; }
+    .reveal #caida .cita { font-size: 0.6em; max-width: none; margin-bottom: 0.6em; }
+    .cadena { position: relative; margin: 0.4em 0 0.8em 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.5em 0; font-size: 0.5em; align-items: center; }
+    .chip { padding: 0.35em 0.6em; border: 2px solid var(--grilla); border-radius: 4px; background: var(--papel-alto); font-weight: 600; }
+    .chip.pc { border-color: var(--violeta); color: var(--violeta); }
+    .chip { position: relative; }
+    .chip + .chip { margin-left: 1.1em; }
+    .chip + .chip::before { content: ""; position: absolute; left: -1em; top: 50%; width: 0.8em; height: 2px; background: var(--tenue); }
+    .pulso { height: 4px; margin-top: 0.5em; background: var(--grilla); border-radius: 2px; position: relative; overflow: hidden; }
+    .pulso::after { content: ""; position: absolute; top: 0; left: -10%; width: 10%; height: 100%; background: var(--violeta); border-radius: 2px; }
+    .fragment.visible .pulso::after { animation: recorrido 2.4s linear infinite; }
+    @keyframes recorrido { to { left: 100%; } }
+    @media (prefers-reduced-motion: reduce) { .fragment.visible .pulso::after { animation: none; left: 0; width: 100%; opacity: 0.4; } }
     .cierre-link { font-family: var(--f-titulo); text-transform: uppercase; font-size: 1.6em; }
   </style>
 </head>
@@ -226,17 +241,17 @@
   <div class="roadmap">
     <div class="paso fragment">
       <h3>1</h3>
-      <div class="cadena" data-paso="1"></div>
+      <div class="cadena"><div class="chips"><span class="chip">Sala (ruido de fondo)</span><span class="chip">Micrófono</span><span class="chip">Sistema de medición</span></div><div class="pulso"></div></div>
       <p><strong>Evaluar el ruido de fondo de la sala</strong>, con la ayuda de un sonómetro clase 1 previamente ajustado: medir el nivel equivalente (Leq) de ruido de fondo en 2 puntos de la sala con 3 repeticiones por punto, en ponderación Z, slow, con un tiempo de integración de 30 s.</p>
     </div>
     <div class="paso fragment">
       <h3>2</h3>
-      <div class="cadena" data-paso="2"></div>
+      <div class="cadena"><div class="chips"><span class="chip pc">PC · ruido rosa</span><span class="chip">Amplificador</span><span class="chip">Fuente</span><span class="chip">Sala</span><span class="chip">Sonómetro a 1 m</span></div><div class="pulso"></div></div>
       <p>Con el valor de ruido de fondo promediado, configurar la fuente a +45 dB utilizando un sonómetro calibrado a 1 metro de la fuente, empleando la función de ruido rosa. Esta medición permite establecer el valor RMS de la fuente de excitación del recinto. Además, ajustar los niveles del sistema de adquisición y reproducción (contemplar la posibilidad de saturación).</p>
     </div>
     <div class="paso fragment">
       <h3>3</h3>
-      <div class="cadena" data-paso="3"></div>
+      <div class="cadena"><div class="chips"><span class="chip pc">PC · sine sweep + filtro inverso</span><span class="chip">Amplificador</span><span class="chip">Fuente</span><span class="chip">Sala</span><span class="chip">Micrófono</span><span class="chip pc">PC · adquisición</span></div><div class="pulso"></div></div>
       <p>Establecer los 3 puntos de medición (micrófono) para una posición de fuente, acorde a las recomendaciones de la normativa, teniendo en cuenta las distancias mínimas (dmin) y la separación entre puntos que establece. Repetir 5 veces la medición por cada punto elegido, con la función de sine sweep logarítmico + filtro inverso y la de adquisición y reproducción.</p>
     </div>
   </div>
@@ -298,6 +313,7 @@
   import { initDeck, registrarEscena } from '../_comun/deck.js';
   import { crearEscucha } from './escenas/escucha.js';
   import { crearSala3D } from './escenas/sala3d.js';
+  import { crearCaida } from './escenas/caida.js';
 
   const pares = [
     { nombre: 'Canto', seco: 'audio/seco_canto.mp3', sala: 'audio/sala_canto.mp3' },
@@ -308,6 +324,7 @@
     registrarEscena(id, crearEscucha(sec, { pares: modo === 'espectral' ? pares.slice(1) : pares, modo }));
   }
   registrarEscena('sala3d', crearSala3D(document.getElementById('sala3d')));
+  registrarEscena('caida', crearCaida(document.getElementById('caida')));
   initDeck();
 </script>
 </body>
