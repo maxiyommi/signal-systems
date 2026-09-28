@@ -219,7 +219,7 @@ html {
 .md-typeset .ruta-tp--pie { margin: 2rem 0 0 0; }
 .md-typeset ol.ruta-tp__hilo {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));   /* las 7 etapas en una fila */
   gap: 0.4rem;
   list-style: none;
   margin: 0.6rem 0;
@@ -258,6 +258,9 @@ html {
 .md-typeset mjx-assistive-mml { max-width: 100%; }
 
 /* Hilo conductor compacto en pantallas chicas */
+@media (max-width: 960px) {
+  .md-typeset ol.ruta-tp__hilo { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 @media (max-width: 600px) {
   .md-typeset ol.ruta-tp__hilo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.3rem; }
   .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa { padding: 0.25rem 0.4rem; }
@@ -295,7 +298,7 @@ body.modo-presentacion .md-top,
 body.modo-presentacion .md-content__button { display: none !important; }
 body.modo-presentacion .md-main__inner { max-width: none; margin-top: 0; }
 body.modo-presentacion .md-content { max-width: none; }
-body.modo-presentacion .md-content__inner { margin: 1.5rem clamp(1rem, 5vw, 4rem) 4rem; }
+body.modo-presentacion .md-content__inner { max-width: 60rem; margin: 1.5rem auto 4rem; padding: 0 clamp(1rem, 4vw, 3rem); }   /* ancho de lectura cómodo, centrado */
 body.modo-presentacion .md-typeset { font-size: clamp(0.85rem, 1.45vw, 1.15rem); line-height: 1.6; }
 body.modo-presentacion .md-typeset h1 { font-size: 2.2em; }
 body.modo-presentacion .md-typeset h2 { font-size: 1.6em; margin-top: 2.2em; }

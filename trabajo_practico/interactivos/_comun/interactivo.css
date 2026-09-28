@@ -33,7 +33,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid 
 .escucha-fila { margin-bottom: 1em; }
 .escucha-fila .controles strong { min-width: 5em; }
 .graficos canvas, .sala .ecograma, .curva canvas { display: block; width: 100%; height: auto; border: 1px solid var(--grilla); border-radius: 4px; background: var(--papel-alto); margin-bottom: 0.4em; }
-.sala-escena { aspect-ratio: 16 / 7; }
+.sala-escena { aspect-ratio: 16 / 7; max-height: 420px; }   /* en pantallas anchas no crece más: entran escena, controles y ecograma */
 
 @media (max-width: 600px) {
   html, body { font-size: 15px; }
