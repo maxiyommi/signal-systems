@@ -205,3 +205,61 @@ html {
 @media screen and (max-width: 600px) {
   .pdf-viewer iframe { height: 440px; }
 }
+
+/* === Trabajo práctico: ruta de lectura e hilo conductor (hooks/ruta_tp.py) === */
+.md-typeset .ruta-tp {
+  margin: 0 0 1.6rem 0;
+  padding: 0.8rem 1rem;
+  border-left: 4px solid var(--md-accent-fg-color);
+  background: var(--md-default-bg-color--light, rgba(0, 0, 0, 0.03));
+  border-radius: 4px;
+  font-size: 0.72rem;
+}
+.md-typeset .ruta-tp p { margin: 0.4rem 0; }
+.md-typeset .ruta-tp--pie { margin: 2rem 0 0 0; }
+.md-typeset ol.ruta-tp__hilo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0.6rem 0;
+  padding: 0;
+  counter-reset: etapa;
+}
+.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa {
+  counter-increment: etapa;
+  margin: 0;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 4px;
+  line-height: 1.3;
+  font-size: 0.64rem;
+}
+.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa::before { content: counter(etapa) " · "; font-weight: 700; color: var(--md-default-fg-color--light); }
+.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa span { display: block; color: var(--md-default-fg-color--light); }
+.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual { border: 2px solid var(--md-accent-fg-color); }
+.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual strong,
+.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual::before { color: var(--md-accent-fg-color); }
+
+/* === Interactivos embebidos (trabajo_practico/interactivos/*.html) === */
+.md-typeset .interactivo { margin: 1rem 0 1.4rem 0; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 6px; overflow: hidden; }
+.md-typeset .interactivo__barra { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.4rem 0.8rem; font-size: 0.7rem; background: var(--md-default-bg-color--light, rgba(0, 0, 0, 0.03)); }
+.md-typeset .interactivo iframe { display: block; width: 100%; height: 520px; border: 0; background: #EEF3F7; }
+
+/* === Componentes de milestones === */
+.md-typeset .figura-tp { text-align: center; }
+.md-typeset .figura-tp img { border-radius: 4px; background: #fff; }
+.md-typeset .audios-tp { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.8rem; }
+.md-typeset .audios-tp audio { width: 100%; }
+
+/* Fórmulas largas: scroll propio en pantallas chicas, sin desbordar la página */
+.md-typeset mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.md-typeset mjx-container:not([display="true"]) { display: inline-block; vertical-align: middle; }
+.md-typeset mjx-assistive-mml { max-width: 100%; }
+
+/* Hilo conductor compacto en pantallas chicas */
+@media (max-width: 600px) {
+  .md-typeset ol.ruta-tp__hilo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.3rem; }
+  .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa { padding: 0.25rem 0.4rem; }
+  .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa span { display: none; }
+}

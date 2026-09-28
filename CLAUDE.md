@@ -13,6 +13,8 @@ signal-systems/
 │   ├── README.md        # Consigna completa
 │   ├── especificacion/  # Milestones M0-M3
 │   ├── rubrica.md       # Criterios de evaluación
+│   ├── ruta.md, marco_conceptual.md  # Ruta del TP y marco conceptual (páginas del sitio)
+│   ├── interactivos/    # Escenas HTML (Web Audio, three.js) embebidas en el sitio + lógica acústica con tests
 │   └── template_repo/   # Template FastAPI para que los alumnos forkeen
 ├── guias/               # Setup entorno, Git, Marimo, Quarto
 ├── material_extra/      # GGWave, GameOfLife, recursos IA
@@ -52,10 +54,7 @@ El TP pide a los alumnos desarrollar una API REST para cálculo de parámetros a
 | M2 | 21/10 → 4/11 | Filtros, RI, deconvolución (services) |
 | M3 | 28/10 → 18/11 | API REST completa, endpoints, validación, demo + oral |
 
-Evaluación 2C 2026: M0-M2 seguimiento sin nota; nota del TP = 60 % M3 + 40 % oral (`AI_LOG.md` obligatorio sin nota; sin informe escrito). La landing (`docs/overrides/home.html`) lista las sesiones de la cursada actual a mano.
-
-La cátedra tiene una implementación de referencia:
-- **Backend**: repo `RIR-API` (desplegado en https://rir-api.onrender.com)
+Evaluación 2C 2026: M0-M2 seguimiento sin nota; nota del TP = 60 % M3 + 40 % oral (`AI_LOG.md` obligatorio sin nota; sin informe escrito). La landing (`docs/overrides/home.html`) lista las sesiones de la cursada actual a mano. Todo el material del TP está en páginas del sitio (sección Trabajo Práctico); `hooks/ruta_tp.py` agrega a cada página "Dónde estamos" (orden de lectura + hilo conductor) y "Qué sigue". Lo interactivo vive en `trabajo_practico/interactivos/` y se embebe con iframe.onrender.com)
 - **Frontend**: repo `RIR-API_frontend` (desplegado en https://rir-api-frontend.onrender.com)
 
 ## Comandos útiles
@@ -67,6 +66,10 @@ marimo edit clases/clase_01/contenido.py
 # Linting
 ruff check .
 ruff format .
+
+# Tests de la lógica acústica de los interactivos y del hook de la ruta
+node --test trabajo_practico/interactivos/_comun/tests/*.test.mjs
+python3 -m unittest hooks.tests.test_ruta_tp
 
 # Tests del template
 cd trabajo_practico/template_repo && pytest -v

@@ -8,10 +8,15 @@ El proyecto se desarrolla de forma incremental en **4 milestones** (M0-M3), util
 
 > **API de referencia**: La catedra desarrolló una implementacion de referencia desplegada en produccion. Pueden explorar la documentacion interactiva (Swagger UI) en [https://rir-api.onrender.com/docs](https://rir-api.onrender.com/docs) para entender la estructura de endpoints, schemas y respuestas esperadas. Esta API sirve como guia, no como solucion — cada grupo debe desarrollar su propia implementacion.
 
+## El TP como caso de aplicación de Señales y Sistemas
+
+RIR-API es el ejemplo de cómo resolver un problema complejo aplicando los conceptos de la materia: se parte de un **fenómeno físico** (la reverberación), se lo **modela** (la sala como sistema LTI, $y = x * h$), se **descompone** la medición en una cadena de sistemas, se **resuelve cada módulo** con una técnica de procesamiento digital de señales y se **automatiza** la medición con una API. El desarrollo completo, con los interactivos, está en el [marco conceptual](marco_conceptual.md); el orden de lectura, en la [ruta del TP](ruta.md).
+
 ## Objetivos de aprendizaje
 
 Al completar este trabajo practico, los alumnos habran adquirido las siguientes habilidades:
 
+- **Modelado con Señales y Sistemas**: plantear un fenómeno físico (la reverberación) como un sistema LTI y descomponer la medición en una cadena de sistemas.
 - **Desarrollo de software**: disenar e implementar una API REST modular en Python con FastAPI, con buenas practicas de codigo, testing y documentacion.
 - **Arquitectura de APIs**: disenar endpoints, schemas de validacion (Pydantic), manejo de errores HTTP y documentacion OpenAPI.
 - **Procesamiento de senales**: implementar algoritmos de generacion, filtrado, deconvolucion y analisis de senales de audio.
@@ -165,7 +170,7 @@ Cada grupo debe mantener un archivo **`AI_LOG.md`** (**obligatorio**, sin nota p
 ### Normativas y referencias tecnicas
 - [ISO 3382-1:2009 - Measurement of room acoustic parameters](https://www.iso.org/standard/40979.html)
 - [IEC 61260-1:2014 - Octave-band and fractional-octave-band filters](https://www.iso.org/standard/69056.html)
-- [Consigna de TP version Matlab (referencia historica)](consigna_TP_matlab%20(desactualizado).pdf)
+- [Consigna de TP version Matlab (referencia historica)](https://github.com/maxiyommi/signal-systems/blob/master/trabajo_practico/consigna_TP_matlab%20(desactualizado).pdf)
 
 ### Herramientas de desarrollo
 - [FastAPI: documentacion oficial](https://fastapi.tiangolo.com/)
@@ -184,5 +189,5 @@ Cada grupo debe mantener un archivo **`AI_LOG.md`** (**obligatorio**, sin nota p
 - Schroeder, M. R. (1965). "New method of measuring reverberation time." JASA, 37(3), 409-412.
 
 ### Material de la catedra
-- [Presentacion con detalle de la consigna](https://docs.google.com/presentation/d/1XJAI0wFRRS6IaVops3jCAcfdRxvMJyQs_mIetzehh1c/edit?usp=sharing)
+- [Ruta del TP y marco conceptual](ruta.md)
 - [Carpeta con material de apoyo](https://drive.google.com/drive/folders/1unNETr7js3hWZtuxa7-5uV9wns9KdTdT?usp=share_link)

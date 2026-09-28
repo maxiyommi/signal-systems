@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curva de caída y T30 — TP Señales y Sistemas (UNTREF)</title>
+  <link rel="stylesheet" href="_comun/interactivo.css">
+</head>
+<body>
+<main class="interactivo">
+  <header class="encabezado">
+    <h1>De la curva de caída a T30</h1>
+    <p>Integral de Schroeder, tramo de −5 a −35 dB y recta de regresión sobre una RI sintética con T60 = 1,2 s. Subí el ruido de fondo y mirá cuándo T30 deja de ser válido.</p>
+  </header>
+  <div class="curva"></div>
+  <p class="credito">Criterio del piso de ruido según NTi Audio (nti-audio.com). Curva calculada en el navegador.</p>
+</main>
+<script type="module">
+  import { crearCaida } from './escenas/caida.js';
+  import { montar } from './_comun/pagina.js';
+  montar(crearCaida(document.querySelector('main')));
+</script>
+</body>
+</html>

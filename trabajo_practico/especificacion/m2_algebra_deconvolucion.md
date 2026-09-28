@@ -1,6 +1,6 @@
 # El álgebra de la deconvolución vía sweep + filtro inverso
 
-Material complementario a la presentación del Milestone 2 (RIR-API · Procesamiento de la Respuesta al Impulso). Cubre el fundamento teórico de la función `obtener_ri_desde_sweep(grabacion, filtro_inverso)` que pide la spec.
+Material complementario de la página del Milestone 2 (RIR-API · Procesamiento de la Respuesta al Impulso). Cubre el fundamento teórico de la función `obtener_ri_desde_sweep(grabacion, filtro_inverso)` que pide la spec.
 
 ---
 

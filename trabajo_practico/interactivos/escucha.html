@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escucha a ciegas — TP Señales y Sistemas (UNTREF)</title>
+  <link rel="stylesheet" href="_comun/interactivo.css">
+</head>
+<body>
+<main class="interactivo">
+  <header class="encabezado">
+    <h1>Escucha a ciegas</h1>
+    <p>Escuchá A y B sin mirar. Después revelá la forma de onda o el espectro: una es la grabación anecoica (sin sala) y la otra, la misma fuente en una sala polideportiva.</p>
+  </header>
+  <div class="controles" role="group" aria-label="Dominio">
+    <button type="button" data-modo="temporal" aria-pressed="true">Dominio temporal</button>
+    <button type="button" data-modo="espectral" aria-pressed="false">Dominio espectral</button>
+  </div>
+  <div class="escucha"></div>
+  <p class="credito">Audios: OpenAIR Library (openairlib.net) — grabación anecoica y Sports Centre, University of York. Espectros calculados en el navegador (FFT, ventana de Hann).</p>
+</main>
+<script type="module">
+  import { crearEscucha } from './escenas/escucha.js';
+  import { montar } from './_comun/pagina.js';
+  const pares = [
+    { nombre: 'Canto', seco: 'audio/seco_canto.mp3', sala: 'audio/sala_canto.mp3' },
+    { nombre: 'Batería', seco: 'audio/seco_bateria.mp3', sala: 'audio/sala_bateria.mp3' },
+  ];
+  const main = document.querySelector('main');
+  const params = new URLSearchParams(location.search);
+  let modo = params.get('modo') === 'espectral' ? 'espectral' : 'temporal';
+  let escena = null;
+  const armar = () => {
+    main.querySelector('.escucha').innerHTML = '';
+    escena = crearEscucha(main, { pares: modo === 'espectral' ? pares.slice(1) : pares, modo });
+    main.querySelectorAll('[data-modo]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.modo === modo)));
+  };
+  armar();
+  main.querySelectorAll('[data-modo]').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.modo === modo) return;
+    escena.detener(); modo = b.dataset.modo; armar(); escena.iniciar();
+  }));
+  montar({ iniciar: () => escena.iniciar(), detener: () => escena.detener() });
+</script>
+</body>
+</html>

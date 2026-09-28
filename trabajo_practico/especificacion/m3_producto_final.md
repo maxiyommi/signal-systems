@@ -1,9 +1,10 @@
 # Milestone 3: Producto Final
 
-**Presentacion de la consigna**: miercoles 28 de octubre 2026
-**Fecha de entrega**: miercoles 18 de noviembre 2026, junto con la presentacion oral (Demo Day)
-**Tag de version**: `v1.0.0`
-**Evaluacion**: **con nota** — Nota del TP = 60% M3 + 40% presentacion oral (ver [rubrica](../rubrica.md))
+!!! info "Fechas y evaluación"
+    - **Presentación de la consigna:** miercoles 28 de octubre 2026
+    - **Fecha de entrega:** miercoles 18 de noviembre 2026, junto con la presentacion oral (Demo Day)
+    - **Tag de version:** `v1.0.0`
+    - **Evaluación:** **con nota** — Nota del TP = 60% M3 + 40% presentacion oral (ver [rubrica](../rubrica.md))
 
 ## Objetivo
 
@@ -12,6 +13,144 @@ Completar el sistema RIR-API implementando las funciones de analisis acustico (s
 > **Referencia**: Explorar la [documentacion interactiva de la API de la catedra](https://rir-api.onrender.com/docs) para entender la estructura de endpoints, schemas y respuestas esperadas.
 
 ---
+
+## Qué cambia
+
+### De funciones a producto
+
+Hasta M2 tenían **funciones sueltas** en `services/`. En M3 esas funciones se convierten en un *producto*: un servicio web que cualquiera puede usar por HTTP, con resultados validados contra software comercial.
+
+M3 son cuatro cosas encadenadas:
+
+- **Análisis acústico** — las funciones que faltan para calcular T30/T20/EDT por banda
+- **API REST** — exponer todo con FastAPI (routers, schemas, docs)
+- **Validación** — comparar contra REW/Aurora sobre RIs reales
+- **Comunicación** — validación en el README + demo en vivo y oral
+
+!!! note "El objetivo, en una frase"
+    Una API que **recibe una respuesta al impulso vía HTTP, la procesa y devuelve todos los parámetros acústicos relevantes**, con resultados que coinciden con los de un software comercial de referencia.
+
+    Su propia versión de `rir-api.onrender.com` — la misma API de referencia de la cátedra que vienen comparando desde M0.
+
+### Tres capas. Un flujo
+
+FastAPI organiza el código en tres capas que ya vienen en el template:
+
+!!! note "routers/ → services/ → schemas/"
+    **routers** reciben el request HTTP y validan · **services** es el DSP puro que ya escribieron (M1+M2) · **schemas** son los modelos Pydantic de entrada/salida.
+
+La clave de M3: **no reescriben el DSP**. Envuelven lo que ya tienen. Un router llama a un service y serializa el resultado con un schema.
+
+!!! note "Endpoints mínimos requeridos"
+    | `GET /health` | estado |
+    |---|---|
+    | `POST /api/v1/signals/*` | pink-noise · sine-sweep · synthetic-ir |
+    | `POST /api/v1/filters/band` | filtrado por bandas |
+    | `POST /api/v1/acoustics/parameters` | + /parameters/by-bands |
+    | `POST /api/v1/analysis/impulse-response` | análisis completo de la RI |
+    | `POST /api/v1/utils/*` | schroeder · smoothing · log-scale |
+
+    Con validación Pydantic, errores HTTP (400/422/500), Swagger en `/docs` y ReDoc en `/redoc` generados solos.
+
+## Conceptos y figuras
+
+Lo que hay que entender antes de implementar, con los gráficos de la implementación de referencia de la cátedra.
+
+### Función 01 · de la RI al decaimiento
+
+<figure class="figura-tp" markdown>
+![Respuesta al impulso cruda superpuesta con su envolvente de Hilbert](../img/m3/rir_vs_envolvente.png)
+<figcaption markdown="span">RI **sintética** (T60 conocido) · `suavizar_signal` con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
+</figure>
+
+El primer paso del análisis es **suavizar** la RI para ver su decaimiento. La **envolvente de Hilbert** es preferible a la media móvil: no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal.
+
+$$
+\text{env}(t) = \big|\, h(t) + j\,\mathcal{H}\{h(t)\} \,\big| \qquad \text{(módulo de la señal analítica)}
+$$
+
+**Tip de comunicación:** en el README y en la demo, muestren la *envolvente / curva de decaimiento*, nunca el audio crudo. El waveform cru­do "lleno" no comunica nada; la envolvente muestra exactamente cómo cae la energía.
+
+<small>Especificación (m3_producto_final) §1 — `scipy.signal.hilbert` devuelve la señal analítica; su módulo es la envolvente.</small>
+
+### Dos miradas a la misma curva
+
+<figure class="figura-tp" markdown>
+![Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito](../img/m3/schroeder_completo.png)
+<figcaption markdown="span">Completa · sin truncar — el decaimiento entra en el ruido (codo) y, al agotarse la energía, la curva cae a −∞. Por eso NO se integra hasta el final.</figcaption>
+</figure>
+
+<figure class="figura-tp" markdown>
+![Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal](../img/m3/schroeder_regresiones.png)
+<figcaption markdown="span">Acotada · sobre el tramo lineal se ajusta la recta (mínimos cuadrados) y se extrapola a −60 dB → T20, T30, EDT.</figcaption>
+</figure>
+
+**Integral de Schroeder** · integración inversa de la energía (`np.cumsum(energia[::-1])[::-1]`), en dB normalizada a 0 dB. Sobre el tramo recto, **regresión lineal** → pendiente $m$ → $T_{60} = -60/m$ (con $R^2 > 0.99$).
+
+$$
+E[n] = \sum_{k=n}^{N-1} h^2[k], \qquad L[n] = 10\,\log_{10}\!\frac{E[n]}{E[0]}, \qquad T_{60} = \frac{-60}{m}
+$$
+
+<small>Nunca se integra hasta el final (izquierda: la curva se desploma a −∞). Se trunca en el cruce con el ruido usando `metodo_lundeby` y se mide sobre el tramo lineal (derecha). RI sintética con T60 conocido · Especificación (m3_producto_final) §2–3 · Schroeder 1965.</small>
+
+### Tres tramos, tres parámetros
+
+Cada parámetro es una regresión sobre un tramo distinto de la curva de Schroeder. Todos se extrapolan a −60 dB.
+
+| Parámetro | Tramo de la curva | Qué mide |
+|---|---|---|
+| **EDT**  
+Early Decay Time | 0 a −10 dB | Percepción *subjetiva* de la reverberación. Sensible a las primeras reflexiones. |
+| **T20** | −5 a −25 dB | Tiempo de reverberación con menos rango dinámico requerido. Útil con SNR limitado. |
+| **T30** | −5 a −35 dB | **El estándar.** Preferido cuando SNR > 45 dB. Es el que se reporta como T60. |
+
+> **En ningún caso** se mide directamente un decaimiento de 60 dB — no hay rango dinámico para eso en una sala real. Siempre se mide un tramo corto y se **extrapola** con la pendiente. Todo se calcula **por banda de octava**.
+
+### El eje frecuencial · filtrado por bandas
+
+<figure class="figura-tp" markdown>
+![Respuesta en frecuencia del banco de filtros de octava IEC 61260](../img/m3/filtros_octava.png)
+<figcaption markdown="span">Banco de filtros Butterworth de octava · IEC 61260 · cada banda cruza a −3 dB en sus flancos</figcaption>
+</figure>
+
+Los parámetros acústicos se calculan **banda por banda**: primero se filtra la RI en cada octava (IEC 61260), y sobre cada banda filtrada se corre el pipeline Schroeder → regresión. Esto ya lo tienen de M2.
+
+**Detalle crítico que se arrastra a M3:** usen `sosfiltfilt` (fase cero, forward + backward), nunca `lfilter`. El retardo de grupo de un filtro causal desplaza el inicio del decaimiento y les infla el T60 en graves un 5–15%.
+
+<small>Clase 9 · m3 reutiliza `filtro_octava` de M2 · frecuencias centrales IEC 61260 (125 Hz a 4 kHz para la tabla de validación).</small>
+
+### El output final
+
+<figure class="figura-tp" markdown>
+![EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte](../img/m3/parametros_por_banda.png)
+<figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** de la Usina del Arte (sala sinfónica, Buenos Aires) · fuente: OpenAIR (York)</figcaption>
+</figure>
+
+Este es el **producto final del análisis**: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve `calcular_parametros_acusticos` y lo que su API expone en `/api/v1/acoustics/parameters/by-bands`.
+
+Acá se ve una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de esta página 6–7 (donde `EDT ≈ T20 ≈ T30`), acá los parámetros **se separan**: cuando `EDT` supera a `T30` hay reflexiones tempranas fuertes; las diferencias entre bandas son información acústica real de la sala.
+
+<small>ISO 3382 · el mismo gráfico que van a ver en el frontend de cátedra cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</small>
+
+### Validación · lo que separa un TP de un producto
+
+<figure class="figura-tp" markdown>
+![Comparacion de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)
+<figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real) · RIR-API vs. software de referencia — el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
+</figure>
+
+No alcanza con que los tests pasen. Hay que demostrar que los números **coinciden con un software profesional** sobre RIs reales.
+
+- Al menos **2 RIs**: una sintética y una real (OpenAIR)
+- Comparar contra **REW, ARTA, Aurora o Dirac**
+- Bandas 125, 250, 500, 1000, 2000, 4000 Hz
+
+!!! note "Criterio de aceptación"
+    Los tiempos de reverberación (**EDT, T20, T30**) no deben diferir en más de **±0.5 s** respecto de la referencia.
+
+    Si su pendiente da la mitad que la de REW, hay un bug — probablemente en el filtrado o en los límites de Schroeder.
+
+> **Grupos con validación sólida:** lúzcanla en la presentación. Una tabla RIR-API vs REW banda por banda con diferencias < 0.5 s es lo más convincente que pueden mostrar.
 
 ## Funciones a implementar
 
@@ -525,6 +664,108 @@ Todos los requisitos de M1 y M2 aplican, mas:
 - **Release en GitHub** con changelog resumido.
 
 ---
+
+## Guía de entrega
+
+### La demo en vivo
+
+En el Demo Day, mostrar la API *corriendo* no es opcional. Es parte central de la nota de presentación.
+
+Guion sugerido de la demo (≈ 8 min):
+
+1. Levantar la API: `uvicorn app.main:app --reload`
+1. Abrir `/docs` (Swagger) y recorrer los endpoints
+1. Subir un WAV real a `/analysis/impulse-response`
+1. Mostrar la respuesta JSON con los parámetros por banda
+1. Un `curl` desde la terminal para el mismo endpoint
+
+Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. No debuggeen en vivo.
+
+!!! note "La referencia de cátedra"
+    Su API tiene que hacer lo mismo que esta. Compárense contra ella hasta el final:
+
+    rir-api.onrender.com/docs
+
+    Suban la misma RI a su API y a la de cátedra. Si los números coinciden, están listos.
+
+### Tres gráficas obligatorias
+
+Son el corazón de la validación en el README y de la presentación oral — las mismas que vieron en esta página.
+
+<figure class="figura-tp" markdown>
+![Curva de decaimiento de Schroeder](../img/m3/schroeder_regresiones.png)
+<figcaption markdown="span">1 · Curva de decaimiento (Schroeder + regresiones)</figcaption>
+</figure>
+
+<figure class="figura-tp" markdown>
+![Comparacion de filtros de octava](../img/m3/filtros_octava.png)
+<figcaption markdown="span">2 · Comparación de filtros por banda</figcaption>
+</figure>
+
+<figure class="figura-tp" markdown>
+![Validacion contra software comercial](../img/m3/validacion_comercial.png)
+<figcaption markdown="span">3 · Validación vs. software comercial</figcaption>
+</figure>
+
+!!! note "También conviene incluir"
+    Diagrama de arquitectura del software · RI vs. envolvente · parámetros por banda · tabla comparativa RIR-API vs. referencia.
+
+!!! note "Cómo presentarlas"
+    Título y ejes rotulados **con unidades** · legibles al proyectar · para la RI mostrar **envolvente/decaimiento**, nunca audio crudo · una idea por figura.
+
+### Lo que tiene que estar el 18 de noviembre
+
+- [ ] Las 4 funciones de análisis + la API con los endpoints mínimos
+- [ ] `pytest` en verde · cobertura > 80% en análisis y API
+- [ ] CI de GitHub Actions **verde** en cada push
+- [ ] Swagger (`/docs`) y ReDoc (`/redoc`) funcionando
+- [ ] README con instrucciones de ejecución y ejemplos `curl`
+
+- [ ] README con la sección **Validación**: 3 gráficas y tabla comparativa
+- [ ] `AI_LOG.md` **en la raíz**, con entradas de M0 a M3
+- [ ] Tag `v1.0.0` en `main`, apuntando al commit final real
+- [ ] Release en GitHub con changelog resumido
+- [ ] Demo lista: WAV de prueba + API levantada
+
+!!! note ""
+    **CI que engaña:** si `ruff` corta antes de `pytest`, los tests nunca corren en CI aunque pasen local. Y si el workflow lintea la carpeta equivocada (`src/` en vez de `app/`), no valida nada. Revisen el YAML.
+
+### Errores que no se repiten
+
+Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP — todos son de proceso.
+
+!!! note "Git y entrega"
+    - Los tres tags apuntando al mismo commit de README, no al código
+    - Sin tag, o `pyproject.toml` desactualizado
+    - Merge a `main` dejado para la hora de cierre
+    - Marcador de conflicto (`>>>>>>>`) commiteado → rompe todos los tests
+
+!!! note "Código y entorno"
+    - `ModuleNotFoundError: app` en CI → falta `pythonpath = ["."]` en `pyproject.toml`
+    - Cientos de warnings de `ruff` sin resolver → `ruff check --fix` + `ruff format`
+    - `NotImplementedError` olvidado arriba de la función real
+    - Archivos basura versionados (rutas locales, `output.txt`, scripts de prueba)
+
+> **La lección transversal:** lo que rompe las entregas casi nunca es el procesamiento de señales — es Git, CI y prolijidad. Dediquen tiempo real a eso esta semana.
+
+### 20 minutos + 5 de preguntas
+
+Estructura recomendada:
+
+| **Introducción** | 3 min | contexto, equipo, arquitectura |
+|---|---|---|
+| **Desarrollo técnico** | 8 min | demo en vivo de la API |
+| **Resultados** | 6 min | validación, precisión |
+| **Reflexiones** | 3 min | dificultades, aprendizajes |
+
+Material visual legible al proyectar. Gráficos grandes, con ejes y unidades.
+
+!!! note "Pregunta obligatoria"
+    Cada grupo tiene que estar preparado para responder:
+
+    > **¿Qué fue lo más valioso que aprendieron desarrollando este proyecto y cómo lo aplicarían en su carrera profesional?**
+
+    No es un trámite. Piénsenla en grupo antes del Demo Day.
 
 ## Recursos
 
