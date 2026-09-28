@@ -1,8 +1,9 @@
 # Milestone 2: Procesamiento de la Respuesta al Impulso
 
-**Fecha de entrega**: Semana 12 (16 de junio 2026)
+**Presentacion de la consigna**: miercoles 21 de octubre 2026
+**Fecha de entrega**: miercoles 4 de noviembre 2026 (en clase)
 **Tag de version**: `v0.2.0`
-**Peso en la nota**: 20%
+**Evaluacion**: seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
 
 ## Objetivo
 
@@ -369,7 +370,7 @@ Para validar el procesamiento, utilizar respuestas al impulso de la base de dato
 1. Descargar al menos 2 RIs de OpenAIR.
 2. Procesarlas con las funciones desarrolladas.
 3. Comparar los resultados (espectro, forma de onda, decaimiento) con los valores reportados en la base de datos.
-4. Documentar la comparacion en el informe.
+4. Documentar la comparacion en el README del repositorio.
 
 **Validacion con software comercial:**
 - Procesar las mismas RIs con software de referencia: **REW (Room EQ Wizard)**, **ARTA**, **Aurora Plugins** o similar.

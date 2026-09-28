@@ -16,9 +16,9 @@ El curso se estructura en **3 pilares**:
 | **Vibecoding, Agents, Skills** | IA como herramienta de desarrollo: Claude.ai, ChatGPT, Ollama, agentes |
 | **De idea a MVP** | Git, testing, CI/CD, documentación, packaging — el TP como producto real |
 
-**Horario**: Martes 15:00 - 18:00 | **Periodo**: 31 de marzo — 7 de julio de 2026
+**2.º cuatrimestre 2026**: la práctica se dedica al TP RIR-API — 7 sesiones los miércoles, del 30 de septiembre al 18 de noviembre de 2026 (4 presenciales + 3 virtuales).
 
-> Ver el [cronograma detallado](cronograma.md) y la [distribución de clases](clases/README.md).
+> Ver el [cronograma de la cursada](cronograma.md) y el [curso completo (15 clases)](clases/README.md).
 
 ---
 
@@ -79,7 +79,7 @@ signal-systems/
 │   ├── git_basico.md        # Cheatsheet de Git
 │   ├── marimo_intro.md      # Cómo usar Marimo
 │   └── quarto_informe.md    # Informes con Quarto
-├── cronograma.md            # Cronograma detallado de 15 clases
+├── cronograma.md            # Cronograma de la cursada + curso completo
 └── guia_ejercicios.pdf      # Guía de ejercicios teóricos
 ```
 
@@ -91,12 +91,14 @@ La distribución del material clase a clase se encuentra en el [índice de clase
 
 **RIR-API** — API REST (FastAPI) para cálculo de parámetros acústicos ISO 3382. Ver la [consigna completa](trabajo_practico/README.md).
 
-| Milestone | Fecha | Contenido |
-|-----------|-------|-----------|
-| M0: Arquitectura | 28 Abr | Plan, diagrama, repo, endpoint /health |
-| M1: Generación | 19 May | Ruido rosa, sine sweep |
-| M2: Procesamiento | 16 Jun | Filtros, RI, deconvolución |
-| M3: API REST + Producto final | 7 Jul | Endpoints, integración, informe, presentación |
+| Milestone | Entrega | Contenido |
+|-----------|---------|-----------|
+| M0: Arquitectura | Mié 7/10 | Plan, diagrama, repo, endpoint /health |
+| M1: Generación | Mié 28/10 | Ruido rosa, sine sweep |
+| M2: Procesamiento | Mié 4/11 | Filtros, RI, deconvolución |
+| M3: API REST + Producto final | Mié 18/11 | Endpoints, integración, validación, presentación oral |
+
+M0, M1 y M2 son de seguimiento (sin nota). La nota del TP es 60 % M3 + 40 % presentación oral — ver la [rúbrica](trabajo_practico/rubrica.md).
 
 ## Guías auxiliares
 
@@ -142,9 +144,8 @@ Las consultas están centralizadas en [Slack](https://slack.com/intl/es-ar/). Ve
 
 ## Docentes
 
-- **Lic. [Miriam Sassano](https://www.linkedin.com/in/miryam-patricia-sassano-7878189)** — miryam.sassano@gmail.com
-- **Ing. Antonio Greco** — antogreco2015@gmail.com
 - **Ing. [Maximiliano Yommi](https://maxiyommi.github.io/portfolio_insight/)** — myommi@untref.edu.ar
+- **[Jerónimo Scafati](https://www.linkedin.com/in/jeronimo-scafati/)**
 
 ## Licencia
 

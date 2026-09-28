@@ -433,7 +433,7 @@
   <div class="titulo-wrap">
     <div class="titulo-top">
       <div>Señales y Sistemas · UNTREF</div>
-      <div>Clase 04 / 15</div>
+      <div>Sesión 1 · 2C 2026</div>
     </div>
 
     <div class="titulo-main">
@@ -444,8 +444,8 @@
 
     <div class="titulo-bottom">
       <div class="meta">
-        <div class="kv"><span class="k">Hoy</span><span class="v">21 abr 2026</span></div>
-        <div class="kv"><span class="k">Entrega final</span><span class="v">07 jul 2026</span></div>
+        <div class="kv"><span class="k">Hoy</span><span class="v">30 sep 2026</span></div>
+        <div class="kv"><span class="k">Entrega final</span><span class="v">18 nov 2026</span></div>
       </div>
       <div>Ing. de Sonido</div>
     </div>
@@ -562,45 +562,45 @@
       <tr>
         <th style="width: 22%;">Milestone</th>
         <th>Qué entregan</th>
-        <th style="width: 18%;">Fecha</th>
+        <th style="width: 16%;">Entrega</th>
         <th style="width: 10%;">Tag</th>
-        <th style="width: 8%;">Peso</th>
+        <th style="width: 14%;">Nota</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><span class="pill pill-m0">M0</span> El Plano</td>
         <td>Arquitectura · repo · issues</td>
-        <td>28 Abr</td>
+        <td>7 Oct</td>
         <td class="muted">—</td>
-        <td>5%</td>
+        <td class="muted">seguimiento</td>
       </tr>
       <tr>
         <td><span class="pill pill-m1">M1</span> Generación</td>
         <td>Ruido rosa · sine sweep · record</td>
-        <td>19 May</td>
+        <td>28 Oct</td>
         <td><code>v0.1.0</code></td>
-        <td>15%</td>
+        <td class="muted">seguimiento</td>
       </tr>
       <tr>
         <td><span class="pill pill-m2">M2</span> Procesamiento</td>
         <td>Filtros · síntesis RI · deconvolución</td>
-        <td>16 Jun</td>
+        <td>4 Nov</td>
         <td><code>v0.2.0</code></td>
-        <td>20%</td>
+        <td class="muted">seguimiento</td>
       </tr>
       <tr>
         <td><span class="pill pill-m3">M3</span> Producto</td>
-        <td>API REST · informe · demo</td>
-        <td>7 Jul</td>
+        <td>API REST · validación · demo + oral</td>
+        <td>18 Nov</td>
         <td><code>v1.0.0</code></td>
-        <td>30%</td>
+        <td><strong>con nota</strong></td>
       </tr>
     </tbody>
   </table>
 
   <blockquote>
-    Cada milestone se entrega con un <strong>tag de GitHub</strong> en la fecha indicada. Las entregas tardías tienen penalización.
+    Cada milestone se entrega con un <strong>tag de GitHub</strong> en la fecha indicada. M0, M1 y M2 son de <strong>seguimiento</strong>: muestran su avance y reciben feedback por Slack. <strong>Solo M3 + la oral llevan nota.</strong>
   </blockquote>
 
   <aside class="notes">
@@ -614,7 +614,7 @@
 <!-- SLIDE 6 — M0: El Plano -->
 <!-- ========================================================= -->
 <section>
-  <div class="kicker"><span class="m">M0</span> · 28 abril · 5%</div>
+  <div class="kicker"><span class="m">M0</span> · 7 octubre · seguimiento</div>
   <h2>El Plano.</h2>
   <p class="lead">Antes de escribir código, planifican. Arquitectura, grupo, issues, branching.</p>
 
@@ -649,7 +649,7 @@
 <!-- SLIDE 7 — M1: Generación -->
 <!-- ========================================================= -->
 <section>
-  <div class="kicker"><span class="m">M1</span> · 19 mayo · 15% · <code>v0.1.0</code></div>
+  <div class="kicker"><span class="m">M1</span> · 28 octubre · seguimiento · <code>v0.1.0</code></div>
   <h2>Generación de señales.</h2>
   <p class="lead">Generar las señales de excitación que usarán para medir respuestas al impulso.</p>
 
@@ -686,7 +686,7 @@
 <!-- SLIDE 8 — M2: Procesamiento -->
 <!-- ========================================================= -->
 <section>
-  <div class="kicker"><span class="m">M2</span> · 16 junio · 20% · <code>v0.2.0</code></div>
+  <div class="kicker"><span class="m">M2</span> · 4 noviembre · seguimiento · <code>v0.2.0</code></div>
   <h2>Procesamiento de la RI.</h2>
   <p class="lead">Obtienen la respuesta al impulso y la preparan para el análisis acústico.</p>
 
@@ -723,9 +723,9 @@
 <!-- SLIDE 9 — M3: Producto final -->
 <!-- ========================================================= -->
 <section>
-  <div class="kicker"><span class="m">M3</span> · 7 julio · 30% · <code>v1.0.0</code></div>
+  <div class="kicker"><span class="m">M3</span> · 18 noviembre · con nota · <code>v1.0.0</code></div>
   <h2>El producto.</h2>
-  <p class="lead">API REST completa expuesta como endpoints · informe técnico · demo en vivo.</p>
+  <p class="lead">API REST completa expuesta como endpoints · validación en el README · demo en vivo.</p>
 
   <div class="grid-2" style="margin-top: 1rem;">
     <div>
@@ -789,7 +789,6 @@
         <li>uv (paquetes)</li>
         <li>pytest · ruff</li>
         <li>Git · GitHub Actions</li>
-        <li>Quarto / LaTeX</li>
       </ul>
     </div>
   </div>
@@ -820,7 +819,7 @@
         <li><strong>Señales</strong> — generación y grabación</li>
         <li><strong>Procesamiento</strong> — filtros, deconvolución, RI</li>
         <li><strong>Testing · CI</strong> — pytest, GitHub Actions</li>
-        <li><strong>Documentación</strong> — README, informe, Quarto</li>
+        <li><strong>Documentación</strong> — README, docs de la API, validación</li>
       </ul>
     </div>
 
@@ -851,26 +850,24 @@
       <tr>
         <th>Componente</th>
         <th style="width: 22%;">Fecha</th>
-        <th style="width: 10%;">Peso</th>
+        <th style="width: 16%;">Peso</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td><span class="pill pill-m0">M0</span> El Plano</td><td>28 Abr</td><td>5%</td></tr>
-      <tr><td><span class="pill pill-m1">M1</span> Generación</td><td>19 May</td><td>15%</td></tr>
-      <tr><td><span class="pill pill-m2">M2</span> Procesamiento</td><td>16 Jun</td><td>20%</td></tr>
-      <tr><td><span class="pill pill-m3">M3</span> Producto</td><td>7 Jul</td><td>30%</td></tr>
-      <tr><td><strong>Presentación oral</strong></td><td>7 Jul</td><td>15%</td></tr>
-      <tr><td><strong>Participación · proceso</strong></td><td>Continuo</td><td>10%</td></tr>
-      <tr><td><strong>Log de desarrollo con IA</strong></td><td>Con cada milestone</td><td>5%</td></tr>
+      <tr><td><span class="pill pill-m3">M3</span> Producto final</td><td>18 Nov</td><td><strong>60%</strong></td></tr>
+      <tr><td><strong>Presentación oral</strong></td><td>18 Nov</td><td><strong>40%</strong></td></tr>
+      <tr><td><span class="pill pill-m0">M0</span> <span class="pill pill-m1">M1</span> <span class="pill pill-m2">M2</span> Seguimiento</td><td>7 Oct · 28 Oct · 4 Nov</td><td class="muted">sin nota</td></tr>
+      <tr><td><strong>Log de desarrollo con IA</strong></td><td>Todo el TP</td><td class="muted">obligatorio</td></tr>
     </tbody>
   </table>
 
   <blockquote>
-    <strong>Mínimo para aprobar:</strong> 4/10 en cada milestone y 4/10 en la nota ponderada final.
+    <strong>Nota del TP = 60% M3 + 40% oral.</strong> Mínimo para aprobar: 4/10 en M3 y 4/10 en la nota del TP. El TP es el 20% de la nota de la materia.
   </blockquote>
 
   <aside class="notes">
-    - El 4/10 por milestone es una barrera: si un grupo saca 0 en M0, no recupera con un M3 excelente.
+    - Esquema simple a propósito: M0-M2 son para detectar problemas temprano, sin presión de nota.
+    - Sin AI_LOG.md, M3 no se considera completo.
     - Timing: 1.5 min.
   </aside>
 </section>
@@ -879,9 +876,9 @@
 <!-- SLIDE 13 — Criterios por milestone -->
 <!-- ========================================================= -->
 <section>
-  <div class="kicker">Cómo se evalúa cada milestone</div>
+  <div class="kicker">Cómo se evalúa M3</div>
   <h2>Cinco criterios.</h2>
-  <p class="lead">M1, M2 y M3 se evalúan con los mismos cinco criterios. La nota del milestone es el promedio ponderado.</p>
+  <p class="lead">M3 se evalúa con estos cinco criterios. En M0, M1 y M2 los usamos para darles feedback (sin nota).</p>
 
   <div class="grid-2" style="margin-top: 1.5rem;">
     <div>
@@ -897,7 +894,7 @@
         <li><strong>Prácticas Git</strong> · 15% — ramas, commits, PRs, tags</li>
       </ul>
       <p class="small muted" style="margin-top: 1em;">
-        M0 tiene su propia rúbrica simplificada (aprobado/desaprobado con checks).
+        M0 tiene su propio checklist de entrega.
       </p>
     </div>
   </div>
@@ -913,21 +910,21 @@
 <!-- ========================================================= -->
 <section>
   <div class="kicker">Entregables no-código</div>
-  <h2>Informe y oral.</h2>
+  <h2>Validación y oral.</h2>
 
   <div class="grid-2" style="margin-top: 1.5rem;">
     <div>
-      <h3>Informe final</h3>
+      <h3>Validación en el README</h3>
       <ul class="small">
-        <li><strong>Formato:</strong> Quarto o LaTeX (UNTREF)</li>
-        <li><strong>Extensión:</strong> máximo 5 páginas sin apéndices</li>
-        <li>Debe incluir diagrama de arquitectura, gráficas y tabla de validación con software comercial</li>
-        <li>Pesos por sección: desarrollo 25% · resultados 30% · conclusiones 20%</li>
+        <li><strong>No hay informe escrito</strong> este cuatrimestre</li>
+        <li>Sección <strong>Validación</strong> en el README del repo</li>
+        <li>Tabla RIR-API vs. software comercial (EDT, T20, T30, C80 por banda)</li>
+        <li>Gráficas: curva de decaimiento, filtros, validación · diagrama de arquitectura</li>
       </ul>
     </div>
 
     <div>
-      <h3>Presentación oral · 7 jul</h3>
+      <h3>Presentación oral · 18 nov</h3>
       <ul class="small">
         <li><strong>Duración:</strong> 20 min + 5 min de preguntas</li>
         <li>Demo en vivo de la API (Swagger UI, requests)</li>
@@ -938,7 +935,7 @@
   </div>
 
   <aside class="notes">
-    - Los informes entregados fuera de fecha no se evalúan — pasan a recuperatorio.
+    - Lo que antes iba al informe ahora vive en el README: lo muestran en la oral.
     - Timing: 1.5 min.
   </aside>
 </section>
@@ -947,7 +944,7 @@
 <!-- SLIDE 15 — Log de IA -->
 <!-- ========================================================= -->
 <section>
-  <div class="kicker">5% de la nota</div>
+  <div class="kicker">Obligatorio · sin nota</div>
   <h2>Log de desarrollo con IA.</h2>
   <p class="lead">Archivo <code>AI_LOG.md</code> en la raíz del repo, actualizado con cada milestone.</p>
 
@@ -964,15 +961,15 @@
     </div>
 
     <div class="panel">
-      <h3 class="good">Se evalúa</h3>
-      <p class="small"><strong>Honestidad</strong> · 40% — documentar sin omisiones</p>
-      <p class="small"><strong>Reflexión</strong> · 35% — evaluar críticamente las respuestas</p>
-      <p class="small"><strong>Aplicación</strong> · 25% — adaptar las sugerencias al contexto</p>
+      <h3 class="good">Lo que buscamos</h3>
+      <p class="small"><strong>Honestidad</strong> — documentar sin omisiones</p>
+      <p class="small"><strong>Reflexión</strong> — evaluar críticamente las respuestas</p>
+      <p class="small"><strong>Aplicación</strong> — adaptar las sugerencias al contexto</p>
     </div>
   </div>
 
   <blockquote>
-    El uso de IA está <strong>permitido y fomentado</strong> como herramienta de aprendizaje. Lo que se evalúa es la honestidad y la reflexión crítica.
+    El uso de IA está <strong>permitido y fomentado</strong> como herramienta de aprendizaje. Lo que importa es la honestidad y la reflexión crítica. Sin <code>AI_LOG.md</code>, M3 no está completo.
   </blockquote>
 
   <aside class="notes">
@@ -993,8 +990,8 @@
     <div class="panel">
       <h3 class="bad">Entregas tardías</h3>
       <ul class="small">
-        <li>Hasta <strong>48 hs</strong> después de la fecha: <strong>-2 puntos</strong> sobre la nota del milestone</li>
-        <li>Después de 48 hs: <strong>no se acepta</strong> · se califica con 0</li>
+        <li>M0, M1 y M2: si se atrasan, pierden el feedback a tiempo — y lo pagan en M3</li>
+        <li>M3 fuera de fecha: pasa a <strong>recuperatorio</strong></li>
         <li>Recuperatorio: una semana adicional · nota máxima 7/10</li>
       </ul>
     </div>
@@ -1086,7 +1083,6 @@
         <li><a href="https://docs.pydantic.dev/" target="_blank">Pydantic</a></li>
         <li><a href="https://docs.astral.sh/uv/" target="_blank">uv</a></li>
         <li><a href="https://docs.pytest.org/" target="_blank">pytest</a></li>
-        <li><a href="https://quarto.org/" target="_blank">Quarto</a></li>
       </ul>
     </div>
   </div>
@@ -1118,7 +1114,7 @@
     <div class="titulo-bottom">
       <div class="meta">
         <div class="kv"><span class="k">Dudas</span><span class="v">Slack · #signal-systems</span></div>
-        <div class="kv"><span class="k">Primera entrega</span><span class="v">28 abr 2026</span></div>
+        <div class="kv"><span class="k">Primera entrega</span><span class="v">7 oct 2026 · Slack/GitHub</span></div>
       </div>
       <div style="font-size: 2em; font-weight: 500; color: var(--fg); text-transform: none; letter-spacing: -0.02em;">¿preguntas?</div>
     </div>

@@ -1,5 +1,7 @@
 # Clases — Señales y Sistemas 2026
 
+> **Curso completo (15 clases).** Las fechas corresponden al 1.er cuatrimestre 2026 y quedan como referencia. En el **2.º cuatrimestre 2026** la práctica se dedica al TP y usa solo parte de este material como apoyo: ver el [cronograma de la cursada actual](../cronograma.md).
+
 | # | Fecha | Clase | Pilares | Material | Ejercicios |
 |---|-------|-------|---------|----------|------------|
 | 1 | 31 Mar | [El Punto de Partida](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_01) | P1, P3, P2 | [contenido.py](https://github.com/maxiyommi/signal-systems/blob/master/clases/clase_01/contenido.py) | [ejercicios.py](https://github.com/maxiyommi/signal-systems/blob/master/clases/clase_01/ejercicios.py) |
@@ -45,9 +47,11 @@ Cada clase contiene:
 
 ## Milestones del TP
 
-| Milestone | Clase | Fecha |
-|-----------|-------|-------|
-| M0: Arquitectura | 5 | 28 Abr |
-| M1: Generación (Entrega 1) | 8 | 19 May |
-| M2: Procesamiento (Entrega 2) | 12 | 16 Jun |
-| M3: Producto Final (Entrega 3) | 15 | 7 Jul |
+Fechas del 2.º cuatrimestre 2026:
+
+| Milestone | Presentación | Entrega | Evaluación |
+|-----------|--------------|---------|------------|
+| M0: Arquitectura | Mié 30/9 | Mié 7/10 (Slack/GitHub) | Seguimiento, sin nota |
+| M1: Generación | Mié 14/10 | Mié 28/10 | Seguimiento, sin nota |
+| M2: Procesamiento | Mié 21/10 | Mié 4/11 | Seguimiento, sin nota |
+| M3: Producto Final + oral | Mié 28/10 | Mié 18/11 | Con nota (60 % M3 + 40 % oral) |

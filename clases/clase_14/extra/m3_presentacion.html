@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M3: Producto Final — Señales y Sistemas UNTREF</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&display=swap">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/github.css">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script"></script>
+
+  <style>
+    :root {
+      --bg: #f6f4ee;
+      --bg-raised: #efece3;
+      --fg: #1a1a22;
+      --dim: #6b7180;
+      --faint: #b0b3bc;
+      --rule: rgba(26, 26, 34, 0.08);
+      --panel: rgba(26, 26, 34, 0.025);
+      --accent: #2563eb;
+      --accent-strong: #1d4ed8;
+      --warn: #b45309;
+      --good: #047857;
+      --bad: #b91c1c;
+      --f-sans: "Geist", system-ui, sans-serif;
+      --f-mono: "Geist Mono", ui-monospace, monospace;
+    }
+    .reveal .backgrounds { background: var(--bg); }
+    .reveal { font-family: var(--f-sans); font-weight: 400; font-size: 34px; color: var(--fg); letter-spacing: -0.01em; }
+    .reveal .slides { text-align: left; }
+    .reveal .slides section { padding: 3rem 4.2rem; box-sizing: border-box; max-width: 1920px; overflow: hidden; }
+    .reveal h1, .reveal h2, .reveal h3 { font-family: var(--f-sans); color: var(--fg); text-transform: none; font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 0.7rem 0; }
+    .reveal h2 { font-size: 2.2em; font-weight: 600; }
+    .reveal h3 { font-size: 0.78em; font-weight: 600; color: var(--dim); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5em; }
+    .reveal p { line-height: 1.4; margin: 0 0 0.75rem 0; color: var(--fg); max-width: 42ch; }
+    .reveal p.wide { max-width: none; }
+    .reveal strong { color: var(--fg); font-weight: 600; }
+    .reveal em { font-style: normal; color: var(--accent); }
+    .reveal a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(96, 165, 250, 0.3); }
+    .reveal a:hover { color: var(--fg); border-bottom-color: var(--accent); }
+    .reveal ul, .reveal ol { list-style: none; padding-left: 0; margin: 0 0 1rem 0; }
+    .reveal ul li, .reveal ol li { padding-left: 1.5em; margin-bottom: 0.65em; line-height: 1.4; position: relative; overflow-wrap: anywhere; }
+    .reveal ul li::before { content: "—"; position: absolute; left: 0; color: var(--faint); }
+    .reveal ol { counter-reset: n; }
+    .reveal ol li { counter-increment: n; }
+    .reveal ol li::before { content: counter(n) "."; position: absolute; left: 0; color: var(--faint); font-family: var(--f-mono); font-size: 0.85em; }
+    .reveal code { font-family: var(--f-mono); font-size: 0.85em; background: rgba(26, 26, 34, 0.06); color: var(--fg); padding: 0.08em 0.4em; border-radius: 3px; }
+    .reveal pre { width: 100%; box-shadow: none; border-radius: 6px; margin: 0 0 1rem 0; }
+    .reveal pre code { font-size: 0.58em; line-height: 1.5; padding: 0.9em 1.1em; background: #ebe8df; color: #1a1a22; border-radius: 6px; border: 1px solid var(--rule); display: block; max-height: 22em; overflow: hidden; }
+    .panel pre { margin: 0.5em 0 0.6em 0; }
+    .panel pre code { font-size: 0.5em; line-height: 1.45; padding: 0.75em 0.9em; max-height: none; }
+    .panel p, .panel ul li { max-width: none; }
+    .panel.compact { padding: 0.85em 1.05em; }
+    .panel.compact pre { margin: 0.35em 0 0.4em 0; }
+    .panel.compact pre code { font-size: 0.44em; padding: 0.65em 0.8em; }
+    .panel.compact h3 { font-size: 0.7em; margin-bottom: 0.3em; }
+    .panel.compact ul li { font-size: 0.78em; margin-bottom: 0.4em; }
+    .panel.compact p { font-size: 0.78em; line-height: 1.35; margin-bottom: 0.35em; }
+    .grid-2 > *, .grid-3 > *, .split > * { min-width: 0; }
+    .kicker { font-family: var(--f-mono); font-size: 0.5em; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-bottom: 1rem; }
+    .kicker .m { color: var(--accent); }
+    .lead { font-size: 1em; color: var(--dim); max-width: 56ch; line-height: 1.4; margin-bottom: 1rem !important; }
+    .pill { display: inline-block; font-family: var(--f-mono); font-size: 0.6em; font-weight: 500; letter-spacing: 0.1em; padding: 0.15em 0.55em; border-radius: 3px; vertical-align: middle; margin-right: 0.35em; background: rgba(26, 26, 34, 0.06); color: var(--fg); }
+    .pill-m3 { background: rgba(37, 99, 235, 0.15); color: var(--accent); }
+    .pill-m0, .pill-m1, .pill-m2 { background: rgba(26, 26, 34, 0.05); color: var(--dim); }
+    .tag { font-family: var(--f-mono); font-size: 0.72em; color: var(--dim); background: rgba(26, 26, 34, 0.04); padding: 0.08em 0.5em; border-radius: 3px; }
+    .grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5em; align-items: start; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5em; }
+    .split { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 3em; align-items: start; }
+    .panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 0.9em 1.1em; }
+    .panel h3 { margin-top: 0; margin-bottom: 0.4em; }
+    .panel p { margin-bottom: 0.5em; }
+    .panel p:last-child { margin-bottom: 0; }
+    .bad { color: var(--bad); }
+    .good { color: var(--good); }
+    .warn { color: var(--warn); }
+    .reveal table { width: 100%; border-collapse: collapse; font-size: 0.78em; font-variant-numeric: tabular-nums; margin: 0 0 1rem 0; }
+    .reveal table th { font-family: var(--f-mono); font-size: 0.82em; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); text-align: left; padding: 0.7em 0.9em; border-bottom: 1px solid var(--rule); }
+    .reveal table td { padding: 0.85em 0.9em; border-bottom: 1px solid var(--rule); color: var(--fg); }
+    .reveal table tr.hl td { color: var(--fg); }
+    .reveal table tr.hl td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+    .reveal blockquote { border: none; background: none; box-shadow: none; border-left: 2px solid var(--rule); padding: 0.3em 0 0.3em 1.2em; margin: 1.5rem 0; font-style: normal; font-size: 0.92em; color: var(--dim); line-height: 1.45; }
+    .reveal blockquote strong { color: var(--fg); }
+    .url-box { display: block; font-family: var(--f-mono); font-size: 0.82em; padding: 0.7em 1em; background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.2); border-radius: 6px; margin: 0.6em 0 1em 0; word-break: break-all; color: var(--accent); text-decoration: none; }
+    a.url-box { border-bottom: none; }
+    .url-box a { color: var(--accent); border: none; }
+    .reveal ul.checklist { list-style: none; padding: 0; margin: 0; }
+    .reveal ul.checklist li { padding-left: 2em; margin-bottom: 0.75em; line-height: 1.4; position: relative; color: var(--fg); }
+    .reveal ul.checklist li::before { content: ""; position: absolute; left: 0; top: 0.35em; width: 1.1em; height: 1.1em; border: 1.5px solid var(--faint); border-radius: 3px; background: transparent; }
+    .small { font-size: 0.78em; color: var(--dim); line-height: 1.4; }
+    .muted { color: var(--dim); }
+    .figure { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 0.6em; }
+    .figure img { width: 100%; height: auto; display: block; border-radius: 4px; }
+    .figure figcaption { font-family: var(--f-mono); font-size: 0.5em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-top: 0.5em; padding: 0 0.4em; }
+    .figure-hero { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 0.4em; margin: 0 0 0.8rem 0; }
+    .figure-hero img { width: 100%; max-height: 420px; object-fit: contain; display: block; border-radius: 4px; }
+    .figure-hero figcaption { font-family: var(--f-mono); font-size: 0.5em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-top: 0.5em; padding: 0 0.4em; }
+    .enunciado { font-size: 0.78em; line-height: 1.45; max-width: none; color: var(--fg); }
+    .enunciado p { max-width: none; margin-bottom: 0.55em; }
+    .enunciado .src { font-family: var(--f-mono); font-size: 0.78em; color: var(--dim); letter-spacing: 0.05em; margin-top: 0.4em; }
+    .formula { background: #ebe8df; border: 1px solid var(--rule); border-radius: 6px; padding: 0.7em 1em; margin: 0.5em 0 0.7em 0; font-size: 0.9em; overflow-x: auto; }
+    .fn-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2em; margin-top: 1rem; }
+    .fn-grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1em; }
+    .fn-grid.cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.9em; }
+    .fn-card { position: relative; background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 1.3em 1.1em 1.1em 1.1em; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+    .fn-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); opacity: 0.85; }
+    .fn-card .num { font-family: var(--f-mono); font-size: 0.55em; letter-spacing: 0.18em; color: var(--dim); margin-bottom: 0.5em; }
+    .fn-card .num .slash { color: var(--faint); margin: 0 0.25em; }
+    .fn-card .name { font-family: var(--f-mono); font-size: 0.65em; font-weight: 500; color: var(--fg); background: rgba(37, 99, 235, 0.08); border-radius: 4px; padding: 0.2em 0.45em; display: inline-block; margin-bottom: 0.35em; width: fit-content; word-break: break-all; }
+    .fn-card .title { font-size: 0.95em; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: var(--fg); margin: 0.15em 0 0.7em 0; }
+    .fn-card .io { display: flex; flex-direction: column; gap: 0.4em; margin-bottom: 0.7em; flex: 1; }
+    .fn-card .io-row { display: grid; grid-template-columns: 2.2em 1fr; align-items: start; gap: 0.4em; }
+    .fn-card .io-tag { font-family: var(--f-mono); font-size: 0.42em; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dim); padding-top: 0.3em; }
+    .fn-card .io-tag.tag-in { color: var(--warn); }
+    .fn-card .io-tag.tag-out { color: var(--good); }
+    .fn-card .io-body { font-family: var(--f-mono); font-size: 0.5em; line-height: 1.5; color: var(--fg); }
+    .fn-card .io-body .param { color: var(--dim); }
+    .fn-card .io-body .param strong { color: var(--fg); font-weight: 500; }
+    .fn-card .footer { border-top: 1px solid var(--rule); padding-top: 0.55em; margin-top: auto; display: flex; flex-direction: column; gap: 0.2em; }
+    .fn-card .footer .label { font-family: var(--f-mono); font-size: 0.42em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+    .fn-card .footer .value { font-size: 0.65em; color: var(--fg); line-height: 1.3; }
+    .reveal .controls { color: var(--dim); }
+    .reveal .controls.layout-edges .navigate-left { left: 2em; }
+    .reveal .controls.layout-edges .navigate-right { right: 2em; }
+    .reveal .controls.layout-edges .navigate-up { top: 1.4em; }
+    .reveal .controls.layout-edges .navigate-down { bottom: 1.4em; }
+    .reveal .controls button { opacity: 0.35; transition: opacity 0.2s; }
+    .reveal .controls button:hover { opacity: 1; }
+    .reveal .slide-number { font-family: var(--f-mono); font-size: 0.55em; letter-spacing: 0.15em; background: transparent; color: var(--faint); right: 2rem; bottom: 1.2rem; }
+    .reveal .progress { color: var(--accent); height: 1px; }
+    .reveal section.titulo { padding: 0; height: 100%; }
+    .titulo-wrap { position: absolute; inset: 0; display: grid; grid-template-rows: auto 1fr auto; padding: 4rem 5rem; }
+    .titulo-top, .titulo-bottom { display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: 0.5em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); }
+    .titulo-main { align-self: center; }
+    .titulo-main h1 { font-size: 4.8em; font-weight: 600; letter-spacing: -0.04em; line-height: 0.95; margin: 0 0 0.3em 0; color: var(--fg); }
+    .titulo-main .bajada { font-size: 1em; font-weight: 400; color: var(--dim); max-width: 34ch; margin: 0; }
+    .titulo-main .tag-ms { font-family: var(--f-mono); font-size: 0.55em; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8em; }
+    .titulo-bottom .meta { display: flex; gap: 3.5em; }
+    .titulo-bottom .meta .kv { display: flex; flex-direction: column; gap: 0.25em; }
+    .titulo-bottom .meta .k { font-size: 0.9em; color: var(--faint); }
+    .titulo-bottom .meta .v { font-family: var(--f-sans); font-size: 1.2em; font-weight: 500; color: var(--fg); text-transform: none; letter-spacing: 0.01em; }
+    .reveal .slides section.present > *:not(aside) { animation: fadeIn 0.4s ease-out backwards; }
+    .reveal .slides section.present > *:nth-child(1) { animation-delay: 0s; }
+    .reveal .slides section.present > *:nth-child(2) { animation-delay: 0.05s; }
+    .reveal .slides section.present > *:nth-child(3) { animation-delay: 0.1s; }
+    .reveal .slides section.present > *:nth-child(4) { animation-delay: 0.15s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ---- Lightbox para imagenes ---- */
+    .figure-hero img, .figure img { cursor: zoom-in; transition: opacity 0.15s; }
+    .figure-hero img:hover, .figure img:hover { opacity: 0.92; }
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 14, 0.94);
+      display: none;
+      z-index: 9999;
+      cursor: zoom-out;
+      align-items: center;
+      justify-content: center;
+      padding: 1vh 1vw;
+      box-sizing: border-box;
+      animation: lightboxFade 0.18s ease-out;
+    }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-overlay img {
+      max-width: 98vw;
+      max-height: 98vh;
+      object-fit: contain;
+      box-shadow: 0 6px 32px rgba(0, 0, 0, 0.5);
+      cursor: zoom-out;
+      background: white;
+      border-radius: 4px;
+    }
+    .lightbox-overlay::after {
+      content: "esc · click para cerrar";
+      position: absolute;
+      bottom: 0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--f-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      pointer-events: none;
+    }
+    @keyframes lightboxFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ===== Impresión / export a PDF — una slide por página (1920×1080) ===== */
+    @media print {
+      @page { size: 1920px 1080px; margin: 0; }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      html, body {
+        width: 1920px; height: auto !important; min-height: 0 !important;
+        margin: 0; padding: 0;
+        background: var(--bg) !important;
+      }
+      html.reveal-viewport, body.reveal-viewport, .reveal-viewport {
+        height: auto !important; min-height: 0 !important;
+      }
+      .reveal-viewport { background: var(--bg) !important; }
+      /* Cromo de reveal, notas del plugin, overlays y cache de MathJax fuera */
+      .reveal .controls, .reveal .progress, .reveal .slide-number,
+      .reveal .backgrounds, .lightbox-overlay, aside.notes,
+      .reveal .speaker-notes, div.speaker-notes,
+      body > svg, #MJX-SVG-global-cache {
+        display: none !important;
+      }
+      /* Dentro de .reveal, solo .slides se imprime */
+      .reveal > *:not(.slides) { display: none !important; }
+      /* Desarmar el layout con transforms/escala que usa reveal en pantalla */
+      .reveal {
+        position: static !important;
+        width: 1920px !important; height: auto !important;
+        overflow: visible !important;
+        background: var(--bg) !important;
+      }
+      .reveal .slides {
+        position: static !important;
+        transform: none !important;
+        perspective: none !important;
+        left: 0 !important; top: 0 !important;
+        width: 1920px !important; height: auto !important;
+        margin: 0 !important; padding: 0 !important;
+        /* flex-column descarta los nodos de espacio entre <section>
+           (si no, suman ~13px y generan una página en blanco al final) */
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      /* Cada slide = exactamente una página (1080px). Sin saltos forzados
+         (generan páginas en blanco cuando la altura ya iguala la página);
+         la paginación natural corta en cada borde de 1080px. */
+      .reveal .slides section {
+        display: block !important;
+        position: relative !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        left: 0 !important; top: 0 !important;
+        width: 1920px !important;
+        height: 1080px !important;
+        min-height: 1080px !important;
+        max-height: 1080px !important;
+        transform: none !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+        background: var(--bg) !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      /* Última slide 1px más corta: el total queda apenas por debajo de 19
+         páginas y Chrome no inserta una página en blanco al final. */
+      .reveal .slides section:last-child {
+        height: 1079px !important;
+        min-height: 1079px !important;
+        max-height: 1079px !important;
+      }
+      /* Sin animaciones de entrada al imprimir (evita contenido en opacity:0) */
+      .reveal .slides section > *:not(aside) {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      /* Chrome colapsa CSS grid (fr) al imprimir → flex-row equivalente.
+         Mantiene columnas en fn-grid, grid-2/3 y split. */
+      .reveal .grid-2, .reveal .grid-3, .reveal .split, .reveal .fn-grid {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+      }
+      .reveal .grid-2 > *, .reveal .grid-3 > *, .reveal .split > *,
+      .reveal .fn-grid > * {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+      }
+      /* Portada y cierre: grid en flujo (sin absolute) que llena la página */
+      .reveal .slides section.titulo { padding: 0 !important; }
+      .reveal .slides section.titulo .titulo-wrap {
+        position: relative !important;
+        inset: auto !important;
+        display: grid !important;
+        grid-template-rows: auto 1fr auto !important;
+        width: 100% !important;
+        height: 1080px !important;
+        padding: 4rem 5rem !important;
+        box-sizing: border-box !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- SLIDE 1 — Portada -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top">
+      <div>Señales y Sistemas · UNTREF</div>
+      <div>Clase 14 / 15</div>
+    </div>
+    <div class="titulo-main">
+      <div class="tag-ms">Milestone 3 · Producto Final</div>
+      <h1>Producto.</h1>
+      <p class="bajada">De las funciones sueltas a una API REST validada — el cierre del TP.</p>
+    </div>
+    <div class="titulo-bottom">
+      <div class="meta">
+        <div class="kv"><span class="k">Hoy</span><span class="v">30 jun 2026</span></div>
+        <div class="kv"><span class="k">Entrega M3</span><span class="v">7 jul · v1.0.0</span></div>
+      </div>
+      <div>TP · RIR-API</div>
+    </div>
+  </div>
+  <aside class="notes">
+    - Ultima clase de preparacion (clase 14). El Demo Day es la proxima (clase 15, 7 jul).
+    - Hoy repasamos que cierra M3: la API, la validacion, el informe (ahora en Markdown) y la presentacion oral.
+    - Timing: 1 min.
+  </aside>
+</section>
+
+<!-- SLIDE 2 — Donde estamos -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · el mapa</div>
+  <h2>La última parada.</h2>
+  <p class="lead">M3 vale el 30% — lo mismo que M1 y M2 juntos. La buena noticia: si M1 y M2 están bien, gran parte de M3 es <em>integración y pulido</em>, no código nuevo.</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 24%;">Milestone</th>
+        <th>Entregan</th>
+        <th style="width: 22%;">Fecha</th>
+        <th style="width: 10%;">Peso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="pill pill-m0">M0</span> El Plano</td><td>Arquitectura · repo · issues</td><td><span class="muted">28 Abr</span></td><td><span class="muted">5%</span></td></tr>
+      <tr><td><span class="pill pill-m1">M1</span> Generación</td><td>Ruido rosa · sine sweep · playrec</td><td><span class="muted">19 May</span></td><td><span class="muted">15%</span></td></tr>
+      <tr><td><span class="pill pill-m2">M2</span> Procesamiento</td><td>Cargar · sintetizar RI · deconv · filtros · log</td><td><span class="muted">16 Jun</span></td><td><span class="muted">20%</span></td></tr>
+      <tr class="hl"><td><span class="pill pill-m3">M3</span> Producto</td><td>Análisis · API REST · validación · informe · demo</td><td><strong>7 Jul</strong> — Demo Day</td><td><strong>30%</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="panel compact" style="margin-top: 0.8rem;">
+    <h3 style="font-size: 0.75em; margin-bottom: 0.5em;">El tag final — desde <code>main</code>, después del último PR mergeado</h3>
+<pre style="margin: 0.4em 0 0.6em 0;"><code class="language-bash" style="font-size: 0.5em; padding: 0.85em 1em;">git checkout main && git pull origin main
+git tag -a v1.0.0 -m "M3: analisis acustico + API REST completa"
+git push origin v1.0.0
+# despues: crear el Release en GitHub con changelog resumido</code></pre>
+    <p style="font-size: 0.72em; line-height: 1.4; color: var(--dim); margin-bottom: 0; max-width: none;">
+      El tag <code>v1.0.0</code> apunta al <strong>commit real del producto</strong> en <code>main</code>, no a un README.
+    </p>
+  </div>
+  <aside class="notes">
+    - M3 = 30%. Es la entrega mas pesada. Pero mucho es wrap-up si M1/M2 estan bien.
+    - Recordatorio del error mas comun de M1/M2: tags apuntando al commit equivocado. Esta vez NO.
+    - Novedad: ademas del tag, va un Release en GitHub con changelog.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 3 — Que es M3 -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · ¿qué cambia?</div>
+  <h2>De funciones a producto.</h2>
+  <div class="grid-2" style="margin-top: 1.5rem;">
+    <div>
+      <p class="wide">
+        Hasta M2 tenían <strong>funciones sueltas</strong> en <code>services/</code>. En M3 esas funciones se convierten en un <em>producto</em>: un servicio web que cualquiera puede usar por HTTP, con resultados validados contra software comercial.
+      </p>
+      <p class="wide">M3 son cuatro cosas encadenadas:</p>
+      <ul>
+        <li><strong>Análisis acústico</strong> — las funciones que faltan para calcular T30/T20/EDT por banda</li>
+        <li><strong>API REST</strong> — exponer todo con FastAPI (routers, schemas, docs)</li>
+        <li><strong>Validación</strong> — comparar contra REW/Aurora sobre RIs reales</li>
+        <li><strong>Comunicación</strong> — informe técnico + demo en vivo</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>El objetivo, en una frase</h3>
+      <p>Una API que <strong>recibe una respuesta al impulso vía HTTP, la procesa y devuelve todos los parámetros acústicos relevantes</strong>, con resultados que coinciden con los de un software comercial de referencia.</p>
+      <p class="small muted" style="margin-top: 0.6em;">Su propia versión de <code>rir-api.onrender.com</code> — la misma API de referencia de la cátedra que vienen comparando desde M0.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - El salto conceptual de M3: "funcion" -> "producto". Algo que otra persona usa sin ver tu codigo.
+    - Insistir en que la API de referencia (rir-api.onrender.com) es EXACTAMENTE lo que ellos construyen.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 4 — Arquitectura de la API -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · arquitectura</div>
+  <h2>Tres capas. Un flujo.</h2>
+  <div class="grid-2" style="margin-top: 1rem; gap: 2em;">
+    <div>
+      <p class="wide">FastAPI organiza el código en tres capas que ya vienen en el template:</p>
+      <div class="panel" style="margin-bottom: 0.6em;">
+        <h3 style="color: var(--accent);">routers/ → services/ → schemas/</h3>
+        <p style="max-width: none; font-size: 0.9em;"><strong>routers</strong> reciben el request HTTP y validan · <strong>services</strong> es el DSP puro que ya escribieron (M1+M2) · <strong>schemas</strong> son los modelos Pydantic de entrada/salida.</p>
+      </div>
+      <p class="small muted">La clave de M3: <strong>no reescriben el DSP</strong>. Envuelven lo que ya tienen. Un router llama a un service y serializa el resultado con un schema.</p>
+    </div>
+    <div class="panel">
+      <h3>Endpoints mínimos requeridos</h3>
+      <table style="margin: 0; font-size: 0.62em;">
+        <tbody>
+          <tr><td><code>GET&nbsp;/health</code></td><td class="muted">estado</td></tr>
+          <tr><td><code>POST /api/v1/signals/*</code></td><td class="muted">pink-noise · sine-sweep · synthetic-ir</td></tr>
+          <tr><td><code>POST /api/v1/filters/band</code></td><td class="muted">filtrado por bandas</td></tr>
+          <tr><td><code>POST /api/v1/acoustics/parameters</code></td><td class="muted">+ /parameters/by-bands</td></tr>
+          <tr><td><code>POST /api/v1/analysis/impulse-response</code></td><td class="muted">análisis completo de la RI</td></tr>
+          <tr><td><code>POST /api/v1/utils/*</code></td><td class="muted">schroeder · smoothing · log-scale</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top: 0.6em;">Con validación Pydantic, errores HTTP (400/422/500), Swagger en <code>/docs</code> y ReDoc en <code>/redoc</code> generados solos.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - El template ya trae la estructura app/{routers,services,schemas}. Ellos rellenan.
+    - Insistir: M3 NO reescribe DSP. Envuelve M1+M2 en endpoints.
+    - Swagger y ReDoc salen gratis con FastAPI. No hay que escribir docs a mano.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 5 — Las funciones de analisis -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · entregables de código · análisis acústico</div>
+  <h2>Cuatro funciones cierran el cálculo.</h2>
+  <div class="fn-grid cols-4">
+
+    <article class="fn-card">
+      <div class="num">01<span class="slash">/</span>04 · función</div>
+      <div class="name">suavizar_signal</div>
+      <div class="title">Envolvente.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>signal</strong> · ndarray</div><div class="param"><strong>ventana</strong> · int</div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>ndarray</strong> · envolvente</div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">Suaviza sin distorsión · Hilbert preferida (sin elegir ventana).</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">02<span class="slash">/</span>04 · función</div>
+      <div class="name">integral_schroeder</div>
+      <div class="title">Curva de decaimiento.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>ri</strong> · ndarray</div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>ndarray</strong> · dB, 0 dB al inicio</div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">Primer valor = 0 dB · monótona decreciente.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">03<span class="slash">/</span>04 · función</div>
+      <div class="name">regresion_lineal</div>
+      <div class="title">Mínimos cuadrados.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>x</strong>, <strong>y</strong> · ndarray</div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>(pendiente, ordenada, r²)</strong></div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">R² = 1 para datos lineales · implementación manual.</div>
+      </div>
+    </article>
+
+    <article class="fn-card">
+      <div class="num">04<span class="slash">/</span>04 · función</div>
+      <div class="name">calcular_parametros_acusticos</div>
+      <div class="title">EDT · T20 · T30.</div>
+      <div class="io">
+        <div class="io-row"><div class="io-tag tag-in">in</div><div class="io-body"><div class="param"><strong>ri</strong>, <strong>fs</strong></div></div></div>
+        <div class="io-row"><div class="io-tag tag-out">out</div><div class="io-body"><div class="param"><strong>dict[str, dict[fc, valor]]</strong></div><div class="param">por banda de octava</div></div></div>
+      </div>
+      <div class="footer">
+        <div class="label">Test que valida</div>
+        <div class="value">T30 dentro de ±10% de un T60 conocido.</div>
+      </div>
+    </article>
+
+  </div>
+  <p class="muted small" style="margin-top: 1.2rem; max-width: none;">Componen el pipeline: <code>suavizar → integral_schroeder → regresion_lineal → calcular_parametros_acusticos</code>. Extra que suma: <code>metodo_lundeby(ri, fs)</code> para truncar la cola de ruido. Spec en <code>especificacion/m3_producto_final.md</code>.</p>
+  <aside class="notes">
+    - Las 4 funciones se encadenan: envolvente -> Schroeder -> regresion -> parametros.
+    - regresion_lineal: pedir implementacion MANUAL (no solo np.polyfit) para demostrar comprension.
+    - Lundeby es extra opcional pero suma — corrige el T60 inflado por ruido.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 6 — RIR vs envolvente -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · función 01 · de la RI al decaimiento</div>
+  <figure class="figure-hero">
+    <img src="img/rir_vs_envolvente.png" alt="Respuesta al impulso cruda superpuesta con su envolvente de Hilbert">
+    <figcaption>RI <strong>sintética</strong> (T60 conocido) · <code>suavizar_signal</code> con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
+  </figure>
+  <div class="enunciado">
+    <p>
+      El primer paso del análisis es <strong>suavizar</strong> la RI para ver su decaimiento. La <strong>envolvente de Hilbert</strong> es preferible a la media móvil: no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal.
+    </p>
+    <div class="formula">$$ \text{env}(t) = \big|\, h(t) + j\,\mathcal{H}\{h(t)\} \,\big| \qquad \text{(módulo de la señal analítica)} $$</div>
+    <p>
+      <strong>Tip de comunicación:</strong> en el informe y la demo, muestren la <em>envolvente / curva de decaimiento</em>, nunca el audio crudo. El waveform cru­do "lleno" no comunica nada; la envolvente muestra exactamente cómo cae la energía.
+    </p>
+    <p class="src">Spec · m3_producto_final.md §1 — <code>scipy.signal.hilbert</code> devuelve la señal analítica; su módulo es la envolvente.</p>
+  </div>
+  <aside class="notes">
+    - Hilbert vs media movil: Hilbert no pide ventana y es mas limpia. La spec la recomienda.
+    - Insistir en el tip de las presentaciones pasadas: mostrar decaimiento, NO audio crudo.
+    - El grafico se genero con la API de referencia sobre ir_synth_octave.wav.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 7 — Schroeder + regresiones (completa + acotada) -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · funciones 02 y 03 · Schroeder + regresión</div>
+  <h2 style="font-size: 1.7em; margin-bottom: 0.6rem;">Dos miradas a la misma curva.</h2>
+  <div class="grid-2" style="gap: 1.5em; align-items: start;">
+    <figure class="figure">
+      <img src="img/schroeder_completo.png" alt="Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito">
+      <figcaption>Completa · sin truncar — el decaimiento entra en el ruido (codo) y, al agotarse la energía, la curva cae a −∞. Por eso NO se integra hasta el final.</figcaption>
+    </figure>
+    <figure class="figure">
+      <img src="img/schroeder_regresiones.png" alt="Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal">
+      <figcaption>Acotada · sobre el tramo lineal se ajusta la recta (mínimos cuadrados) y se extrapola a −60 dB → T20, T30, EDT.</figcaption>
+    </figure>
+  </div>
+  <div class="enunciado" style="margin-top: 0.7rem;">
+    <p>
+      <strong>Integral de Schroeder</strong> · integración inversa de la energía (<code>np.cumsum(energia[::-1])[::-1]</code>), en dB normalizada a 0 dB. Sobre el tramo recto, <strong>regresión lineal</strong> → pendiente $m$ → $T_{60} = -60/m$ (con $R^2 > 0.99$).
+    </p>
+    <div class="formula" style="font-size: 0.82em;">$$ E[n] = \sum_{k=n}^{N-1} h^2[k], \qquad L[n] = 10\,\log_{10}\!\frac{E[n]}{E[0]}, \qquad T_{60} = \frac{-60}{m} $$</div>
+    <p class="src"><span class="warn">Nunca se integra hasta el final</span> (izquierda: la curva se desploma a −∞). Se trunca en el cruce con el ruido usando <code>metodo_lundeby</code> y se mide sobre el tramo lineal (derecha). RI sintética con T60 conocido · Spec · m3_producto_final.md §2–3 · Schroeder 1965.</p>
+  </div>
+  <aside class="notes">
+    - DOS graficos de la MISMA curva: completa (izq) y acotada (der).
+    - Completa: se ve el codo (entra en el ruido) y el desplome a -inf al final de la integracion. Eso justifica truncar con Lundeby.
+    - Acotada: se ve la regresion sobre el tramo lineal y la extrapolacion a -60 dB. De ahi sale el T60.
+    - Schroeder es una linea: cumsum(h[::-1]**2)[::-1] / sum(h**2), luego 10*log10.
+    - regresion_lineal implementada a mano demuestra que entienden minimos cuadrados.
+    - Timing: 4 min.
+  </aside>
+</section>
+
+<!-- SLIDE 8 — EDT / T20 / T30 -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · función 04 · los parámetros ISO 3382</div>
+  <h2>Tres tramos, tres parámetros.</h2>
+  <p class="lead">Cada parámetro es una regresión sobre un tramo distinto de la curva de Schroeder. Todos se extrapolan a −60 dB.</p>
+  <table style="margin-top: 1rem;">
+    <thead>
+      <tr><th style="width: 16%;">Parámetro</th><th style="width: 26%;">Tramo de la curva</th><th>Qué mide</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>EDT</strong><br><span class="small muted">Early Decay Time</span></td><td>0 a −10 dB</td><td>Percepción <em>subjetiva</em> de la reverberación. Sensible a las primeras reflexiones.</td></tr>
+      <tr><td><strong>T20</strong></td><td>−5 a −25 dB</td><td>Tiempo de reverberación con menos rango dinámico requerido. Útil con SNR limitado.</td></tr>
+      <tr class="hl"><td><strong>T30</strong></td><td>−5 a −35 dB</td><td><strong>El estándar.</strong> Preferido cuando SNR &gt; 45 dB. Es el que se reporta como T60.</td></tr>
+    </tbody>
+  </table>
+  <blockquote style="margin-top: 0.8rem;">
+    <strong>En ningún caso</strong> se mide directamente un decaimiento de 60 dB — no hay rango dinámico para eso en una sala real. Siempre se mide un tramo corto y se <strong>extrapola</strong> con la pendiente. Todo se calcula <strong>por banda de octava</strong>.
+  </blockquote>
+  <aside class="notes">
+    - EDT usa el tramo inicial (0 a -10): captura la primera impresion auditiva.
+    - T20 y T30 arrancan en -5 dB para saltear la reflexion directa.
+    - T30 es el estandar salvo que el SNR no de (< 45 dB) — ahi cae a T20.
+    - Nunca se mide -60 dB directo. Se extrapola. Punto clave conceptual.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 9 — Filtros por banda -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · el eje frecuencial · filtrado por bandas</div>
+  <figure class="figure-hero">
+    <img src="img/filtros_octava.png" alt="Respuesta en frecuencia del banco de filtros de octava IEC 61260">
+    <figcaption>Banco de filtros Butterworth de octava · IEC 61260 · cada banda cruza a −3 dB en sus flancos</figcaption>
+  </figure>
+  <div class="enunciado">
+    <p>
+      Los parámetros acústicos se calculan <strong>banda por banda</strong>: primero se filtra la RI en cada octava (IEC 61260), y sobre cada banda filtrada se corre el pipeline Schroeder → regresión. Esto ya lo tienen de M2.
+    </p>
+    <p>
+      <strong>Detalle crítico que se arrastra a M3:</strong> usen <code>sosfiltfilt</code> (fase cero, forward + backward), nunca <code>lfilter</code>. El retardo de grupo de un filtro causal desplaza el inicio del decaimiento y les <span class="warn">infla el T60 en graves un 5–15%</span>.
+    </p>
+    <p class="src">Clase 9 · m3 reutiliza <code>filtro_octava</code> de M2 · frecuencias centrales IEC 61260 (125 Hz a 4 kHz para la tabla de validación).</p>
+  </div>
+  <aside class="notes">
+    - Nada nuevo respecto a M2 en el filtrado — se reutiliza filtro_octava.
+    - Recordar sosfiltfilt (fase cero). Sin eso T60 en graves sale inflado.
+    - El grafico sale de get_filter_response de la API de referencia.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 10 — Parametros por banda -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · el output final</div>
+  <figure class="figure-hero">
+    <img src="img/parametros_por_banda.png" alt="EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte">
+    <figcaption>EDT · T20 · T30 por banda (125 Hz – 4 kHz) · <strong>RI real</strong> de la Usina del Arte (sala sinfónica, Buenos Aires) · fuente: OpenAIR (York)</figcaption>
+  </figure>
+  <div class="enunciado">
+    <p>
+      Este es el <strong>producto final del análisis</strong>: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve <code>calcular_parametros_acusticos</code> y lo que su API expone en <code>/api/v1/acoustics/parameters/by-bands</code>.
+    </p>
+    <p>
+      Acá se ve una <strong>sala real</strong>: la Usina del Arte, con T30 ≈ 2 s y la forma de <em>campana</em> típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de las slides 6–7 (donde <code>EDT ≈ T20 ≈ T30</code>), acá los parámetros <strong>se separan</strong>: cuando <code>EDT</code> supera a <code>T30</code> hay reflexiones tempranas fuertes; las diferencias entre bandas son información acústica real de la sala.
+    </p>
+    <p class="src">ISO 3382 · el mismo gráfico que van a ver en el frontend de cátedra cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</p>
+  </div>
+  <aside class="notes">
+    - CAMBIO: ahora es una RI REAL (Usina del Arte, sala de conciertos de Buenos Aires, de OpenAIR).
+    - Forma de campana: T30 max en medios (~2.2s), cae en graves/agudos. Tipico de sala real.
+    - A diferencia de la sintetica, EDT/T20/T30 se SEPARAN. EDT>T30 = reflexiones tempranas.
+    - Sintetica (slides 6-7) para enseñar el metodo; real aca para el producto. La consigna pide las 2.
+    - Es el output de /acoustics/parameters/by-bands en su API.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 11 — Validacion contra software comercial -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · validación · lo que separa un TP de un producto</div>
+  <figure class="figure-hero" style="margin-bottom: 0.5rem;">
+    <img src="img/validacion_comercial.png" alt="Comparacion de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte" style="max-height: 300px;">
+    <figcaption>T30 por banda · <strong>Usina del Arte</strong> (RI real) · RIR-API vs. software de referencia — el formato que va en el informe (la serie de referencia acá es ilustrativa)</figcaption>
+  </figure>
+  <div class="grid-2" style="gap: 1.2em;">
+    <div>
+      <p style="max-width: none; font-size: 0.82em;">No alcanza con que los tests pasen. Hay que demostrar que los números <strong>coinciden con un software profesional</strong> sobre RIs reales.</p>
+      <ul style="font-size: 0.82em;">
+        <li>Al menos <strong>2 RIs</strong>: una sintética y una real (OpenAIR)</li>
+        <li>Comparar contra <strong>REW, ARTA, Aurora o Dirac</strong></li>
+        <li>Bandas 125, 250, 500, 1000, 2000, 4000 Hz</li>
+      </ul>
+    </div>
+    <div class="panel" style="padding: 0.7em 0.9em;">
+      <h3 style="font-size: 0.68em;">Criterio de aceptación</h3>
+      <p style="max-width: none; font-size: 0.8em;">Los tiempos de reverberación (<strong>EDT, T20, T30</strong>) no deben diferir en más de <strong>±0.5 s</strong> respecto de la referencia.</p>
+      <p class="small muted" style="margin-top: 0.4em;">Si su pendiente da la mitad que la de REW, hay un bug — probablemente en el filtrado o en los límites de Schroeder.</p>
+    </div>
+  </div>
+  <blockquote style="margin-top: 0.4rem; font-size: 0.8em;">
+    <strong>Grupos con validación sólida:</strong> lúzcanla en la presentación. Una tabla RIR-API vs REW banda por banda con diferencias &lt; 0.5 s es lo más convincente que pueden mostrar.
+  </blockquote>
+  <aside class="notes">
+    - El grafico de validacion usa datos de referencia ILUSTRATIVOS (script). En el informe real la columna "referencia" sale de medir la MISMA RI en REW/ARTA.
+    - Criterio: +-0.5s en tiempos de reverberacion.
+    - Tip de devoluciones: los grupos con buena validacion OpenAIR (Maes Howe, Hamilton) que la luzcan.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 12 — Tests -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · validación automática</div>
+  <h2>Los tests, ahora también de la API.</h2>
+  <p class="lead">M3 agrega tests de <em>endpoints</em> a los de las funciones. Cobertura mínima <strong>80%</strong> en análisis + API.</p>
+  <div class="grid-2" style="gap: 1.2em;">
+    <div class="panel">
+      <h3>Tests de análisis</h3>
+      <ul class="small" style="margin: 0;">
+        <li><strong>suavizado</strong> — la envolvente no distorsiona la señal</li>
+        <li><strong>Schroeder</strong> — primer valor 0 dB · monótona decreciente · RI con T60 conocido</li>
+        <li><strong>regresión</strong> — R² = 1 para datos perfectamente lineales</li>
+        <li><strong>parámetros</strong> — T30 dentro de ±10% de un T60 = 2.0 s conocido</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Tests de API</h3>
+      <ul class="small" style="margin: 0;">
+        <li><code>/health</code> responde 200</li>
+        <li>análisis de un WAV válido devuelve los parámetros</li>
+        <li>generación de <code>pink-noise</code> devuelve un WAV</li>
+        <li>archivo inválido → <strong>422</strong> (no un 500)</li>
+      </ul>
+      <p class="small muted" style="margin-top: 0.5em;">Con <code>TestClient</code> o <code>httpx.AsyncClient</code>. <code>pytest --cov=app tests/</code> da el reporte.</p>
+    </div>
+  </div>
+  <div class="panel" style="margin-top: 0.8rem; padding: 0.7em 1em; background: rgba(180, 83, 9, 0.08); border-color: rgba(180, 83, 9, 0.2);">
+    <p class="small warn" style="margin: 0; max-width: none;"><strong>De las devoluciones:</strong> un test que "pasa de casualidad" (indentado mal, o que esquiva la función rota) da falsa cobertura. Que cada test realmente ejercite la función.</p>
+  </div>
+  <aside class="notes">
+    - M3 suma tests de API a los de funciones. Cobertura 80% en analisis + API.
+    - El test de 422 (no 500) es clave: validacion Pydantic manejando el error bien.
+    - Advertencia real de devoluciones: tests que pasan sin ejercitar la funcion = falsa cobertura.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 13 — Demo en vivo -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · Demo Day · obligatorio</div>
+  <h2>La demo en vivo.</h2>
+  <p class="lead">En el Demo Day, mostrar la API <em>corriendo</em> no es opcional. Es parte central de la nota de presentación.</p>
+  <div class="grid-2" style="margin-top: 1rem;">
+    <div>
+      <p class="wide">Guion sugerido de la demo (≈ 8 min):</p>
+      <ol>
+        <li>Levantar la API: <code>uvicorn app.main:app --reload</code></li>
+        <li>Abrir <code>/docs</code> (Swagger) y recorrer los endpoints</li>
+        <li>Subir un WAV real a <code>/analysis/impulse-response</code></li>
+        <li>Mostrar la respuesta JSON con los parámetros por banda</li>
+        <li>Un <code>curl</code> desde la terminal para el mismo endpoint</li>
+      </ol>
+      <p class="small muted">Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. No debuggeen en vivo.</p>
+    </div>
+    <div class="panel">
+      <h3>La referencia de cátedra</h3>
+      <p>Su API tiene que hacer lo mismo que esta. Compárense contra ella hasta el final:</p>
+      <a class="url-box" href="https://rir-api.onrender.com/docs" target="_blank">rir-api.onrender.com/docs</a>
+      <p class="small muted">Suban la misma RI a su API y a la de cátedra. Si los números coinciden, están listos.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - Demo en vivo OBLIGATORIA. Tener todo levantado antes. Cero debugging en vivo.
+    - Guion: uvicorn -> /docs -> subir WAV -> ver JSON -> curl.
+    - Compararse contra rir-api.onrender.com/docs hasta el final.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 14 — El informe ahora en Markdown -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · novedad · el informe</div>
+  <h2>El informe, ahora en Markdown.</h2>
+  <div class="grid-2" style="margin-top: 1rem;">
+    <div>
+      <p class="wide">Cambio respecto de años anteriores: el informe final va en <strong>Markdown (<code>.md</code>)</strong>, no en Quarto ni LaTeX.</p>
+      <p class="wide">¿Por qué?</p>
+      <ul>
+        <li><strong>Sin toolchain</strong> — nada de instalar LaTeX ni compilar. Escriben en cualquier editor.</li>
+        <li><strong>Versionable</strong> — el informe vive en el repo (<code>docs/informe.md</code>) y viaja con el código.</li>
+        <li><strong>GitHub lo renderiza solo</strong> — se lee directo en el navegador, con imágenes y tablas.</li>
+        <li><strong>Foco en el contenido</strong>, no en pelear con el formato.</li>
+      </ul>
+      <p class="small muted">Las imágenes se referencian con rutas relativas: <code>![Curva de decaimiento](img/decaimiento.png)</code>.</p>
+    </div>
+    <div class="panel">
+      <h3>Estructura y pesos (se mantienen)</h3>
+      <table style="margin: 0; font-size: 0.66em;">
+        <thead><tr><th>Sección</th><th style="width: 18%;">Peso</th></tr></thead>
+        <tbody>
+          <tr><td>Resumen</td><td>5%</td></tr>
+          <tr><td>Introducción · objetivos · ISO 3382</td><td>10%</td></tr>
+          <tr><td>Marco teórico · con referencias</td><td>10%</td></tr>
+          <tr><td>Desarrollo · arquitectura, diseño, funciones</td><td>25%</td></tr>
+          <tr class="hl"><td>Resultados · gráficas, tablas, validación</td><td><strong>30%</strong></td></tr>
+          <tr><td>Conclusiones · análisis crítico, aprendizajes</td><td>20%</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted" style="margin-top: 0.5em;">Referencias en formato APA o IEEE. Lo que cambia es el <em>formato</em> (Markdown), no el contenido ni los pesos.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - NOVEDAD 2026: informe en Markdown, no Quarto/LaTeX. Simplifica la vida.
+    - El informe vive en el repo (docs/informe.md) y GitHub lo renderiza.
+    - Pesos por seccion IDENTICOS. Resultados sigue pesando 30%.
+    - Referencias APA o IEEE igual que siempre.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 15 — Informe: que graficos incluir -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · informe · los gráficos que importan</div>
+  <h2>Tres gráficas obligatorias.</h2>
+  <p class="lead">Los "Resultados" pesan 30%. Estas tres figuras son el corazón — las mismas que vieron en estas slides.</p>
+  <div class="grid-3" style="margin-top: 1rem;">
+    <figure class="figure">
+      <img src="img/schroeder_regresiones.png" alt="Curva de decaimiento de Schroeder">
+      <figcaption>1 · Curva de decaimiento (Schroeder + regresiones)</figcaption>
+    </figure>
+    <figure class="figure">
+      <img src="img/filtros_octava.png" alt="Comparacion de filtros de octava">
+      <figcaption>2 · Comparación de filtros por banda</figcaption>
+    </figure>
+    <figure class="figure">
+      <img src="img/validacion_comercial.png" alt="Validacion contra software comercial">
+      <figcaption>3 · Validación vs. software comercial</figcaption>
+    </figure>
+  </div>
+  <div class="grid-2" style="margin-top: 1rem; gap: 2em;">
+    <div class="panel" style="padding: 0.7em 0.9em;">
+      <h3 style="font-size: 0.66em;">También conviene incluir</h3>
+      <p class="small" style="margin: 0;">Diagrama de arquitectura del software · RI vs. envolvente · parámetros por banda · tabla comparativa RIR-API vs. referencia.</p>
+    </div>
+    <div class="panel" style="padding: 0.7em 0.9em;">
+      <h3 style="font-size: 0.66em;">Cómo presentarlas</h3>
+      <p class="small" style="margin: 0;">Título y ejes rotulados <strong>con unidades</strong> · legibles al proyectar · para la RI mostrar <strong>envolvente/decaimiento</strong>, nunca audio crudo · una idea por figura.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - Las 3 obligatorias: decaimiento, filtros, validacion. Son las que generamos en estas slides.
+    - Ademas: diagrama de arquitectura (actualizado), tabla comparativa RIR-API vs referencia.
+    - Reglas de figura: ejes con unidades, legible al proyectar, envolvente no audio crudo.
+    - Pueden generar estas figuras con su propia API, igual que hicimos aca.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 16 — Calidad + entrega -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · calidad de código y entrega</div>
+  <h2>Lo que tiene que estar el 7 de julio.</h2>
+  <div class="grid-2" style="margin-top: 1rem; gap: 3em;">
+    <ul class="checklist">
+      <li>Las 4 funciones de análisis + la API con los endpoints mínimos</li>
+      <li><code>pytest</code> en verde · cobertura &gt; 80% en análisis y API</li>
+      <li>CI de GitHub Actions <strong>verde</strong> en cada push</li>
+      <li>Swagger (<code>/docs</code>) y ReDoc (<code>/redoc</code>) funcionando</li>
+      <li>README con instrucciones de ejecución y ejemplos <code>curl</code></li>
+    </ul>
+    <ul class="checklist">
+      <li>Informe en <code>.md</code> con las 3 gráficas y la tabla de validación</li>
+      <li><code>AI_LOG.md</code> <strong>en la raíz</strong>, con entradas de M0 a M3</li>
+      <li>Tag <code>v1.0.0</code> en <code>main</code>, apuntando al commit final real</li>
+      <li>Release en GitHub con changelog resumido</li>
+      <li>Demo lista: WAV de prueba + API levantada</li>
+    </ul>
+  </div>
+  <div class="panel" style="margin-top: 0.8rem; padding: 0.6em 1em; background: rgba(180, 83, 9, 0.08); border-color: rgba(180, 83, 9, 0.2);">
+    <p class="small warn" style="margin: 0; max-width: none;"><strong>CI que engaña:</strong> si <code>ruff</code> corta antes de <code>pytest</code>, los tests nunca corren en CI aunque pasen local. Y si el workflow lintea la carpeta equivocada (<code>src/</code> en vez de <code>app/</code>), no valida nada. Revisen el YAML.</p>
+  </div>
+  <aside class="notes">
+    - Diez checks. Novedad: informe .md + Release en GitHub.
+    - AI_LOG.md EN LA RAIZ. Casi todos los grupos lo tuvieron mal (en docs/, o inexistente).
+    - CI: ruff antes de pytest hace que los tests no corran. CI apuntando a src/ en vez de app/ no valida nada. Errores reales de M1/M2.
+    - Tag v1.0.0 al commit REAL, no al README. Error recurrente.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 17 — Errores a no repetir -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · aprendido de M1 y M2</div>
+  <h2>Errores que no se repiten.</h2>
+  <p class="lead">Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP — todos son de proceso.</p>
+  <div class="grid-2" style="gap: 1.2em; margin-top: 0.5rem;">
+    <div class="panel">
+      <h3 class="bad">Git y entrega</h3>
+      <ul class="small" style="margin: 0;">
+        <li>Los tres tags apuntando al mismo commit de README, no al código</li>
+        <li>Sin tag, o <code>pyproject.toml</code> desactualizado</li>
+        <li>Merge a <code>main</code> dejado para la hora de cierre</li>
+        <li>Marcador de conflicto (<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>) commiteado → rompe todos los tests</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3 class="bad">Código y entorno</h3>
+      <ul class="small" style="margin: 0;">
+        <li><code>ModuleNotFoundError: app</code> en CI → falta <code>pythonpath = ["."]</code> en <code>pyproject.toml</code></li>
+        <li>Cientos de warnings de <code>ruff</code> sin resolver → <code>ruff check --fix</code> + <code>ruff format</code></li>
+        <li><code>NotImplementedError</code> olvidado arriba de la función real</li>
+        <li>Archivos basura versionados (rutas locales, <code>output.txt</code>, scripts de prueba)</li>
+      </ul>
+    </div>
+  </div>
+  <blockquote style="margin-top: 0.8rem; font-size: 0.85em;">
+    <strong>La lección transversal:</strong> lo que rompe las entregas casi nunca es el procesamiento de señales — es Git, CI y prolijidad. Dediquen tiempo real a eso esta semana.
+  </blockquote>
+  <aside class="notes">
+    - Todos estos son errores REALES de las devoluciones de M1/M2 (anonimizados).
+    - Ninguno es de DSP. Son de proceso: git, CI, prolijidad.
+    - El de pythonpath y el de ruff-antes-de-pytest son los que mas horas cuestan.
+    - Timing: 3 min.
+  </aside>
+</section>
+
+<!-- SLIDE 18 — Presentacion oral -->
+<section>
+  <div class="kicker"><span class="m">M3</span> · Demo Day · la presentación oral</div>
+  <h2>20 minutos + 5 de preguntas.</h2>
+  <div class="grid-2" style="margin-top: 1rem;">
+    <div>
+      <p class="wide">Estructura recomendada:</p>
+      <table style="font-size: 0.72em;">
+        <tbody>
+          <tr><td><strong>Introducción</strong></td><td class="muted">3 min</td><td class="small">contexto, equipo, arquitectura</td></tr>
+          <tr class="hl"><td><strong>Desarrollo técnico</strong></td><td class="muted">8 min</td><td class="small">demo en vivo de la API</td></tr>
+          <tr><td><strong>Resultados</strong></td><td class="muted">6 min</td><td class="small">validación, precisión</td></tr>
+          <tr><td><strong>Reflexiones</strong></td><td class="muted">3 min</td><td class="small">dificultades, aprendizajes</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted">Material visual legible al proyectar. Gráficos grandes, con ejes y unidades.</p>
+    </div>
+    <div class="panel" style="background: rgba(37, 99, 235, 0.05); border-color: rgba(37, 99, 235, 0.2);">
+      <h3 style="color: var(--accent);">Pregunta obligatoria</h3>
+      <p style="max-width: none;">Cada grupo tiene que estar preparado para responder:</p>
+      <blockquote style="margin: 0.6em 0 0 0; border-left-color: var(--accent);">
+        <strong>¿Qué fue lo más valioso que aprendieron desarrollando este proyecto y cómo lo aplicarían en su carrera profesional?</strong>
+      </blockquote>
+      <p class="small muted" style="margin-top: 0.6em;">No es un trámite. Piénsenla en grupo antes del Demo Day.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    - 20 + 5. El grueso (8 min) es la demo en vivo.
+    - La pregunta de reflexion es OBLIGATORIA. Que la piensen antes, no que improvisen.
+    - Todos los integrantes deberian hablar.
+    - Timing: 2 min.
+  </aside>
+</section>
+
+<!-- SLIDE 19 — Cierre -->
+<section class="titulo">
+  <div class="titulo-wrap">
+    <div class="titulo-top">
+      <div>Señales y Sistemas · UNTREF</div>
+      <div>Clase 14 / 15</div>
+    </div>
+    <div class="titulo-main">
+      <div class="tag-ms">Próxima parada · Demo Day</div>
+      <h1>A cerrar el TP.</h1>
+      <p class="bajada">Esta semana: pulir la API, validar contra REW, escribir el informe y ensayar la demo.</p>
+    </div>
+    <div class="titulo-bottom">
+      <div class="meta">
+        <div class="kv"><span class="k">Entrega M3</span><span class="v">7 jul · v1.0.0</span></div>
+        <div class="kv"><span class="k">Referencia</span><span class="v">rir-api.onrender.com/docs</span></div>
+      </div>
+      <div>Preguntas →</div>
+    </div>
+  </div>
+  <aside class="notes">
+    - Cierre. Recordar las 4 tareas de la semana: API, validacion, informe, demo.
+    - Abrir a preguntas.
+    - Timing: 2 min + preguntas.
+  </aside>
+</section>
+
+</div>
+</div>
+
+<div id="lightbox" class="lightbox-overlay" role="dialog" aria-hidden="true"><img alt=""></div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    controls: true,
+    controlsLayout: 'edges',
+    controlsBackArrows: 'visible',
+    progress: true,
+    center: false,
+    width: 1920,
+    height: 1080,
+    margin: 0.03,
+    minScale: 0.2,
+    maxScale: 2.0,
+    plugins: [RevealHighlight, RevealNotes],
+  });
+</script>
+
+<script>
+  (function() {
+    const lb = document.getElementById('lightbox');
+    const lbImg = lb.querySelector('img');
+
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('.figure-hero img, .figure img');
+      if (img && !lb.classList.contains('open')) {
+        e.stopPropagation();
+        e.preventDefault();
+        lbImg.src = img.src;
+        lbImg.alt = img.alt || '';
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden', 'false');
+        return;
+      }
+      if (lb.classList.contains('open') && lb.contains(e.target)) {
+        e.stopPropagation();
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        lbImg.src = '';
+      }
+    }, true);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lb.classList.contains('open')) {
+        e.stopPropagation();
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        lbImg.src = '';
+      }
+    }, true);
+  })();
+</script>
+</body>
+</html>

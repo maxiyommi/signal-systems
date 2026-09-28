@@ -1,7 +1,8 @@
 # Milestone 0: El Plano
 
-**Fecha de entrega**: Semana 5 (28 de abril 2026)
-**Peso en la nota**: 5%
+**Presentacion de la consigna**: miercoles 30 de septiembre 2026
+**Fecha de entrega**: miercoles 7 de octubre 2026 (asincronica, por Slack/GitHub — no hay clase)
+**Evaluacion**: seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)
 
 ## Objetivo
 
@@ -100,7 +101,7 @@ rir-api/
 - Ramas de feature con convencion de nombres: `feature/nombre-descriptivo`.
 - Convencion de commits (recomendado: [Conventional Commits](https://www.conventionalcommits.org/)).
 
-## Criterios de aprobacion
+## Checklist de entrega
 
 - [ ] Repositorio accesible por los docentes (agregar como colaboradores)
 - [ ] README completo, claro y con instrucciones que funcionan

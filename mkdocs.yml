@@ -3,6 +3,7 @@ site_url: https://maxiyommi.github.io/signal-systems/
 site_description: "Material práctico de Señales y Sistemas — Ingeniería de Sonido — UNTREF"
 repo_url: https://github.com/maxiyommi/signal-systems
 repo_name: maxiyommi/signal-systems
+copyright: 'Desarrollado y diseñado por <a href="https://github.com/maxiyommi">maxiyommi</a>'
 
 theme:
   name: material

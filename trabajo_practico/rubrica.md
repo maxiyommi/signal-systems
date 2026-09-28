@@ -1,25 +1,36 @@
 # Rubrica de evaluacion - RIR-API
 
-## Distribucion de notas
+> **2.º cuatrimestre 2026.** El TP pesa el **20 %** de la nota de la materia y se evalua con un esquema simple: solo llevan nota el **producto final (M3)** y la **presentacion oral**.
 
-| Componente | Peso | Fecha de entrega |
-|------------|------|-----------------|
-| **M0**: El Plano (arquitectura) | 5% | Semana 5 - 28/04/2026 |
-| **M1**: Generacion de senales | 15% | Semana 8 - 19/05/2026 |
-| **M2**: Procesamiento de la RI | 20% | Semana 12 - 16/06/2026 |
-| **M3**: Producto final | 30% | Semana 15 - 07/07/2026 |
-| **Presentacion oral** | 15% | Semana 15 - 07/07/2026 |
-| **Participacion y proceso** | 10% | Continuo |
-| **Log de desarrollo con IA** | 5% | Con cada milestone |
-| **Total** | **100%** | |
+## Distribucion de la nota del TP
 
-**Nota minima de aprobacion**: 4/10 en cada milestone y 4/10 en el total ponderado.
+| Componente | Peso | Fecha |
+|------------|------|-------|
+| **M3**: Producto final | **60%** | Mie 18/11/2026 (tag `v1.0.0`) |
+| **Presentacion oral** (Demo Day) | **40%** | Mie 18/11/2026 |
+| M0, M1, M2 | Sin nota | Seguimiento con feedback por Slack |
+
+```
+Nota del TP = 0.60 * M3 + 0.40 * Presentacion oral
+```
+
+**Nota minima de aprobacion**: 4/10 en M3 y 4/10 en la nota del TP.
+
+### Milestones de seguimiento (M0, M1, M2)
+
+M0, M1 y M2 **no llevan nota**. En cada entrega el grupo muestra su avance (~15 minutos) y recibe una devolucion por Slack. Son la mejor oportunidad para detectar problemas antes de la entrega final: aprovechenlas.
+
+### Requisitos para que M3 se considere completo
+
+- Tag `v1.0.0` en `main` en la fecha de entrega.
+- Repositorio accesible por los docentes como colaboradores.
+- **`AI_LOG.md`** en la raiz del repositorio, actualizado durante todo el proyecto (obligatorio, sin nota propia — ver la [consigna](README.md#log-de-desarrollo-con-ia)).
 
 ---
 
-## Rubrica por milestone (M1, M2, M3)
+## Rubrica de M3: producto final (60%)
 
-Cada milestone se evalua en 5 criterios. La nota del milestone es el promedio ponderado de estos criterios.
+M3 se evalua en 5 criterios. Cada criterio se valora con un nivel cualitativo (Insuficiente / Regular / Bueno / Excelente).
 
 ### Funcionalidad (30%)
 
@@ -68,25 +79,9 @@ Cada milestone se evalua en 5 criterios. La nota del milestone es el promedio po
 
 ---
 
-## Rubrica de M0: El Plano (5%)
+## Rubrica de presentacion oral (40%)
 
-M0 se evalua como aprobado/desaprobado con los siguientes criterios:
-
-| Criterio | Requerido | Puntos |
-|----------|-----------|--------|
-| Repositorio accesible por docentes | Si | 1 |
-| README completo (nombre, integrantes, instalacion, estructura) | Si | 2 |
-| Diagrama de arquitectura con todos los modulos | Si | 2 |
-| Al menos 10 issues con labels y asignaciones | Si | 2 |
-| Proyecto ejecutable con `uvicorn` (endpoint `/health` funcional) | Si | 2 |
-| Branching strategy documentada | Si | 1 |
-| **Total** | | **10** |
-
-**Nota**: M0 se aprueba con 4/10 o mas.
-
----
-
-## Rubrica de presentacion oral (15%)
+Duracion: 20 minutos de presentacion + 5 minutos de preguntas, con demo en vivo de la API.
 
 ### Aspectos tecnicos (40%)
 
@@ -115,57 +110,13 @@ M0 se evalua como aprobado/desaprobado con los siguientes criterios:
 | **Bueno** | 6-7 | Reflexion honesta sobre dificultades y como se resolvieron. Identifica mejoras concretas. Conecta resultados con la teoria. |
 | **Excelente** | 8-10 | Analisis critico profundo y honesto. Identifica limitaciones con precision y propone mejoras concretas y viables. Conecta resultados con teoria y con aplicaciones profesionales reales. Reflexion madura sobre el proceso de aprendizaje. |
 
----
-
-## Rubrica de participacion y proceso (10%)
-
-| Nivel | Puntos | Descripcion |
-|-------|--------|-------------|
-| **Insuficiente** | 0-3 | Contribucion minima o nula al proyecto. Sin participacion en clase. Sin evidencia de trabajo en equipo en el historial de Git. |
-| **Regular** | 4-5 | Participacion basica. Algunos commits y PRs. Asistencia regular a clase. |
-| **Bueno** | 6-7 | Participacion activa. Contribuciones regulares y significativas al codigo. Revisiones de PRs de companeros. Asistencia y participacion en clase. |
-| **Excelente** | 8-10 | Participacion destacada. Contribuciones frecuentes y de alta calidad. Revisiones detalladas de PRs. Ayuda a companeros. Participacion activa en clase y consultas. Liderazgo positivo en el equipo. |
-
-**Nota sobre contribuciones individuales:** Se evaluara el historial de Git para verificar que todos los integrantes del grupo contribuyen de manera equitativa. Diferencias significativas en la cantidad y calidad de contribuciones pueden resultar en notas individuales diferentes dentro del mismo grupo.
-
----
-
-## Rubrica del log de desarrollo con IA (5%)
-
-Cada grupo debe mantener un **log de desarrollo con IA** que documente como se utilizaron herramientas de inteligencia artificial (ChatGPT, Claude, Copilot, etc.) durante el proyecto.
-
-### Formato del log
-
-El log debe ser un archivo `AI_LOG.md` en la raiz del repositorio, actualizado con cada milestone. Cada entrada debe contener:
-
-1. **Fecha y milestone**.
-2. **Herramienta utilizada** (nombre y version si corresponde).
-3. **Prompt o consulta realizada** (resumido).
-4. **Resultado obtenido** (resumido).
-5. **Evaluacion**: fue util? que se modifico del resultado? que se aprendio?
-
-### Criterios de evaluacion
-
-| Criterio | Peso | Descripcion |
-|----------|------|-------------|
-| **Honestidad** | 40% | Transparencia en el uso de herramientas de IA. Se documenta sin omisiones. No se presenta codigo generado por IA como propio sin mencion. |
-| **Reflexion** | 35% | Se reflexiona sobre la calidad de las respuestas de la IA. Se identifican errores o limitaciones. Se comparan las sugerencias con el conocimiento adquirido en clase. |
-| **Aplicacion** | 25% | Se demuestra que la IA se uso como herramienta de aprendizaje, no como reemplazo del pensamiento critico. Se modificaron y adaptaron las sugerencias al contexto especifico del proyecto. |
-
-| Nivel | Puntos | Descripcion |
-|-------|--------|-------------|
-| **Insuficiente** | 0-3 | Sin log o log vacio. Evidencia de uso de IA sin documentar. |
-| **Regular** | 4-5 | Log basico con pocas entradas. Documentacion superficial de interacciones. Poca reflexion. |
-| **Bueno** | 6-7 | Log completo con entradas para cada milestone. Documentacion clara de prompts y resultados. Reflexion honesta sobre utilidad y limitaciones. |
-| **Excelente** | 8-10 | Log detallado y reflexivo. Analisis critico de cada interaccion con IA. Identificacion clara de lo que funciono y lo que no. Reflexion sobre el aprendizaje obtenido. Ejemplos concretos de como se mejoraron las sugerencias de la IA. |
+**Nota sobre contribuciones individuales:** se revisara el historial de Git y la participacion en la oral para verificar que todos los integrantes contribuyen. Diferencias significativas pueden resultar en notas individuales diferentes dentro del mismo grupo.
 
 ---
 
 ## Politica de entregas tardias
 
-- Entregas hasta **48 horas despues** de la fecha limite: penalizacion de **-2 puntos** sobre la nota del milestone.
-- Entregas despues de **48 horas**: no se aceptan. El milestone se califica con **0** y pasa a instancia de **recuperatorio**.
-- El recuperatorio consiste en entregar el milestone con una semana adicional de plazo, con nota maxima de **7/10**.
+- Si M3 no se entrega en la fecha indicada, pasa a instancia de **recuperatorio** (una semana adicional de plazo, nota maxima **7/10**).
 
 ## Politica de integridad academica
 
@@ -173,14 +124,3 @@ El log debe ser un archivo `AI_LOG.md` en la raiz del repositorio, actualizado c
 - Copiar codigo de otro grupo sin atribucion se considera plagio y resulta en la desaprobacion del TP completo para ambos grupos.
 - El uso de librerias externas esta permitido siempre que se documenten en las dependencias del proyecto y se justifique su uso.
 - Las funciones especificadas en los milestones deben implementarse, no reemplazarse por llamadas a librerias de alto nivel que oculten la logica (por ejemplo, no usar una funcion `calcular_t60()` de una libreria externa).
-
----
-
-## Resumen visual
-
-```
-Nota final = 0.05 * M0 + 0.15 * M1 + 0.20 * M2 + 0.30 * M3
-           + 0.15 * Presentacion + 0.10 * Participacion + 0.05 * Log_IA
-```
-
-Cada componente se evalua en escala 0-10. La nota final se calcula como el promedio ponderado. Se requiere un minimo de 4/10 en cada milestone individual para aprobar la materia.

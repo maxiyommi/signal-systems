@@ -1,8 +1,9 @@
 # Milestone 3: Producto Final
 
-**Fecha de entrega**: Semana 15 (7 de julio 2026)
+**Presentacion de la consigna**: miercoles 28 de octubre 2026
+**Fecha de entrega**: miercoles 18 de noviembre 2026, junto con la presentacion oral (Demo Day)
 **Tag de version**: `v1.0.0`
-**Peso en la nota**: 30%
+**Evaluacion**: **con nota** — Nota del TP = 60% M3 + 40% presentacion oral (ver [rubrica](../rubrica.md))
 
 ## Objetivo
 
@@ -466,7 +467,7 @@ Los resultados de RIR-API deben compararse con al menos **uno** de los siguiente
 
 > Los resultados obtenidos no deben diferir en mas de **+-0.5 s** de los arrojados por el software comercial para los tiempos de reverberacion ($T_{20}$, $T_{30}$, EDT), y no mas de **+-1 dB** para $C_{80}$.
 
-**Tabla de validacion requerida** (incluir en el informe):
+**Tabla de validacion requerida** (incluir en el README y mostrar en la presentacion oral):
 
 | Parametro | Banda (Hz) | RIR-API | Software ref. | Diferencia | Dentro de tolerancia |
 |-----------|-----------|-----------|---------------|------------|---------------------|
@@ -481,40 +482,22 @@ Completar la tabla para al menos las bandas de 125, 250, 500, 1000, 2000 y 4000 
 
 ---
 
-## Informe final
+## Validacion y resultados en el README
 
-El informe final es **obligatorio** y debe realizarse en **Quarto** o **LaTeX**.
+Este cuatrimestre **no hay informe escrito**. En su lugar, el README del repositorio debe incluir una seccion **Validacion** con:
 
-### Formato
-
-- **Extension maxima**: 5 paginas (sin contar apendices).
-- **Template**: formato UNTREF para memorias cuatrimestrales o formato propio aprobado por los docentes.
-- **Herramientas**: [Overleaf](https://www.overleaf.com/) para LaTeX online, [Quarto](https://quarto.org/) como alternativa moderna.
-
-### Contenido requerido
-
-| Seccion | Peso | Descripcion |
-|---------|------|-------------|
-| Resumen | 5% | Descripcion concisa del proyecto, metodologia y resultados principales |
-| Introduccion | 10% | Contexto, objetivos, normativa ISO 3382 |
-| Marco teorico | 10% | Fundamentos matematicos de las funciones implementadas (con referencias) |
-| Desarrollo experimental | 25% | Arquitectura del software, diagrama de flujo, decisiones de diseno, descripcion de funciones |
-| Resultados | 30% | Graficas, tablas de comparacion, validacion con software comercial |
-| Conclusiones | 20% | Analisis critico, limitaciones, posibles mejoras, aprendizajes |
-
-### Elementos obligatorios
-
-- Diagrama de arquitectura del software (actualizado).
+- La tabla comparativa RIR-API vs. software de referencia (ver arriba).
 - Al menos 3 graficas: (1) curva de decaimiento, (2) comparacion de filtros, (3) validacion con software comercial.
-- Tabla comparativa de resultados RIR-API vs. software de referencia.
-- Referencias bibliograficas en formato APA o IEEE.
+- El diagrama de arquitectura actualizado.
+
+Estos mismos resultados se muestran en la presentacion oral.
 
 ---
 
 ## Presentacion oral final
 
 - **Duracion**: 20 minutos de presentacion + 5 minutos de preguntas.
-- **Formato**: presencial con apoyo de material visual.
+- **Formato**: virtual (sesion del miercoles 18/11), con apoyo de material visual.
 - **Demostracion en vivo obligatoria**: mostrar la API corriendo, enviar requests y mostrar las respuestas.
 
 ### Estructura recomendada
@@ -553,5 +536,4 @@ Todos los requisitos de M1 y M2 aplican, mas:
 - [Schroeder, M. R. (1965) - New method of measuring reverberation time](https://asa.scitation.org/doi/10.1121/1.1909343)
 - [Lundeby, A. et al. (1995) - Uncertainties of measurements in room acoustics](https://doi.org/10.1155/1995/37816)
 - [scipy.signal.hilbert](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html)
-- [Quarto: publicacion tecnica](https://quarto.org/)
 - [REW - Room EQ Wizard](https://www.roomeqwizard.com/)
