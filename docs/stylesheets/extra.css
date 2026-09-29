@@ -302,7 +302,12 @@ body.modo-presentacion .md-top,
 body.modo-presentacion .md-content__button { display: none !important; }
 body.modo-presentacion .md-main__inner { max-width: none; margin-top: 0; }
 body.modo-presentacion .md-content { max-width: none; }
-body.modo-presentacion .md-content__inner { max-width: 60rem; margin: 1.5rem auto 4rem; padding: 0 clamp(1rem, 4vw, 3rem); }   /* ancho de lectura cómodo, centrado */
+/* Todo el ancho disponible; a la derecha queda libre la columna de botones (presentación, sesión, lápiz) */
+body.modo-presentacion .md-content__inner { max-width: none; margin: 1.5rem 0 4rem; padding: 0 5rem 0 clamp(1rem, 3vw, 2.5rem); transition: padding-right 0.25s ease; }
+/* Con el panel de la sesión abierto, el texto se corre para que el panel no lo tape */
+body.modo-presentacion.agenda-abierta .md-content__inner { padding-right: calc(min(23rem, 100vw - 6rem) + 6rem); }
+@media (max-width: 700px) { body.modo-presentacion.agenda-abierta .md-content__inner { padding-right: 5rem; } }   /* en pantallas chicas el panel va encima */
+@media (prefers-reduced-motion: reduce) { body.modo-presentacion .md-content__inner { transition: none; } }
 body.modo-presentacion .md-typeset { font-size: clamp(0.85rem, 1.45vw, 1.15rem); line-height: 1.6; }
 body.modo-presentacion .md-typeset h1 { font-size: 2.2em; }
 body.modo-presentacion .md-typeset h2 { font-size: 1.6em; margin-top: 2.2em; }
@@ -487,3 +492,5 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
   background: transparent; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 2rem;
 }
 .md-typeset .definicion__cerrar:hover { border-color: var(--md-accent-fg-color); }
+/* Con el panel de la sesión abierto hay menos ancho: el hilo conductor pasa a 4 columnas */
+body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__hilo { grid-template-columns: repeat(4, 1fr); }

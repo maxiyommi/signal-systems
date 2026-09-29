@@ -146,6 +146,7 @@
 
     function abrir(v) {
       panel.hidden = !v;
+      document.body.classList.toggle('agenda-abierta', v);          // el texto se corre para dejarle lugar
       boton.setAttribute('aria-expanded', String(v));
       panelAbierto.guardar(v);
       if (v) render();
@@ -171,7 +172,7 @@
     function actualizar() {
       const activo = enPresentacion();
       barra.hidden = !activo;
-      if (!activo) { panel.hidden = true; boton.setAttribute('aria-expanded', 'false'); return; }
+      if (!activo) { panel.hidden = true; document.body.classList.remove('agenda-abierta'); boton.setAttribute('aria-expanded', 'false'); return; }
       marcar(clave(AQUI, ''));
       // Lo que ya está en pantalla al entrar al modo presentación también cuenta.
       document.querySelectorAll('.md-content h2[id]').forEach((h) => {
