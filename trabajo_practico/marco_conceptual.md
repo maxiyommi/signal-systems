@@ -96,18 +96,18 @@ La medición in situ no forma parte del TP, pero da contexto a cada función que
 
 | Concepto de la materia | Qué resuelve en la medición | Función del TP | Milestone |
 |------------------------|-----------------------------|----------------|-----------|
-| Señales aleatorias, densidad espectral $1/f$ | Excitar todas las bandas con energía pareja por octava | `generar_ruido_rosa` | [M1](especificacion/m1_generacion.md) |
-| Frecuencia instantánea, filtro inverso | Una excitación que separa la respuesta lineal de la distorsión | `generar_sine_sweep` | [M1](especificacion/m1_generacion.md) |
-| Muestreo, DAC/ADC, sistemas en cascada | Emitir y grabar a la vez | `reproducir_y_grabar` | [M1](especificacion/m1_generacion.md) |
-| Señales discretas, cuantización | Leer una grabación como un arreglo normalizado | `cargar_audio` | [M2](especificacion/m2_procesamiento.md) |
-| Sistemas LTI, respuesta al impulso | Una RI sintética con $T_{60}$ conocido para validar | `sintetizar_ri` | [M2](especificacion/m2_procesamiento.md) |
-| Convolución, delta, asociatividad | Recuperar $h(t)$ a partir de la grabación | `obtener_ri_desde_sweep` | [M2](especificacion/m2_procesamiento.md) |
-| Filtros LTI (Butterworth, IEC 61260) | Analizar la sala por bandas de octava | `filtro_octava` | [M2](especificacion/m2_procesamiento.md) |
-| Escala logarítmica | Expresar niveles en dB | `a_escala_log` | [M2](especificacion/m2_procesamiento.md) |
-| Señal analítica, transformada de Hilbert | Envolvente de $h(t)$ | `suavizar_signal` | [M3](especificacion/m3_producto_final.md) |
-| Energía, integración | Curva de decaimiento (Schroeder) | `integral_schroeder` | [M3](especificacion/m3_producto_final.md) |
-| Mínimos cuadrados | Pendiente de la curva: T30, T20, EDT | `regresion_lineal` | [M3](especificacion/m3_producto_final.md) |
-| Energía en ventanas temporales | Parámetros por banda: EDT, T20, T30, D50, C80 | `calcular_parametros_acusticos` | [M3](especificacion/m3_producto_final.md) |
+| Señales aleatorias, densidad espectral $1/f$ | Excitar todas las bandas con energía pareja por octava | `generate_pink_noise` | [M1](especificacion/m1_generacion.md) |
+| Frecuencia instantánea, filtro inverso | Una excitación que separa la respuesta lineal de la distorsión | `generate_sine_sweep_pair` | [M1](especificacion/m1_generacion.md) |
+| Muestreo, DAC/ADC, sistemas en cascada | Emitir y grabar a la vez | `play_and_record` | [M1](especificacion/m1_generacion.md) |
+| Señales discretas, cuantización | Leer una grabación como un arreglo normalizado | `load_audio` | [M2](especificacion/m2_procesamiento.md) |
+| Sistemas LTI, respuesta al impulso | Una RI sintética con $T_{60}$ conocido para validar | `generate_synthetic_ir` | [M2](especificacion/m2_procesamiento.md) |
+| Convolución, delta, asociatividad | Recuperar $h(t)$ a partir de la grabación | `get_impulse_response` | [M2](especificacion/m2_procesamiento.md) |
+| Filtros LTI (Butterworth, IEC 61260) | Analizar la sala por bandas de octava | `filter_single_band` | [M2](especificacion/m2_procesamiento.md) |
+| Escala logarítmica | Expresar niveles en dB | `logarithmic_scale_conversion` | [M2](especificacion/m2_procesamiento.md) |
+| Señal analítica, transformada de Hilbert | Envolvente de $h(t)$ | `apply_smoothing` | [M3](especificacion/m3_producto_final.md) |
+| Energía, integración | Curva de decaimiento (Schroeder) | `apply_schroeder_integral` | [M3](especificacion/m3_producto_final.md) |
+| Mínimos cuadrados | Pendiente de la curva: T30, T20, EDT | `linear_regression` | [M3](especificacion/m3_producto_final.md) |
+| Energía en ventanas temporales | Parámetros por banda: EDT, T20, T30, D50, C80 | `calculate_parameters_from_ir` | [M3](especificacion/m3_producto_final.md) |
 | El sistema completo | Automatizar la medición y obtener datos | API REST | [M3](especificacion/m3_producto_final.md) |
 
 ## 10. Cómo se baja un problema complejo

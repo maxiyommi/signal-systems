@@ -29,7 +29,7 @@ signal-systems/
 
 ## Convenciones
 
-- **Idioma**: Todo el contenido está en español (sin tildes en código/archivos). Los nombres de archivos, variables y funciones usan snake_case en inglés o español según contexto.
+- **Idioma**: Todo el contenido está en español (sin tildes en código/archivos). Los nombres de archivos, variables y funciones usan snake_case en inglés o español según contexto. En el TP (template y especificaciones) las funciones de servicio, sus parámetros y los tests van en inglés, alineados con la API de referencia `RIR-API` (p. ej. `generate_pink_noise`, `filter_single_band`, `apply_schroeder_integral`); la prosa sigue en español.
 - **Notebooks**: Usan Marimo (archivos `.py`), no Jupyter.
 - **TP (RIR-API)**: API REST con FastAPI. Estructura `app/` con `routers/`, `services/`, `schemas/`. La API de referencia de la cátedra está desplegada en https://rir-api.onrender.com/docs.
 - **Template repo**: En `trabajo_practico/template_repo/` — cada grupo copia su contenido a un repo nuevo (instrucciones en su README y en M0). Stubs con `NotImplementedError` y tests de M1-M3 marcados `xfail` hasta implementarlos.
@@ -50,8 +50,8 @@ El TP pide a los alumnos desarrollar una API REST para cálculo de parámetros a
 | Milestone | Presentación → Entrega (2C 2026) | Contenido |
 |-----------|----------------------------------|-----------|
 | M0 | 30/9 → 7/10 (async, Slack/GitHub) | Arquitectura, repo, /health endpoint |
-| M1 | 14/10 → 28/10 | Ruido rosa, sine sweep, reproducir_y_grabar (services) |
-| M2 | 21/10 → 4/11 | cargar_audio, sintetizar_ri, deconvolución, bandas de octava, dB (services) |
+| M1 | 14/10 → 28/10 | Ruido rosa, sine sweep, play_and_record (services) |
+| M2 | 21/10 → 4/11 | load_audio, generate_synthetic_ir, deconvolución, bandas de octava, dB (services) |
 | M3 | 28/10 → 18/11 | API REST completa, endpoints, validación, demo + oral |
 
 Evaluación 2C 2026: M0-M2 seguimiento sin nota; nota del TP = 60 % M3 + 40 % oral (`AI_LOG.md` obligatorio sin nota; sin informe escrito). La landing (`docs/overrides/home.html`) lista las sesiones de la cursada actual a mano. Todo el material del TP está en páginas del sitio (sección Trabajo Práctico); `hooks/ruta_tp.py` agrega a cada página "Dónde estamos" (orden de lectura + hilo conductor) y "Qué sigue". Lo interactivo vive en `trabajo_practico/interactivos/`: páginas sueltas con el estilo de la landing (tema según la elección del sitio) que se abren en pestaña aparte desde tarjetas. El modo presentación (`docs/javascripts/presentacion.js`), la pizarra (`pizarra.js`) y la agenda de la sesión (`agenda.js`, fechas y páginas por sesión) se comparten entre el sitio y los interactivos (salvo la agenda).

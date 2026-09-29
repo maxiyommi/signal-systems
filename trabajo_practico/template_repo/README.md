@@ -98,13 +98,14 @@ rir-api/
 │   │   └── __init__.py            # Modelos Pydantic de request/response (M3)
 │   └── services/
 │       ├── __init__.py
-│       ├── pink_noise.py          # generar_ruido_rosa (M1)
-│       ├── sine_sweep.py          # generar_sine_sweep (M1)
-│       ├── audio_io.py            # reproducir_y_grabar (M1)
-│       ├── signal_utils.py        # cargar_audio, sintetizar_ri, obtener_ri_desde_sweep, a_escala_log (M2)
-│       ├── filter.py              # filtro_octava (M2)
-│       └── acoustic_parameters.py # suavizar_signal, integral_schroeder, regresion_lineal,
-│                                  # calcular_parametros_acusticos, metodo_lundeby (M3)
+│       ├── pink_noise.py          # generate_pink_noise (M1)
+│       ├── sine_sweep.py          # generate_sine_sweep_pair (M1)
+│       ├── audio_io.py            # play_and_record (M1)
+│       ├── signal_utils.py        # load_audio, generate_synthetic_ir, get_impulse_response,
+│       │                          # logarithmic_scale_conversion (M2)
+│       ├── filter.py              # filter_single_band (M2)
+│       └── acoustic_parameters.py # apply_smoothing, apply_schroeder_integral, linear_regression,
+│                                  # calculate_parameters_from_ir, apply_lundeby (M3)
 ├── tests/
 │   ├── data/                      # WAV chicos de prueba (se versionan)
 │   ├── test_placeholder.py        # Test trivial (M0)
@@ -150,26 +151,26 @@ en M3 (ver los `TODO` en `app/main.py`).
 
 ### M1 · Generacion de senales (`v0.1.0`)
 
-- [ ] `generar_ruido_rosa()` en `app/services/pink_noise.py` (Voss-McCartney recomendado).
-- [ ] `generar_sine_sweep()` (sweep + filtro inverso) en `app/services/sine_sweep.py`.
-- [ ] `reproducir_y_grabar()` en `app/services/audio_io.py`.
+- [ ] `generate_pink_noise()` en `app/services/pink_noise.py` (Voss-McCartney recomendado).
+- [ ] `generate_sine_sweep_pair()` (sweep + filtro inverso) en `app/services/sine_sweep.py`.
+- [ ] `play_and_record()` en `app/services/audio_io.py`.
 - [ ] Tests de `tests/test_generacion.py` pasando; graficas de validacion en `docs/m1/`.
 
 ### M2 · Procesamiento de la RI (`v0.2.0`)
 
-- [ ] `cargar_audio()`, `sintetizar_ri()`, `obtener_ri_desde_sweep()` y `a_escala_log()`
-      en `app/services/signal_utils.py`.
-- [ ] `filtro_octava()` en `app/services/filter.py`.
+- [ ] `load_audio()`, `generate_synthetic_ir()`, `get_impulse_response()` y
+      `logarithmic_scale_conversion()` en `app/services/signal_utils.py`.
+- [ ] `filter_single_band()` en `app/services/filter.py`.
 - [ ] Tests de `tests/test_procesamiento.py` pasando.
 
 ### M3 · Producto final (`v1.0.0`)
 
-- [ ] `suavizar_signal()`, `integral_schroeder()`, `regresion_lineal()` y
-      `calcular_parametros_acusticos()` en `app/services/acoustic_parameters.py`.
+- [ ] `apply_smoothing()`, `apply_schroeder_integral()`, `linear_regression()` y
+      `calculate_parameters_from_ir()` en `app/services/acoustic_parameters.py`.
 - [ ] Routers y schemas que exponen toda la funcionalidad como API REST.
 - [ ] Tests de `tests/test_analisis.py` y `tests/test_api.py` pasando.
 - [ ] Seccion "Validacion" en este README, `AI_LOG.md` y presentacion oral.
-- [ ] (Opcional) `metodo_lundeby()`.
+- [ ] (Opcional) `apply_lundeby()`.
 
 ## Tests
 
@@ -186,12 +187,12 @@ primer dia:
 ```bash
 uv run pytest                                  # todos los tests
 uv run pytest -v tests/test_generacion.py      # un archivo, con detalle
-uv run pytest -v -k ruido_rosa                 # tests cuyo nombre contiene "ruido_rosa"
+uv run pytest -v -k pink_noise                 # tests cuyo nombre contiene "pink_noise"
 uv run pytest -rxX                             # listar xfailed / xpassed
 uv run pytest --cov=app                        # con cobertura
 ```
 
-`reproducir_y_grabar` se testea con un *mock* de `sounddevice`, por lo que el CI no necesita
+`play_and_record` se testea con un *mock* de `sounddevice`, por lo que el CI no necesita
 placa de audio. Para probarla de verdad, corran la funcion localmente con un parlante y un
 microfono y documenten la configuracion (dispositivo, canales, fs, buffer size).
 

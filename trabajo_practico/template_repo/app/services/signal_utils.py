@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 
 
-def cargar_audio(ruta: str | Path) -> tuple[np.ndarray, int]:
+def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """Carga un archivo de audio (al menos WAV y FLAC) y retorna senal y fs.
 
     La senal se devuelve **mono**: si el archivo es estereo (o multicanal) se
@@ -18,7 +18,7 @@ def cargar_audio(ruta: str | Path) -> tuple[np.ndarray, int]:
 
     Parameters
     ----------
-    ruta : str | Path
+    path : str | Path
         Ruta al archivo de audio a cargar.
 
     Returns
@@ -39,7 +39,7 @@ def cargar_audio(ruta: str | Path) -> tuple[np.ndarray, int]:
     raise NotImplementedError("Implementar en Milestone 2")
 
 
-def sintetizar_ri(t60_por_banda: dict[float, float], fs: int, duracion: float) -> np.ndarray:
+def generate_synthetic_ir(duration: float, t60_values: dict[float, float], fs: int) -> np.ndarray:
     """Sintetiza una respuesta al impulso con valores de T60 conocidos por banda.
 
     Modelo: ``h(t) = n(t) * exp(-alpha * t)`` con ``alpha = 3 * ln(10) / T60``,
@@ -48,34 +48,34 @@ def sintetizar_ri(t60_por_banda: dict[float, float], fs: int, duracion: float) -
 
     Parameters
     ----------
-    t60_por_banda : dict[float, float]
+    duration : float
+        Duracion de la respuesta al impulso en segundos.
+    t60_values : dict[float, float]
         Diccionario ``{frecuencia_central_Hz: T60_segundos}``.
         Ejemplo: ``{125: 2.0, 250: 1.8, 500: 1.5, 1000: 1.2, 2000: 1.0, 4000: 0.8}``.
     fs : int
         Frecuencia de muestreo en Hz.
-    duracion : float
-        Duracion de la respuesta al impulso en segundos.
 
     Returns
     -------
     np.ndarray
-        Respuesta al impulso sintetizada (array 1D de ``int(duracion * fs)`` muestras).
+        Respuesta al impulso sintetizada (array 1D de ``int(duration * fs)`` muestras).
     """
     raise NotImplementedError("Implementar en Milestone 2")
 
 
-def obtener_ri_desde_sweep(grabacion: np.ndarray, filtro_inverso: np.ndarray) -> np.ndarray:
+def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> np.ndarray:
     """Obtiene la respuesta al impulso mediante deconvolucion de un sine sweep.
 
-    ``h(t) = y(t) * x_inv(t)``; usar ``scipy.signal.fftconvolve`` (``mode='full'``),
-    recortar para que la RI comience en el pico (o ligeramente antes) y
-    normalizar respecto del pico.
+    ``h(t) = y(t) * x_inv(t)``, con ``y = recording`` y ``x_inv = inverse_filter``;
+    usar ``scipy.signal.fftconvolve`` (``mode='full'``), recortar para que la RI
+    comience en el pico (o ligeramente antes) y normalizar respecto del pico.
 
     Parameters
     ----------
-    grabacion : np.ndarray
+    recording : np.ndarray
         Senal grabada que contiene la respuesta de la sala al sweep.
-    filtro_inverso : np.ndarray
+    inverse_filter : np.ndarray
         Filtro inverso del sweep utilizado.
 
     Returns
@@ -86,7 +86,7 @@ def obtener_ri_desde_sweep(grabacion: np.ndarray, filtro_inverso: np.ndarray) ->
     raise NotImplementedError("Implementar en Milestone 2")
 
 
-def a_escala_log(signal: np.ndarray) -> np.ndarray:
+def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
     """Convierte una senal a escala logaritmica (dB) normalizada.
 
     ``L = 20 * log10(|x| / max(|x|))``. Evitar ``log(0)`` (usar un ``eps`` o

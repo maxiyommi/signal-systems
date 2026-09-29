@@ -1,6 +1,6 @@
 # El álgebra de la deconvolución vía sweep + filtro inverso
 
-Material complementario de la página del Milestone 2 (RIR-API · Procesamiento de la Respuesta al Impulso). Cubre el fundamento teórico de la función `obtener_ri_desde_sweep(grabacion, filtro_inverso)` que pide la spec.
+Material complementario de la página del Milestone 2 (RIR-API · Procesamiento de la Respuesta al Impulso). Cubre el fundamento teórico de la función `get_impulse_response(recording, inverse_filter)` que pide la spec.
 
 ---
 
@@ -61,7 +61,7 @@ Por eso para medición precisa nadie usa palmadas — se usan **señales largas 
 
 ## 3. La magia: sine sweep + filtro inverso ≈ delta
 
-En M1 implementaron `generar_sine_sweep(f1, f2, duracion, fs)` que devuelve **dos** señales:
+En M1 implementaron `generate_sine_sweep_pair(duration, f1, f2, fs)` que devuelve **dos** señales:
 
 - $x(t)$ — el sweep logarítmico que barre de $f_1$ a $f_2$.
 - $x_{\text{inv}}(t)$ — su filtro inverso (el mismo sweep invertido temporalmente, con envolvente compensada).
@@ -154,7 +154,7 @@ $$
 \boxed{\;y(t) * x_{\text{inv}}(t) \approx h(t)\;}
 $$
 
-Del archivo grabado y del filtro inverso (que tenías guardado), **obtuviste $h(t)$ directamente** por convolución. Eso es lo que implementa `obtener_ri_desde_sweep(grabacion, filtro_inverso)`.
+Del archivo grabado y del filtro inverso (que tenías guardado), **obtuviste $h(t)$ directamente** por convolución. Eso es lo que implementa `get_impulse_response(recording, inverse_filter)`.
 
 ---
 
@@ -232,24 +232,24 @@ Por la propiedad de Farina del sweep, $X(f) \cdot X_{\text{inv}}(f) \approx 1$ e
 import numpy as np
 from scipy.signal import fftconvolve
 
-def obtener_ri_desde_sweep(grabacion: np.ndarray, filtro_inverso: np.ndarray) -> np.ndarray:
+def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> np.ndarray:
     """Extrae la respuesta al impulso de la sala vía deconvolución con filtro inverso."""
     # Paso 1: convolucion full (devuelve N + M - 1 muestras)
-    ri_full = fftconvolve(grabacion, filtro_inverso, mode="full")
+    ir_full = fftconvolve(recording, inverse_filter, mode="full")
 
     # Paso 2: ubicar el pico (es donde "aterriza" el impulso recuperado)
-    peak_idx = int(np.argmax(np.abs(ri_full)))
+    peak_idx = int(np.argmax(np.abs(ir_full)))
 
     # Paso 3: recortar desde el pico, descartando la pre-respuesta
-    duracion_ri_max = 2.0  # segundos, ajustar según el T60 esperado
+    max_ir_duration = 2.0  # segundos, ajustar según el T60 esperado
     fs = 44100
-    fin = peak_idx + int(duracion_ri_max * fs)
-    ri = ri_full[peak_idx:fin]
+    end = peak_idx + int(max_ir_duration * fs)
+    ir = ir_full[peak_idx:end]
 
     # Paso 4: normalizar al pico
-    ri = ri / np.max(np.abs(ri))
+    ir = ir / np.max(np.abs(ir))
 
-    return ri
+    return ir
 ```
 
 ### Detalles que importan
@@ -262,16 +262,16 @@ def obtener_ri_desde_sweep(grabacion: np.ndarray, filtro_inverso: np.ndarray) ->
 
 4. **Recortar a la duración útil** — la RI tiene una cola que decae exponencialmente. Recortar a 2-3 veces el T60 esperado deja todo lo útil y descarta el ruido de fondo.
 
-5. **Normalizar al final** — `ri = ri / np.max(np.abs(ri))`. Imprescindible para que el output sea homogéneo entre mediciones.
+5. **Normalizar al final** — `ir = ir / np.max(np.abs(ir))`. Imprescindible para que el output sea homogéneo entre mediciones.
 
 ### Verificación con la propia spec
 
-El test 3 de M2 (`test_obtener_ri_pico`) usa esta cadena:
+El test 3 de M2 (`test_impulse_response_peak`) usa esta cadena:
 
-1. Sintetizar una RI conocida con `sintetizar_ri()`.
+1. Armar una RI conocida (en el test: sonido directo + cola exponencial filtrada; también sirve una generada con `generate_synthetic_ir()`).
 2. Generar el sweep + filtro inverso con M1.
 3. Convolucionar `sweep * RI_sintetica` → simular la "grabación".
-4. Llamar `obtener_ri_desde_sweep(grabacion, filtro_inverso)`.
+4. Llamar `get_impulse_response(recording, inverse_filter)`.
 5. Verificar correlación cruzada con la RI original > 0.9.
 
 Si el álgebra está bien implementada, la correlación queda > 0.95 fácil. Si está < 0.9, hay bug — probablemente en la ubicación del pico o en el modo de convolución.

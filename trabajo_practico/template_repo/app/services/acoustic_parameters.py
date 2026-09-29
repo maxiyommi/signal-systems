@@ -6,23 +6,29 @@ Milestone 3: Producto final.
 import numpy as np
 
 
-def suavizar_signal(signal: np.ndarray, ventana: int | str = "hilbert") -> np.ndarray:
+def apply_smoothing(
+    signal: np.ndarray, fs: int, method: str = "hilbert", window_ms: float = 10
+) -> np.ndarray:
     """Suaviza una senal y devuelve su envolvente en **amplitud**.
 
-    - ``ventana='hilbert'`` (recomendado): envolvente de Hilbert,
-      ``np.abs(scipy.signal.hilbert(signal))``.
-    - ``ventana`` entero: media movil de ``ventana`` muestras. Para que la
-      salida quede en amplitud (comparable con Hilbert), devolver la raiz de la
-      media movil de ``signal**2`` (envolvente RMS) o, alternativamente, la
-      media movil de ``|signal|``. Documentar cual se eligio.
+    - ``method='hilbert'`` (recomendado): envolvente de Hilbert,
+      ``np.abs(scipy.signal.hilbert(signal))``. Ignora ``window_ms``.
+    - ``method='moving_average'``: media movil de ``window_ms`` milisegundos
+      (``int(window_ms * fs / 1000)`` muestras, al menos 1). Para que la salida
+      quede en amplitud (comparable con Hilbert), devolver la raiz de la media
+      movil de ``signal**2`` (envolvente RMS) o, alternativamente, la media
+      movil de ``|signal|``. Documentar cual se eligio.
 
     Parameters
     ----------
     signal : np.ndarray
         Senal de entrada (tipicamente una RI filtrada por banda, array 1D).
-    ventana : int | str, optional
-        ``'hilbert'`` (por defecto) o el tamano de la ventana de media movil
-        en muestras.
+    fs : int
+        Frecuencia de muestreo en Hz (para convertir ``window_ms`` a muestras).
+    method : str, optional
+        ``'hilbert'`` (por defecto) o ``'moving_average'``.
+    window_ms : float, optional
+        Largo de la ventana de media movil en milisegundos (por defecto 10 ms).
 
     Returns
     -------
@@ -32,12 +38,13 @@ def suavizar_signal(signal: np.ndarray, ventana: int | str = "hilbert") -> np.nd
     Raises
     ------
     ValueError
-        Si ``ventana`` no es ``'hilbert'`` ni un entero positivo.
+        Si ``method`` no es ``'hilbert'`` ni ``'moving_average'``, o si
+        ``window_ms`` no es positivo.
     """
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def integral_schroeder(ri: np.ndarray) -> np.ndarray:
+def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     """Calcula la integral de Schroeder (Energy Decay Curve) en dB.
 
     ``E[n] = sum_{k=n}^{N-1} h[k]**2`` (integracion inversa, por ejemplo con
@@ -45,14 +52,14 @@ def integral_schroeder(ri: np.ndarray) -> np.ndarray:
 
     Parameters
     ----------
-    ri : np.ndarray
+    ir : np.ndarray
         Respuesta al impulso (o RI filtrada por banda, array 1D).
 
     Returns
     -------
     np.ndarray
         Curva de decaimiento en dB, normalizada a 0 dB en la primera muestra,
-        de la misma longitud que ``ri``.
+        de la misma longitud que ``ir``.
 
     References
     ----------
@@ -62,7 +69,7 @@ def integral_schroeder(ri: np.ndarray) -> np.ndarray:
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def regresion_lineal(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
+def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
     """Calcula la regresion lineal por minimos cuadrados.
 
     Se recomienda implementarla a mano (formulas de minimos cuadrados) en lugar
@@ -77,17 +84,17 @@ def regresion_lineal(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]
 
     Returns
     -------
-    pendiente : float
+    slope : float
         Pendiente de la recta ajustada ``m`` (dB/s en el contexto acustico).
-    ordenada : float
+    intercept : float
         Ordenada al origen ``b`` (dB).
-    r_cuadrado : float
+    r2 : float
         Coeficiente de determinacion R^2.
     """
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def calcular_parametros_acusticos(ri: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
+def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
     """Calcula los parametros acusticos ISO 3382 por banda de octava.
 
     Parametros: EDT (0 a -10 dB), T10 (-5 a -15 dB), T20 (-5 a -25 dB),
@@ -95,7 +102,7 @@ def calcular_parametros_acusticos(ri: np.ndarray, fs: int) -> dict[str, dict[flo
 
     Parameters
     ----------
-    ri : np.ndarray
+    ir : np.ndarray
         Respuesta al impulso (array 1D).
     fs : int
         Frecuencia de muestreo en Hz.
@@ -115,21 +122,21 @@ def calcular_parametros_acusticos(ri: np.ndarray, fs: int) -> dict[str, dict[flo
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def metodo_lundeby(ri: np.ndarray, fs: int) -> tuple[int, float]:
+def apply_lundeby(ir: np.ndarray, fs: int) -> tuple[int, float]:
     """Estima el punto de truncamiento de la RI (metodo de Lundeby).
 
     Parameters
     ----------
-    ri : np.ndarray
+    ir : np.ndarray
         Respuesta al impulso (array 1D).
     fs : int
         Frecuencia de muestreo en Hz.
 
     Returns
     -------
-    indice_truncamiento : int
+    index : int
         Indice de la muestra donde la RI se cruza con el ruido de fondo.
-    nivel_ruido_db : float
+    noise_level_db : float
         Nivel estimado del ruido de fondo en dB.
 
     Notes

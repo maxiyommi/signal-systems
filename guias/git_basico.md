@@ -227,7 +227,7 @@ datos/
 
 ### Crear un issue desde la web
 1. Ir al repo → Issues → New Issue
-2. Título descriptivo: "Implementar función generar_ruido_rosa"
+2. Título descriptivo: "Implementar función generate_pink_noise"
 3. Descripción con checklist:
    ```markdown
    ## Descripción
@@ -264,7 +264,7 @@ git reset --soft HEAD~1
 git blame archivo.py
 
 # Buscar un texto en todo el historial
-git log --all -S "ruido_rosa"
+git log --all -S "pink_noise"
 
 # Ver el diff de un commit específico
 git show abc1234

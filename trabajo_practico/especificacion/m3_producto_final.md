@@ -60,7 +60,7 @@ Lo que hay que entender antes de implementar, con los gráficos de la implementa
 
 <figure class="figura-tp" markdown>
 [![Respuesta al impulso cruda superpuesta con su envolvente de Hilbert](../img/m3/rir_vs_envolvente.png)](../img/m3/rir_vs_envolvente.png)
-<figcaption markdown="span">RI **sintética** (T60 conocido) · `suavizar_signal` con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
+<figcaption markdown="span">RI **sintética** (T60 conocido) · `apply_smoothing` con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
 </figure>
 
 El primer paso del análisis es **suavizar** la RI para ver su decaimiento. La **envolvente de Hilbert** es preferible a la media móvil: no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal.
@@ -117,7 +117,7 @@ Los parámetros acústicos se calculan **banda por banda**: primero se filtra la
 
 **Detalle crítico que se arrastra a M3:** usen `sosfiltfilt` (fase cero, forward + backward), nunca `lfilter`. El retardo de grupo de un filtro causal desplaza el inicio del decaimiento y les infla el T60 en graves un 5–15%.
 
-<small>Clase 9 · m3 reutiliza `filtro_octava` de M2 · frecuencias centrales IEC 61260 (125 Hz a 4 kHz para la tabla de validación).</small>
+<small>Clase 9 · m3 reutiliza `filter_single_band` de M2 · frecuencias centrales IEC 61260 (125 Hz a 4 kHz para la tabla de validación).</small>
 
 ### El output final
 
@@ -126,7 +126,7 @@ Los parámetros acústicos se calculan **banda por banda**: primero se filtra la
 <figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** medida en la Usina del Arte (sala sinfónica, Buenos Aires)</figcaption>
 </figure>
 
-Este es el **producto final del análisis**: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve `calcular_parametros_acusticos` y lo que su API expone en `/api/v1/acoustics/parameters/by-bands`.
+Este es el **producto final del análisis**: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve `calculate_parameters_from_ir` y lo que su API expone en `/api/v1/acoustics/parameters/by-bands`.
 
 Acá se ve una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de las figuras anteriores (donde `EDT ≈ T20 ≈ T30`), acá los parámetros **se separan**: cuando `EDT` es menor que `T30` domina la energía temprana (cerca de la fuente o con reflexiones tempranas fuertes); cuando es mayor, la energía temprana es débil (lejos de la fuente o con volúmenes acoplados). Las diferencias entre bandas son información acústica real de la sala.
 
@@ -154,12 +154,12 @@ No alcanza con que los tests pasen. Hay que demostrar que los números **coincid
 
 ## Funciones a implementar
 
-### 1. `suavizar_signal(signal, ventana)`
+### 1. `apply_smoothing(signal, fs, method, window_ms)`
 
 **Firma sugerida:**
 ```python
-def suavizar_signal(
-    signal: np.ndarray, ventana: int | str = 'hilbert'
+def apply_smoothing(
+    signal: np.ndarray, fs: int, method: str = "hilbert", window_ms: float = 10
 ) -> np.ndarray:
     """
     Suaviza una senal para reducir fluctuaciones del ruido.
@@ -168,9 +168,14 @@ def suavizar_signal(
     ----------
     signal : np.ndarray
         Senal de entrada (tipicamente una RI filtrada por banda).
-    ventana : int | str
-        Si es int: tamano de la ventana para media movil (en muestras).
-        Si es 'hilbert': usa la envolvente de Hilbert.
+    fs : int
+        Frecuencia de muestreo en Hz.
+    method : str
+        'hilbert' (por defecto): envolvente de Hilbert.
+        'moving_average': media movil de largo window_ms.
+    window_ms : float
+        Largo de la ventana de media movil en milisegundos (por defecto 10).
+        No se usa con 'hilbert'.
 
     Returns
     -------
@@ -180,17 +185,20 @@ def suavizar_signal(
     """
 ```
 
+!!! note "Equivalencia con la API de referencia"
+    Mismo nombre y firma que `apply_smoothing` de RIR-API. La de cátedra acepta más métodos (`'hilbert'`, `'rms'`, `'median'`, `'savgol'`); acá se piden dos: `'hilbert'` y `'moving_average'` (esta última equivale al `'rms'` de la referencia si la implementan como envolvente RMS).
+
 **Fundamento matemático:**
 
 **Opción A - Media movil:**
 
-La media movil de una señal $x[n]$ con ventana de tamaño $M$ es:
+La media movil de una señal $x[n]$ con ventana de tamaño $M$ muestras (con `method='moving_average'`, $M = \text{window\_ms} \cdot f_s / 1000$) es:
 
 $$y[n] = \sqrt{\frac{1}{M} \sum_{k=0}^{M-1} x^2[n-k]}$$
 
 Se promedia la energía ($x^2$) y se toma la raíz: así la salida es una envolvente de **amplitud** (valor eficaz local), comparable con la de Hilbert. Ambas opciones devuelven amplitud; en dB, usar $20\log_{10}$.
 
-**Importante:** `suavizar_signal` se usa para **visualizar** el decaimiento. La integral de Schroeder (función 2) se calcula sobre la **RI** filtrada por banda ($h^2$), no sobre la envolvente.
+**Importante:** `apply_smoothing` se usa para **visualizar** el decaimiento. La integral de Schroeder (función 2) se calcula sobre la **RI** filtrada por banda ($h^2$), no sobre la envolvente.
 
 **Opción B - Envolvente de Hilbert (recomendada):**
 
@@ -216,17 +224,17 @@ La envolvente de Hilbert es preferible porque no requiere elegir un tamaño de v
 
 ---
 
-### 2. `integral_schroeder(ri)`
+### 2. `apply_schroeder_integral(ir)`
 
 **Firma sugerida:**
 ```python
-def integral_schroeder(ri: np.ndarray) -> np.ndarray:
+def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
     """
     Calcula la integral de Schroeder (integracion inversa).
 
     Parameters
     ----------
-    ri : np.ndarray
+    ir : np.ndarray
         Respuesta al impulso (o RI filtrada por banda).
 
     Returns
@@ -235,6 +243,9 @@ def integral_schroeder(ri: np.ndarray) -> np.ndarray:
         Curva de decaimiento de Schroeder en dB, normalizada a 0 dB.
     """
 ```
+
+!!! note "Equivalencia con la API de referencia"
+    En RIR-API la firma es `apply_schroeder_integral(impulse, t, fs, lundeby=False)`: recibe también el vector de tiempo y puede truncar con Lundeby antes de integrar. Acá solo se pide la RI; el truncamiento es el extra opcional `apply_lundeby`.
 
 **Fundamento matemático:**
 
@@ -257,7 +268,7 @@ $$L(t) = 10 \log_{10}\left(\frac{E(t)}{E(0)}\right) = 10 \log_{10}\left(\frac{\s
 La integral se calcula eficientemente usando `np.cumsum` sobre la señal invertida:
 
 ```python
-energia = ri ** 2
+energia = ir ** 2
 integral_inversa = np.cumsum(energia[::-1])[::-1]
 integral_db = 10 * np.log10(integral_inversa / integral_inversa[0] + eps)
 ```
@@ -270,11 +281,11 @@ donde `eps` es un valor pequeño para evitar logaritmo de cero.
 
 ---
 
-### 3. `regresion_lineal(x, y)`
+### 3. `linear_regression(x, y)`
 
 **Firma sugerida:**
 ```python
-def regresion_lineal(
+def linear_regression(
     x: np.ndarray, y: np.ndarray
 ) -> tuple[float, float, float]:
     """
@@ -290,10 +301,13 @@ def regresion_lineal(
     Returns
     -------
     tuple[float, float, float]
-        (pendiente, ordenada_al_origen, r_cuadrado)
-        pendiente en dB/s, ordenada en dB, coeficiente de determinacion.
+        (slope, intercept, r2)
+        pendiente en dB/s, ordenada al origen en dB, coeficiente de determinacion.
     """
 ```
+
+!!! warning "Diferencia con la API de referencia"
+    `linear_regression` de RIR-API recibe los argumentos al revés, `(signal_values, x_values=None)`, y devuelve solo `(m, b)`. Acá el orden es el matemático `(x, y)` y se devuelve también $R^2$: `slope, intercept, r2 = linear_regression(x, y)`. Si copian código de la referencia, ojo con el orden.
 
 **Fundamento matemático:**
 
@@ -321,19 +335,19 @@ Un $R^2 > 0.99$ indica un decaimiento bien definido. Valores menores sugieren pr
 
 ---
 
-### 4. `calcular_parametros_acusticos(ri, fs)`
+### 4. `calculate_parameters_from_ir(ir, fs)`
 
 **Firma sugerida:**
 ```python
-def calcular_parametros_acusticos(
-    ri: np.ndarray, fs: int
+def calculate_parameters_from_ir(
+    ir: np.ndarray, fs: int
 ) -> dict[str, dict[float, float]]:
     """
     Calcula los parametros acusticos ISO 3382 por banda de octava.
 
     Parameters
     ----------
-    ri : np.ndarray
+    ir : np.ndarray
         Respuesta al impulso.
     fs : int
         Frecuencia de muestreo en Hz.
@@ -346,6 +360,9 @@ def calcular_parametros_acusticos(
         Ejemplo: {'T30': {125: 1.5, 250: 1.3, ...}, 'EDT': {...}, ...}
     """
 ```
+
+!!! note "Equivalencia con la API de referencia"
+    `calculate_parameters_from_ir` de RIR-API calcula los parámetros de **una** señal (ya filtrada; acepta `t_max` y `freq` opcionales) y el recorrido por bandas lo hace otra función. Acá la función recibe la RI de banda ancha y devuelve directamente **todas las bandas** de octava.
 
 **Parámetros a calcular:**
 
@@ -478,18 +495,18 @@ app/
 
 No es obligatoria. Si la implementan, se valora dentro del criterio **Funcionalidad** de la rúbrica (resultados robustos frente al ruido de fondo).
 
-### `metodo_lundeby(ri, fs)`
+### `apply_lundeby(ir, fs)`
 
 ```python
-def metodo_lundeby(
-    ri: np.ndarray, fs: int
+def apply_lundeby(
+    ir: np.ndarray, fs: int
 ) -> tuple[int, float]:
     """
     Determina el punto de truncamiento de la RI usando el metodo de Lundeby.
 
     Parameters
     ----------
-    ri : np.ndarray
+    ir : np.ndarray
         Respuesta al impulso.
     fs : int
         Frecuencia de muestreo en Hz.
@@ -497,11 +514,14 @@ def metodo_lundeby(
     Returns
     -------
     tuple[int, float]
-        (indice_truncamiento, nivel_ruido_dB)
+        (index, noise_level_db)
         Indice de la muestra donde la RI se cruza con el ruido de fondo
         y el nivel estimado de ruido en dB.
     """
 ```
+
+!!! note "Equivalencia con la API de referencia"
+    En RIR-API la firma es `apply_lundeby(impulse, max_tries=10, fs=44100)` y devuelve solo el **tiempo** de cruce en segundos. Acá `fs` va en segundo lugar y se devuelve el índice de muestra junto con el nivel de ruido.
 
 **Fundamento matemático:**
 
@@ -527,23 +547,23 @@ El método de Lundeby busca iterativamente el punto donde la curva de decaimient
 ### Test 1: Suavizado
 
 ```python
-def test_suavizar_hilbert_envolvente():
+def test_smoothing_hilbert_envelope():
     """La envolvente debe ser no negativa y suave."""
 
-def test_suavizar_media_movil_longitud():
+def test_smoothing_moving_average_length():
     """La salida debe tener la misma longitud que la entrada."""
 ```
 
 ### Test 2: Integral de Schroeder
 
 ```python
-def test_schroeder_maximo_cero_db():
+def test_schroeder_max_zero_db():
     """El primer valor de la integral de Schroeder debe ser 0 dB."""
 
-def test_schroeder_decreciente():
+def test_schroeder_decreasing():
     """La integral de Schroeder debe ser monotonamente decreciente."""
 
-def test_schroeder_ri_sintetizada():
+def test_schroeder_synthetic_ir():
     """
     Para una RI sintetizada con T60 conocido,
     la curva de Schroeder debe ser aproximadamente lineal
@@ -554,26 +574,26 @@ def test_schroeder_ri_sintetizada():
 ### Test 3: Regresión lineal
 
 ```python
-def test_regresion_lineal_exacta():
+def test_linear_regression_exact():
     """Para datos perfectamente lineales, R^2 debe ser 1.0."""
 
-def test_regresion_lineal_pendiente():
+def test_linear_regression_slope():
     """Verificar pendiente con datos conocidos."""
 ```
 
 ### Test 4: Parámetros acústicos con RI sintetizada
 
 ```python
-def test_parametros_ri_sintetizada():
+def test_parameters_synthetic_ir():
     """
     Sintetizar una RI con T60 = 2.0 s, calcular parametros
     y verificar que T30 esta dentro del +-10% del valor conocido.
     """
 
-def test_d50_rango():
+def test_d50_range():
     """D50 debe estar entre 0% y 100%."""
 
-def test_c80_consistencia():
+def test_c80_consistency():
     """Para una RI con mucha energia temprana, C80 debe ser positivo."""
 ```
 
