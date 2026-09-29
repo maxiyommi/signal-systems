@@ -617,3 +617,18 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
 .md-typeset .arq-detalle pre { margin: 0.6rem 0; max-height: 45vh; overflow: auto; }
 .md-typeset .arq-detalle pre code { font-size: 0.72rem; white-space: pre; }
 .md-typeset .arq-detalle__nota { font-size: 0.72rem; color: var(--md-default-fg-color--light); }
+/* Paquete que viaja por el recorrido: dice qué dato lleva en cada tramo */
+.md-typeset .arq-paquete {
+  position: absolute; left: 0; top: 0; z-index: 5; pointer-events: none; white-space: nowrap;
+  padding: 0.15rem 0.55rem; border-radius: 1rem; font: 700 0.66rem var(--md-code-font-family);
+  color: #fff; background: var(--md-accent-fg-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-accent-fg-color) 35%, transparent), 0 0 18px var(--md-accent-fg-color);
+}
+.md-typeset .arq-paquete[data-sentido="vuelta"] {
+  color: #1a1206; background: var(--m3);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--m3) 35%, transparent), 0 0 18px var(--m3);
+}
+.md-typeset .arq-paquete[hidden] { display: none; }
+.md-typeset .arq-chip.pulso { animation: arq-pulso 0.6s ease-out; }
+@keyframes arq-pulso { 0% { transform: scale(1.14); } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .md-typeset .arq-chip.pulso { animation: none; } }
