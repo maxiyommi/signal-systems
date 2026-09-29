@@ -34,3 +34,14 @@ test('cada recuadro se enciende cuando la línea llega a él (proporcional al la
   const t = A.tiemposDeLlegada([{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 300 }], 1000);
   assert.deepEqual([...t].map((v) => Math.round(v)), [0, 250, 1000]);
 });
+
+test('el recorrido se parte en ida y vuelta: la vuelta arranca en el último punto de la ida', () => {
+  const tramos = A.tramosIdaVuelta(['a', 'b', 'c', 'd'], ['ida', 'ida', 'vuelta', 'vuelta']);
+  assert.deepEqual([...tramos].map((t) => [t.sentido, [...t.elementos].join('')]), [['ida', 'ab'], ['vuelta', 'bcd']]);
+});
+
+test('sin pasos de vuelta, un solo tramo', () => {
+  const tramos = A.tramosIdaVuelta(['a', 'b'], [undefined, undefined]);
+  assert.equal(tramos.length, 1);
+  assert.equal(tramos[0].sentido, 'ida');
+});
