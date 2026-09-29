@@ -11,25 +11,25 @@ import pytest
 import soundfile as sf
 from scipy import signal as sps
 
-from app.services.filter import filtro_octava
+from app.services.filter import filter_single_band
 from app.services.signal_utils import (
-    a_escala_log,
-    cargar_audio,
-    obtener_ri_desde_sweep,
-    sintetizar_ri,
+    generate_synthetic_ir,
+    get_impulse_response,
+    load_audio,
+    logarithmic_scale_conversion,
 )
-from app.services.sine_sweep import generar_sine_sweep
+from app.services.sine_sweep import generate_sine_sweep_pair
 
 pytestmark = pytest.mark.xfail(
     raises=NotImplementedError, strict=False, reason="se implementa en M2"
 )
 
 
-def _t60_desde_schroeder(ri: np.ndarray, fs: int) -> float:
+def _t60_desde_schroeder(ir: np.ndarray, fs: int) -> float:
     """T60 extrapolado de la pendiente de Schroeder entre -5 y -25 dB (T20)."""
-    energia = np.cumsum(ri[::-1] ** 2)[::-1]
+    energia = np.cumsum(ir[::-1] ** 2)[::-1]
     edc = 10 * np.log10(energia / energia[0] + 1e-300)
-    t = np.arange(len(ri)) / fs
+    t = np.arange(len(ir)) / fs
     tramo = (edc <= -5) & (edc >= -25)
     pendiente = np.polyfit(t[tramo], edc[tramo], 1)[0]
     return -60 / pendiente
@@ -38,23 +38,23 @@ def _t60_desde_schroeder(ri: np.ndarray, fs: int) -> float:
 # --------------------------------------------------------------------------- #
 # Carga de audio
 # --------------------------------------------------------------------------- #
-class TestCargarAudio:
-    """Tests para la funcion cargar_audio."""
+class TestLoadAudio:
+    """Tests para la funcion load_audio."""
 
-    def test_cargar_audio_wav(self, tmp_path):
+    def test_load_audio_wav(self, tmp_path):
         """Carga un WAV mono: devuelve (senal 1D, fs) con la longitud correcta."""
         fs = 48000
         t = np.arange(fs) / fs
         ruta = tmp_path / "seno.wav"
         sf.write(ruta, 0.5 * np.sin(2 * np.pi * 1000 * t), fs, subtype="PCM_16")
 
-        senal, fs_leida = cargar_audio(ruta)
+        senal, fs_leida = load_audio(ruta)
         assert fs_leida == fs
         assert isinstance(senal, np.ndarray)
         assert senal.ndim == 1
         assert len(senal) == fs
 
-    def test_cargar_audio_estereo_a_mono(self, tmp_path):
+    def test_load_audio_stereo_to_mono(self, tmp_path):
         """Un WAV estereo se devuelve mono (promedio de canales)."""
         fs = 48000
         n = fs // 2
@@ -63,31 +63,31 @@ class TestCargarAudio:
         ruta = tmp_path / "estereo.wav"
         sf.write(ruta, np.column_stack([izq, der]), fs, subtype="FLOAT")
 
-        senal, _ = cargar_audio(str(ruta))
+        senal, _ = load_audio(str(ruta))
         assert senal.ndim == 1
         assert len(senal) == n
         np.testing.assert_allclose(senal, 0.3, atol=1e-6)
 
-    def test_cargar_audio_no_existe(self):
+    def test_load_audio_file_not_found(self):
         """Lanza FileNotFoundError si el archivo no existe."""
         with pytest.raises(FileNotFoundError):
-            cargar_audio("archivo_que_no_existe.wav")
+            load_audio("archivo_que_no_existe.wav")
 
-    def test_cargar_audio_formato_invalido(self, tmp_path):
+    def test_load_audio_invalid_format(self, tmp_path):
         """Lanza ValueError si el archivo no es un audio valido."""
         ruta = tmp_path / "no_es_audio.wav"
         ruta.write_text("esto no es un archivo de audio")
         with pytest.raises(ValueError):
-            cargar_audio(ruta)
+            load_audio(ruta)
 
-    def test_cargar_audio_normalizacion(self, tmp_path):
+    def test_load_audio_normalization(self, tmp_path):
         """La salida es float64 y esta normalizada entre -1 y 1 (PCM 16 a plena escala)."""
         fs = 44100
         pcm = np.array([32767, -32768, 16384, 0] * 1000, dtype=np.int16)
         ruta = tmp_path / "pcm16.wav"
         sf.write(ruta, pcm, fs, subtype="PCM_16")
 
-        senal, _ = cargar_audio(ruta)
+        senal, _ = load_audio(ruta)
         assert senal.dtype == np.float64
         assert np.max(np.abs(senal)) <= 1.0
         assert np.max(np.abs(senal)) > 0.99
@@ -96,30 +96,30 @@ class TestCargarAudio:
 # --------------------------------------------------------------------------- #
 # Sintesis de RI
 # --------------------------------------------------------------------------- #
-class TestSintetizarRI:
-    """Tests para la funcion sintetizar_ri."""
+class TestGenerateSyntheticIR:
+    """Tests para la funcion generate_synthetic_ir."""
 
-    def test_sintetizar_ri_duracion(self):
-        """La RI tiene duracion * fs muestras."""
-        fs, duracion = 44100, 1.5
-        ri = sintetizar_ri({500: 1.0, 1000: 0.8}, fs, duracion)
-        assert isinstance(ri, np.ndarray)
-        assert len(ri) == int(duracion * fs)
+    def test_synthetic_ir_duration(self):
+        """La RI tiene duration * fs muestras."""
+        fs, duration = 44100, 1.5
+        ir = generate_synthetic_ir(duration, {500: 1.0, 1000: 0.8}, fs)
+        assert isinstance(ir, np.ndarray)
+        assert len(ir) == int(duration * fs)
 
-    def test_sintetizar_ri_decaimiento(self):
+    def test_synthetic_ir_decay(self):
         """El decaimiento en la banda de 1 kHz corresponde a T60 = 2 s (+-10 %)."""
         fs, t60 = 44100, 2.0
-        ri = sintetizar_ri({1000: t60}, fs, duracion=3 * t60)
+        ir = generate_synthetic_ir(3 * t60, {1000: t60}, fs)
         sos = sps.butter(4, [1000 / np.sqrt(2), 1000 * np.sqrt(2)], "bandpass", fs=fs, output="sos")
-        ri_banda = sps.sosfiltfilt(sos, ri)
-        t60_medido = _t60_desde_schroeder(ri_banda, fs)
+        ir_banda = sps.sosfiltfilt(sos, ir)
+        t60_medido = _t60_desde_schroeder(ir_banda, fs)
         assert abs(t60_medido - t60) <= 0.1 * t60, f"T60 medido = {t60_medido:.2f} s"
 
 
 # --------------------------------------------------------------------------- #
 # Deconvolucion
 # --------------------------------------------------------------------------- #
-def test_obtener_ri_pico():
+def test_impulse_response_peak():
     """La RI recuperada por deconvolucion se parece a la original (correlacion > 0.9)."""
     fs = 44100
     rng = np.random.default_rng(0)
@@ -128,24 +128,24 @@ def test_obtener_ri_pico():
     # (dentro del rango del sweep) con un filtro causal.
     n = int(0.5 * fs)
     t = np.arange(n) / fs
-    ri = 0.3 * rng.standard_normal(n) * np.exp(-3 * np.log(10) / 0.3 * t)
-    ri[0] = 1.0
+    ir = 0.3 * rng.standard_normal(n) * np.exp(-3 * np.log(10) / 0.3 * t)
+    ir[0] = 1.0
     sos = sps.butter(2, [100, 10000], "bandpass", fs=fs, output="sos")
-    ri = sps.sosfilt(sos, ri)
+    ir = sps.sosfilt(sos, ir)
 
-    sweep, filtro_inv = generar_sine_sweep(20, 20000, 2.0, fs)
-    grabacion = sps.fftconvolve(sweep, ri)  # grabacion simulada
-    ri_rec = obtener_ri_desde_sweep(grabacion, filtro_inv)
+    sweep, inverse_filter = generate_sine_sweep_pair(2.0, 20, 20000, fs)
+    recording = sps.fftconvolve(sweep, ir)  # grabacion simulada
+    ir_rec = get_impulse_response(recording, inverse_filter)
 
     # Alinear por correlacion cruzada y comparar el tramo superpuesto.
-    xcorr = sps.correlate(ri_rec, ri, mode="full", method="fft")
-    desplazamiento = int(np.argmax(np.abs(xcorr))) - (len(ri) - 1)
+    xcorr = sps.correlate(ir_rec, ir, mode="full", method="fft")
+    desplazamiento = int(np.argmax(np.abs(xcorr))) - (len(ir) - 1)
     if desplazamiento >= 0:
-        tramo_rec = ri_rec[desplazamiento : desplazamiento + len(ri)]
-        tramo_ref = ri[: len(tramo_rec)]
+        tramo_rec = ir_rec[desplazamiento : desplazamiento + len(ir)]
+        tramo_ref = ir[: len(tramo_rec)]
     else:
-        tramo_rec = ri_rec[: len(ri) + desplazamiento]
-        tramo_ref = ri[-desplazamiento : -desplazamiento + len(tramo_rec)]
+        tramo_rec = ir_rec[: len(ir) + desplazamiento]
+        tramo_ref = ir[-desplazamiento : -desplazamiento + len(tramo_rec)]
     correlacion = abs(np.corrcoef(tramo_rec, tramo_ref)[0, 1])
     assert correlacion > 0.9, f"correlacion = {correlacion:.3f}"
 
@@ -154,40 +154,40 @@ def test_obtener_ri_pico():
 # Filtro de octava
 # --------------------------------------------------------------------------- #
 def _respuesta_en_frecuencia(fc: float, fs: int) -> tuple[np.ndarray, np.ndarray]:
-    """Respuesta en frecuencia (dB) de filtro_octava medida con un impulso centrado."""
+    """Respuesta en frecuencia (dB) de filter_single_band medida con un impulso centrado."""
     n = fs  # 1 s -> resolucion de 1 Hz
     delta = np.zeros(n)
     delta[n // 2] = 1.0
-    h = filtro_octava(delta, fc, fs)
+    h = filter_single_band(delta, fs, fc)
     mag = np.abs(np.fft.rfft(h))
     f = np.fft.rfftfreq(n, 1 / fs)
     return f, 20 * np.log10(mag + 1e-300)
 
 
-class TestFiltroOctava:
-    """Tests para la funcion filtro_octava."""
+class TestFilterSingleBand:
+    """Tests para la funcion filter_single_band."""
 
-    def test_filtro_octava_frecuencia_central(self):
+    def test_filter_single_band_center_frequency(self):
         """Un seno en fc pasa sin atenuacion apreciable (+-1 dB)."""
         fs, fc = 48000, 1000.0
         t = np.arange(2 * fs) / fs
         seno = np.sin(2 * np.pi * fc * t)
-        salida = filtro_octava(seno, fc, fs)
+        salida = filter_single_band(seno, fs, fc)
         centro = slice(fs // 2, -fs // 2)  # descartar transitorios
         ganancia_db = 20 * np.log10(np.std(salida[centro]) / np.std(seno[centro]))
         assert abs(ganancia_db) <= 1.0, f"ganancia en fc = {ganancia_db:.2f} dB"
 
-    def test_filtro_octava_atenuacion(self):
+    def test_filter_single_band_attenuation(self):
         """Un seno dos octavas por encima de fc queda atenuado mas de 20 dB."""
         fs, fc = 48000, 1000.0
         t = np.arange(2 * fs) / fs
         seno = np.sin(2 * np.pi * 4 * fc * t)
-        salida = filtro_octava(seno, fc, fs)
+        salida = filter_single_band(seno, fs, fc)
         centro = slice(fs // 2, -fs // 2)
         ganancia_db = 20 * np.log10(np.std(salida[centro]) / np.std(seno[centro]))
         assert ganancia_db < -20, f"ganancia en 4*fc = {ganancia_db:.2f} dB"
 
-    def test_filtro_octava_respuesta_frecuencia(self):
+    def test_filter_single_band_frequency_response(self):
         """0 dB en fc, caida en los bordes de banda y > 20 dB a una octava de distancia."""
         fs, fc = 48000, 1000.0
         f, h_db = _respuesta_en_frecuencia(fc, fs)
@@ -207,24 +207,24 @@ class TestFiltroOctava:
 # --------------------------------------------------------------------------- #
 # Escala logaritmica
 # --------------------------------------------------------------------------- #
-class TestAEscalaLog:
-    """Tests para la funcion a_escala_log."""
+class TestLogarithmicScaleConversion:
+    """Tests para la funcion logarithmic_scale_conversion."""
 
-    def test_a_escala_log_tipo(self):
+    def test_logarithmic_scale_type(self):
         """Retorna un np.ndarray de la misma longitud."""
         x = np.array([1.0, 0.5])
-        db = a_escala_log(x)
+        db = logarithmic_scale_conversion(x)
         assert isinstance(db, np.ndarray)
         assert len(db) == len(x)
 
-    def test_a_escala_log_maximo_cero(self):
+    def test_logarithmic_scale_max_zero(self):
         """El valor maximo de la salida es 0 dB."""
         x = np.array([0.1, 1.0, 0.5, 0.25])
-        db = a_escala_log(x)
+        db = logarithmic_scale_conversion(x)
         assert abs(np.max(db)) < 1e-10
         assert int(np.argmax(db)) == 1
 
-    def test_a_escala_log_relacion(self):
+    def test_logarithmic_scale_ratio(self):
         """Una senal con amplitud mitad da -6 dB."""
-        db = a_escala_log(np.array([1.0, 0.5]))
+        db = logarithmic_scale_conversion(np.array([1.0, 0.5]))
         assert abs(db[1] - 20 * np.log10(0.5)) < 0.1

@@ -9,12 +9,12 @@ resto de la API, los tests y el CI funcionan en maquinas sin placa de audio.
 import numpy as np
 
 
-def reproducir_y_grabar(signal: np.ndarray, fs: int, duracion_grabacion: float) -> np.ndarray:
+def play_and_record(signal: np.ndarray, fs: int, record_duration: float) -> np.ndarray:
     """Reproduce una senal y graba simultaneamente (``sounddevice.playrec``).
 
     Consideraciones:
 
-    - ``duracion_grabacion`` debe ser mayor o igual a la duracion de la senal
+    - ``record_duration`` debe ser mayor o igual a la duracion de la senal
       para capturar la cola de reverberacion del recinto.
     - Aceptar senales mono (array 1D) y estereo (array 2D ``(muestras, canales)``)
       sin asumir la forma.
@@ -29,13 +29,13 @@ def reproducir_y_grabar(signal: np.ndarray, fs: int, duracion_grabacion: float) 
         Senal a reproducir (1D mono o 2D ``(muestras, canales)``).
     fs : int
         Frecuencia de muestreo en Hz.
-    duracion_grabacion : float
+    record_duration : float
         Duracion total de la grabacion en segundos.
 
     Returns
     -------
     np.ndarray
-        Senal grabada, con ``int(duracion_grabacion * fs)`` muestras.
+        Senal grabada, con ``int(record_duration * fs)`` muestras.
 
     Raises
     ------

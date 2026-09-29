@@ -25,9 +25,9 @@ El flujo nuevo:
 - Llevar todo a escala logarítmica para el análisis
 
 !!! note "De qué clases viene"
-    **Clase 8 · Convolución y deconvolución** — convolución, propiedades (asociatividad), deconvolución. Es el fundamento de `obtener_ri_desde_sweep()`.
+    **Clase 8 · Convolución y deconvolución** — convolución, propiedades (asociatividad), deconvolución. Es el fundamento de `get_impulse_response()`.
 
-    **Clase 9 · Frecuencia y filtros** — FFT, ventanas, espectrogramas, Butterworth, bandas IEC 61260. Es el fundamento de `filtro_octava()`.
+    **Clase 9 · Frecuencia y filtros** — FFT, ventanas, espectrogramas, Butterworth, bandas IEC 61260. Es el fundamento de `filter_single_band()`.
 
     Si esas dos clases las tienen frescas, M2 se resuelve casi por composición.
 
@@ -41,7 +41,7 @@ Cargar un WAV o FLAC y devolver **(señal, fs)** normalizado entre -1 y 1.
 
 Detalles que no son obvios:
 
-- Soporte mono *y* estéreo: si el archivo es estéreo, `cargar_audio` lo devuelve en mono promediando los canales
+- Soporte mono *y* estéreo: si el archivo es estéreo, `load_audio` lo devuelve en mono promediando los canales
 - Validar la extensión antes de leer — no es lo mismo un .wav corrupto que un .mp3 mal etiquetado
 - El `fs` sale del header del archivo — nunca lo asuman
 - Normalizar al máximo absoluto evita que un archivo grabado con poco nivel les arruine los plots después
@@ -49,7 +49,7 @@ Detalles que no son obvios:
 !!! note "Caso real · OpenAIR"
     Para la validación manual van a usar RI de **OpenAIR** (catálogo público). Vienen en variedad de sample rates (44.1, 48, 96 kHz) y resoluciones (16 o 24 bit).
 
-    Si su `cargar_audio` hace asunciones, se rompe en el primer archivo de ahí.
+    Si su `load_audio` hace asunciones, se rompe en el primer archivo de ahí.
 
     Recomendación: `soundfile.read()` (más robusto que `scipy.io.wavfile`) y siempre revisar `signal.shape` antes de usarla.
 
@@ -74,7 +74,7 @@ $n_i(t)$ es *ruido blanco filtrado por banda* con Butterworth pasa-banda IEC 612
 
 <figure class="figura-tp" markdown>
 [![Tres paneles: control sweep × inverso = delta; grabación en el recinto; RI recuperada por deconvolución](../img/m2/deconvolucion_ri.png)](../img/m2/deconvolucion_ri.png)
-<figcaption markdown="span">(a) control · sweep $\ast$ inverso $\approx \delta(t)$ · (b) grabación del recinto · (c) `obtener_ri_desde_sweep(grabacion, filtro_inverso)`</figcaption>
+<figcaption markdown="span">(a) control · sweep $\ast$ inverso $\approx \delta(t)$ · (b) grabación del recinto · (c) `get_impulse_response(recording, inverse_filter)`</figcaption>
 </figure>
 
 <div class="audios-tp">
@@ -91,7 +91,7 @@ $$
 y(t) * x_{\text{inv}}(t) = (x * h) * x_{\text{inv}} = h(t) * (x * x_{\text{inv}}) \approx h(t) * \delta(t) = h(t)
 $$
 
-La firma de la spec es `obtener_ri_desde_sweep(grabacion, filtro_inverso)`. Implementación: `scipy.signal.fftconvolve(grabacion, filtro_inverso, mode='full')`, ubicar el pico con `np.argmax(np.abs(...))` y recortar la cola. `fftconvolve` es órdenes de magnitud más rápido que `convolve` para señales largas (la grabación típica son ~3-5 s a 48 kHz).
+La firma de la spec es `get_impulse_response(recording, inverse_filter)`. Implementación: `scipy.signal.fftconvolve(recording, inverse_filter, mode='full')`, ubicar el pico con `np.argmax(np.abs(...))` y recortar la cola. `fftconvolve` es órdenes de magnitud más rápido que `convolve` para señales largas (la grabación típica son ~3-5 s a 48 kHz).
 
 <small>Especificación (m2_procesamiento) §3 — Farina (2000). Test: correlación cruzada con la RI original > 0.9. En el panel (b) la $h_\text{sala}$ está simulada con el modelo de la spec (ruido $\times$ envolvente) para poder mostrar el flujo completo sin grabar realmente.</small>
 
@@ -144,16 +144,16 @@ Inversa de Fourier → recuperás $h(t)$. La propiedad de Farina del sweep es ex
 !!! note "Resumen operacional"
     | Qué tenés | De dónde sale |
     |---|---|
-    | `x(t)` · sweep | M1 — `sweep, x_inv = generar_sine_sweep(f1, f2, duracion, fs)` |
-    | `x_inv(t)` · inverso | M1 — el segundo valor que devuelve `generar_sine_sweep` |
+    | `x(t)` · sweep | M1 — `sweep, inverse_filter = generate_sine_sweep_pair(duration, f1, f2, fs)` |
+    | `x_inv(t)` · inverso | M1 — el segundo valor que devuelve `generate_sine_sweep_pair` |
     | `y(t)` · grabación | el micrófono en la sala |
-    | `h(t)` · RI | `obtener_ri_desde_sweep(y, x_inv)` |
+    | `h(t)` · RI | `get_impulse_response(recording, inverse_filter)` |
 
-    Tres entradas conocidas, una salida deseada. La función de M2 es una sola línea: `scipy.signal.fftconvolve(grabacion, filtro_inverso, mode='full')` más ubicar el pico y recortar.
+    Tres entradas conocidas, una salida deseada. La función de M2 es una sola línea: `scipy.signal.fftconvolve(recording, inverse_filter, mode='full')` más ubicar el pico y recortar.
 
 > **Material extendido:** [Álgebra de la deconvolución](m2_algebra_deconvolucion.md) — derivación detallada de las propiedades, comparación con MLS, implementación paso a paso, referencias.
 
-### Función 04 · filtro_octava(signal, fc, fs, orden)
+### Función 04 · filter_single_band(signal, fs, center_freq, order)
 
 <figure class="figura-tp" markdown>
 [![Respuestá en frecuencia de filtros Butterworth de octava IEC 61260](../img/m2/filtros_octava.png)](../img/m2/filtros_octava.png)
@@ -180,11 +180,11 @@ Norma **IEC 61260**: $f_\text{inf} = f_c \cdot 2^{-1/2}$, $f_\text{sup} = f_c \c
     import numpy as np
     import scipy.signal
 
-    def filtro_octava(signal, fc, fs, orden=4):
-        f_inf = fc / np.sqrt(2)
-        f_sup = fc * np.sqrt(2)
+    def filter_single_band(signal, fs, center_freq, order=4):
+        f_inf = center_freq / np.sqrt(2)
+        f_sup = center_freq * np.sqrt(2)
         # forma SOS (secciones de segundo orden): estable también en las bandas graves
-        sos = scipy.signal.butter(orden, [f_inf, f_sup], btype='band', fs=fs, output='sos')
+        sos = scipy.signal.butter(order, [f_inf, f_sup], btype='band', fs=fs, output='sos')
         return scipy.signal.sosfiltfilt(sos, signal)
     ```
 
@@ -211,7 +211,7 @@ Detalles que no aparecen en la fórmula pero rompen la implementación:
     ```python
     import numpy as np
 
-    def a_escala_log(signal):
+    def logarithmic_scale_conversion(signal):
         # 1. Reemplazar ceros para evitar log(0) = -inf
         safe = np.where(signal == 0, np.finfo(float).eps, np.abs(signal))
         # 2. Normalizar al maximo y convertir a dB
@@ -265,7 +265,7 @@ Una herramienta web para comparar sus resultados contra los de la cátedra *en v
 https://rir-api-frontend.onrender.com
 
 !!! note "Analizador"
-    Suben un WAV de una RI (la que sintetizaron con su `sintetizar_ri`, o una de OpenAIR) y la app calcula:
+    Suben un WAV de una RI (la que sintetizaron con su `generate_synthetic_ir`, o una de OpenAIR) y la app calcula:
 
     - SNR · cutoff Lundeby · ratio EDT/T30
     - T30/T20/T10/EDT por banda con la gráfica de la sección anterior
@@ -281,17 +281,17 @@ https://rir-api-frontend.onrender.com
 
 ## Funciones a implementar
 
-### 1. `cargar_audio(ruta)`
+### 1. `load_audio(path)`
 
 **Firma sugerida:**
 ```python
-def cargar_audio(ruta: str | Path) -> tuple[np.ndarray, int]:
+def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
     """
     Carga un archivo de audio WAV o FLAC.
 
     Parameters
     ----------
-    ruta : str | Path
+    path : str | Path
         Ruta al archivo de audio.
 
     Returns
@@ -309,6 +309,9 @@ def cargar_audio(ruta: str | Path) -> tuple[np.ndarray, int]:
     """
 ```
 
+!!! note "Equivalencia con la API de referencia"
+    RIR-API no tiene una función de servicio para esto: cada router lee el archivo con `soundfile.read` y promedia los canales si es estéreo. Acá lo centralizamos en `load_audio` para no repetir esa lógica en cada endpoint de M3.
+
 **Consideraciones:**
 - Soportar al menos los formatos WAV y FLAC.
 - Utilizar `soundfile` o `scipy.io.wavfile` para la carga.
@@ -318,25 +321,25 @@ def cargar_audio(ruta: str | Path) -> tuple[np.ndarray, int]:
 
 ---
 
-### 2. `sintetizar_ri(t60_por_banda, fs, duracion)`
+### 2. `generate_synthetic_ir(duration, t60_values, fs)`
 
 **Firma sugerida:**
 ```python
-def sintetizar_ri(
-    t60_por_banda: dict[float, float], fs: int, duracion: float
+def generate_synthetic_ir(
+    duration: float, t60_values: dict[float, float], fs: int
 ) -> np.ndarray:
     """
     Sintetiza una respuesta al impulso con valores de T60 conocidos por banda.
 
     Parameters
     ----------
-    t60_por_banda : dict[float, float]
+    duration : float
+        Duracion total de la RI sintetizada en segundos.
+    t60_values : dict[float, float]
         Diccionario {frecuencia_central_Hz: T60_segundos}.
         Ejemplo: {125: 2.0, 250: 1.8, 500: 1.5, 1000: 1.2, 2000: 1.0, 4000: 0.8}
     fs : int
         Frecuencia de muestreo en Hz.
-    duracion : float
-        Duracion total de la RI sintetizada en segundos.
 
     Returns
     -------
@@ -344,6 +347,9 @@ def sintetizar_ri(
         Respuesta al impulso sintetizada.
     """
 ```
+
+!!! note "Equivalencia con la API de referencia"
+    `generate_synthetic_ir` de RIR-API recibe además `bandwidth` (octavas o tercios) y parámetros opcionales (`amplitude`, `noise`, `displacement_time`, `output_path`). Acá alcanza con bandas de octava y los tres argumentos obligatorios, en el mismo orden relativo (`duration`, `t60_values`, `fs`).
 
 **Fundamento matemático:**
 
@@ -365,9 +371,9 @@ $$\alpha = \frac{60}{T_{60} \cdot 20 \log_{10}(e)} = \frac{3\ln(10)}{T_{60}}$$
 
 **Procedimiento de síntesis multi-banda:**
 
-1. Para cada banda de frecuencia en `t60_por_banda`:
-   a. Generar ruido blanco de duración `duracion`.
-   b. Filtrar con filtro pasa-banda centrado en la frecuencia central (usar `filtro_octava` del punto 4).
+1. Para cada banda de frecuencia en `t60_values`:
+   a. Generar ruido blanco de duración `duration`.
+   b. Filtrar con filtro pasa-banda centrado en la frecuencia central (usar `filter_single_band` del punto 4).
    c. Aplicar la envolvente exponencial con el $\alpha$ correspondiente al $T_{60}$ de esa banda.
 2. Sumar todas las componentes filtradas.
 3. Normalizar la señal resultante.
@@ -376,21 +382,21 @@ $$\alpha = \frac{60}{T_{60} \cdot 20 \log_{10}(e)} = \frac{3\ln(10)}{T_{60}}$$
 
 ---
 
-### 3. `obtener_ri_desde_sweep(grabacion, filtro_inverso)`
+### 3. `get_impulse_response(recording, inverse_filter)`
 
 **Firma sugerida:**
 ```python
-def obtener_ri_desde_sweep(
-    grabacion: np.ndarray, filtro_inverso: np.ndarray
+def get_impulse_response(
+    recording: np.ndarray, inverse_filter: np.ndarray
 ) -> np.ndarray:
     """
     Obtiene la respuesta al impulso mediante deconvolucion.
 
     Parameters
     ----------
-    grabacion : np.ndarray
+    recording : np.ndarray
         Senal grabada que contiene la respuesta del recinto al sweep.
-    filtro_inverso : np.ndarray
+    inverse_filter : np.ndarray
         Filtro inverso del sweep utilizado en la excitacion.
 
     Returns
@@ -399,6 +405,9 @@ def obtener_ri_desde_sweep(
         Respuesta al impulso del recinto.
     """
 ```
+
+!!! note "Equivalencia con la API de referencia"
+    RIR-API no tiene una función con este nombre: la deconvolución se hace con la función genérica `convolve_signals(recording, inverse_filter)` (endpoint `/signals/convolve`). Acá la pedimos como función propia porque además recorta la RI en el pico y la normaliza.
 
 **Fundamento matemático:**
 
@@ -429,12 +438,12 @@ Usar `scipy.signal.fftconvolve` con `mode='full'` y luego recortar la señal al 
 
 ---
 
-### 4. `filtro_octava(signal, fc, fs, orden)`
+### 4. `filter_single_band(signal, fs, center_freq, order)`
 
 **Firma sugerida:**
 ```python
-def filtro_octava(
-    signal: np.ndarray, fc: float, fs: int, orden: int = 4
+def filter_single_band(
+    signal: np.ndarray, fs: int, center_freq: float, order: int = 4
 ) -> np.ndarray:
     """
     Aplica un filtro pasa-banda de octava segun IEC 61260.
@@ -443,11 +452,11 @@ def filtro_octava(
     ----------
     signal : np.ndarray
         Senal de entrada.
-    fc : float
-        Frecuencia central de la banda en Hz.
     fs : int
         Frecuencia de muestreo en Hz.
-    orden : int, optional
+    center_freq : float
+        Frecuencia central de la banda en Hz.
+    order : int, optional
         Orden del filtro Butterworth (default: 4).
 
     Returns
@@ -456,6 +465,9 @@ def filtro_octava(
         Senal filtrada en la banda de octava especificada.
     """
 ```
+
+!!! note "Equivalencia con la API de referencia"
+    Mismo nombre y mismo orden (`signal`, `fs`, `center_freq`) que `filter_single_band` de RIR-API. El cuarto argumento difiere: la de cátedra recibe `bandwidth` (`'octave'` o `'third'`); acá solo se piden octavas y el cuarto argumento es el `order` del Butterworth.
 
 **Fundamento matemático:**
 
@@ -489,7 +501,7 @@ Las frecuencias centrales normalizadas de las bandas de octava son:
 
 2. Diseñar un filtro Butterworth pasa-banda con `scipy.signal.butter` en forma de secciones de segundo orden (SOS), estable en todas las bandas:
    ```python
-   sos = scipy.signal.butter(orden, [f_inf, f_sup], btype='band', fs=fs, output='sos')
+   sos = scipy.signal.butter(order, [f_inf, f_sup], btype='band', fs=fs, output='sos')
    ```
 
 3. Aplicar el filtro con `scipy.signal.sosfiltfilt` para obtener fase cero (filtra en ambas direcciones):
@@ -503,11 +515,11 @@ Las frecuencias centrales normalizadas de las bandas de octava son:
 
 ---
 
-### 5. `a_escala_log(signal)`
+### 5. `logarithmic_scale_conversion(signal)`
 
 **Firma sugerida:**
 ```python
-def a_escala_log(signal: np.ndarray) -> np.ndarray:
+def logarithmic_scale_conversion(signal: np.ndarray) -> np.ndarray:
     """
     Convierte una senal a escala logaritmica normalizada (dB).
 
@@ -522,6 +534,9 @@ def a_escala_log(signal: np.ndarray) -> np.ndarray:
         Senal en decibeles, normalizada respecto al valor maximo.
     """
 ```
+
+!!! note "Equivalencia con la API de referencia"
+    En RIR-API esta función se llama `logarithmicScaleConversion` (camelCase). Acá la pedimos en *snake_case*, como indica PEP 8 para nombres de funciones (y como exige la regla `N802` de `ruff`, que el CI tiene activada).
 
 **Fundamento matemático:**
 
@@ -546,23 +561,23 @@ El resultado es una señal en dB donde el valor máximo es 0 dB.
 ### Test 1: Carga de audio
 
 ```python
-def test_cargar_audio_wav():
+def test_load_audio_wav():
     """Verificar carga correcta de archivo WAV."""
 
-def test_cargar_audio_formato_invalido():
+def test_load_audio_invalid_format():
     """Verificar que lanza error con formato no soportado."""
 
-def test_cargar_audio_normalizacion():
+def test_load_audio_normalization():
     """Verificar que la salida esta normalizada entre -1 y 1."""
 ```
 
 ### Test 2: Síntesis de RI
 
 ```python
-def test_sintetizar_ri_duracion():
+def test_synthetic_ir_duration():
     """Verificar que la RI tiene la duracion correcta."""
 
-def test_sintetizar_ri_decaimiento():
+def test_synthetic_ir_decay():
     """
     Verificar que el decaimiento por banda corresponde
     aproximadamente al T60 especificado.
@@ -579,7 +594,7 @@ def test_sintetizar_ri_decaimiento():
 ### Test 3: Deconvolución
 
 ```python
-def test_obtener_ri_pico():
+def test_impulse_response_peak():
     """
     Verificar que la RI obtenida por deconvolucion tiene
     un pico principal claramente identificable.
@@ -589,19 +604,19 @@ def test_obtener_ri_pico():
 **Procedimiento:**
 1. Generar un sweep y su filtro inverso (M1).
 2. Convolucionar el sweep con una RI sintetizada conocida para simular una grabación.
-3. Aplicar `obtener_ri_desde_sweep` con la grabación simulada y el filtro inverso.
+3. Aplicar `get_impulse_response` con la grabación simulada y el filtro inverso.
 4. Verificar que la RI recuperada se parece a la RI original (correlacion cruzada > 0.9).
 
 ### Test 4: Filtro de octava
 
 ```python
-def test_filtro_octava_frecuencia_central():
+def test_filter_single_band_center_frequency():
     """Verificar que el filtro pasa correctamente la frecuencia central."""
 
-def test_filtro_octava_atenuacion():
+def test_filter_single_band_attenuation():
     """Verificar atenuacion fuera de banda."""
 
-def test_filtro_octava_respuesta_frecuencia():
+def test_filter_single_band_frequency_response():
     """Verificar que la respuesta cumple -3 dB en frecuencias de corte."""
 ```
 
@@ -614,10 +629,10 @@ def test_filtro_octava_respuesta_frecuencia():
 ### Test 5: Escala logarítmica
 
 ```python
-def test_a_escala_log_maximo_cero():
+def test_logarithmic_scale_max_zero():
     """Verificar que el valor maximo de la salida es 0 dB."""
 
-def test_a_escala_log_relacion():
+def test_logarithmic_scale_ratio():
     """Verificar que una senal con amplitud mitad da -6 dB."""
 ```
 
@@ -655,7 +670,7 @@ Todos los requisitos de M1 aplican, más los siguientes:
   app/
   ├── services/
   │   ├── __init__.py
-  │   ├── audio_io.py         # M1: reproducir_y_grabar (placa de audio)
+  │   ├── audio_io.py         # M1: play_and_record (placa de audio)
   │   ├── pink_noise.py       # M1
   │   ├── sine_sweep.py       # M1
   │   ├── signal_utils.py     # M2
@@ -712,7 +727,7 @@ Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les a
 
 !!! note "06 · Mono y estéreo · una línea"
     `if signal.ndim > 1: signal = signal.mean(axis=1)`  
-    Va dentro de `cargar_audio`: así el resto del procesamiento recibe siempre una señal mono.
+    Va dentro de `load_audio`: así el resto del procesamiento recibe siempre una señal mono.
 
 ### Lo que tiene que estar para el 4 de noviembre
 

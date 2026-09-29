@@ -57,9 +57,9 @@ def test_analysis_endpoint():
     fs = 44100
     t = np.arange(fs) / fs
     rng = np.random.default_rng(0)
-    ri = 0.9 * rng.standard_normal(fs) * np.exp(-3 * np.log(10) / 0.5 * t)
-    ri = ri / np.max(np.abs(ri)) * 0.9
-    archivos = {"file": ("ri.wav", _wav_en_memoria(ri, fs), "audio/wav")}
+    ir = 0.9 * rng.standard_normal(fs) * np.exp(-3 * np.log(10) / 0.5 * t)
+    ir = ir / np.max(np.abs(ir)) * 0.9
+    archivos = {"file": ("ir.wav", _wav_en_memoria(ir, fs), "audio/wav")}
     response = client.post("/api/v1/analysis/impulse-response", files=archivos)
     assert response.status_code == 200
     assert isinstance(response.json(), dict)
@@ -68,7 +68,9 @@ def test_analysis_endpoint():
 @xfail_m3
 def test_signals_pink_noise_endpoint():
     """/api/v1/signals/pink-noise genera y devuelve un WAV valido."""
-    response = client.post("/api/v1/signals/pink-noise", json={"duracion": 1.0, "fs": 44100})
+    response = client.post(
+        "/api/v1/signals/pink-noise", json={"duration": 1.0, "sample_rate": 44100}
+    )
     assert response.status_code == 200
     senal, fs = sf.read(io.BytesIO(response.content))
     assert fs == 44100

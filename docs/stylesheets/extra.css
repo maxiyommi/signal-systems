@@ -429,3 +429,39 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
   .md-typeset ol.viaje__actores > li:nth-child(2)::after { content: none; }
 }
 @media (prefers-reduced-motion: reduce) { .md-typeset ol.viaje__actores > li { transition: none; } }
+
+/* ── Demos de servicios (M1): generar, escuchar y ver ── */
+/* Colores de los gráficos (los lee paleta() de trabajo_practico/interactivos/_comun/grafico.js) */
+[data-md-color-scheme="slate"] {
+  --g-fondo: #161b22; --g-tinta: #c9d1d9; --g-violeta: #818cf8; --g-senal: #fbbf24;
+  --g-grilla: #30363d; --g-eje: #8b949e; --g-tenue: #6e7681; --g-mal: #f85149;
+}
+[data-md-color-scheme="default"] {
+  --g-fondo: #f6f8fa; --g-tinta: #1f2328; --g-violeta: #6d28d9; --g-senal: #d97706;
+  --g-grilla: #d8dee4; --g-eje: #59636e; --g-tenue: #8c959f; --g-mal: #cf222e;
+}
+.md-typeset .servicio-demo {
+  margin: 1rem 0 1.4rem; padding: 0.9rem 1rem 1rem; border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.6rem; background: var(--md-default-bg-color);
+}
+.md-typeset .servicio-demo canvas { display: block; width: 100%; margin-top: 0.6rem; border-radius: 0.4rem; }
+.md-typeset .servicio-demo__cabecera { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
+.md-typeset .servicio-demo__verbo { padding: 0.1rem 0.5rem; border-radius: 0.3rem; font-size: 0.68rem; font-weight: 800; background: #1a3a2a; color: #34d399; }
+[data-md-color-scheme="default"] .md-typeset .servicio-demo__verbo { background: #d1fae5; color: #059669; }
+.md-typeset .servicio-demo__nota { font-size: 0.7rem; color: var(--md-default-fg-color--light); }
+.md-typeset .servicio-demo__controles { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem 1rem; }
+.md-typeset .servicio-demo__controles label { display: grid; grid-template-columns: auto auto; gap: 0 0.5rem; font-size: 0.72rem; font-family: var(--md-code-font-family); min-width: 10rem; }
+.md-typeset .servicio-demo__controles input[type="range"] { grid-column: 1 / -1; accent-color: var(--md-primary-fg-color); }
+.md-typeset .servicio-demo__controles output { font-weight: 700; color: var(--md-default-fg-color); }
+.md-typeset .servicio-demo__grupo { display: flex; gap: 0.3rem; }
+.md-typeset .servicio-demo button {
+  font: 500 0.74rem var(--md-text-font-family, sans-serif); color: var(--md-default-fg-color); cursor: pointer;
+  background: var(--md-default-bg-color--light, transparent); border: 1px solid var(--md-default-fg-color--lightest); border-radius: 2rem; padding: 0.4em 1em;
+}
+.md-typeset .servicio-demo button:hover { border-color: var(--md-primary-fg-color); }
+.md-typeset .servicio-demo button[aria-pressed="true"] { background: var(--md-primary-fg-color); border-color: var(--md-primary-fg-color); color: #fff; }
+.md-typeset .servicio-demo__dato { margin: 0.5rem 0 0; font-size: 0.75rem; }
+.md-typeset .servicio-demo__respuesta { margin-top: 0.6rem; font-size: 0.72rem; }
+.md-typeset .servicio-demo__respuesta pre { margin: 0.4rem 0 0; }
+/* Rótulo de carpeta arriba de cada snippet: dónde va el código */
+.md-typeset .ruta-archivo { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.8rem 0 -0.4rem; padding: 0.15rem 0.6rem; border-radius: 0.4rem 0.4rem 0 0; font: 600 0.68rem var(--md-code-font-family); background: var(--md-code-bg-color); color: var(--md-default-fg-color--light); }

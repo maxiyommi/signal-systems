@@ -33,7 +33,7 @@ export function crearConvolucion(seccion, { audios }) {
           <legend>La sala h(t)</legend>
           <label>T60 <input type="range" data-p="t60" min="0.1" max="4" step="0.1" value="${estado.t60}"><output data-o="t60"></output></label>
           <label>Sonido reverberado en la mezcla <input type="range" data-p="mezcla" min="0" max="1" step="0.05" value="${estado.mezcla}"><output data-o="mezcla"></output></label>
-          <p class="small">h(t) = ruido × envolvente exponencial, que cae 60 dB en T60: el mismo modelo que <code>sintetizar_ri</code> de M2.</p>
+          <p class="small">h(t) = ruido × envolvente exponencial, que cae 60 dB en T60: el mismo modelo que <code>generate_synthetic_ir</code> de M2.</p>
         </fieldset>
       </div>
       <canvas class="grafico-h" role="img" aria-label="Respuesta al impulso h(t) diseñada"></canvas>

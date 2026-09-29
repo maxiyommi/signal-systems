@@ -8,330 +8,369 @@
 
 ## Objetivo
 
-Implementar las funciones de generación de señales de excitación necesarias para mediciones acústicas según ISO 3382, así como la función de reproducción y grabación simultánea. Al finalizar este milestone, el sistema debe ser capaz de generar ruido rosa, sine sweep logarítmico con su filtro inverso, y realizar adquisición de audio en tiempo real.
+Implementar los **servicios de generación** de señales de excitación que necesita una medición acústica según ISO 3382, y el servicio que reproduce y graba en simultáneo. Al terminar este milestone, la API sabe generar ruido rosa y un sine sweep logarítmico con su filtro inverso, y adquirir audio en tiempo real.
 
 ---
 
 ## Del plano al primer cálculo
 
-En M0 dibujaron las tres capas. En M1 le ponen **código real** a una sola de ellas: `services/`.
+En M0 dibujaron las tres capas. En M1 le ponen **código real** a una sola: los **servicios** (`app/services/`). Son las funciones que después la API va a exponer como endpoints: cada una hace un cálculo, recibe NumPy y devuelve NumPy, sin saber nada de HTTP ni de JSON.
 
-Los routers no se tocan todavía. Los schemas tampoco. Solo:
+M1 son **tres servicios**. Cada uno se presenta igual:
 
-- `services/pink_noise.py`
-- `services/sine_sweep.py`
-- `services/audio_io.py` (reproducir/grabar)
+1. **Qué es:** el concepto de Señales y Sistemas detrás.
+2. **Probalo:** generalo, escuchalo y miralo acá mismo, con el mismo algoritmo que la API de referencia.
+3. **El código, archivo por archivo:** el service que implementan, el test que lo verifica y cómo lo va a exponer la API en M3.
 
-`generar_ruido_rosa` y `generar_sine_sweep` son *funciones puras de DSP*: entra `numpy`, sale `numpy`, y no dependen de HTTP, JSON ni FastAPI. `reproducir_y_grabar` es la única que toca el mundo exterior (la placa de audio), por eso vive en su propio módulo.
+Dónde va cada cosa en el repositorio:
 
-!!! note "Por qué importa"
-    Una función pura es fácil de testear, se conecta a un endpoint en M3 sin cambios y evita problemas cuando en M2 se combinen funciones.
-
-    **Regla:** la lógica de DSP no depende de HTTP ni de FastAPI. La E/S (archivos, placa de audio) queda en funciones propias, separadas del cálculo.
-
-## Conceptos y figuras
-
-Lo que hay que entender antes de implementar, con los gráficos de la implementación de referencia de la cátedra.
-
-### Función 01 · ruido rosa
-
-<figure class="figura-tp" markdown>
-[![PSD del ruido rosa generado con la API de referencia](../img/m1/psd_ruido_rosa.png)](../img/m1/psd_ruido_rosa.png)
-<figcaption markdown="span">PSD medida (Welch) vs. teórico -3 dB/oct · pendiente medida sobre la API de cátedra: -3.02 dB/oct</figcaption>
-</figure>
-
-El ruido rosa (también llamado ruido $1/f$) se caracteriza por tener una densidad espectral de potencia inversamente proporcional a la frecuencia: $S(f) = k/f$, donde $k$ es una constante. En escala logarítmica esto corresponde a una caída de **-3 dB/octava** (o equivalentemente, -10 dB/década), porque $\Delta L = 10 \log_{10}(1/2) \approx -3{,}01$ dB.
-
-Algoritmo recomendado **Voss-McCartney**: suma de múltiples generadores de ruido blanco que se actualizan a tasas $2^i$. El generador $i$ se actualiza cuando el bit $i$ del índice $n$ cambia. La suma produce una señal cuyo espectro se aproxima a $1/f$. Alternativa aceptable: ruido blanco filtrado en frecuencia con $H(f) = 1/\sqrt{f}$.
-
-<small>Especificación (m1_generacion) §1 — *Voss, R. F. & Clarke, J. (1978). "1/f noise" in music. JASA 63(1).*</small>
-
-### Función 02 · sine sweep logarítmico
-
-<figure class="figura-tp" markdown>
-[![Waveform y espectrograma del sine sweep 20 Hz a 20 kHz](../img/m1/sweep_waveform_spec.png)](../img/m1/sweep_waveform_spec.png)
-<figcaption markdown="span">Sweep 20 Hz → 20 kHz, 5 s · línea blanca discontinua = f(t) teórica</figcaption>
-</figure>
-
-El sine sweep logarítmico (también llamado exponencial) se define como: $\;x(t) = \sin\!\left[\tfrac{2\pi f_1 T}{\ln(f_2/f_1)}\!\left(e^{t \ln(f_2/f_1)/T} - 1\right)\right]$, con $f_1$ frecuencia inicial, $f_2$ final, $T$ duración total, $0 \leq t \leq T$.
-
-La frecuencia instantánea es $f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}$, que crece exponencialmente de $f_1$ a $f_2$. Logarítmico (no lineal) porque buscamos *igual energía por octava* — coincide con la escala de los filtros de bandas IEC 61260 que van a usar en M2.
-
-<small>Especificación (m1_generacion) §2 — *Farina, A. (2000). Simultaneous measurement of impulse response and distortion with a swept-sine technique. 108th AES Convention.*</small>
-
-### Función 02 · filtro inverso
-
-<figure class="figura-tp" markdown>
-[![Convolución del sweep con su filtro inverso resultando en un pico tipo impulso](../img/m1/convolucion_impulso.png)](../img/m1/convolucion_impulso.png)
-<figcaption markdown="span">Convolución sweep ∗ inverso · pico vs. piso ≈ 98 dB de relación (el test pide ≥ 60 dB)</figcaption>
-</figure>
-
-El filtro inverso se obtiene invirtiendo temporalmente el sweep y aplicando una corrección de amplitud que compensa la distribución no uniforme de energía por frecuencia del sweep logarítmico: $\;x_{\text{inv}}(t) = x(T - t) \cdot A(t)$, con envolvente $A(t) = e^{-t \ln(f_2/f_1)/T}$, que decae de 1 a $f_1/f_2$: el sweep invertido termina en las frecuencias bajas, y ahí la envolvente las atenúa ($-6$ dB/octava).
-
-La corrección es necesaria porque el sweep logarítmico permanece **más tiempo en las frecuencias bajas** y concentra más energía allí. El filtro inverso compensa atenuando esa banda. La convolución del sweep con su filtro inverso debe producir un impulso ideal: $\;x(t) * x_{\text{inv}}(t) \approx \delta(t)$. En la práctica, un pulso estrecho con lóbulos laterales pequeños.
-
-<small>Especificación (m1_generacion) §2 (filtro inverso) — *esto es lo que en M2 usan para deconvolucionar la respuesta al impulso de la sala.*</small>
-
-### Reproducir y grabar en simultáneo
-
-!!! note "Backend · `sounddevice`"
-    ```python
-    import sounddevice as sd
-    recorded = sd.playrec(signal, samplerate=fs, channels=1, blocking=True)
-    sd.wait()
-    ```
-
-    Reproduce y graba a la vez sobre el mismo dispositivo (con una latencia fija, que se compensa con un *pre-roll*: unos milisegundos de silencio al inicio). Documenten en el README la config: dispositivo, canales, fs, buffer size.
-
-!!! note "Detalles que rompen mediciones"
-    - **Pre-roll** 0.5-1 s — compensa latencia del driver
-    - **Grabación > señal** — capturar la cola de reverberación
-    - Manejar **mono y estéreo** sin asumir shape
-    - Error **informativo** si no hay device
-
-!!! note "Cliente · cómo se hace lo mismo en el navegador (frontend de cátedra)"
-    `sd.playrec()` no existe en el browser. La analogía es la **Web Audio API**:
-
-    - `navigator.mediaDevices.getUserMedia({audio: {sampleRate: {ideal: fs}}})` — permiso + micrófono
-    - `new AudioContext({sampleRate})` + `AudioBufferSourceNode` — reproduce la señal de excitación
-    - `new MediaRecorder(stream, {mimeType: 'audio/webm;codecs=opus'})` — captura el stream
-    - Conversión a WAV en cliente con `OfflineAudioContext` antes de subir al backend
-    - `setSinkId()` para elegir salida cuando hay múltiples dispositivos
-
-    **Mismos cuidados**: sample rate explícito, manejo de permisos denegados, latencia entre play y record (acá la introduce el browser, no el driver de audio). Grabar en mono para no duplicar el tamaño del archivo subido al backend.
-
-## Funciones a implementar
-
-### 1. `generar_ruido_rosa(duracion, fs)`
-
-**Firma sugerida:**
-```python
-def generar_ruido_rosa(duracion: float, fs: int) -> np.ndarray:
-    """
-    Genera ruido rosa utilizando el algoritmo Voss-McCartney.
-
-    Parameters
-    ----------
-    duracion : float
-        Duracion de la senal en segundos.
-    fs : int
-        Frecuencia de muestreo en Hz.
-
-    Returns
-    -------
-    np.ndarray
-        Array con la senal de ruido rosa normalizada entre -1 y 1.
-    """
+```text
+rir-api/
+├── app/
+│   ├── services/
+│   │   ├── pink_noise.py     ← Servicio 1 · generate_pink_noise          (M1)
+│   │   ├── sine_sweep.py     ← Servicio 2 · generate_sine_sweep_pair     (M1)
+│   │   └── audio_io.py       ← Servicio 3 · play_and_record              (M1)
+│   ├── schemas/signals.py    ← qué datos recibe cada endpoint            (M3)
+│   └── routers/signals.py    ← los endpoints /api/v1/signals/...         (M3)
+└── tests/
+    └── test_generacion.py    ← los tests de los tres servicios           (M1)
 ```
 
-**Fundamento matemático:**
+El template ya trae los tres archivos de `services/` con la firma y el docstring, y los tests escritos: su trabajo es reemplazar el `raise NotImplementedError` por la implementación hasta que los tests pasen.
 
-El ruido rosa (también llamado ruido $1/f$) se caracteriza por tener una densidad espectral de potencia inversamente proporcional a la frecuencia:
+!!! note "Por qué importa"
+    Un servicio es una **función pura**: con los mismos datos devuelve siempre lo mismo. Es fácil de testear, se conecta a un endpoint en M3 sin cambios, y en M2 se puede combinar con otros servicios sin sorpresas.
+
+    **Regla:** la lógica de DSP no depende de HTTP ni de FastAPI. La entrada y salida (archivos, placa de audio) queda en funciones propias, separadas del cálculo: por eso `play_and_record` vive en su propio archivo.
+
+!!! note "Los nombres coinciden con la API de referencia"
+    Los servicios, sus parámetros y los endpoints usan los mismos nombres que la implementación de la cátedra ([Swagger](https://rir-api.onrender.com/docs)): `generate_pink_noise` atiende `POST /api/v1/signals/pink-noise`, `generate_sine_sweep_pair` atiende `POST /api/v1/signals/sine-sweep/pair`. Los nombres van en inglés; la documentación, en español.
+
+---
+
+## Servicio 1 · `generate_pink_noise(duration, fs)`
+
+### Qué es
+
+El **ruido rosa** (o ruido $1/f$) tiene una densidad espectral de potencia inversamente proporcional a la frecuencia:
 
 $$S(f) = \frac{k}{f}$$
 
-donde $k$ es una constante. En escala logarítmica, esto corresponde a una caída de **-3 dB/octava** (o equivalentemente, -10 dB/decada).
+Entre dos frecuencias separadas una octava ($f_2 = 2 f_1$) el nivel cae
 
-La relación en decibeles entre dos frecuencias separadas por una octava ($f_2 = 2 f_1$) es:
+$$\Delta L = 10 \log_{10}\left(\frac{S(f_2)}{S(f_1)}\right) = 10 \log_{10}\left(\frac{1}{2}\right) \approx -3{,}01 \text{ dB}$$
 
-$$\Delta L = 10 \log_{10}\left(\frac{S(f_2)}{S(f_1)}\right) = 10 \log_{10}\left(\frac{f_1}{f_2}\right) = 10 \log_{10}\left(\frac{1}{2}\right) \approx -3.01 \text{ dB}$$
+o sea **−3 dB por octava**. Como cada octava es el doble de ancha que la anterior, la energía **por octava** queda igual en todas: por eso se usa para medir salas, que se analizan por bandas de octava (M2).
 
-**Algoritmo Voss-McCartney:**
+Hay dos formas de generarlo, y la API de referencia tiene las dos:
 
-El algoritmo genera ruido rosa mediante la suma de múltiples generadores de ruido blanco que se actualizan a diferentes tasas. Cada generador $i$ se actualiza cada $2^i$ muestras. La suma de todos los generadores produce una señal cuyo espectro se aproxima a $1/f$.
+- **Voss-McCartney** (`/pink-noise/voss`): se suman 16 a 20 generadores de ruido blanco; el generador $i$ se renueva cada $2^i$ muestras (cuando cambia el bit $i$ del índice $n$). Los que cambian lento aportan los graves.
+- **Filtrado de ruido blanco** (`/pink-noise`): ruido blanco que pasa por un filtro con $|H(f)| \propto 1/\sqrt{f}$, por ejemplo un IIR de tercer orden (`scipy.signal.lfilter`) o en frecuencia con la FFT: $X_{rosa}(f) = X_{blanco}(f) / \sqrt{f}$.
 
-El procedimiento es:
+<small>Voss, R. F. & Clarke, J. (1978). "1/f noise" in music: Music from 1/f noise. *JASA*, 63(1), 258-263.</small>
 
-1. Definir $N_{bits}$ generadores de ruido blanco (típicamente 16-20).
-2. Para cada muestra $n$, determinar cuales generadores deben actualizarse. El generador $i$ se actualiza cuando el bit $i$ de $n$ cambia respecto a $n-1$.
-3. Sumar las salidas de todos los generadores.
-4. Normalizar la señal resultante.
+### Probalo
 
-**Alternativa aceptable:** También se acepta la generación en el dominio frecuencial, creando ruido blanco y aplicando un filtro con respuesta $H(f) = 1/\sqrt{f}$:
+Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seguir la recta de −3 dB/octava. Probá los dos métodos y distintas duraciones (con más duración, más promedios y una curva más lisa).
 
-$$X_{rosa}(f) = X_{blanco}(f) \cdot \frac{1}{\sqrt{f}}$$
+<div class="servicio-demo" data-servicio="pink-noise"></div>
 
-**Referencia:** Voss, R. F., & Clarke, J. (1978). "1/f noise" in music: Music from 1/f noise. *Journal of the Acoustical Society of América*, 63(1), 258-263.
+### El código, archivo por archivo
+
+=== "Service"
+
+    <span class="ruta-archivo">app/services/pink_noise.py</span>
+
+    ```python
+    import numpy as np
+
+
+    def generate_pink_noise(duration: float, fs: int) -> np.ndarray:
+        """Genera una senal de ruido rosa de la duracion especificada.
+
+        Parameters
+        ----------
+        duration : float
+            Duracion de la senal en segundos.
+        fs : int
+            Frecuencia de muestreo en Hz.
+
+        Returns
+        -------
+        np.ndarray
+            Ruido rosa normalizado entre -1 y 1, de largo int(duration * fs).
+        """
+        raise NotImplementedError("Implementar en Milestone 1")   # ← acá va su implementación
+    ```
+
+    Mismo nombre y orden de argumentos que `generate_pink_noise` de la API de referencia. La de cátedra además acepta `output_path` para escribir el WAV; acá el service **solo devuelve el array** (guardar archivos es tarea del router, en M3).
+
+=== "Test"
+
+    <span class="ruta-archivo">tests/test_generacion.py</span>
+
+    ```python
+    def test_pink_noise_spectrum(self):
+        """La PSD cae aproximadamente -3 dB/octava entre 100 Hz y 10 kHz."""
+        fs = 44100
+        ruido = generate_pink_noise(10.0, fs)
+        f, pxx = sps.welch(ruido, fs=fs, nperseg=8192)
+        banda = (f >= 100) & (f <= 10000)
+        # Regresion de nivel (dB) contra octavas (log2 f): la pendiente es dB/octava.
+        pendiente = np.polyfit(np.log2(f[banda]), 10 * np.log10(pxx[banda]), 1)[0]
+        assert -4.0 <= pendiente <= -2.0, f"pendiente = {pendiente:.2f} dB/oct"
+    ```
+
+    Es lo mismo que calcula la demo: la densidad espectral con el método de Welch y la pendiente por regresión. En el mismo archivo están `test_pink_noise_duration`, `test_pink_noise_type` y `test_pink_noise_normalized` (largo, tipo y rango de la señal).
+
+=== "Endpoint (M3)"
+
+    En M1 no se escribe: así lo va a exponer la API en M3. El schema describe el pedido y el router llama al service.
+
+    <span class="ruta-archivo">app/schemas/signals.py</span>
+
+    ```python
+    class PinkNoiseRequest(BaseModel):
+        duration: float = Field(gt=0, le=60)            # segundos
+        sample_rate: int = Field(default=44100, ge=8000, le=192000)
+    ```
+
+    <span class="ruta-archivo">app/routers/signals.py</span>
+
+    ```python
+    @router.post("/pink-noise")                         # POST /api/v1/signals/pink-noise
+    async def pink_noise(req: PinkNoiseRequest):
+        audio = generate_pink_noise(req.duration, req.sample_rate)
+        return {"duration": req.duration, "sample_rate": req.sample_rate,
+                "num_samples": len(audio), "max_amplitude": float(np.max(np.abs(audio)))}
+    ```
 
 ---
 
-### 2. `generar_sine_sweep(f1, f2, duracion, fs)`
+## Servicio 2 · `generate_sine_sweep_pair(duration, f1, f2, fs)`
 
-**Firma sugerida:**
-```python
-def generar_sine_sweep(
-    f1: float, f2: float, duracion: float, fs: int
-) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Genera un sine sweep logaritmico y su filtro inverso.
+Devuelve **dos señales**: el sine sweep, que se reproduce en la sala, y su filtro inverso, que en M2 se usa para recuperar la respuesta al impulso.
 
-    Parameters
-    ----------
-    f1 : float
-        Frecuencia inicial en Hz.
-    f2 : float
-        Frecuencia final en Hz.
-    duracion : float
-        Duracion del sweep en segundos.
-    fs : int
-        Frecuencia de muestreo en Hz.
+### Qué es: el sine sweep logarítmico
 
-    Returns
-    -------
-    tuple[np.ndarray, np.ndarray]
-        Tupla con (sweep, filtro_inverso), ambos normalizados.
-    """
-```
+Un seno cuya frecuencia sube de $f_1$ a $f_2$ en $T$ segundos, de forma exponencial:
 
-**Fundamento matemático:**
+$$x(t) = \sin\left[\frac{2\pi f_1 T}{\ln(f_2/f_1)} \left(e^{t \ln(f_2/f_1)/T} - 1\right)\right], \qquad 0 \leq t \leq T$$
 
-El sine sweep logarítmico (también llamado exponencial) se define como:
-
-$$x(t) = \sin\left[\frac{2\pi f_1 T}{\ln(f_2/f_1)} \left(e^{t \ln(f_2/f_1)/T} - 1\right)\right]$$
-
-donde:
-- $f_1$ es la frecuencia inicial (Hz)
-- $f_2$ es la frecuencia final (Hz)
-- $T$ es la duración total del sweep (s)
-- $t$ es el tiempo, con $0 \leq t \leq T$
-
-La frecuencia instantanea del sweep en el instante $t$ es:
+Su frecuencia instantánea es
 
 $$f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}$$
 
-que crece exponencialmente de $f_1$ a $f_2$.
+que tarda **el mismo tiempo en recorrer cada octava**: igual energía por octava, como el ruido rosa y como los filtros de bandas de la IEC 61260 que van a usar en M2.
 
-**Filtro inverso:**
+### Qué es: el filtro inverso
 
-El filtro inverso se obtiene invirtiendo temporalmente el sweep y aplicando una corrección de amplitud que compensa la distribución no uniforme de energía por frecuencia del sweep logarítmico:
+Es el sweep **invertido en el tiempo** y multiplicado por una envolvente de amplitud:
 
-$$x_{inv}(t) = x(T - t) \cdot A(t)$$
+$$x_{inv}(t) = x(T - t) \cdot A(t), \qquad A(t) = e^{-t \ln(f_2/f_1)/T}$$
 
-donde la envolvente de amplitud es:
-
-$$A(t) = e^{-t \ln(f_2/f_1)/T}$$
-
-Esta corrección es necesaria porque el sweep logarítmico permanece más tiempo en las frecuencias bajas, concentrando más energía allí. Como el sweep invertido recorre las frecuencias de $f_2$ a $f_1$, multiplicarlo por $A(t)$ (que decae de 1 a $f_1/f_2$) atenúa las bajas frecuencias en $-6$ dB/octava y el producto $X(f)\,X_{inv}(f)$ queda plano.
-
-!!! warning "Multiplicar, no dividir"
-    Dividir por $A(t)$ refuerza los graves en lugar de atenuarlos: la convolución sale inclinada unos ±40 dB entre 100 Hz y 10 kHz. Con la corrección bien aplicada, la implementación de referencia obtiene un pico ~98 dB por encima del resto.
-
-La convolución del sweep con su filtro inverso debe producir un impulso (delta de Dirac) ideal:
+El sweep pasa más tiempo en los graves (cada octava grave dura lo mismo que una aguda, pero tiene menos ciclos), así que concentra más energía ahí. El sweep invertido recorre de $f_2$ a $f_1$, y $A(t)$, que decae de 1 a $f_1/f_2$, atenúa los graves $-6$ dB/octava para compensar. Resultado: el sweep convolucionado con su filtro inverso da un **impulso**,
 
 $$x(t) * x_{inv}(t) \approx \delta(t)$$
 
-En la práctica, el resultado será un pulso estrecho con lóbulos laterales pequeños.
+y por eso en M2, convolucionando la grabación de la sala con el filtro inverso, se obtiene la respuesta al impulso de la sala.
 
-**Referencia:** Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." *108th AES Convention*.
+!!! warning "Multiplicar, no dividir"
+    Dividir por $A(t)$ refuerza los graves en lugar de atenuarlos. Con la corrección bien aplicada, el pico del impulso queda ~90 dB por encima del resto; sin la corrección, ~50 dB; dividiendo, ~35 dB. El test pide 60 dB justamente para detectar estos errores.
+
+<small>Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." *108th AES Convention*.</small>
+
+### Probalo
+
+Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro inverso, y mirá tres cosas: el espectrograma (la energía sigue la curva teórica $f(t)$), la forma del filtro inverso (la amplitud baja hacia el final, en los graves) y la convolución de los dos, que da un impulso.
+
+<div class="servicio-demo" data-servicio="sine-sweep"></div>
+
+### El código, archivo por archivo
+
+=== "Service"
+
+    <span class="ruta-archivo">app/services/sine_sweep.py</span>
+
+    ```python
+    import numpy as np
+
+
+    def generate_sine_sweep_pair(
+        duration: float, f1: float, f2: float, fs: int
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Genera un sine sweep logaritmico y su filtro inverso.
+
+        Parameters
+        ----------
+        duration : float
+            Duracion del sweep en segundos.
+        f1, f2 : float
+            Frecuencias inicial y final en Hz.
+        fs : int
+            Frecuencia de muestreo en Hz.
+
+        Returns
+        -------
+        tuple[np.ndarray, np.ndarray]
+            (sweep, inverse_filter), ambos de largo int(duration * fs) y normalizados.
+        """
+        raise NotImplementedError("Implementar en Milestone 1")   # ← acá va su implementación
+    ```
+
+    Mismo nombre y orden de argumentos que `generate_sine_sweep_pair` de la API de referencia, que además define valores por defecto (`f1=20`, `f2=20000`, `fs=44100`). Pueden agregarlos: los tests pasan los cuatro argumentos.
+
+=== "Tests"
+
+    <span class="ruta-archivo">tests/test_generacion.py</span>
+
+    ```python
+    def test_sine_sweep_frequency_range(self):
+        """El sweep barre de f1 a f2 con frecuencia instantanea creciente."""
+        f1, f2, fs = 20.0, 20000.0, 44100
+        sweep, _ = generate_sine_sweep_pair(5.0, f1, f2, fs)
+        f, _, sxx = sps.spectrogram(sweep, fs=fs, nperseg=4096, noverlap=2048)
+        f_pico = f[np.argmax(sxx, axis=0)]           # frecuencia con mas energia en cada instante
+        df = f[1] - f[0]
+        assert f_pico[0] < 200                        # arranca cerca de f1
+        assert f_pico[-1] > 0.75 * f2                 # termina cerca de f2
+        assert np.all(np.diff(f_pico) >= -2 * df)     # y siempre sube
+
+
+    def test_sweep_convolution_impulse(self):
+        """sweep * inverse_filter aproxima un impulso (pico >= 60 dB sobre el resto)."""
+        fs = 44100
+        sweep, inverse_filter = generate_sine_sweep_pair(5.0, 20, 20000, fs)
+        impulso = sps.fftconvolve(sweep, inverse_filter)
+        energia = impulso**2
+        i_pico = int(np.argmax(energia))
+        ventana = int(0.01 * fs)                      # se excluyen +-10 ms alrededor del pico
+        resto = np.concatenate([energia[: i_pico - ventana], energia[i_pico + ventana :]])
+        relacion_db = 10 * np.log10(energia[i_pico] / np.mean(resto))
+        assert relacion_db >= 60, f"pico/resto = {relacion_db:.1f} dB"
+    ```
+
+    El primero es el espectrograma de la demo; el segundo, la convolución (la demo muestra la misma relación pico/resto). En el mismo archivo están `test_sine_sweep_pair_returns_tuple` y `test_sine_sweep_duration`.
+
+=== "Endpoint (M3)"
+
+    En M1 no se escribe: así lo va a exponer la API en M3.
+
+    <span class="ruta-archivo">app/schemas/signals.py</span>
+
+    ```python
+    class SineSweepRequest(BaseModel):
+        duration: float = Field(gt=0, le=60)
+        start_freq: float = Field(default=20, ge=1, le=20000)
+        end_freq: float = Field(default=20000, ge=1, le=22050)
+        sample_rate: int = Field(default=44100, ge=8000, le=192000)
+    ```
+
+    <span class="ruta-archivo">app/routers/signals.py</span>
+
+    ```python
+    @router.post("/sine-sweep/pair")                    # POST /api/v1/signals/sine-sweep/pair
+    async def sine_sweep_pair(req: SineSweepRequest):
+        sweep, inverse_filter = generate_sine_sweep_pair(
+            req.duration, req.start_freq, req.end_freq, req.sample_rate
+        )
+        return {"sine_sweep": {"num_samples": len(sweep)},
+                "inverse_filter": {"num_samples": len(inverse_filter)}}
+    ```
 
 ---
 
-### 3. `reproducir_y_grabar(signal, fs, duracion_grabacion)`
+## Servicio 3 · `play_and_record(signal, fs, record_duration)`
 
-**Firma sugerida:**
-```python
-def reproducir_y_grabar(
-    signal: np.ndarray, fs: int, duracion_grabacion: float
-) -> np.ndarray:
-    """
-    Reproduce una senal y graba simultaneamente.
+### Qué es
 
-    Parameters
-    ----------
-    signal : np.ndarray
-        Senal a reproducir.
-    fs : int
-        Frecuencia de muestreo en Hz.
-    duracion_grabacion : float
-        Duracion total de la grabacion en segundos.
-        Debe ser >= duracion de la senal para capturar la reverberacion.
+Para medir una sala hay que **reproducir** la señal de excitación (el sweep) por un parlante y **grabar al mismo tiempo** lo que capta el micrófono. En la cadena de medición del [marco conceptual](../marco_conceptual.md#5-la-medicion-es-una-cadena-de-sistemas), este servicio es el tramo PC → DAC → … → ADC → PC.
 
-    Returns
-    -------
-    np.ndarray
-        Array con la senal grabada.
-    """
-```
-
-**Consideraciones técnicas:**
-
-- Utilizar la librería `sounddevice` con la función `sd.playrec()` para reproducción y grabación simultánea.
-- La `duracion_grabacion` debe ser mayor que la duración de la señal reproducida para capturar la cola de reverberación del recinto.
-- La función debe manejar correctamente señales mono y estéreo.
-- Se recomienda agregar un silencio inicial (pre-roll) de 0.5-1 s antes de la señal para compensar latencia del sistema de audio.
-- La función debe verificar que los dispositivos de audio están disponibles y manejar errores de manera informativa.
-
-**Nota sobre la configuración de audio:** Cada grupo deberá documentar en el README la configuración de su interfaz de audio (dispositivo, canales, frecuencia de muestreo soportada, buffer size).
-
----
-
-## Tests requeridos
-
-Todos los tests deben estar en el directorio `tests/` y ejecutarse con `pytest`.
-
-### Test 1: Espectro del ruido rosa
+Con `sounddevice` se hace con una sola función, que reproduce y graba sobre el mismo dispositivo:
 
 ```python
-def test_ruido_rosa_espectro():
-    """
-    Verificar que el espectro del ruido rosa tiene una pendiente
-    de aproximadamente -3 dB/octava.
-    """
+import sounddevice as sd
+recording = sd.playrec(signal, samplerate=fs, channels=1, blocking=True)
 ```
 
-**Procedimiento:**
-1. Generar ruido rosa de al menos 10 segundos a 44100 Hz.
-2. Calcular la PSD (Power Spectral Density) usando el método de Welch (`scipy.signal.welch`).
-3. Calcular la pendiente en dB/octava entre 100 Hz y 10000 Hz.
-4. Verificar que la pendiente está entre -4 dB/octava y -2 dB/octava (tolerancia de 1 dB/octava respecto al valor teórico de -3 dB/octava).
+Detalles que, si se olvidan, arruinan la medición:
 
-### Test 2: Rango de frecuencias del sine sweep
+- **Grabar más de lo que dura la señal** (`record_duration` > duración del sweep): después del sweep la sala sigue sonando, y esa cola de reverberación es justamente lo que se quiere medir.
+- **Pre-roll:** 0,5 a 1 s de silencio al inicio, para compensar la latencia del driver de audio.
+- **Mono y estéreo:** aceptar arrays 1D y 2D sin suponer la forma.
+- **Error informativo** (`RuntimeError` con un mensaje claro) si no hay dispositivo de audio.
+- Documentar en el README la configuración: dispositivo, canales, frecuencia de muestreo y tamaño de buffer.
 
-```python
-def test_sine_sweep_rango_frecuencias():
-    """
-    Verificar que el sine sweep cubre el rango de frecuencias
-    especificado de f1 a f2.
-    """
-```
+Este servicio no tiene demo: necesita su placa de audio. La prueba real (parlante + micrófono, puede ser la PC) es parte de la validación de M1.
 
-**Procedimiento:**
-1. Generar un sweep de 20 Hz a 20000 Hz de 5 segundos a 44100 Hz.
-2. Calcular el espectrograma de la señal.
-3. Verificar que hay energía significativa en las frecuencias inicial y final.
-4. Verificar que la frecuencia instantanea crece monótonamente.
+!!! note "Cómo lo hace la API de referencia"
+    RIR-API no tiene este servicio: en la versión de cátedra la grabación la hace el frontend, en el navegador, con la Web Audio API (`getUserMedia` para el micrófono, `AudioBufferSourceNode` para reproducir, `MediaRecorder` para grabar). Los cuidados son los mismos: frecuencia de muestreo explícita, permisos del micrófono y latencia entre reproducir y grabar. En este TP el servicio vive en el backend y usa `sounddevice`.
 
-### Test 3: Convolución sweep * filtro inverso
+### El código, archivo por archivo
 
-```python
-def test_sweep_convolucion_impulso():
-    """
-    Verificar que la convolucion del sweep con su filtro inverso
-    produce una aproximacion a un impulso.
-    """
-```
+=== "Service"
 
-**Procedimiento:**
-1. Generar sweep y filtro inverso.
-2. Calcular la convolución (preferiblemente vía FFT con `scipy.signal.fftconvolve`).
-3. Encontrar el pico máximo de la señal resultante.
-4. Verificar que la energía del pico es al menos **60 dB** superior a la energía promedio del resto de la señal (excluyendo una ventana alrededor del pico). Con el filtro inverso correcto se obtienen ~98 dB; un inverso mal corregido queda por debajo de 60 dB.
+    <span class="ruta-archivo">app/services/audio_io.py</span>
 
-### Test 4: Reproducción y grabación
+    ```python
+    import numpy as np
 
-```python
-def test_reproducir_y_grabar_forma():
-    """
-    Verificar que la funcion maneja correctamente senales mono y estereo.
-    """
-```
 
-**Procedimiento:**
-1. Verificar que la función acepta arrays 1D (mono) y 2D (estéreo).
-2. Verificar que la grabación tiene la duración esperada (número de muestras = `duracion_grabacion * fs`, con tolerancia del 1%).
-3. Verificar que la función lanza una excepción informativa si no hay dispositivo de audio disponible.
+    def play_and_record(signal: np.ndarray, fs: int, record_duration: float) -> np.ndarray:
+        """Reproduce una senal y graba simultaneamente.
 
-**Nota:** Este test puede requerir un mock del dispositivo de audio para ejecutarse en CI. Documentar como ejecutarlo localmente.
+        Parameters
+        ----------
+        signal : np.ndarray
+            Senal a reproducir (1D mono o 2D estereo).
+        fs : int
+            Frecuencia de muestreo en Hz.
+        record_duration : float
+            Duracion total de la grabacion en segundos (>= duracion de la senal).
+
+        Returns
+        -------
+        np.ndarray
+            La senal grabada, de largo int(record_duration * fs).
+
+        Raises
+        ------
+        RuntimeError
+            Si no hay dispositivo de audio disponible.
+        """
+        # import sounddevice as sd   (adentro de la funcion: los tests lo reemplazan)
+        raise NotImplementedError("Implementar en Milestone 1")   # ← acá va su implementación
+    ```
+
+=== "Test"
+
+    <span class="ruta-archivo">tests/test_generacion.py</span>
+
+    ```python
+    def test_play_and_record_shape(monkeypatch):
+        """Acepta mono y estereo, respeta la duracion y falla informativamente sin dispositivo."""
+        fs, record_duration = 44100, 2.0
+        esperado = int(record_duration * fs)
+        monkeypatch.setitem(sys.modules, "sounddevice", _sounddevice_falso())
+
+        mono = np.zeros(fs)                           # 1 s, array 1D
+        estereo = np.zeros((fs, 2))                   # 1 s, array 2D (muestras, canales)
+        for senal in (mono, estereo):
+            recording = play_and_record(senal, fs, record_duration)
+            assert isinstance(recording, np.ndarray)
+            assert abs(recording.shape[0] - esperado) <= 0.01 * esperado
+
+        monkeypatch.setitem(sys.modules, "sounddevice", _sounddevice_falso(hay_dispositivo=False))
+        with pytest.raises(RuntimeError):
+            play_and_record(mono, fs, record_duration)
+    ```
+
+    El test **no usa la placa de audio**: reemplaza `sounddevice` por un módulo falso (un *mock*), así corre también en el CI de GitHub, donde no hay parlantes. Por eso el `import sounddevice` va adentro de la función.
+
+=== "Endpoint"
+
+    No tiene endpoint: grabar con la placa de audio del servidor no tiene sentido en una API (el servidor está en un datacenter, no en la sala). La API recibe la grabación ya hecha como archivo, en M2 y M3.
 
 ---
 
@@ -382,13 +421,13 @@ Además de los tests automatizados, cada grupo entrega evidencia visual:
 Las capturas o PNG van en `docs/m1/` del repo y se enlazan desde el README.
 
 !!! note "Referencia visual"
-    Comparen contra los gráficos de las funciones 01 y 02 de esta página. Las pendientes y SNRs deberían estar en el mismo orden.
+    Comparen sus gráficos con las demos de los servicios 1 y 2 de esta página, que usan el algoritmo de la API de referencia. Los valores deberían estar en el mismo orden:
 
     - Ruido rosa: -3 ± 1 dB/oct
     - Sweep: barrido monótono visible
     - Convolución: pico claro > 60 dB sobre el piso
 
-    Si su resultado se ve muy distinto a las imágenes de cátedra, hay un bug — empiecen por ahí.
+    Si su resultado se ve muy distinto al de las demos, hay un bug: empiecen por ahí.
 
 ### Buenas prácticas que ya vimos funcionar
 
@@ -402,7 +441,9 @@ Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les a
     Deja margen (*headroom*) para evitar saturación al guardar el WAV o reproducir.
 
 !!! note "03 · Descartar el transitorio si filtran ruido blanco"
-    Si generan el ruido rosa filtrando ruido blanco con un filtro IIR (`scipy.signal.lfilter`), generen `N + N_trans` muestras y eliminen las primeras `N_trans`: los primeros milisegundos salen con el transitorio del filtro.
+    Si generan el ruido rosa filtrando ruido blanco con un filtro IIR (`scipy.signal.lfilter`), generen `N + N_trans` muestras y eliminen las primeras `N_trans`: los primeros milisegundos salen con el transitorio del filtro. Una regla práctica es $N_{trans} = \ln(1000) / (1 - |p_{max}|)$, donde $p_{max}$ es el polo de mayor módulo (las muestras que tarda el transitorio en caer 60 dB). Para el filtro de la API de referencia da ~1430 muestras.
+
+    Ojo con los paréntesis: en la API de referencia está escrito `np.log(1000)/1 - max(np.abs(np.roots(A)))`, que por precedencia de operadores da ~6 muestras en lugar de ~1430. Es un bug real: un test del transitorio lo habría detectado.
 
 !!! note "04 · Generación ≠ Plotting"
     `pink_noise.py` genera. `signal_utils.py` grafica. Funciones distintas, archivos distintos. Si mañana cambian el plot, no rompen el generador.
@@ -435,7 +476,7 @@ Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les a
     uv sync                              # asegurar dependencias instaladas
     uv run pytest -v                     # correr todos los tests con output verboso
     uv run pytest -v tests/test_generacion.py  # correr solo un archivo
-    uv run pytest -v -k "ruido_rosa"     # correr tests que matchean el nombre
+    uv run pytest -v -k "pink_noise"     # correr tests que matchean el nombre
     ```
 
     `-v` (verbose) muestra cada test con su nombre y si pasó; sin `-v` solo ven puntos. `-k` filtra tests por substring del nombre — útil para correr solo lo que están tocando. Si un test falla, `pytest --pdb` abre el debugger en el punto exacto de la falla, y `pytest -x` detiene la corrida en el primer fallo.
@@ -444,12 +485,12 @@ Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les a
 
 Lo que tiene que estar en el tag `v0.1.0` el 28/10.
 
-- [ ] `generar_ruido_rosa` con test pasando
-- [ ] `generar_sine_sweep` + filtro inverso con tests pasando
-- [ ] `reproducir_y_grabar` con test de forma
+- [ ] `generate_pink_noise` con test pasando
+- [ ] `generate_sine_sweep_pair` + filtro inverso con tests pasando
+- [ ] `play_and_record` con test de forma
 - [ ] Las gráficas y la evidencia de validación en `docs/m1/`, enlazadas desde el README
-- [ ] `pytest -v` en verde — los 4 tests requeridos
-- [ ] Docstrings y type hints en las 3 funciones públicas
+- [ ] `pytest -v` en verde: los tests de los tres servicios
+- [ ] Docstrings y type hints en los 3 servicios
 - [ ] PRs mergeados, no commits directos a `main`
 - [ ] Tag `v0.1.0` anotado y empujado al remote
 

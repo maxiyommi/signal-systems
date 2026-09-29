@@ -12,9 +12,9 @@ import numpy as np
 import pytest
 from scipy import signal as sps
 
-from app.services.audio_io import reproducir_y_grabar
-from app.services.pink_noise import generar_ruido_rosa
-from app.services.sine_sweep import generar_sine_sweep
+from app.services.audio_io import play_and_record
+from app.services.pink_noise import generate_pink_noise
+from app.services.sine_sweep import generate_sine_sweep_pair
 
 pytestmark = pytest.mark.xfail(
     raises=NotImplementedError, strict=False, reason="se implementa en M1"
@@ -24,30 +24,30 @@ pytestmark = pytest.mark.xfail(
 # --------------------------------------------------------------------------- #
 # Ruido rosa
 # --------------------------------------------------------------------------- #
-class TestGenerarRuidoRosa:
-    """Tests para la funcion generar_ruido_rosa."""
+class TestGeneratePinkNoise:
+    """Tests para la funcion generate_pink_noise."""
 
-    def test_ruido_rosa_duracion(self):
-        """La longitud de la senal corresponde a duracion * fs."""
-        duracion, fs = 2.0, 44100
-        ruido = generar_ruido_rosa(duracion, fs)
-        assert len(ruido) == int(duracion * fs)
+    def test_pink_noise_duration(self):
+        """La longitud de la senal corresponde a duration * fs."""
+        duration, fs = 2.0, 44100
+        ruido = generate_pink_noise(duration, fs)
+        assert len(ruido) == int(duration * fs)
 
-    def test_ruido_rosa_tipo(self):
+    def test_pink_noise_type(self):
         """Retorna un np.ndarray 1D."""
-        ruido = generar_ruido_rosa(1.0, 44100)
+        ruido = generate_pink_noise(1.0, 44100)
         assert isinstance(ruido, np.ndarray)
         assert ruido.ndim == 1
 
-    def test_ruido_rosa_normalizado(self):
+    def test_pink_noise_normalized(self):
         """La senal esta normalizada entre -1 y 1."""
-        ruido = generar_ruido_rosa(1.0, 44100)
+        ruido = generate_pink_noise(1.0, 44100)
         assert np.max(np.abs(ruido)) <= 1.0
 
-    def test_ruido_rosa_espectro(self):
+    def test_pink_noise_spectrum(self):
         """La PSD cae aproximadamente -3 dB/octava entre 100 Hz y 10 kHz."""
         fs = 44100
-        ruido = generar_ruido_rosa(10.0, fs)
+        ruido = generate_pink_noise(10.0, fs)
         f, pxx = sps.welch(ruido, fs=fs, nperseg=8192)
         banda = (f >= 100) & (f <= 10000)
         # Regresion de nivel (dB) contra octavas (log2 f): la pendiente es dB/octava.
@@ -58,28 +58,28 @@ class TestGenerarRuidoRosa:
 # --------------------------------------------------------------------------- #
 # Sine sweep
 # --------------------------------------------------------------------------- #
-class TestGenerarSineSweep:
-    """Tests para la funcion generar_sine_sweep."""
+class TestGenerateSineSweepPair:
+    """Tests para la funcion generate_sine_sweep_pair."""
 
-    def test_sine_sweep_retorna_tupla(self):
-        """Retorna una tupla (sweep, filtro_inverso) de np.ndarray."""
-        resultado = generar_sine_sweep(20, 20000, 1.0, 44100)
+    def test_sine_sweep_pair_returns_tuple(self):
+        """Retorna una tupla (sweep, inverse_filter) de np.ndarray."""
+        resultado = generate_sine_sweep_pair(1.0, 20, 20000, 44100)
         assert isinstance(resultado, tuple)
         assert len(resultado) == 2
         assert isinstance(resultado[0], np.ndarray)
         assert isinstance(resultado[1], np.ndarray)
 
-    def test_sine_sweep_duracion(self):
-        """Ambas senales tienen longitud duracion * fs."""
-        duracion, fs = 3.0, 44100
-        sweep, filtro_inv = generar_sine_sweep(20, 20000, duracion, fs)
-        assert len(sweep) == int(duracion * fs)
-        assert len(filtro_inv) == int(duracion * fs)
+    def test_sine_sweep_duration(self):
+        """Ambas senales tienen longitud duration * fs."""
+        duration, fs = 3.0, 44100
+        sweep, inverse_filter = generate_sine_sweep_pair(duration, 20, 20000, fs)
+        assert len(sweep) == int(duration * fs)
+        assert len(inverse_filter) == int(duration * fs)
 
-    def test_sine_sweep_rango_frecuencias(self):
+    def test_sine_sweep_frequency_range(self):
         """El sweep barre de f1 a f2 con frecuencia instantanea creciente."""
         f1, f2, fs = 20.0, 20000.0, 44100
-        sweep, _ = generar_sine_sweep(f1, f2, 5.0, fs)
+        sweep, _ = generate_sine_sweep_pair(5.0, f1, f2, fs)
         f, _, sxx = sps.spectrogram(sweep, fs=fs, nperseg=4096, noverlap=2048)
         f_pico = f[np.argmax(sxx, axis=0)]
         df = f[1] - f[0]
@@ -89,17 +89,21 @@ class TestGenerarSineSweep:
         # Frecuencia instantanea monotonamente creciente (tolerancia de 2 bins).
         assert np.all(np.diff(f_pico) >= -2 * df)
 
-    def test_sweep_convolucion_impulso(self):
-        """sweep * filtro_inverso aproxima un impulso (pico >= 40 dB sobre el resto)."""
+    def test_sweep_convolution_impulse(self):
+        """sweep * inverse_filter aproxima un impulso (pico >= 60 dB sobre el resto).
+
+        Con la correccion de amplitud bien aplicada da ~90 dB; sin corregir, ~50 dB;
+        dividiendo en lugar de multiplicar, ~35 dB.
+        """
         fs = 44100
-        sweep, filtro_inv = generar_sine_sweep(20, 20000, 5.0, fs)
-        impulso = sps.fftconvolve(sweep, filtro_inv)
+        sweep, inverse_filter = generate_sine_sweep_pair(5.0, 20, 20000, fs)
+        impulso = sps.fftconvolve(sweep, inverse_filter)
         energia = impulso**2
         i_pico = int(np.argmax(energia))
         ventana = int(0.01 * fs)  # se excluyen +-10 ms alrededor del pico
         resto = np.concatenate([energia[: i_pico - ventana], energia[i_pico + ventana :]])
         relacion_db = 10 * np.log10(energia[i_pico] / np.mean(resto))
-        assert relacion_db >= 40, f"pico/resto = {relacion_db:.1f} dB"
+        assert relacion_db >= 60, f"pico/resto = {relacion_db:.1f} dB"
 
 
 # --------------------------------------------------------------------------- #
@@ -141,19 +145,19 @@ def _sounddevice_falso(hay_dispositivo: bool = True) -> types.ModuleType:
     return sd
 
 
-def test_reproducir_y_grabar_forma(monkeypatch):
+def test_play_and_record_shape(monkeypatch):
     """Acepta mono y estereo, respeta la duracion y falla informativamente sin dispositivo."""
-    fs, duracion_grabacion = 44100, 2.0
-    esperado = int(duracion_grabacion * fs)
+    fs, record_duration = 44100, 2.0
+    esperado = int(record_duration * fs)
     monkeypatch.setitem(sys.modules, "sounddevice", _sounddevice_falso())
 
     mono = np.zeros(fs)  # 1 s, array 1D
     estereo = np.zeros((fs, 2))  # 1 s, array 2D (muestras, canales)
     for senal in (mono, estereo):
-        grabacion = reproducir_y_grabar(senal, fs, duracion_grabacion)
-        assert isinstance(grabacion, np.ndarray)
-        assert abs(grabacion.shape[0] - esperado) <= 0.01 * esperado
+        recording = play_and_record(senal, fs, record_duration)
+        assert isinstance(recording, np.ndarray)
+        assert abs(recording.shape[0] - esperado) <= 0.01 * esperado
 
     monkeypatch.setitem(sys.modules, "sounddevice", _sounddevice_falso(hay_dispositivo=False))
     with pytest.raises(RuntimeError):
-        reproducir_y_grabar(mono, fs, duracion_grabacion)
+        play_and_record(mono, fs, record_duration)

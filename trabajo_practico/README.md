@@ -43,6 +43,8 @@ En cada **presentación** la cátedra presenta la consigna del milestone. En las
 
 ## Resumen de entregas por milestone
 
+Los nombres de funciones, parámetros y tests van en inglés y en *snake_case* (PEP 8), alineados con la implementación de referencia de la cátedra (ver [De idea a MVP](#de-idea-a-mvp-la-implementacion-de-referencia)); la documentación y los comentarios, en español. Cada especificación aclara dónde la firma difiere de la referencia.
+
 ### M0 · El plano (entrega 7/10)
 - README del repositorio con integrantes, roles, instrucciones y estructura.
 - Diagrama de arquitectura (Mermaid o draw.io).
@@ -52,28 +54,28 @@ En cada **presentación** la cátedra presenta la consigna del milestone. En las
 ### M1 · Generación de señales (entrega 28/10)
 | Función | Descripción |
 |---------|-------------|
-| `generar_ruido_rosa(duracion, fs)` | Ruido rosa (algoritmo Voss-McCartney). Espectro −3 dB/octava. |
-| `generar_sine_sweep(f1, f2, duracion, fs)` | Sine sweep logarítmico + filtro inverso. |
-| `reproducir_y_grabar(signal, fs, duracion_grabacion)` | Reproducción y grabación simultánea con `sounddevice`. |
+| `generate_pink_noise(duration, fs)` | Ruido rosa (algoritmo Voss-McCartney). Espectro −3 dB/octava. |
+| `generate_sine_sweep_pair(duration, f1, f2, fs)` | Sine sweep logarítmico + filtro inverso. |
+| `play_and_record(signal, fs, record_duration)` | Reproducción y grabación simultánea con `sounddevice`. |
 
 ### M2 · Procesamiento de la RI (entrega 4/11)
 | Función | Descripción |
 |---------|-------------|
-| `cargar_audio(ruta)` | Carga archivos WAV/FLAC; devuelve la señal en mono y la frecuencia de muestreo. |
-| `sintetizar_ri(t60_por_banda, fs, duracion)` | Sintetiza una RI con T60 conocidos para validar. |
-| `obtener_ri_desde_sweep(grabacion, filtro_inverso)` | Deconvolución vía FFT para obtener la RI. |
-| `filtro_octava(signal, fc, fs, orden)` | Filtro de banda de octava según IEC 61260 (Butterworth). |
-| `a_escala_log(signal)` | Conversión a escala logarítmica normalizada (dB). |
+| `load_audio(path)` | Carga archivos WAV/FLAC; devuelve la señal en mono y la frecuencia de muestreo. |
+| `generate_synthetic_ir(duration, t60_values, fs)` | Sintetiza una RI con T60 conocidos para validar. |
+| `get_impulse_response(recording, inverse_filter)` | Deconvolución vía FFT para obtener la RI. |
+| `filter_single_band(signal, fs, center_freq, order)` | Filtro de banda de octava según IEC 61260 (Butterworth). |
+| `logarithmic_scale_conversion(signal)` | Conversión a escala logarítmica normalizada (dB). |
 
 ### M3 · Producto final: API REST (entrega 18/11)
 | Componente | Descripción |
 |------------|-------------|
-| `suavizar_signal(signal, ventana)` | Envolvente: transformada de Hilbert o media móvil. |
-| `integral_schroeder(ri)` | Integración inversa de Schroeder. |
-| `regresion_lineal(x, y)` | Mínimos cuadrados para calcular los tiempos de reverberación. |
-| `calcular_parametros_acusticos(ri, fs)` | EDT, T10, T20, T30, D50 y C80 por banda de octava. |
+| `apply_smoothing(signal, fs, method, window_ms)` | Envolvente: transformada de Hilbert o media móvil. |
+| `apply_schroeder_integral(ir)` | Integración inversa de Schroeder. |
+| `linear_regression(x, y)` | Mínimos cuadrados para calcular los tiempos de reverberación. |
+| `calculate_parameters_from_ir(ir, fs)` | EDT, T10, T20, T30, D50 y C80 por banda de octava. |
 | **API REST (FastAPI)** | Endpoints que exponen la funcionalidad de M1, M2 y M3. |
-| `metodo_lundeby(ri, fs)` *(opcional)* | Estima el punto de corte por ruido de fondo; se valora dentro del criterio Funcionalidad. |
+| `apply_lundeby(ir, fs)` *(opcional)* | Estima el punto de corte por ruido de fondo; se valora dentro del criterio Funcionalidad. |
 
 ---
 

@@ -78,19 +78,19 @@ Seguí paso a paso qué pasa cuando alguien le pide ruido rosa a la API. Probá 
 <li data-actor="service"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></span><strong>Service</strong><span>la cocina</span></li>
 </ol>
 <ol class="viaje__pasos" data-caso="valido">
-<li data-actor="cliente" data-sentido="ida"><p>El cliente pide ruido rosa de 2 segundos. Manda un <strong>request</strong> a la dirección <code>POST /api/v1/signals/pink-noise</code> con los datos en JSON:</p><pre><code>{"duracion": 2, "fs": 44100}</code></pre></li>
+<li data-actor="cliente" data-sentido="ida"><p>El cliente pide ruido rosa de 2 segundos. Manda un <strong>request</strong> a la dirección <code>POST /api/v1/signals/pink-noise</code> con los datos en JSON:</p><pre><code>{"duration": 2, "sample_rate": 44100}</code></pre></li>
 <li data-actor="router" data-sentido="ida"><p>El <strong>router</strong> recibe el pedido. No calcula nada: primero se lo pasa al schema para que lo controle.</p></li>
-<li data-actor="schema" data-sentido="ida"><p>El <strong>schema</strong> controla la comanda: ¿<code>duracion</code> es un número mayor que 0 y como mucho 60? ¿<code>fs</code> es un entero? Todo en orden: el pedido sigue.</p><pre><code>duracion = 2      ✓  (mayor que 0, hasta 60)
-fs       = 44100  ✓  (entero)</code></pre></li>
-<li data-actor="service" data-sentido="ida"><p>El <strong>service</strong> hace el trabajo: llama a la función de M1, que devuelve un arreglo de NumPy con 2 × 44 100 = 88 200 muestras. No sabe nada de HTTP ni de JSON.</p><pre><code>generar_ruido_rosa(2, 44100)  →  array([0.12, -0.03, 0.41, ...])</code></pre></li>
+<li data-actor="schema" data-sentido="ida"><p>El <strong>schema</strong> controla la comanda: ¿<code>duration</code> es un número mayor que 0 y como mucho 60? ¿<code>sample_rate</code> es un entero? Todo en orden: el pedido sigue.</p><pre><code>duration    = 2      ✓  (mayor que 0, hasta 60)
+sample_rate = 44100  ✓  (entero)</code></pre></li>
+<li data-actor="service" data-sentido="ida"><p>El <strong>service</strong> hace el trabajo: llama a la función de M1, que devuelve un arreglo de NumPy con 2 × 44 100 = 88 200 muestras. No sabe nada de HTTP ni de JSON.</p><pre><code>generate_pink_noise(2, 44100)  →  array([0.12, -0.03, 0.41, ...])</code></pre></li>
 <li data-actor="router" data-sentido="vuelta"><p>El router recibe el arreglo y lo convierte en JSON, el formato que entiende cualquier cliente.</p></li>
 <li data-actor="cliente" data-sentido="vuelta"><p>El cliente recibe la <strong>respuesta</strong> con el código <code>200 OK</code> (salió todo bien) y los datos:</p><pre><code>{"audio": [0.12, -0.03, 0.41, ...]}</code></pre></li>
 </ol>
 <ol class="viaje__pasos" data-caso="invalido">
-<li data-actor="cliente" data-sentido="ida"><p>Ahora el cliente se equivoca y pide una duración negativa:</p><pre><code>{"duracion": -1, "fs": 44100}</code></pre></li>
+<li data-actor="cliente" data-sentido="ida"><p>Ahora el cliente se equivoca y pide una duración negativa:</p><pre><code>{"duration": -1, "sample_rate": 44100}</code></pre></li>
 <li data-actor="router" data-sentido="ida"><p>El router recibe el pedido y, como siempre, se lo pasa al schema.</p></li>
-<li data-actor="schema" data-sentido="ida"><p>El schema encuentra el error: <code>duracion = -1</code> no es mayor que 0. <strong>El pedido se frena acá.</strong></p><pre><code>duracion = -1     ✗  (tiene que ser mayor que 0)</code></pre></li>
-<li data-actor="cliente" data-sentido="vuelta"><p>La API responde <code>422</code> (datos inválidos) con una explicación del error. <strong>El service nunca se ejecutó</strong>: la cocina no recibe comandas mal escritas, y por eso sus funciones no tienen que andar revisando datos.</p><pre><code>{"detail": [{"loc": ["body", "duracion"],
+<li data-actor="schema" data-sentido="ida"><p>El schema encuentra el error: <code>duration = -1</code> no es mayor que 0. <strong>El pedido se frena acá.</strong></p><pre><code>duration = -1     ✗  (tiene que ser mayor que 0)</code></pre></li>
+<li data-actor="cliente" data-sentido="vuelta"><p>La API responde <code>422</code> (datos inválidos) con una explicación del error. <strong>El service nunca se ejecutó</strong>: la cocina no recibe comandas mal escritas, y por eso sus funciones no tienen que andar revisando datos.</p><pre><code>{"detail": [{"loc": ["body", "duration"],
              "msg": "Input should be greater than 0"}]}</code></pre></li>
 </ol>
 <div class="viaje__panel" aria-live="polite"></div>
@@ -111,9 +111,9 @@ Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa 
 
     ```python
     @router.post("/pink-noise")
-    async def pink_noise(req: PinkNoiseReq):          # FastAPI valida req con el schema
-        audio = services.generar_ruido_rosa(req.duracion, req.fs)
-        return {"audio": audio.tolist()}             # arreglo de NumPy → lista → JSON
+    async def pink_noise(req: PinkNoiseRequest):      # FastAPI valida req con el schema
+        audio = services.generate_pink_noise(req.duration, req.sample_rate)
+        return {"audio": audio.tolist()}              # arreglo de NumPy → lista → JSON
     ```
 
 === "2 · Schema (la comanda)"
@@ -121,9 +121,9 @@ Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa 
     En `app/schemas/`. Un modelo de Pydantic que describe cómo tiene que venir el pedido; si algo no cumple, FastAPI responde 422 solo.
 
     ```python
-    class PinkNoiseReq(BaseModel):
-        duracion: float = Field(gt=0, le=60)          # mayor que 0 y hasta 60 segundos
-        fs: int = Field(default=44100)                 # si no viene, 44100
+    class PinkNoiseRequest(BaseModel):
+        duration: float = Field(gt=0, le=60)           # mayor que 0 y hasta 60 segundos
+        sample_rate: int = Field(default=44100)        # si no viene, 44100
     ```
 
 === "3 · Service (la cocina)"
@@ -131,8 +131,8 @@ Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa 
     En `app/services/`. Funciones puras de procesamiento de señales: entra NumPy, sale NumPy. **No saben de HTTP ni de JSON**, y por eso se pueden testear solas.
 
     ```python
-    def generar_ruido_rosa(duracion: float, fs: int) -> np.ndarray:
-        n = int(duracion * fs)
+    def generate_pink_noise(duration: float, fs: int) -> np.ndarray:
+        n = int(duration * fs)
         # algoritmo Voss-McCartney
         return signal
     ```
@@ -189,7 +189,7 @@ Crear al menos **10 issues** en el repositorio de GitHub, cada uno con:
 
 | Malo | Bueno |
 |------|-------|
-| "Hacer M1": demasiado grande, nadie sabe qué entra ni cuándo está listo. | "Implementar `generar_ruido_rosa` con Voss-McCartney". Criterios: recibe `(duracion, fs)` y devuelve `np.ndarray`; el espectro cae ~3 dB/octava; tiene un test unitario. Labels `milestone-1`, `complejidad-media`, asignado. |
+| "Hacer M1": demasiado grande, nadie sabe qué entra ni cuándo está listo. | "Implementar `generate_pink_noise` con Voss-McCartney". Criterios: recibe `(duration, fs)` y devuelve `np.ndarray`; el espectro cae ~3 dB/octava; tiene un test unitario. Labels `milestone-1`, `complejidad-media`, asignado. |
 
 **Regla de oro:** un issue es algo que una persona puede terminar en una sesión de trabajo.
 

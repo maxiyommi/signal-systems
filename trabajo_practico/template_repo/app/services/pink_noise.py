@@ -6,7 +6,7 @@ Milestone 1: Generacion de senales.
 import numpy as np
 
 
-def generar_ruido_rosa(duracion: float, fs: int) -> np.ndarray:
+def generate_pink_noise(duration: float, fs: int) -> np.ndarray:
     """Genera una senal de ruido rosa de la duracion especificada.
 
     El ruido rosa tiene una densidad espectral de potencia inversamente
@@ -28,7 +28,7 @@ def generar_ruido_rosa(duracion: float, fs: int) -> np.ndarray:
 
     Parameters
     ----------
-    duracion : float
+    duration : float
         Duracion de la senal en segundos.
     fs : int
         Frecuencia de muestreo en Hz.
@@ -37,7 +37,7 @@ def generar_ruido_rosa(duracion: float, fs: int) -> np.ndarray:
     -------
     np.ndarray
         Senal de ruido rosa normalizada entre -1 y 1, de longitud
-        ``int(duracion * fs)``.
+        ``int(duration * fs)``.
 
     References
     ----------

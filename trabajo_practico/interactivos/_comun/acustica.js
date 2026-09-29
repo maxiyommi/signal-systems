@@ -90,7 +90,7 @@ export function llegadas(imagenes, [mx, my, mz], alpha, c = 343) {
 }
 
 // FFT radix-2 in place (re, im de largo potencia de 2).
-function fft(re, im) {
+export function fft(re, im) {
   const n = re.length;
   for (let i = 1, j = 0; i < n; i++) {
     let bit = n >> 1;
