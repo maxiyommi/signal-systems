@@ -1,4 +1,4 @@
-// Diagrama de arquitectura de M0: botones para ver cómo crece la API milestone a milestone
+// Diagrama de arquitectura (M0, y repetido en M1-M3 arrancando en el milestone de cada página): botones para ver cómo crece la API milestone a milestone
 // (lo que viene después queda punteado) y para seguir el recorrido numerado de un análisis.
 // El contenido está escrito en la página (.arq); sin JavaScript se ve el diagrama completo.
 (function () {
@@ -43,7 +43,13 @@
     for (const h of hitos) if (h.d <= d) e = h.etiqueta;
     return e;
   }
-  window.ArquitecturaLogica = { estado, estadoArchivo, ordenRecorrido, caminoOrtogonal, tiemposDeLlegada, tramosIdaVuelta, distanciasAcumuladas, etiquetaEn };
+  // Con qué vista arranca: la del milestone de la página (data-inicial) o, si no se indica, la API completa.
+  function milestoneInicial(valor) {
+    if (valor === 'recorrido') return 'recorrido';
+    const m = Number(valor);
+    return valor != null && Number.isInteger(m) && m >= 0 && m <= 3 ? m : 3;
+  }
+  window.ArquitecturaLogica = { estado, estadoArchivo, ordenRecorrido, caminoOrtogonal, tiemposDeLlegada, tramosIdaVuelta, distanciasAcumuladas, etiquetaEn, milestoneInicial };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
 
   function montar(arq) {
@@ -196,7 +202,9 @@
         const ms = [...a.querySelectorAll('[data-m]')].map((el) => Number(el.dataset.m));
         a.classList.toggle('pendiente', estadoArchivo(ms, m) === 'pendiente');
       });
-      leyenda.textContent = m === 3
+      leyenda.textContent = m === enPagina
+        ? `Estás en M${m}. Lo que se enciende es lo que construyen en este milestone; lo sólido ya existe y lo punteado viene después.`
+        : m === 3
         ? 'La API completa al final de M3. Tocá M0, M1 o M2 para ver cómo se va armando: lo punteado es lo que viene después.'
         : `Así queda la API al terminar M${m}. Lo punteado todavía no existe: se agrega en los milestones siguientes, en las mismas carpetas.`;
       pasos.hidden = true;
@@ -226,7 +234,22 @@
     // Si cambia el ancho (rotar el iPad), la línea dibujada ya no coincide con los recuadros.
     let ancho = arq.clientWidth;
     window.addEventListener('resize', () => { if (arq.clientWidth !== ancho) { ancho = arq.clientWidth; limpiarLinea(); } });
-    mostrarMilestone(3, false);
+    // En M1-M3 el diagrama arranca en el milestone de la página y lo enciende la primera vez que se ve.
+    const pedido = arq.closest('[data-inicial]')?.dataset.inicial;
+    const inicial = milestoneInicial(pedido);
+    const enPagina = pedido == null ? null : inicial;
+    botones.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ver === String(inicial))));
+    if (inicial === 'recorrido') { mostrarMilestone(3, false); }
+    else mostrarMilestone(inicial, false);
+    if (enPagina !== null && 'IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entradas) => {
+        if (!entradas.some((e) => e.isIntersecting)) return;
+        obs.disconnect();
+        if (inicial === 'recorrido') mostrarRecorrido();
+        else { actual = inicial - 1; mostrarMilestone(inicial); }
+      }, { threshold: 0.4 });
+      obs.observe(arq);
+    }
   }
 
   const iniciar = () => document.querySelectorAll('.arq').forEach(montar);

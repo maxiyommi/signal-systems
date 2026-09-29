@@ -12,6 +12,16 @@ Implementar las funciones de procesamiento de la respuesta al impulso (RI): carg
 
 ---
 
+## En el plano de la API
+
+El mismo diagrama de M0, **parado en M2**: se encienden los services nuevos, en `signal_utils.py` y `filter.py`, al lado de los de M1 que ya existen. Todavía nada de HTTP: los endpoints siguen punteados hasta M3. Tocá cualquier recuadro para ver su estructura básica.
+
+<div class="arq-marco" data-inicial="2">
+--8<-- "arquitectura.html"
+</div>
+
+---
+
 ## Del estímulo a la respuesta al impulso
 
 En M1 generaron las señales que *excitan* la sala. En M2 las usan para extraer la **respuesta al impulso (RI)** real y dejarla lista para el análisis: separada **por bandas de octava** y en **dB**. Los parámetros acústicos se calculan en M3.

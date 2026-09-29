@@ -14,6 +14,16 @@ Completar el sistema RIR-API implementando las funciones de análisis acústico 
 
 ---
 
+## En el plano de la API
+
+El mismo diagrama de M0, **parado en M3**: se encienden los services de análisis y, sobre todo, las capas de **routers** y **schemas**, que envuelven todo lo que ya escribieron. Tocá **Recorrido de un análisis** para seguir un pedido de punta a punta: sube un WAV, pasa por cada capa y vuelve como JSON.
+
+<div class="arq-marco" data-inicial="3">
+--8<-- "arquitectura.html"
+</div>
+
+---
+
 ## Qué cambia
 
 ### De funciones a producto

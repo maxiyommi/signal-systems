@@ -48,6 +48,7 @@ extra:
 # Archivos que están en docs/ pero no se publican (plantillas del tema, tests, checkpoints)
 exclude_docs: |
   overrides/
+  snippets/
   **/tests/
   .ipynb_checkpoints/
 
@@ -119,6 +120,9 @@ markdown_extensions:
       alternate_style: true
   - attr_list
   - md_in_html
+  - pymdownx.snippets:
+      base_path: [docs/snippets]
+      check_paths: true
   - toc:
       permalink: true
   - pymdownx.arithmatex:
