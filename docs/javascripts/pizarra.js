@@ -80,7 +80,11 @@
   // de iPad pueden no coincidir con el lienzo (barra del navegador, zoom).
   const transformacion = (rect, dpr) => [dpr, 0, 0, dpr, -rect.left * dpr, -rect.top * dpr];
 
-  window.PizarraLogica = { borrarParcial, colorDe, alfaLaser, purgarLaser, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion };
+  // Linterna: oscurece la pantalla salvo un círculo que sigue al lápiz, para enfocar una fórmula o un gráfico.
+  const radioLinterna = (ancho, alto) => Math.round(Math.min(170, Math.max(90, Math.min(ancho, alto) * 0.16)));
+  const mascaraLinterna = (x, y, r) => `radial-gradient(circle at ${Math.round(x)}px ${Math.round(y)}px, transparent ${r}px, rgba(0, 0, 0, 0.72) ${r + 3}px)`;
+
+  window.PizarraLogica = { borrarParcial, colorDe, alfaLaser, purgarLaser, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion, radioLinterna, mascaraLinterna };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
 
@@ -92,6 +96,7 @@
   ];
   const RADIO_GOMA = 14;
   const ICONO_LASER = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="17" cy="7" r="2.5" fill="currentColor"/><path d="M14.5 9.5 4 20"/><path d="M17 1.5v1.5M22.5 7H21M20.9 3.1l-1 1M13.1 3.1l1 1M20.9 10.9l-1-1"/></svg>';
+  const ICONO_LINTERNA = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12z"/><path d="M6 6h12M12 12v1"/></svg>';
   const ICONO_GOMA = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L13 19"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>';
   // Tema actual: el sitio lo marca en el body (Material) y los interactivos en <html data-tema>.
   const esOscuro = () => document.body.getAttribute('data-md-color-scheme') === 'slate'
@@ -117,7 +122,12 @@
     barra.setAttribute('aria-label', 'Pizarra');
     // Botonera común del modo presentación (la comparten presentacion.js, agenda.js y pizarra.js).
     const columna = document.querySelector('.botonera-presentacion') || document.body.appendChild(Object.assign(document.createElement('div'), { className: 'botonera-presentacion' }));
-    document.body.append(lienzo, capaLaser);
+    // Linterna: una capa que oscurece todo menos un círculo (no toca las anotaciones).
+    const capaLinterna = document.createElement('div');
+    capaLinterna.className = 'pizarra-linterna';
+    capaLinterna.setAttribute('aria-hidden', 'true');
+    capaLinterna.hidden = true;
+    document.body.append(lienzo, capaLaser, capaLinterna);
     columna.append(barra);
 
     let trazos = [], actual = null, activo = false;
@@ -158,6 +168,8 @@
     muestras.push([bResaltador.querySelector('i'), 'resaltador']);
     const bLaser = boton(ICONO_LASER, 'Puntero láser: marca y se borra solo', () => elegir('laser', null, bLaser));
     herramientas.push(bLaser);
+    const bLinterna = boton(ICONO_LINTERNA, 'Linterna: ilumina solo donde apoyás el lápiz', () => elegir('linterna', null, bLinterna));
+    herramientas.push(bLinterna);
     const bGoma = boton(ICONO_GOMA, 'Goma: frotá sobre lo que quieras borrar', () => elegir('goma', null, bGoma));
     herramientas.push(bResaltador, bGoma);
     // Las muestras de color siguen al tema (claro u oscuro).
@@ -172,13 +184,25 @@
     function elegir(h, c, b) {
       herramienta = h; color = c;
       herramientas.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      actualizarLinterna();
     }
+    let linternaEn = null;                                     // último lugar donde se apoyó (pantalla)
+    function actualizarLinterna() {
+      const visible = activo && herramienta === 'linterna' && !lienzo.hidden;
+      capaLinterna.hidden = !visible;
+      if (!visible) return;
+      const r = radioLinterna(window.innerWidth, window.innerHeight);
+      const { x, y } = linternaEn || { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      capaLinterna.style.background = mascaraLinterna(x, y, r);
+    }
+    function moverLinterna(e) { linternaEn = { x: e.clientX, y: e.clientY }; actualizarLinterna(); }
     elegir('lapiz', COLORES[0].clave, herramientas[0]);
 
     function activar(v) {
       activo = v;
       document.body.classList.toggle('pizarra-activa', v);
       bLapiz.setAttribute('aria-pressed', String(v));
+      actualizarLinterna();
     }
 
     function mostrar(visible) {
@@ -187,6 +211,7 @@
       capaLaser.hidden = !visible;
       if (!visible) activar(false);
       else ajustar();
+      actualizarLinterna();
     }
 
     // ── Dibujo ───────────────────────────────────────────────────────────────────────────────
@@ -293,6 +318,7 @@
       verificarMedida();
       try { lienzo.setPointerCapture(e.pointerId); } catch { /* puntero ya liberado */ }
       if (e.pointerType === 'touch') { dedoY = e.clientY; return; }
+      if (herramienta === 'linterna') { moverLinterna(e); return; }
       const v = vista();
       const p = aDocumento(e.clientX, e.clientY, v);
       if (herramienta === 'laser') {
@@ -314,6 +340,7 @@
         if (dedoY !== null) { desplazable().scrollBy({ top: dedoY - e.clientY, behavior: 'instant' }); dedoY = e.clientY; }
         return;
       }
+      if (herramienta === 'linterna') { if (e.buttons || e.pointerType === 'pen') moverLinterna(e); return; }   // arrastrar (o el Pencil sobrevolando)
       if (!actual) return;
       const v = vista();
       if (actual.goma) {
@@ -353,6 +380,7 @@
     document.addEventListener('scroll', () => { redibujar(); if (laser.length) animarLaser(); }, { passive: true, capture: true });
     const reajustar = () => { if (!lienzo.hidden) ajustar(); };
     window.addEventListener('resize', reajustar);
+    window.addEventListener('resize', actualizarLinterna);
     window.visualViewport?.addEventListener('resize', reajustar);   // aparece o se oculta la barra de Safari
 
     // Se muestra solo en modo presentación (lo maneja presentacion.js con una clase en el body).

@@ -93,3 +93,14 @@ test('puntero láser: se descartan los trazos que ya se borraron del todo', () =
   const quedan = P.purgarLaser([t(100), t(5000), t(2100)], 1000);
   assert.equal(quedan.length, 2);
 });
+
+test('la linterna ilumina un círculo proporcional a la pantalla, sin irse a los extremos', () => {
+  assert.equal(P.radioLinterna(1194, 834), Math.round(834 * 0.16));
+  assert.equal(P.radioLinterna(390, 300), 90);        // pantalla chica: no menos de 90 px
+  assert.equal(P.radioLinterna(3840, 2160), 170);     // pantalla enorme: no más de 170 px
+});
+
+test('la máscara de la linterna deja transparente el círculo y oscurece el resto', () => {
+  const m = P.mascaraLinterna(200, 150, 100);
+  assert.match(m, /^radial-gradient\(circle at 200px 150px, transparent 100px, rgba\(0, 0, 0, [\d.]+\) 10[1-9]px\)$/);
+});

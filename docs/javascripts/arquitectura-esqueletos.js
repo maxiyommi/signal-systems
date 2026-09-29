@@ -31,27 +31,27 @@
       codigo: 'router = APIRouter(tags=["health"])\n\n\n@router.get("/health", response_model=HealthResponse)\nasync def health() -> HealthResponse:\n    return HealthResponse(status="healthy", version=settings.version)',
     },
     'POST /signals/pink-noise': {
-      archivo: 'app/routers/signals.py', que: 'Expone el service de ruido rosa. El router no calcula: recibe, llama y responde.', spec: M1,
+      archivo: 'app/routers/signals.py', que: 'Expone el service de ruido rosa. El router no calcula: recibe, llama y responde.', spec: M3,
       codigo: 'router = APIRouter(prefix="/signals", tags=["signals"])\n\n\n@router.post("/pink-noise", response_model=PinkNoiseResponse)\nasync def pink_noise(req: PinkNoiseRequest) -> PinkNoiseResponse:\n    audio = generate_pink_noise(req.duration, req.sample_rate)\n    ...  # guardar el WAV y armar la respuesta\n    return PinkNoiseResponse(...)',
     },
     'POST /signals/sine-sweep/pair': {
-      archivo: 'app/routers/signals.py', que: 'Devuelve el sweep y su filtro inverso.', spec: M1,
+      archivo: 'app/routers/signals.py', que: 'Devuelve el sweep y su filtro inverso.', spec: M3,
       codigo: '@router.post("/sine-sweep/pair")\nasync def sine_sweep_pair(req: SineSweepRequest):\n    sweep, inverse_filter = generate_sine_sweep_pair(\n        req.duration, req.start_freq, req.end_freq, req.sample_rate\n    )\n    ...  # guardar los dos WAV y armar la respuesta',
     },
     'POST /signals/synthetic-ir': {
-      archivo: 'app/routers/signals.py', que: 'Genera una RI sintética con T60 conocidos, para validar el análisis.', spec: M2,
+      archivo: 'app/routers/signals.py', que: 'Genera una RI sintética con T60 conocidos, para validar el análisis.', spec: M3,
       codigo: '@router.post("/synthetic-ir", response_model=SyntheticIRResponse)\nasync def synthetic_ir(req: SyntheticIRRequest) -> SyntheticIRResponse:\n    ir = generate_synthetic_ir(req.duration, ..., req.sample_rate)\n    ...',
     },
     'POST /signals/convolve': {
-      archivo: 'app/routers/signals.py', que: 'Recibe la grabación del sweep y el filtro inverso, y devuelve la respuesta al impulso.', spec: M2,
+      archivo: 'app/routers/signals.py', que: 'Recibe la grabación del sweep y el filtro inverso, y devuelve la respuesta al impulso.', spec: M3,
       codigo: '@router.post("/convolve", response_model=ConvolveResponse)\nasync def convolve(recording: UploadFile, inverse_filter: UploadFile):\n    ...  # leer los dos archivos\n    ir = get_impulse_response(...)\n    ...',
     },
     'POST /filters/single-band': {
-      archivo: 'app/routers/filters.py', que: 'Filtra un audio en una banda de octava.', spec: M2,
+      archivo: 'app/routers/filters.py', que: 'Filtra un audio en una banda de octava.', spec: M3,
       codigo: 'router = APIRouter(prefix="/filters", tags=["filters"])\n\n\n@router.post("/single-band")\nasync def single_band(file: UploadFile, center_freq: float):\n    signal, fs = ...  # leer el archivo\n    filtered = filter_single_band(signal, fs, center_freq)\n    ...',
     },
     'POST /utils/log-scale': {
-      archivo: 'app/routers/utils.py', que: 'Pasa una señal a escala logarítmica (dB).', spec: M2,
+      archivo: 'app/routers/utils.py', que: 'Pasa una señal a escala logarítmica (dB).', spec: M3,
       codigo: 'router = APIRouter(prefix="/utils", tags=["utils"])\n\n\n@router.post("/log-scale", response_model=LogScaleResponse)\nasync def log_scale(file: UploadFile) -> LogScaleResponse:\n    ...',
     },
     'POST /utils/smoothing': {
@@ -81,23 +81,23 @@
       codigo: 'class BandResult(BaseModel):\n    T30: float | None = None\n    T20: float | None = None\n    EDT: float | None = None\n\n\nclass BandAnalysisResponse(BaseModel):\n    center_frequencies: list[float]\n    band_results: dict[str, BandResult]\n    ...',
     },
     PinkNoiseRequest: {
-      archivo: 'app/schemas/signals.py', que: 'Lo que tiene que venir en el pedido de ruido rosa. Si no cumple, FastAPI responde 422 solo.', spec: M1,
+      archivo: 'app/schemas/signals.py', que: 'Lo que tiene que venir en el pedido de ruido rosa. Si no cumple, FastAPI responde 422 solo.', spec: M3,
       codigo: 'class PinkNoiseRequest(BaseModel):\n    duration: float = Field(..., gt=0, le=60)          # segundos\n    sample_rate: int = Field(default=44100, ge=8000, le=192000)',
     },
     SineSweepRequest: {
-      archivo: 'app/schemas/signals.py', que: 'El pedido del sweep: duración y rango de frecuencias.', spec: M1,
+      archivo: 'app/schemas/signals.py', que: 'El pedido del sweep: duración y rango de frecuencias.', spec: M3,
       codigo: 'class SineSweepRequest(BaseModel):\n    duration: float = Field(..., gt=0, le=60)\n    start_freq: float = Field(default=20, ge=1, le=20000)\n    end_freq: float = Field(default=20000, ge=1, le=22050)\n    sample_rate: int = Field(default=44100, ge=8000, le=192000)',
     },
     SyntheticIRRequest: {
-      archivo: 'app/schemas/signals.py', que: 'El pedido de una RI sintética: duración y T60 por banda.', spec: M2,
+      archivo: 'app/schemas/signals.py', que: 'El pedido de una RI sintética: duración y T60 por banda.', spec: M3,
       codigo: 'class SyntheticIRRequest(BaseModel):\n    duration: float = Field(..., gt=0, le=10)\n    t60_values: list[float]             # un T60 por banda de octava\n    sample_rate: int = Field(default=44100, ge=8000, le=192000)',
     },
     ConvolveRequest: {
-      archivo: 'app/schemas/signals.py', que: 'Opciones de la convolución.', spec: M2,
+      archivo: 'app/schemas/signals.py', que: 'Opciones de la convolución.', spec: M3,
       codigo: 'class ConvolveRequest(BaseModel):\n    mode: str = "full"          # full, same o valid\n    normalize: bool = True',
     },
     LogScaleResponse: {
-      archivo: 'app/schemas/utils.py', que: 'La respuesta de la conversión a dB.', spec: M2,
+      archivo: 'app/schemas/utils.py', que: 'La respuesta de la conversión a dB.', spec: M3,
       codigo: 'class LogScaleResponse(BaseModel):\n    num_samples: int\n    min_db: float\n    max_db: float',
     },
     SmoothingRequest: {

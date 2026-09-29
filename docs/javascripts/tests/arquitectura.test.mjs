@@ -57,3 +57,11 @@ test('el paquete lleva la etiqueta del último recuadro por el que pasó', () =>
 test('distancias de los recuadros sobre el camino en ángulo recto', () => {
   assert.deepEqual([...A.distanciasAcumuladas([{ x: 0, y: 0 }, { x: 30, y: 40 }, { x: 30, y: 100 }])], [0, 70, 130]);
 });
+
+test('el diagrama arranca en el milestone de la página (o en la API completa si no se indica)', () => {
+  assert.equal(A.milestoneInicial('1'), 1);
+  assert.equal(A.milestoneInicial('2'), 2);
+  assert.equal(A.milestoneInicial('recorrido'), 'recorrido');
+  assert.equal(A.milestoneInicial(undefined), 3);
+  assert.equal(A.milestoneInicial('7'), 3);
+});

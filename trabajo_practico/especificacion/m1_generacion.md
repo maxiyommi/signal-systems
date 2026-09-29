@@ -12,6 +12,16 @@ Implementar los **servicios de generación** de señales de excitación que nece
 
 ---
 
+## En el plano de la API
+
+Es el mismo diagrama que dibujaron en M0, ahora **parado en M1**: al verlo se encienden los recuadros de este milestone. Son solo **services** (y las librerías que usan); los endpoints de generación se agregan en M3, por eso siguen punteados. Tocá cualquier recuadro para ver su estructura básica, o M0, M2 y M3 para ver de dónde vienen y adónde van.
+
+<div class="arq-marco" data-inicial="1">
+--8<-- "arquitectura.html"
+</div>
+
+---
+
 ## Del plano al primer cálculo
 
 En M0 dibujaron las tres capas. En M1 le ponen **código real** a una sola: los **servicios** (`app/services/`). Son las funciones que después la API va a exponer como endpoints: cada una hace un cálculo, recibe NumPy y devuelve NumPy, sin saber nada de HTTP ni de JSON.

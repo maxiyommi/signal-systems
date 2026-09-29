@@ -57,6 +57,9 @@ html.en-presentacion { height: 100%; overflow: hidden; }
 html.en-presentacion body { height: 100%; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 /* La capa del puntero láser va encima y nunca recibe el lápiz (lo recibe el lienzo de abajo) */
 .pizarra-lienzo--laser, body.pizarra-activa .pizarra-lienzo--laser { pointer-events: none; }
+/* Linterna: por encima del contenido y debajo de la botonera; no captura el lápiz (lo recibe el lienzo) */
+.pizarra-linterna { position: fixed; inset: 0; z-index: 9; pointer-events: none; }
+.pizarra-linterna[hidden] { display: none; }
 /* Celular vertical: botones un poco más chicos para que las herramientas del lápiz entren a lo ancho */
 @media (max-width: 440px) {
   .botonera-presentacion { --tam-boton: 2rem; gap: 0.35rem; }
