@@ -8,7 +8,7 @@
 
 ## Objetivo
 
-Completar el sistema RIR-API implementando las funciones de análisis acústico (suavizado de señal, integral de Schroeder, regresión lineal, cálculo de parámetros acústicos según ISO 3382) y exponiendo **toda la funcionalidad de M1, M2 y M3 como una API REST** con FastAPI. Al finalizar este milestone, la API debe ser capaz de recibir una respuesta al impulso vía HTTP, procesarla y devolver todos los parámetros acústicos relevantes, con resultados validados contra software comercial.
+Completar el sistema RIR-API implementando las funciones de análisis acústico (suavizado de señal, integral de Schroeder, regresión lineal, cálculo de parámetros acústicos según ISO 3382) y **completando la API REST** que empezaron en M1: el endpoint que recibe una RI y devuelve los parámetros por banda, y dos de utilidades. Al finalizar este milestone, la API debe ser capaz de recibir una respuesta al impulso vía HTTP, procesarla y devolver todos los parámetros acústicos relevantes, con resultados validados contra software comercial.
 
 > **Referencia**: Explorar la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) para entender la estructura de endpoints, schemas y respuestas esperadas.
 
@@ -16,7 +16,7 @@ Completar el sistema RIR-API implementando las funciones de análisis acústico 
 
 ## En el plano de la API
 
-El mismo diagrama de M0, **parado en M3**: se encienden los services de análisis y, sobre todo, las capas de **routers** y **schemas**, que envuelven todo lo que ya escribieron. Tocá **Recorrido de un análisis** para seguir un pedido de punta a punta: sube un WAV, pasa por cada capa y vuelve como JSON.
+El mismo diagrama de M0, **parado en M3**: se encienden los services de análisis y los endpoints que faltaban (`acoustics.py` y `utils.py`, con sus schemas). Lo de M1 y M2 ya está sólido: la API existe desde hace dos milestones y en M3 se completa. Tocá **Recorrido de un análisis** para seguir un pedido de punta a punta: sube un WAV, pasa por cada capa y vuelve como JSON.
 
 <div class="arq-marco" data-inicial="3">
 --8<-- "arquitectura.html"
@@ -28,12 +28,12 @@ El mismo diagrama de M0, **parado en M3**: se encienden los services de análisi
 
 ### De funciones a producto
 
-Hasta M2 tenían **funciones sueltas** en `services/`. En M3 esas funciones se convierten en un *producto*: un servicio web que cualquiera puede usar por HTTP, con resultados validados contra software comercial.
+Hasta M2 construyeron los services y una API chica que ya genera señales, sintetiza RIs y filtra un WAV subido. En M3 la API responde **la pregunta de la medición**: le suben una RI y devuelve sus parámetros acústicos por banda. Eso la convierte en un *producto*: un servicio web que cualquiera puede usar por HTTP, con resultados validados contra software comercial.
 
 M3 son cuatro cosas encadenadas:
 
 - **Análisis acústico** — las funciones que faltan para calcular T30/T20/EDT por banda
-- **API REST** — exponer todo con FastAPI (routers, schemas, docs)
+- **API REST** — completarla: el endpoint de parámetros y los de utilidades, con errores claros y la documentación de `/docs`
 - **Validación** — comparar contra REW/Aurora sobre RIs reales
 - **Comunicación** — validación en el README + demo en vivo y oral
 
@@ -51,14 +51,14 @@ FastAPI organiza el código en tres capas que ya vienen en el template:
 
 La clave de M3: **no reescriben el DSP**. Envuelven lo que ya tienen. Un router llama a un service y serializa el resultado con un schema.
 
-!!! note "Endpoints mínimos requeridos"
-    | `GET /health` | estado |
+!!! note "Endpoints mínimos: cada milestone expone lo que construye"
+    | Endpoint | Milestone |
     |---|---|
-    | `POST /api/v1/signals/*` | pink-noise · sine-sweep · synthetic-ir |
-    | `POST /api/v1/filters/band` | filtrado por bandas |
-    | `POST /api/v1/acoustics/parameters` | + /parameters/by-bands |
-    | `POST /api/v1/analysis/impulse-response` | análisis completo de la RI |
-    | `POST /api/v1/utils/*` | schroeder · smoothing · log-scale |
+    | `GET /health` | M0 |
+    | `POST /api/v1/signals/pink-noise` · `/signals/sine-sweep` | M1 |
+    | `POST /api/v1/signals/synthetic-ir` · `/filters/single-band` | M2 |
+    | `POST /api/v1/acoustics/parameters` | **M3** · el principal |
+    | `POST /api/v1/utils/schroeder` · `/utils/smoothing` | **M3** |
 
     Con validación Pydantic, errores HTTP (400/422/500), Swagger en `/docs` y ReDoc en `/redoc` generados automáticamente.
 
@@ -136,7 +136,7 @@ Los parámetros acústicos se calculan **banda por banda**: primero se filtra la
 <figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** medida en la Usina del Arte (sala sinfónica, Buenos Aires)</figcaption>
 </figure>
 
-Este es el **producto final del análisis**: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve `calculate_parameters_from_ir` y lo que su API expone en `/api/v1/acoustics/parameters/by-bands`.
+Este es el **producto final del análisis**: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve `calculate_parameters_from_ir` y lo que su API expone en `/api/v1/acoustics/parameters`.
 
 Acá se ve una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de las figuras anteriores (donde `EDT ≈ T20 ≈ T30`), acá los parámetros **se separan**: cuando `EDT` es menor que `T30` domina la energía temprana (cerca de la fuente o con reflexiones tempranas fuertes); cuando es mayor, la energía temprana es débil (lejos de la fuente o con volúmenes acoplados). Las diferencias entre bandas son información acústica real de la sala.
 
@@ -443,9 +443,9 @@ $C_{80}$ es un parámetro fundamental para la **calidad musical**. Valores típi
 
 ---
 
-### 5. API REST - Integración completa con FastAPI
+### 5. API REST - Completar la API
 
-Toda la funcionalidad desarrollada en M1, M2 y M3 debe exponerse como endpoints de una API REST. La API debe seguir la arquitectura de capas: **routers** (endpoints) → **services** (lógica de negocio) → **schemas** (validación con Pydantic).
+En M1 y M2 la API ya expone la generación de señales y el filtrado. En M3 se agregan los endpoints que responden la pregunta de la medición, con la misma arquitectura de capas: **routers** (endpoints) → **services** (lógica) → **schemas** (validación con Pydantic).
 
 **Estructura de la API:**
 
@@ -454,49 +454,51 @@ app/
 ├── main.py                    # Punto de entrada FastAPI + CORS
 ├── settings.py                # Configuracion con pydantic-settings
 ├── routers/
-│   ├── health.py              # GET /health
-│   ├── signals.py             # POST /api/v1/signals/*
-│   ├── filters.py             # POST /api/v1/filters/*
-│   ├── acoustics.py           # POST /api/v1/acoustics/*
-│   ├── analysis.py            # POST /api/v1/analysis/*
-│   └── utils.py               # POST /api/v1/utils/*
+│   ├── health.py              # GET /health                          (M0)
+│   ├── audio_http.py          # wav_response, uploaded_file          (template)
+│   ├── signals.py             # POST /api/v1/signals/*               (M1, M2)
+│   ├── filters.py             # POST /api/v1/filters/single-band     (M2)
+│   ├── acoustics.py           # POST /api/v1/acoustics/parameters    (M3)
+│   └── utils.py               # POST /api/v1/utils/*                 (M3)
 ├── schemas/
-│   ├── signals.py             # Modelos de request/response para senales
-│   ├── filters.py             # Modelos para filtrado
-│   └── responses.py           # Modelos de respuesta para analisis
+│   ├── signals.py             # Pedidos de generacion                (M1, M2)
+│   ├── utils.py               # Respuestas de schroeder y smoothing  (M3)
+│   └── responses.py           # HealthResponse, BandAnalysisResponse (M3)
 └── services/
     ├── audio_io.py            # Reproducción y grabación (M1)
-    ├── pink_noise.py          # Generacion de ruido rosa
-    ├── sine_sweep.py          # Generacion de sine sweep
-    ├── filter.py              # Filtros de banda
-    ├── signal_utils.py        # Utilidades de procesamiento
-    └── acoustic_parameters.py # Calculo de parametros acusticos
+    ├── pink_noise.py          # Generacion de ruido rosa (M1)
+    ├── sine_sweep.py          # Generacion de sine sweep (M1)
+    ├── filter.py              # Filtros de banda (M2)
+    ├── signal_utils.py        # Utilidades de procesamiento (M2)
+    └── acoustic_parameters.py # Calculo de parametros acusticos (M3)
 ```
 
 **Endpoints mínimos requeridos:**
 
-| Grupo | Endpoint | Método | Descripción |
-|-------|----------|--------|-------------|
-| Base | `/health` | GET | Health check |
-| Signals | `/api/v1/signals/pink-noise` | POST | Genera ruido rosa |
-| Signals | `/api/v1/signals/sine-sweep` | POST | Genera sine sweep logarítmico |
-| Signals | `/api/v1/signals/synthetic-ir` | POST | Genera RI sintética |
-| Filters | `/api/v1/filters/band` | POST | Filtra audio por bandas de octava |
-| Filters | `/api/v1/filters/frequencies` | GET | Lista frecuencias centrales |
-| Acoustics | `/api/v1/acoustics/parameters` | POST | Calcula parámetros acústicos |
-| Acoustics | `/api/v1/acoustics/parameters/by-bands` | POST | Parámetros por bandas |
-| Analysis | `/api/v1/analysis/impulse-response` | POST | Análisis completo de RI |
-| Utils | `/api/v1/utils/schroeder` | POST | Integral de Schroeder |
-| Utils | `/api/v1/utils/smoothing` | POST | Suavizado de señal |
-| Utils | `/api/v1/utils/log-scale` | POST | Conversión a escala dB |
+| Grupo | Endpoint | Método | Descripción | Milestone |
+|-------|----------|--------|-------------|-----------|
+| Base | `/health` | GET | Health check | M0 |
+| Signals | `/api/v1/signals/pink-noise` | POST | Genera ruido rosa (WAV) | M1 |
+| Signals | `/api/v1/signals/sine-sweep` | POST | Genera el sweep o su filtro inverso (WAV) | M1 |
+| Signals | `/api/v1/signals/synthetic-ir` | POST | Genera una RI sintética (WAV) | M2 |
+| Filters | `/api/v1/filters/single-band` | POST | Filtra un WAV subido en una banda de octava | M2 |
+| Acoustics | `/api/v1/acoustics/parameters` | POST | Recibe una RI y devuelve EDT, T20, T30, D50 y C80 por banda (JSON) | **M3** |
+| Utils | `/api/v1/utils/schroeder` | POST | Curva de caída de Schroeder de una RI (JSON) | **M3** |
+| Utils | `/api/v1/utils/smoothing` | POST | Envolvente de una señal (JSON) | **M3** |
+
+El endpoint principal, `/acoustics/parameters`, sigue el mismo patrón que `/filters/single-band` de M2: recibe el archivo con `uploaded_file`, lo lee con `load_audio` (422 si no es audio), filtra por bandas y llama a `calculate_parameters_from_ir` en cada una. Lo nuevo es la respuesta: un JSON validado con un schema (`BandAnalysisResponse`) en lugar de un WAV.
+
+!!! note "Opcionales (suman en Funcionalidad)"
+    Los que tiene la API de referencia y no son mínimos: `/utils/lundeby`, `/utils/log-scale`, `/filters/band` (todas las bandas de una vez), `/filters/frequencies` y `/analysis/impulse-response`.
 
 **Requisitos de la API:**
+
 - Documentación automática vía Swagger UI (`/docs`) y ReDoc (`/redoc`).
 - Validación de entrada con schemas Pydantic (tipos, rangos, formatos).
 - Manejo de errores con códigos HTTP apropiados (400, 422, 500).
 - Configuración vía variables de entorno (CORS, límites de archivo, etc.).
-- Los endpoints de archivos de audio deben aceptar uploads vía `multipart/form-data`.
-- Los endpoints de generación deben devolver archivos WAV descargables.
+- Los endpoints que reciben audio lo aceptan vía `multipart/form-data` (como `/filters/single-band`).
+- Los endpoints de generación devuelven archivos WAV descargables (como los de M1 y M2).
 - Debe poder ejecutarse con `uvicorn app.main:app --reload`.
 
 ---
@@ -609,19 +611,20 @@ def test_c80_consistency():
 
 ### Test 5: API endpoints
 
+Están en `tests/test_api.py`, uno por endpoint y marcados por milestone. En M3 sacan las marcas `@xfail_m3`:
+
 ```python
-def test_health_endpoint():
-    """Verificar que /health responde correctamente."""
+def test_acoustics_parameters_endpoint():
+    """Enviar una RI a /api/v1/acoustics/parameters devuelve los parametros por banda."""
 
-def test_analysis_endpoint():
-    """Enviar un archivo WAV a /api/v1/analysis/impulse-response y verificar respuesta."""
+def test_utils_schroeder_endpoint():
+    """/api/v1/utils/schroeder devuelve la curva de caida."""
 
-def test_signals_pink_noise_endpoint():
-    """Verificar que /api/v1/signals/pink-noise genera y devuelve un WAV valido."""
-
-def test_invalid_file_returns_422():
-    """Verificar que un archivo invalido retorna 422 Unprocessable Entity."""
+def test_utils_smoothing_endpoint():
+    """/api/v1/utils/smoothing devuelve la envolvente de la senal."""
 ```
+
+Los de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que seguir pasando: son la red que avisa si algo de M3 rompió lo anterior.
 
 **Nota:** Usar `httpx.AsyncClient` o `fastapi.testclient.TestClient` para tests de API.
 
@@ -693,7 +696,7 @@ Guion sugerido de la demo (≈ 8 min):
 
 1. Levantar la API: `uvicorn app.main:app --reload`
 1. Abrir `/docs` (Swagger) y recorrer los endpoints
-1. Subir un WAV real a `/analysis/impulse-response`
+1. Subir un WAV real a `/acoustics/parameters`
 1. Mostrar la respuesta JSON con los parámetros por banda
 1. Un `curl` desde la terminal para el mismo endpoint
 
@@ -733,7 +736,7 @@ Son el corazón de la validación en el README y de la presentación oral — la
 
 ### Lo que tiene que estar el 18 de noviembre
 
-- [ ] Las 4 funciones de análisis + la API con los endpoints mínimos
+- [ ] Las 4 funciones de análisis + los 3 endpoints de M3 (y los de M1 y M2 andando)
 - [ ] `pytest` en verde · cobertura objetivo 80 % en análisis y API
 - [ ] CI de GitHub Actions **verde** en cada push
 - [ ] Swagger (`/docs`) y ReDoc (`/redoc`) funcionando

@@ -8,13 +8,13 @@
 
 ## Objetivo
 
-Implementar las funciones de procesamiento de la respuesta al impulso (RI): carga de archivos de audio, síntesis de RI conocidas para validación, deconvolución, filtrado por bandas de octava y conversión a escala logarítmica. Al finalizar este milestone, el sistema debe ser capaz de obtener la RI a partir de una grabación de sine sweep y procesarla en bandas de frecuencia.
+Implementar las funciones de procesamiento de la respuesta al impulso (RI): carga de archivos de audio, síntesis de RI conocidas para validación, deconvolución, filtrado por bandas de octava y conversión a escala logarítmica. Al finalizar este milestone, el sistema debe ser capaz de obtener la RI a partir de una grabación de sine sweep y procesarla en bandas de frecuencia, y la API suma **dos endpoints**: uno que genera una RI sintética y el primero que **recibe un archivo** (filtrar un WAV en una banda de octava).
 
 ---
 
 ## En el plano de la API
 
-El mismo diagrama de M0, **parado en M2**: se encienden los services nuevos, en `signal_utils.py` y `filter.py`, al lado de los de M1 que ya existen. Todavía nada de HTTP: los endpoints siguen punteados hasta M3. Tocá cualquier recuadro para ver su estructura básica.
+El mismo diagrama de M0, **parado en M2**: se encienden los services nuevos, en `signal_utils.py` y `filter.py`, al lado de los de M1 que ya existen, y dos endpoints más: `POST /signals/synthetic-ir` (en el router de M1) y `POST /filters/single-band` (en un router nuevo). Lo que queda punteado es el análisis de M3. Tocá cualquier recuadro para ver su estructura básica.
 
 <div class="arq-marco" data-inicial="2">
 --8<-- "arquitectura.html"
@@ -32,6 +32,7 @@ El flujo nuevo:
 - Sintetizar una RI de prueba con T60 conocidos (para validar sin medir en una sala)
 - Deconvolucionar para obtener la RI desde una grabación de sweep
 - Filtrar en bandas de octava (IEC 61260)
+- Exponer dos endpoints: la RI sintética y el filtro de una banda, que recibe un WAV subido
 - Llevar todo a escala logarítmica para el análisis
 
 !!! note "De qué clases viene"
@@ -320,7 +321,7 @@ def load_audio(path: str | Path) -> tuple[np.ndarray, int]:
 ```
 
 !!! note "Equivalencia con la API de referencia"
-    RIR-API no tiene una función de servicio para esto: cada router lee el archivo con `soundfile.read` y promedia los canales si es estéreo. Acá lo centralizamos en `load_audio` para no repetir esa lógica en cada endpoint de M3.
+    RIR-API no tiene una función de servicio para esto: cada router lee el archivo con `soundfile.read` y promedia los canales si es estéreo. Acá lo centralizamos en `load_audio` para no repetir esa lógica en cada endpoint que recibe un archivo: el primero es `/filters/single-band`, en este mismo milestone.
 
 **Consideraciones:**
 - Soportar al menos los formatos WAV y FLAC.
@@ -646,6 +647,90 @@ def test_logarithmic_scale_ratio():
     """Verificar que una senal con amplitud mitad da -6 dB."""
 ```
 
+### Test 6: Endpoints de M2
+
+Ya están escritos en `tests/test_api.py`, marcados `@xfail_m2`: `test_signals_synthetic_ir_endpoint`, `test_filters_single_band_endpoint` y `test_invalid_file_returns_422`. Implementen los endpoints (sección siguiente) y saquen las marcas.
+
+---
+
+## Los endpoints de M2
+
+En M1 escribieron endpoints que **reciben JSON y devuelven un WAV**. En M2 repiten ese patrón una vez y suman el que faltaba: un endpoint que **recibe un archivo**. Es lo que va a hacer el endpoint principal de M3 con la RI, así que conviene resolverlo ahora, con una sola función de por medio.
+
+=== "RI sintética"
+
+    Igual que el ruido rosa de M1: schema, router, `wav_response`. Va en el mismo router de `signals`.
+
+    <span class="ruta-archivo">app/schemas/signals.py</span>
+
+    ```python
+    class SyntheticIRRequest(BaseModel):
+        duration: float = Field(gt=0, le=10)
+        t60_values: dict[float, float]                  # {frecuencia_central: T60}, ej. {"1000": 0.8}
+        sample_rate: int = Field(default=44100, ge=8000, le=192000)
+    ```
+
+    <span class="ruta-archivo">app/routers/signals.py</span>
+
+    ```python
+    @router.post("/synthetic-ir")                       # POST /api/v1/signals/synthetic-ir
+    async def synthetic_ir(req: SyntheticIRRequest):
+        ...  # llamar a generate_synthetic_ir y responder con wav_response
+    ```
+
+    En JSON las claves de un diccionario son siempre texto (`"1000"`); Pydantic las convierte a `float` porque el schema lo dice.
+
+=== "Filtro de una banda"
+
+    El archivo llega como `UploadFile` (formulario `multipart/form-data`) y los parámetros, como campos del mismo formulario (`Form`). `uploaded_file` (ya resuelta en `app/routers/audio_http.py`) lo guarda en una carpeta temporal para que `load_audio` lo lea como cualquier archivo.
+
+    <span class="ruta-archivo">app/routers/filters.py</span>
+
+    ```python
+    from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+
+    from app.routers.audio_http import uploaded_file, wav_response
+    from app.services.filter import filter_single_band
+    from app.services.signal_utils import load_audio
+
+    router = APIRouter()
+
+
+    @router.post("/single-band")                        # POST /api/v1/filters/single-band
+    async def single_band(
+        file: UploadFile = File(...),
+        center_freq: float = Form(..., gt=0),
+        order: int = Form(4, ge=1, le=8),
+    ):
+        with uploaded_file(file) as path:
+            try:
+                signal, fs = load_audio(path)
+            except ValueError as e:                     # no es un audio: el pedido está mal
+                raise HTTPException(status_code=422, detail=f"No es un audio válido: {e}")
+        filtered = filter_single_band(signal, fs, center_freq, order)
+        return wav_response(filtered, fs, f"band_{center_freq:g}hz.wav")
+    ```
+
+    Para que el `except` funcione, `load_audio` tiene que lanzar `ValueError` cuando el archivo no es un audio (lo pide su docstring). Si deja escapar otra excepción, la API responde 500 y el test del 422 falla.
+
+Después, **registrar el router nuevo** en `app/main.py` (está en el `TODO (M2)`):
+
+```python
+from app.routers import filters, health, signals
+
+app.include_router(filters.router, prefix="/api/v1/filters", tags=["filters"])
+```
+
+Y probarlo en `/docs`: en `POST /api/v1/filters/single-band`, *Try it out* muestra un botón para elegir el archivo. Suban una RI de OpenAIR (o del MIT IR Survey), pidan la banda de 1 kHz y escuchen el resultado.
+
+```bash
+curl -X POST http://localhost:8000/api/v1/filters/single-band \
+     -F "file=@ri.wav" -F "center_freq=1000" -o banda_1k.wav
+```
+
+!!! note "Qué queda para M3"
+    `get_impulse_response` y `logarithmic_scale_conversion` no tienen endpoint propio: los usa el análisis completo de M3, que recibe la RI y devuelve los parámetros. Exponer todo no es el objetivo; exponer lo que un cliente necesita, sí.
+
 ---
 
 ## Dataset de validación
@@ -686,6 +771,11 @@ Todos los requisitos de M1 aplican, más los siguientes:
   │   ├── signal_utils.py     # M2
   │   ├── filter.py           # M2
   │   └── acoustic_parameters.py  # M3 (placeholder)
+  ├── schemas/
+  │   └── signals.py          # M1 + SyntheticIRRequest (M2)
+  └── routers/
+      ├── signals.py          # M1 + /synthetic-ir (M2)
+      └── filters.py          # M2: /single-band
   ```
 - **Cobertura de tests**: apuntar a al menos 80% de cobertura en las funciones de M2.
 - **CI**: se recomienda fuertemente configurar GitHub Actions para ejecutar tests automáticamente en cada push. Archivo sugerido: `.github/workflows/ci.yml`.
@@ -742,7 +832,8 @@ Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les a
 ### Lo que tiene que estar para el 4 de noviembre
 
 - [ ] Las 5 funciones implementadas con la firma de la especificación
-- [ ] `pytest -v` en verde — los 5 tests + cobertura > 80%
+- [ ] Endpoints `POST /api/v1/signals/synthetic-ir` y `POST /api/v1/filters/single-band` registrados en `main.py`
+- [ ] `pytest -v` en verde — los tests de las 5 funciones, los 3 de endpoints de M2 (sin `@xfail_m2`) + cobertura > 80%
 - [ ] Docstrings NumPy + type hints en todas las funciones públicas
 - [ ] PRs mergeados, no commits directos a `main`
 
@@ -751,10 +842,10 @@ Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les a
 - [ ] Comparación contra REW o software equivalente en el README
 - [ ] Integración con M1 testeada (sweep ∗ inverso → δ sigue funcionando)
 
-Ocho checks. Si están, presentan tranquilos.
+Nueve checks. Si están, presentan tranquilos.
 
 !!! note "Próxima parada · M3 (entrega 18 de noviembre)"
-    M3 cierra el TP: API REST completa, endpoints expuestos como su propia versión de `rir-api.onrender.com`, validación en el README, demo en vivo y presentación oral. Si M2 está bien resuelto, buena parte de M3 es exponer como endpoints lo que ya tienen; lo nuevo son las funciones de análisis y la validación.
+    M3 cierra el TP: las funciones de análisis, el endpoint que recibe una RI y devuelve los parámetros por banda (el mismo patrón que `/filters/single-band`), la validación en el README, la demo en vivo y la presentación oral. Llegan con cinco endpoints andando: en M3 la API se completa, no se empieza.
 
 ## Recursos
 

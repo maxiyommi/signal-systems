@@ -97,9 +97,9 @@ La distribución del material clase a clase se encuentra en el [índice de clase
 | Milestone | Entrega | Contenido |
 |-----------|---------|-----------|
 | M0 · El plano (arquitectura) | Mié 7/10 (Slack/GitHub) | Plan, diagrama, repo, endpoint /health |
-| M1 · Generación de señales | Mié 28/10 | Ruido rosa, sine sweep, grabación |
-| M2 · Procesamiento de la RI | Mié 4/11 | Deconvolución, bandas de octava, escala en dB |
-| M3 · Producto final | Mié 18/11 | Parámetros ISO 3382, API REST, validación, presentación oral |
+| M1 · Generación de señales | Mié 28/10 | Ruido rosa, sine sweep, grabación + primeros endpoints |
+| M2 · Procesamiento de la RI | Mié 4/11 | Deconvolución, bandas de octava, escala en dB + endpoints con archivos |
+| M3 · Producto final | Mié 18/11 | Parámetros ISO 3382, API completa, validación, presentación oral |
 
 M0, M1 y M2 son de seguimiento (sin nota). La nota del TP es 60 % M3 + 40 % presentación oral — ver la [rúbrica](trabajo_practico/rubrica.md).
 

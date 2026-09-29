@@ -8,13 +8,13 @@
 
 ## Objetivo
 
-Implementar los **servicios de generación** de señales de excitación que necesita una medición acústica según ISO 3382, y el servicio que reproduce y graba en simultáneo. Al terminar este milestone, la API sabe generar ruido rosa y un sine sweep logarítmico con su filtro inverso, y adquirir audio en tiempo real.
+Implementar los **servicios de generación** de señales de excitación que necesita una medición acústica según ISO 3382, y el servicio que reproduce y graba en simultáneo, y **exponer los dos primeros endpoints** de la API. Al terminar este milestone, la API sabe generar ruido rosa y un sine sweep logarítmico con su filtro inverso, los entrega como WAV por HTTP, y el grupo puede adquirir audio en tiempo real.
 
 ---
 
 ## En el plano de la API
 
-Es el mismo diagrama que dibujaron en M0, ahora **parado en M1**: al verlo se encienden los recuadros de este milestone. Son solo **services** (y las librerías que usan); los endpoints de generación se agregan en M3, por eso siguen punteados. Tocá cualquier recuadro para ver su estructura básica, o M0, M2 y M3 para ver de dónde vienen y adónde van.
+Es el mismo diagrama que dibujaron en M0, ahora **parado en M1**: al verlo se encienden los recuadros de este milestone. Esta vez se encienden **las tres capas**: los services de generación, sus schemas y los dos endpoints que los exponen. Tocá cualquier recuadro para ver su estructura básica, o M0, M2 y M3 para ver de dónde vienen y adónde van.
 
 <div class="arq-marco" data-inicial="1">
 --8<-- "arquitectura.html"
@@ -24,13 +24,16 @@ Es el mismo diagrama que dibujaron en M0, ahora **parado en M1**: al verlo se en
 
 ## Del plano al primer cálculo
 
-En M0 dibujaron las tres capas. En M1 le ponen **código real** a una sola: los **servicios** (`app/services/`). Son las funciones que después la API va a exponer como endpoints: cada una hace un cálculo, recibe NumPy y devuelve NumPy, sin saber nada de HTTP ni de JSON.
+En M0 dibujaron las tres capas. En M1 le ponen **código real** a las tres, en ese orden:
+
+- El trabajo grueso son los **servicios** (`app/services/`): cada uno hace un cálculo, recibe NumPy y devuelve NumPy, sin saber nada de HTTP ni de JSON.
+- Encima de dos de ellos va un **endpoint** chico: un **schema** (`app/schemas/`) que valida el pedido y un **router** (`app/routers/`) que llama al service y responde un WAV. Son pocas líneas: el cálculo ya lo hizo el service.
 
 M1 son **tres servicios**. Cada uno se presenta igual:
 
 1. **Qué es:** el concepto de Señales y Sistemas detrás.
 2. **Probalo:** generalo, escuchalo y miralo acá mismo, con el mismo algoritmo que la API de referencia.
-3. **El código, archivo por archivo:** el service que implementan, el test que lo verifica y cómo lo va a exponer la API en M3.
+3. **El código, archivo por archivo:** el service que implementan, el test que lo verifica y el endpoint que lo expone.
 
 Dónde va cada cosa en el repositorio:
 
@@ -41,21 +44,23 @@ rir-api/
 │   │   ├── pink_noise.py     ← Servicio 1 · generate_pink_noise          (M1)
 │   │   ├── sine_sweep.py     ← Servicio 2 · generate_sine_sweep_pair     (M1)
 │   │   └── audio_io.py       ← Servicio 3 · play_and_record              (M1)
-│   ├── schemas/signals.py    ← qué datos recibe cada endpoint            (M3)
-│   └── routers/signals.py    ← los endpoints /api/v1/signals/...         (M3)
+│   ├── schemas/signals.py    ← PinkNoiseRequest, SineSweepRequest        (M1)
+│   ├── routers/signals.py    ← POST /api/v1/signals/pink-noise, /sine-sweep (M1)
+│   └── main.py               ← registrar el router de signals             (M1)
 └── tests/
-    └── test_generacion.py    ← los tests de los tres servicios           (M1)
+    ├── test_generacion.py    ← los tests de los tres servicios           (M1)
+    └── test_api.py           ← los tests de los dos endpoints            (M1)
 ```
 
-El template ya trae los tres archivos de `services/` con la firma y el docstring, y los tests escritos: su trabajo es reemplazar el `raise NotImplementedError` por la implementación hasta que los tests pasen.
+El template ya trae los tres archivos de `services/` con la firma y el docstring, y los tests escritos: su trabajo es reemplazar el `raise NotImplementedError` por la implementación hasta que los tests pasen. Para los endpoints trae resuelta la parte que no es de la materia: `wav_response` (en `app/routers/audio_http.py`) convierte un array en un WAV descargable.
 
 !!! note "Por qué importa"
-    Un servicio es una **función pura**: con los mismos datos devuelve siempre lo mismo. Es fácil de testear, se conecta a un endpoint en M3 sin cambios, y en M2 se puede combinar con otros servicios sin sorpresas.
+    Un servicio es una **función pura**: con los mismos datos devuelve siempre lo mismo. Es fácil de testear, se conecta a su endpoint sin cambios, y en M2 se puede combinar con otros servicios sin sorpresas.
 
     **Regla:** la lógica de DSP no depende de HTTP ni de FastAPI. La entrada y salida (archivos, placa de audio) queda en funciones propias, separadas del cálculo: por eso `play_and_record` vive en su propio archivo.
 
 !!! note "Los nombres coinciden con la API de referencia"
-    Los servicios, sus parámetros y los endpoints usan los mismos nombres que la implementación de la cátedra ([Swagger](https://rir-api.onrender.com/docs)): `generate_pink_noise` atiende `POST /api/v1/signals/pink-noise`, `generate_sine_sweep_pair` atiende `POST /api/v1/signals/sine-sweep/pair`. Los nombres van en inglés; la documentación, en español.
+    Los servicios, sus parámetros y los endpoints usan los mismos nombres que la implementación de la cátedra ([Swagger](https://rir-api.onrender.com/docs)): `generate_pink_noise` atiende `POST /api/v1/signals/pink-noise`, `generate_sine_sweep_pair` atiende `POST /api/v1/signals/sine-sweep` (con `inverse` se elige el sweep o su filtro inverso). Los nombres van en inglés; la documentación, en español.
 
 ---
 
@@ -114,7 +119,7 @@ Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seg
         raise NotImplementedError("Implementar en Milestone 1")   # ← acá va su implementación
     ```
 
-    Mismo nombre y orden de argumentos que `generate_pink_noise` de la API de referencia. La de cátedra además acepta `output_path` para escribir el WAV; acá el service **solo devuelve el array** (guardar archivos es tarea del router, en M3).
+    Mismo nombre y orden de argumentos que `generate_pink_noise` de la API de referencia. La de cátedra además acepta `output_path` para escribir el WAV; acá el service **solo devuelve el array** (convertirlo en WAV es tarea del router).
 
 === "Test"
 
@@ -134,13 +139,16 @@ Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seg
 
     Es lo mismo que calcula la demo: la densidad espectral con el método de Welch y la pendiente por regresión. En el mismo archivo están `test_pink_noise_duration`, `test_pink_noise_type` y `test_pink_noise_normalized` (largo, tipo y rango de la señal).
 
-=== "Endpoint (M3)"
+=== "Endpoint"
 
-    En M1 no se escribe: así lo va a exponer la API en M3. El schema describe el pedido y el router llama al service.
+    El schema describe el pedido (y rechaza con 422 lo que no cumple) y el router llama al service y responde el WAV. Es el ejemplo completo: el del sweep se escribe igual.
 
     <span class="ruta-archivo">app/schemas/signals.py</span>
 
     ```python
+    from pydantic import BaseModel, Field
+
+
     class PinkNoiseRequest(BaseModel):
         duration: float = Field(gt=0, le=60)            # segundos
         sample_rate: int = Field(default=44100, ge=8000, le=192000)
@@ -149,12 +157,22 @@ Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seg
     <span class="ruta-archivo">app/routers/signals.py</span>
 
     ```python
+    from fastapi import APIRouter
+
+    from app.routers.audio_http import wav_response
+    from app.schemas.signals import PinkNoiseRequest
+    from app.services.pink_noise import generate_pink_noise
+
+    router = APIRouter()
+
+
     @router.post("/pink-noise")                         # POST /api/v1/signals/pink-noise
     async def pink_noise(req: PinkNoiseRequest):
         audio = generate_pink_noise(req.duration, req.sample_rate)
-        return {"duration": req.duration, "sample_rate": req.sample_rate,
-                "num_samples": len(audio), "max_amplitude": float(np.max(np.abs(audio)))}
+        return wav_response(audio, req.sample_rate, "pink_noise.wav")
     ```
+
+    El test es `test_signals_pink_noise_endpoint` en `tests/test_api.py`: pide 1 s y verifica que vuelva un WAV de 44100 muestras.
 
 ---
 
@@ -263,9 +281,9 @@ Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro in
 
     El primero es el espectrograma de la demo; el segundo, la convolución (la demo muestra la misma relación pico/resto). En el mismo archivo están `test_sine_sweep_pair_returns_tuple` y `test_sine_sweep_duration`.
 
-=== "Endpoint (M3)"
+=== "Endpoint"
 
-    En M1 no se escribe: así lo va a exponer la API en M3.
+    Un solo endpoint para el par: con `inverse` en `false` devuelve el sweep (lo que se reproduce en la sala) y en `true`, el filtro inverso (lo que se usa en M2 para obtener la RI).
 
     <span class="ruta-archivo">app/schemas/signals.py</span>
 
@@ -275,19 +293,26 @@ Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro in
         start_freq: float = Field(default=20, ge=1, le=20000)
         end_freq: float = Field(default=20000, ge=1, le=22050)
         sample_rate: int = Field(default=44100, ge=8000, le=192000)
+        inverse: bool = False                           # True: devuelve el filtro inverso
     ```
 
     <span class="ruta-archivo">app/routers/signals.py</span>
 
     ```python
-    @router.post("/sine-sweep/pair")                    # POST /api/v1/signals/sine-sweep/pair
-    async def sine_sweep_pair(req: SineSweepRequest):
+    # arriba del archivo: from fastapi import APIRouter, HTTPException
+    #                     from app.services.sine_sweep import generate_sine_sweep_pair
+
+    @router.post("/sine-sweep")                         # POST /api/v1/signals/sine-sweep
+    async def sine_sweep(req: SineSweepRequest):
+        if req.start_freq >= req.end_freq:
+            raise HTTPException(status_code=400, detail="start_freq tiene que ser menor que end_freq")
         sweep, inverse_filter = generate_sine_sweep_pair(
             req.duration, req.start_freq, req.end_freq, req.sample_rate
         )
-        return {"sine_sweep": {"num_samples": len(sweep)},
-                "inverse_filter": {"num_samples": len(inverse_filter)}}
+        ...  # devolver con wav_response el sweep o el filtro inverso, según req.inverse
     ```
+
+    El test es `test_signals_sine_sweep_endpoint`: pide los dos y verifica que sean WAV distintos del largo pedido.
 
 ---
 
@@ -380,7 +405,35 @@ Este servicio no tiene demo: necesita su placa de audio. La prueba real (parlant
 
 === "Endpoint"
 
-    No tiene endpoint: grabar con la placa de audio del servidor no tiene sentido en una API (el servidor está en un datacenter, no en la sala). La API recibe la grabación ya hecha como archivo, en M2 y M3.
+    No tiene endpoint: grabar con la placa de audio del servidor no tiene sentido en una API (el servidor está en un datacenter, no en la sala). La API recibe la grabación ya hecha como archivo, desde M2.
+
+---
+
+## Los endpoints de M1
+
+Con los dos routers escritos, falta **registrarlos** y **probarlos**. Es la primera vez que la API hace algo más que `/health`.
+
+1. **Registrar el router** en `app/main.py` (el template tiene la línea comentada en el `TODO (M1)`):
+
+    ```python
+    from app.routers import health, signals
+
+    app.include_router(signals.router, prefix="/api/v1/signals", tags=["signals"])
+    ```
+
+2. **Probarlo en Swagger:** `uv run uvicorn app.main:app --reload`, abrir `http://localhost:8000/docs`, desplegar `POST /api/v1/signals/pink-noise`, *Try it out*, y descargar el WAV. Pidan una duración negativa: tiene que volver **422** sin que escriban una línea de validación (lo hace el schema).
+3. **Probarlo desde la terminal**, para el README:
+
+    ```bash
+    curl -X POST http://localhost:8000/api/v1/signals/pink-noise \
+         -H "Content-Type: application/json" \
+         -d '{"duration": 5, "sample_rate": 44100}' -o pink_noise.wav
+    ```
+
+4. **Sacar las marcas `@xfail_m1`** de los tres tests de M1 en `tests/test_api.py` (los dos endpoints y el 422) y verlos pasar.
+
+!!! note "Cuánto trabajo es"
+    El peso de M1 sigue estando en los servicios. Los endpoints son dos funciones de tres o cuatro líneas y dos schemas: el de ruido rosa está completo en esta página y el del sweep se escribe igual. Lo que ganan es que desde M1 la API **hace algo**, y en M2 y M3 agregar un endpoint ya es rutina.
 
 ---
 
@@ -389,7 +442,7 @@ Este servicio no tiene demo: necesita su placa de audio. La prueba real (parlant
 Además de los tests automatizados, cada grupo debe realizar las siguientes validaciones manuales:
 
 1. **Comparación espectral con Audacity o REW:**
-   - Exportar el ruido rosa generado a WAV y abrirlo en Audacity.
+   - Generar el ruido rosa **con su endpoint** (desde `/docs` o con `curl`) y abrir el WAV en Audacity.
    - Analizar el espectro y verificar visualmente la pendiente de -3 dB/octava.
    - Repetir para el sine sweep: verificar que el espectrograma muestra un barrido logarítmico de $f_1$ a $f_2$.
 
@@ -444,7 +497,7 @@ Las capturas o PNG van en `docs/m1/` del repo y se enlazan desde el README.
 Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les ahorran trabajo en M2 y M3.
 
 !!! note "01 · Metadatos en el router, no en el service"
-    La función devuelve el array (así lo piden la firma y los tests). En M3, el endpoint arma la respuesta JSON con `sample_rate`, `num_samples`, `max_amplitude`, etc., sin tocar el service.
+    La función devuelve el array (así lo piden la firma y los tests). El endpoint decide cómo responder: acá, un WAV con `wav_response`; la API de referencia responde un JSON con `sample_rate`, `num_samples`, `max_amplitude` y un link de descarga. En los dos casos el service no se toca.
 
 !!! note "02 · Normalizar al 90% del máximo"
     `signal = signal / max(|signal|) * 0.9`  
@@ -459,7 +512,7 @@ Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les a
     `pink_noise.py` genera. `signal_utils.py` grafica. Funciones distintas, archivos distintos. Si mañana cambian el plot, no rompen el generador.
 
 !!! note "05 · Guardar WAV fuera del service"
-    Si en M3 un endpoint devuelve un WAV, que lo escriba el router en un archivo temporal (`tempfile`), no en la carpeta de trabajo: los tests no ensucian el repo.
+    El WAV lo arma el router, en memoria (`wav_response` usa un `io.BytesIO`), nunca en la carpeta de trabajo: los tests no ensucian el repo.
 
 !!! note "06 · Dos implementaciones, mismo test"
     Voss-McCartney y el filtrado de ruido blanco son válidos. El test es el contrato, no la implementación. Esto les da margen de optimizar después sin romper nada.
@@ -498,8 +551,11 @@ Lo que tiene que estar en el tag `v0.1.0` el 28/10.
 - [ ] `generate_pink_noise` con test pasando
 - [ ] `generate_sine_sweep_pair` + filtro inverso con tests pasando
 - [ ] `play_and_record` con test de forma
+- [ ] Endpoints `POST /api/v1/signals/pink-noise` y `POST /api/v1/signals/sine-sweep` registrados en `main.py`, con sus schemas, devolviendo WAV
+- [ ] Los tres tests de M1 de `tests/test_api.py` pasando (sin la marca `@xfail_m1`)
+- [ ] Un ejemplo `curl` en el README
 - [ ] Las gráficas y la evidencia de validación en `docs/m1/`, enlazadas desde el README
-- [ ] `pytest -v` en verde: los tests de los tres servicios
+- [ ] `pytest -v` en verde: los tests de los tres servicios y de los dos endpoints
 - [ ] Docstrings y type hints en los 3 servicios
 - [ ] PRs mergeados, no commits directos a `main`
 - [ ] Tag `v0.1.0` anotado y empujado al remote

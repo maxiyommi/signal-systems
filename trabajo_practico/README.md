@@ -45,6 +45,8 @@ En cada **presentación** la cátedra presenta la consigna del milestone. En las
 
 Los nombres de funciones, parámetros y tests van en inglés y en *snake_case* (PEP 8), alineados con la implementación de referencia de la cátedra (ver [De idea a MVP](#de-idea-a-mvp-la-implementacion-de-referencia)); la documentación y los comentarios, en español. Cada especificación aclara dónde la firma difiere de la referencia.
 
+La API crece con el TP: **cada milestone expone como endpoints lo que construye**. En M1 genera señales, en M2 sintetiza RIs y filtra un WAV subido, y en M3 recibe una RI y devuelve sus parámetros acústicos.
+
 ### M0 · El plano (entrega 7/10)
 - README del repositorio con integrantes, roles, instrucciones y estructura.
 - Diagrama de arquitectura (Mermaid o draw.io).
@@ -57,6 +59,7 @@ Los nombres de funciones, parámetros y tests van en inglés y en *snake_case* (
 | `generate_pink_noise(duration, fs)` | Ruido rosa (algoritmo Voss-McCartney). Espectro −3 dB/octava. |
 | `generate_sine_sweep_pair(duration, f1, f2, fs)` | Sine sweep logarítmico + filtro inverso. |
 | `play_and_record(signal, fs, record_duration)` | Reproducción y grabación simultánea con `sounddevice`. |
+| **Endpoints** | `POST /api/v1/signals/pink-noise` y `POST /api/v1/signals/sine-sweep`: devuelven WAV. |
 
 ### M2 · Procesamiento de la RI (entrega 4/11)
 | Función | Descripción |
@@ -66,15 +69,16 @@ Los nombres de funciones, parámetros y tests van en inglés y en *snake_case* (
 | `get_impulse_response(recording, inverse_filter)` | Deconvolución vía FFT para obtener la RI. |
 | `filter_single_band(signal, fs, center_freq, order)` | Filtro de banda de octava según IEC 61260 (Butterworth). |
 | `logarithmic_scale_conversion(signal)` | Conversión a escala logarítmica normalizada (dB). |
+| **Endpoints** | `POST /api/v1/signals/synthetic-ir` (WAV) y `POST /api/v1/filters/single-band` (recibe un WAV subido). |
 
-### M3 · Producto final: API REST (entrega 18/11)
+### M3 · Producto final: la API completa (entrega 18/11)
 | Componente | Descripción |
 |------------|-------------|
 | `apply_smoothing(signal, fs, method, window_ms)` | Envolvente: transformada de Hilbert o media móvil. |
 | `apply_schroeder_integral(ir)` | Integración inversa de Schroeder. |
 | `linear_regression(x, y)` | Mínimos cuadrados para calcular los tiempos de reverberación. |
 | `calculate_parameters_from_ir(ir, fs)` | EDT, T10, T20, T30, D50 y C80 por banda de octava. |
-| **API REST (FastAPI)** | Endpoints que exponen la funcionalidad de M1, M2 y M3. |
+| **Endpoints** | `POST /api/v1/acoustics/parameters` (recibe una RI, devuelve los parámetros por banda), `/utils/schroeder` y `/utils/smoothing`. Con los de M1 y M2, la API completa. |
 | `apply_lundeby(ir, fs)` *(opcional)* | Estima el punto de corte por ruido de fondo; se valora dentro del criterio Funcionalidad. |
 
 ---

@@ -93,9 +93,10 @@ rir-api/
 │   ├── settings.py                # Configuracion (pydantic-settings, variables RIR_*)
 │   ├── routers/
 │   │   ├── __init__.py
-│   │   └── health.py              # GET /health
+│   │   ├── health.py              # GET /health (M0)
+│   │   └── audio_http.py          # wav_response y uploaded_file (ya resueltas)
 │   ├── schemas/
-│   │   └── __init__.py            # Modelos Pydantic de request/response (M3)
+│   │   └── __init__.py            # Modelos Pydantic de request/response (desde M1)
 │   └── services/
 │       ├── __init__.py
 │       ├── pink_noise.py          # generate_pink_noise (M1)
@@ -112,7 +113,7 @@ rir-api/
 │   ├── test_generacion.py         # Tests de M1
 │   ├── test_procesamiento.py      # Tests de M2
 │   ├── test_analisis.py           # Tests de M3 (services)
-│   └── test_api.py                # Tests de endpoints (/health desde M0, resto M3)
+│   └── test_api.py                # Tests de endpoints, por milestone (M0 a M3)
 ├── data/                          # Mediciones y audios locales (ignorado por git)
 ├── docs/
 │   └── README.md                  # Guia para la documentacion (graficas de validacion, etc.)
@@ -122,8 +123,9 @@ rir-api/
 └── README.md
 ```
 
-Los routers y schemas de `signals`, `filters`, `acoustics`, `analysis` y `utils` se agregan
-en M3 (ver los `TODO` en `app/main.py`).
+Cada milestone expone lo que construye: los routers y schemas de `signals` se agregan en M1
+(y suman `synthetic-ir` en M2), los de `filters` en M2 y los de `acoustics` y `utils` en M3
+(ver los `TODO` en `app/main.py`).
 
 ## Milestones y entregas (2C 2026)
 
@@ -154,21 +156,27 @@ en M3 (ver los `TODO` en `app/main.py`).
 - [ ] `generate_pink_noise()` en `app/services/pink_noise.py` (Voss-McCartney recomendado).
 - [ ] `generate_sine_sweep_pair()` (sweep + filtro inverso) en `app/services/sine_sweep.py`.
 - [ ] `play_and_record()` en `app/services/audio_io.py`.
-- [ ] Tests de `tests/test_generacion.py` pasando; graficas de validacion en `docs/m1/`.
+- [ ] Endpoints `POST /api/v1/signals/pink-noise` y `POST /api/v1/signals/sine-sweep` (devuelven WAV),
+      con sus schemas en `app/schemas/signals.py`.
+- [ ] Tests de `tests/test_generacion.py` y los de M1 en `tests/test_api.py` pasando;
+      graficas de validacion en `docs/m1/`.
 
 ### M2 · Procesamiento de la RI (`v0.2.0`)
 
 - [ ] `load_audio()`, `generate_synthetic_ir()`, `get_impulse_response()` y
       `logarithmic_scale_conversion()` en `app/services/signal_utils.py`.
 - [ ] `filter_single_band()` en `app/services/filter.py`.
-- [ ] Tests de `tests/test_procesamiento.py` pasando.
+- [ ] Endpoints `POST /api/v1/signals/synthetic-ir` y `POST /api/v1/filters/single-band`
+      (recibe un WAV subido).
+- [ ] Tests de `tests/test_procesamiento.py` y los de M2 en `tests/test_api.py` pasando.
 
 ### M3 · Producto final (`v1.0.0`)
 
 - [ ] `apply_smoothing()`, `apply_schroeder_integral()`, `linear_regression()` y
       `calculate_parameters_from_ir()` en `app/services/acoustic_parameters.py`.
-- [ ] Routers y schemas que exponen toda la funcionalidad como API REST.
-- [ ] Tests de `tests/test_analisis.py` y `tests/test_api.py` pasando.
+- [ ] Endpoints `POST /api/v1/acoustics/parameters`, `POST /api/v1/utils/schroeder` y
+      `POST /api/v1/utils/smoothing`: la API completa.
+- [ ] Tests de `tests/test_analisis.py` y todos los de `tests/test_api.py` pasando.
 - [ ] Seccion "Validacion" en este README, `AI_LOG.md` y presentacion oral.
 - [ ] (Opcional) `apply_lundeby()`.
 
@@ -181,7 +189,8 @@ primer dia:
 - Mientras la funcion no este implementada, el test aparece como `x` (xfailed).
 - Cuando la implementen bien, aparece como `X` (xpassed). En ese momento conviene **borrar
   la marca `xfail`** del modulo de tests (`pytestmark = ...`) para que el test cuente como
-  un test normal.
+  un test normal. En `tests/test_api.py` la marca va test por test (`@xfail_m1`,
+  `@xfail_m2`, `@xfail_m3`): borren la de cada endpoint que implementen.
 - Si la implementacion es incorrecta, el test **falla** (rojo) con el `AssertionError`.
 
 ```bash

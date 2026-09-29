@@ -184,7 +184,7 @@ function demoRuidoRosa(el) {
     fs = contexto().sampleRate;
     x = (estado.method === 'iir' ? generatePinkNoise : generateVossPinkNoise)(estado.duration, fs);
     pendiente = pendienteDbPorOctava(x, fs, 100, 5000);
-    el.querySelector('[data-endpoint]').textContent = estado.method === 'iir' ? '/api/v1/signals/pink-noise' : '/api/v1/signals/pink-noise/voss';
+    el.querySelector('[data-endpoint]').textContent = '/api/v1/signals/pink-noise';   // el endpoint de M1 (el método es interno del service)
     el.querySelector('pre code').textContent = json({ duration: estado.duration, sample_rate: fs, num_samples: x.length, max_amplitude: 0.9, method: estado.method === 'iir' ? 'iir_filter' : 'voss' });
     dibujar();
   }
@@ -207,7 +207,7 @@ function demoRuidoRosa(el) {
 function demoSweep(el) {
   const estado = { duration: 3, f1: 20, f2: 20000 };
   el.innerHTML = `
-    <div class="servicio-demo__cabecera"><span class="servicio-demo__verbo">POST</span><code>/api/v1/signals/sine-sweep/pair</code><span class="servicio-demo__nota">Mismo algoritmo que la API de referencia, calculado en tu navegador.</span></div>
+    <div class="servicio-demo__cabecera"><span class="servicio-demo__verbo">POST</span><code>/api/v1/signals/sine-sweep</code><span class="servicio-demo__nota">Mismo algoritmo que la API de referencia, calculado en tu navegador.</span></div>
     <div class="servicio-demo__controles">
       ${rango('duration', 'duration', 0.5, 10, 0.5, estado.duration)}
       ${rango('f1', 'f1', 20, 1000, 10, estado.f1)}
