@@ -261,3 +261,23 @@ export function evaluarDecaimiento(ri, fs, { desdeDb = -5, hastaDb = -35, corte 
   const motivo = valido ? '' : `No válido: rango dinámico de ${Math.round(rangoDinamico)} dB; este tramo pide al menos ${requerido} dB (ISO 3382-1).`;
   return { ...base, tr, pendiente, ordenada, valido, motivo };
 }
+
+// Envolvente de un ecograma: la curva que toca los picos. En cada instante se toma la llegada más fuerte
+// dentro de una ventana corta centrada y se pasa a dB (0 dB = amplitud 1, el sonido directo).
+export function envolventeLlegadas(llegadas, tMax, { paso = 0.002, ventana = 0.005 } = {}) {
+  const n = Math.round(tMax / paso) + 1;
+  const energia = new Float64Array(n);
+  for (const l of llegadas) {
+    const b = Math.round(l.t / paso);
+    if (b >= 0 && b < n) energia[b] = Math.max(energia[b], l.amp * l.amp);
+  }
+  const medio = Math.max(0, Math.round(ventana / paso / 2));
+  const t = new Float32Array(n), db = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let e = 0;
+    for (let k = Math.max(0, i - medio); k <= Math.min(n - 1, i + medio); k++) e = Math.max(e, energia[k]);
+    t[i] = i * paso;
+    db[i] = Math.max(-90, 10 * Math.log10(e + 1e-12));
+  }
+  return { t, db };
+}

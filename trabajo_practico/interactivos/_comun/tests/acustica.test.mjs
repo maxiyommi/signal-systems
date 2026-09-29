@@ -81,3 +81,23 @@ test('tiempo que conviene mostrar en el ecograma: crece con la sala, entre 0,2 y
   assert.ok(tiempoEcograma({ lx: 25, ly: 20, lz: 10 }) > 0.3);
   assert.equal(tiempoEcograma({ lx: 60, ly: 60, lz: 30 }), 0.5);
 });
+
+test('envolvente de un ecograma: energía por ventanas, en dB respecto del directo', async () => {
+  const { envolventeLlegadas } = await import('../acustica.js');
+  // directo (amp 1) en 10 ms y una reflexión de amp 0.1 en 40 ms (−20 dB)
+  const e = envolventeLlegadas([{ t: 0.010, amp: 1 }, { t: 0.040, amp: 0.1 }], 0.06, { paso: 0.002, ventana: 0.004 });
+  const en = (t) => e.db[Math.round(t / 0.002)];
+  assert.ok(Math.abs(en(0.010)) < 1, `en el directo ≈ 0 dB: ${en(0.010)}`);
+  assert.ok(Math.abs(en(0.040) + 20) < 1, `en la reflexión ≈ −20 dB: ${en(0.040)}`);
+  assert.ok(en(0.025) <= -60, `sin llegadas, piso: ${en(0.025)}`);
+});
+
+test('envolvente de llegadas que decaen exponencialmente: baja con el tiempo', async () => {
+  const { envolventeLlegadas } = await import('../acustica.js');
+  const ll = Array.from({ length: 200 }, (_, k) => ({ t: 0.005 + k * 0.001, amp: Math.pow(10, -3 * (k * 0.001) / 0.5) }));
+  const e = envolventeLlegadas(ll, 0.2, { paso: 0.002, ventana: 0.01 });
+  const en = (t) => e.db[Math.round(t / 0.002)];
+  assert.ok(en(0.05) > en(0.15));
+  // 60 dB en 0,5 s: entre 50 y 150 ms caen ≈ 12 dB
+  assert.ok(Math.abs(en(0.05) - en(0.15) - 12) < 2, `caída = ${en(0.05) - en(0.15)}`);
+});

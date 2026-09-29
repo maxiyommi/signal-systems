@@ -1,6 +1,6 @@
 // Sala 3D: rayos por fuentes imagen, ecograma sincronizado y auralización con el T60 de la sala.
 // Si no hay WebGL (o three.js no carga) cae a una planta 2D con los mismos controles.
-import { fuentesImagen, llegadas, caminoPlegado, sabineT60, eyringT60, tiempoEcograma, riSintetica, edcDb, tiempoReverberacion } from '../_comun/acustica.js';
+import { fuentesImagen, llegadas, caminoPlegado, sabineT60, eyringT60, tiempoEcograma, riSintetica, edcDb, tiempoReverberacion, envolventeLlegadas } from '../_comun/acustica.js';
 import { obtenerContexto, cargarBuffer, crearCanal } from '../_comun/audio.js';
 import { FUENTE, prepararCanvas, dibujarLeyenda, paleta } from '../_comun/grafico.js';
 
@@ -32,7 +32,8 @@ export function crearSala3D(seccion, {
     alpha: 0.3, modo: 'simulada', mic: [...mic], ts: 0, pausa: 0, activa: false,
     ordenMax: 3, velocidad: 1, pausado: false, audio: 'canto',
   };
-  let tMax = tiempoEcograma(sala);                          // s de ecograma (crece con la sala)
+  let tMax = tiempoEcograma(sala);
+  let envolvente = null;                                    // energía de las llegadas en el tiempo (dB)                          // s de ecograma (crece con la sala)
   const canal = crearCanal();
   let ui = null, vista = null, rayos = [], ecoLlegadas = [], riRealInfo = null, ultimo = 0, rafId = 0, preparando = null;
 
@@ -59,6 +60,7 @@ export function crearSala3D(seccion, {
     const ordenEco = Math.min(18, Math.ceil((tMax * C) / Math.min(sala.lx, sala.ly, sala.lz)) + 1);
     ecoLlegadas = llegadas(fuentesImagen(sala, fuente, estado.modo === 'libre' ? 0 : ordenEco), estado.mic, alpha)
       .filter((l) => l.amp > 0 && l.t <= tMax);
+    envolvente = envolventeLlegadas(ecoLlegadas, tMax, { paso: 0.002, ventana: 0.006 });
     estado.ts = 0; estado.pausa = 0;
     actualizarTexto();
     if (vista) vista.reconstruir();
@@ -101,7 +103,11 @@ export function crearSala3D(seccion, {
     if (riRealInfo) return riRealInfo;
     const buf = await cargarBuffer(riReal);
     const datos = buf.getChannelData(0);
-    riRealInfo = { buf, datos, fs: buf.sampleRate, t30: tiempoReverberacion(edcDb(datos), buf.sampleRate) };
+    const fs = buf.sampleRate, paso = Math.round(fs * 0.002), bins = [];
+    for (let i = 0; i + paso <= datos.length; i += paso) { let e = 0; for (let k = i; k < i + paso; k++) e += datos[k] * datos[k]; bins.push(e); }
+    const eMax = Math.max(...bins) || 1;
+    const envolventeReal = { t: bins.map((_, i) => (i + 0.5) * 0.002), db: bins.map((e) => Math.max(-90, 10 * Math.log10(e / eMax + 1e-12))) };
+    riRealInfo = { buf, datos, fs, envolventeReal, t30: tiempoReverberacion(edcDb(datos), fs) };
     return riRealInfo;
   }
 
@@ -183,12 +189,11 @@ export function crearSala3D(seccion, {
             </div>
           </aside>
           <div class="sala-flotante sala-flotante--abajo">
-            <span class="t60" aria-live="polite"></span>
-            <span class="small datos"></span>
+            <div class="sala-lecturas"><span class="t60" aria-live="polite"></span><span class="small datos"></span></div>
+            <canvas class="ecograma" role="img" aria-label="Ecograma: llegadas al micrófono en el tiempo, con su envolvente"></canvas>
           </div>
         </div>
       </div>
-      <canvas class="ecograma" role="img" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
       <p class="small aviso" hidden></p>`;
     const $ = (sel) => raiz.querySelector(sel);
     ui = {
@@ -244,11 +249,13 @@ export function crearSala3D(seccion, {
   let eco = null;                                         // contexto del ecograma (se rehace si cambia el ancho)
   function dibujarEcograma() {
     const ancho = ui.eco.parentElement.clientWidth;
-    if (!eco || Math.abs(eco.anchoPadre - ancho) > 2) eco = { ...prepararCanvas(ui.eco, { aspecto: 0.3, min: 170, max: 240 }), anchoPadre: ancho };
+    if (!eco || Math.abs(eco.anchoPadre - ancho) > 2) eco = { ...prepararCanvas(ui.eco, { aspecto: 0.17, min: 130, max: 200 }), anchoPadre: ancho };
     const { g, W, H, compacto } = eco;
-    const tt = compacto ? 11 : 13;
-    g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
-    const leyenda = estado.modo === 'real' ? [[COL.violeta, 'RI medida (envolvente)']] : [[COL.senal, 'Sonido directo'], [COL.violeta, 'Reflexiones']];
+    const tt = compacto ? 11 : 12;
+    g.clearRect(0, 0, W, H);                                  // fondo transparente: flota sobre la simulación
+    const leyenda = estado.modo === 'real'
+      ? [[COL.violeta, 'RI medida'], [COL.tinta, 'Envolvente']]
+      : [[COL.senal, 'Sonido directo'], [COL.violeta, 'Reflexiones'], [COL.tinta, 'Envolvente']];
     const altoLeyenda = dibujarLeyenda(g, leyenda, { x0: compacto ? 36 : 52, y0: tt + 6, maxAncho: W - 60, tamano: tt });
     const m = { l: compacto ? 36 : 52, r: 12, t: altoLeyenda + 12, b: compacto ? 36 : 42 }, dbMin = -60;
     const xt = (t) => m.l + (t / tMax) * (W - m.l - m.r);
@@ -273,6 +280,7 @@ export function crearSala3D(seccion, {
         const d = 20 * Math.log10(v / pico + 1e-12);
         if (d > dbMin) { g.beginPath(); g.moveTo(x, H - m.b); g.lineTo(x, yd(d)); g.stroke(); }
       }
+      curvaEnvolvente(riRealInfo.envolventeReal, hasta);
       return;
     }
     for (const l of ecoLlegadas) {
@@ -282,6 +290,18 @@ export function crearSala3D(seccion, {
       g.strokeStyle = l.orden === 0 ? COL.senal : COL.violeta;
       g.lineWidth = l.orden === 0 ? (compacto ? 2.5 : 3.5) : (compacto ? 1 : 1.5);
       g.beginPath(); g.moveTo(xt(l.t), H - m.b); g.lineTo(xt(l.t), yd(d)); g.stroke();
+    }
+    if (envolvente) curvaEnvolvente(envolvente, Math.min(estado.ts, tMax));
+
+    function curvaEnvolvente(env, hasta) {
+      g.strokeStyle = COL.tinta; g.lineWidth = compacto ? 1.5 : 2; g.globalAlpha = 0.9; g.beginPath();
+      let empezado = false;
+      for (let i = 0; i < env.t.length && env.t[i] <= hasta; i++) {
+        if (env.db[i] <= dbMin) { empezado = false; continue; }
+        const x = xt(env.t[i]), y = yd(env.db[i]);
+        if (empezado) g.lineTo(x, y); else { g.moveTo(x, y); empezado = true; }
+      }
+      g.stroke(); g.globalAlpha = 1;
     }
   }
 
@@ -416,9 +436,12 @@ export function crearSala3D(seccion, {
       renderer.domElement.style.width = '100%'; renderer.domElement.style.height = '100%';
       camara.aspect = w / h;
       // Con el panel de ajustes abierto encima, la sala se centra en el espacio libre (a su derecha).
-      const panel = ui.escena.parentElement.querySelector('.sala-panel');
-      const tapa = panel && getComputedStyle(ui.escena.parentElement.querySelector('.sala-capas')).position === 'absolute' ? panel.offsetWidth + 12 : 0;
-      if (tapa) camara.setViewOffset(w, h, -tapa / 2, 0, w, h); else camara.clearViewOffset();
+      const capas = ui.escena.parentElement.querySelector('.sala-capas');
+      const encima = capas && getComputedStyle(capas).position === 'absolute';
+      const alto = (sel) => (encima ? (capas.querySelector(sel)?.offsetHeight || 0) + 12 : 0);
+      const izq = encima ? (capas.querySelector('.sala-panel')?.offsetWidth || 0) + 12 : 0;
+      const dy = (alto('.sala-flotante--abajo') - alto('.sala-flotante--arriba')) / 2;
+      if (encima) camara.setViewOffset(w, h, -izq / 2, dy, w, h); else camara.clearViewOffset();
       camara.updateProjectionMatrix();
     }
     new ResizeObserver(ajustar).observe(ui.escena);
