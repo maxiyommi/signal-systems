@@ -142,44 +142,53 @@ export function crearSala3D(seccion, {
   function construirUI() {
     const rango = (clave, texto, min, max, paso, valor) =>
       `<label>${texto} <input type="range" data-p="${clave}" min="${min}" max="${max}" step="${paso}" value="${valor}"><output data-o="${clave}"></output></label>`;
+    // Todo integrado en la simulación: barra arriba (modo, animación, audio), panel plegable a la izquierda
+    // (parámetros) y franja abajo (lecturas). En pantallas angostas pasan debajo de la escena.
     raiz.innerHTML = `
-      <div class="escena sala-escena"></div>
-      <div class="controles">
-        <div class="segmentado" role="group" aria-label="Qué se escucha y se ve">
-          <button type="button" data-modo="simulada">Sala simulada</button>
-          <button type="button" data-modo="real">Sala real (Sports Centre)</button>
-          <button type="button" data-modo="libre">Aire libre</button>
-        </div>
-        <div class="segmentado" role="group" aria-label="Animación">
-          <button type="button" data-accion="pausa">Pausar</button>
-          <button type="button" data-accion="reiniciar">Reiniciar</button>
+      <div class="sala-simulacion">
+        <div class="escena sala-escena"></div>
+        <div class="sala-capas">
+          <div class="sala-flotante sala-flotante--arriba">
+            <div class="segmentado" role="group" aria-label="Qué se escucha y se ve">
+              <button type="button" data-modo="simulada">Sala simulada</button>
+              <button type="button" data-modo="real">Sala real</button>
+              <button type="button" data-modo="libre">Aire libre</button>
+            </div>
+            <div class="segmentado" role="group" aria-label="Animación">
+              <button type="button" data-accion="pausa">Pausar</button>
+              <button type="button" data-accion="reiniciar">Reiniciar</button>
+            </div>
+            <div class="segmentado" role="group" aria-label="Escuchar">
+              <button type="button" data-accion="escuchar">Escuchar</button>
+              <button type="button" data-audio="canto">Canto</button>
+              <button type="button" data-audio="bateria">Batería</button>
+            </div>
+          </div>
+          <aside class="sala-flotante sala-panel" aria-label="Ajustes de la simulación">
+            <button type="button" class="sala-panel__plegar" aria-expanded="true">Ajustes</button>
+            <div class="sala-panel__cuerpo parametros">
+              <fieldset>
+                <legend>Sala simulada</legend>
+                ${rango('lx', 'Largo', 4, 30, 0.5, sala.lx)}
+                ${rango('ly', 'Ancho', 3, 25, 0.5, sala.ly)}
+                ${rango('lz', 'Alto', 2.5, 12, 0.5, sala.lz)}
+                ${rango('alpha', 'Absorción (α)', 0.05, 0.95, 0.05, estado.alpha)}
+              </fieldset>
+              <fieldset>
+                <legend>Visualización</legend>
+                ${rango('orden', 'Reflexiones', 0, 3, 1, estado.ordenMax)}
+                ${rango('velocidad', 'Velocidad', 0, 4, 1, 2)}
+                <p class="small">Arrastrá el micrófono sobre la escena. Orden 1: rebota en una pared; orden 2: en dos.</p>
+              </fieldset>
+            </div>
+          </aside>
+          <div class="sala-flotante sala-flotante--abajo">
+            <span class="t60" aria-live="polite"></span>
+            <span class="small datos"></span>
+          </div>
         </div>
       </div>
-      <div class="controles">
-        <button type="button" data-accion="escuchar">Escuchar</button>
-        <div class="segmentado" role="group" aria-label="Fuente sonora">
-          <button type="button" data-audio="canto">Canto</button>
-          <button type="button" data-audio="bateria">Batería</button>
-        </div>
-        <span class="t60" aria-live="polite"></span>
-      </div>
-      <p class="small datos"></p>
       <canvas class="ecograma" role="img" aria-label="Ecograma: llegadas al micrófono en el tiempo"></canvas>
-      <div class="parametros">
-        <fieldset>
-          <legend>Sala simulada</legend>
-          ${rango('lx', 'Largo', 4, 30, 0.5, sala.lx)}
-          ${rango('ly', 'Ancho', 3, 25, 0.5, sala.ly)}
-          ${rango('lz', 'Alto', 2.5, 12, 0.5, sala.lz)}
-          ${rango('alpha', 'Absorción de las paredes (α)', 0.05, 0.95, 0.05, estado.alpha)}
-        </fieldset>
-        <fieldset>
-          <legend>Visualización</legend>
-          ${rango('orden', 'Reflexiones que se dibujan', 0, 3, 1, estado.ordenMax)}
-          ${rango('velocidad', 'Velocidad de la animación', 0, 4, 1, 2)}
-          <p class="small">El micrófono se arrastra sobre la escena. Orden 1: rebota en una pared; orden 2: en dos; y así.</p>
-        </fieldset>
-      </div>
       <p class="small aviso" hidden></p>`;
     const $ = (sel) => raiz.querySelector(sel);
     ui = {
@@ -200,6 +209,14 @@ export function crearSala3D(seccion, {
       aviso: $('.aviso'),
     };
     const VELOCIDADES = [0.25, 0.5, 1, 2, 4];
+    // Panel plegable: abierto en pantallas anchas, cerrado en las angostas.
+    const panel = $('.sala-panel'), plegar = $('.sala-panel__plegar');
+    const abrirPanel = (v) => {
+      panel.dataset.abierto = String(v); plegar.setAttribute('aria-expanded', String(v));
+      vista?.reencuadrar?.();                                     // la sala se vuelve a centrar en el espacio libre
+    };
+    abrirPanel(window.innerWidth > 900);
+    plegar.addEventListener('click', () => abrirPanel(panel.dataset.abierto !== 'true'));
     ui.alpha.addEventListener('input', () => { estado.alpha = Number(ui.alpha.value); recalcular(); });
     for (const k of ['lx', 'ly', 'lz']) ui.dim[k].addEventListener('input', () => { sala[k] = Number(ui.dim[k].value); cambiarSala(); });
     $('input[data-p="orden"]').addEventListener('input', (e) => { estado.ordenMax = Number(e.target.value); recalcular(); });
@@ -397,13 +414,18 @@ export function crearSala3D(seccion, {
       if (!w || !h) return;
       renderer.setSize(w, h, false);
       renderer.domElement.style.width = '100%'; renderer.domElement.style.height = '100%';
-      camara.aspect = w / h; camara.updateProjectionMatrix();
+      camara.aspect = w / h;
+      // Con el panel de ajustes abierto encima, la sala se centra en el espacio libre (a su derecha).
+      const panel = ui.escena.parentElement.querySelector('.sala-panel');
+      const tapa = panel && getComputedStyle(ui.escena.parentElement.querySelector('.sala-capas')).position === 'absolute' ? panel.offsetWidth + 12 : 0;
+      if (tapa) camara.setViewOffset(w, h, -tapa / 2, 0, w, h); else camara.clearViewOffset();
+      camara.updateProjectionMatrix();
     }
     new ResizeObserver(ajustar).observe(ui.escena);
     ajustar();
     reconstruirSala();
     reconstruir();
-    return { reconstruir, reconstruirSala, actualizar, tipo: '3d' };
+    return { reconstruir, reconstruirSala, actualizar, reencuadrar: ajustar, tipo: '3d' };
   }
 
   // ---------- Vista 2D (planta) ----------
