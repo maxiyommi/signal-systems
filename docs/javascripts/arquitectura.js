@@ -115,7 +115,7 @@
     paquete.hidden = true;
     arq.appendChild(paquete);
     let dibujados = [], conPaquete = false, rafPaquete = 0;
-    const VELOCIDAD = 0.32;                                   // px por ms
+    const VELOCIDAD = 0.2;                                    // px por ms (lento, para seguirlo en clase)
 
     function viajarPaquete() {
       if (!dibujados.length || !conPaquete) return;
