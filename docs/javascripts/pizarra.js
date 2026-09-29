@@ -56,6 +56,12 @@
   };
   const colorDe = (clave, oscuro) => PALETA[oscuro ? 'oscuro' : 'claro'][clave];
 
+  // Puntero láser: el trazo se ve entero un momento y después se desvanece solo (edad en ms).
+  const LASER_MANTENER = 1200, LASER_DESVANECER = 1000;
+  const alfaLaser = (edad) => (edad <= LASER_MANTENER ? 1 : Math.max(0, 1 - (edad - LASER_MANTENER) / LASER_DESVANECER));
+  const purgarLaser = (trazos, ahora) => trazos.filter((t) => alfaLaser(ahora - t.puntos[t.puntos.length - 1].t) > 0);
+  const COLOR_LASER = { oscuro: '#ff3b3b', claro: '#e11d48' };
+
   // Coordenadas relativas a la esquina del contenido: siguen al texto se desplace la ventana o un
   // contenedor (en modo presentación se desplaza el body, no la ventana).
   const aPantalla = (p, { origenX, origenY }) => ({ x: p.x + origenX, y: p.y + origenY });
@@ -74,7 +80,7 @@
   // de iPad pueden no coincidir con el lienzo (barra del navegador, zoom).
   const transformacion = (rect, dpr) => [dpr, 0, 0, dpr, -rect.left * dpr, -rect.top * dpr];
 
-  window.PizarraLogica = { borrarParcial, colorDe, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion };
+  window.PizarraLogica = { borrarParcial, colorDe, alfaLaser, purgarLaser, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
 
@@ -85,6 +91,7 @@
     { nombre: 'Tinta', clave: 'tinta' },
   ];
   const RADIO_GOMA = 14;
+  const ICONO_LASER = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="17" cy="7" r="2.5" fill="currentColor"/><path d="M14.5 9.5 4 20"/><path d="M17 1.5v1.5M22.5 7H21M20.9 3.1l-1 1M13.1 3.1l1 1M20.9 10.9l-1-1"/></svg>';
   const ICONO_GOMA = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L13 19"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>';
   // Tema actual: el sitio lo marca en el body (Material) y los interactivos en <html data-tema>.
   const esOscuro = () => document.body.getAttribute('data-md-color-scheme') === 'slate'
@@ -98,16 +105,21 @@
     lienzo.className = 'pizarra-lienzo';
     lienzo.setAttribute('aria-hidden', 'true');
     const g = lienzo.getContext('2d');
+    // Capa aparte para el puntero láser: se anima sin redibujar las anotaciones.
+    const capaLaser = document.createElement('canvas');
+    capaLaser.className = 'pizarra-lienzo pizarra-lienzo--laser';
+    capaLaser.setAttribute('aria-hidden', 'true');
+    const gl = capaLaser.getContext('2d');
 
     const barra = document.createElement('div');
     barra.className = 'pizarra-barra';
     barra.setAttribute('role', 'toolbar');
     barra.setAttribute('aria-label', 'Pizarra');
-    document.body.append(lienzo, barra);
+    document.body.append(lienzo, capaLaser, barra);
 
     let trazos = [], actual = null, activo = false;
     let herramienta = 'lapiz', color = COLORES[0].clave;
-    let dedoY = null, gomaEn = null;
+    let dedoY = null, gomaEn = null, laser = [], animando = false;
 
     // Lo que se desplaza: el body en modo presentación (ver presentacion.css), si no la página.
     const desplazable = () => {
@@ -141,6 +153,8 @@
     }
     const bResaltador = boton('<i class="pizarra-resaltador"></i>', 'Resaltador', () => elegir('resaltador', 'resaltador', bResaltador));
     muestras.push([bResaltador.querySelector('i'), 'resaltador']);
+    const bLaser = boton(ICONO_LASER, 'Puntero láser: marca y se borra solo', () => elegir('laser', null, bLaser));
+    herramientas.push(bLaser);
     const bGoma = boton(ICONO_GOMA, 'Goma: frotá sobre lo que quieras borrar', () => elegir('goma', null, bGoma));
     herramientas.push(bResaltador, bGoma);
     // Las muestras de color siguen al tema (claro u oscuro).
@@ -167,6 +181,7 @@
     function mostrar(visible) {
       barra.hidden = !visible;
       lienzo.hidden = !visible;
+      capaLaser.hidden = !visible;
       if (!visible) activar(false);
       else ajustar();
     }
@@ -178,9 +193,9 @@
     function ajustar() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       rect = lienzo.getBoundingClientRect();
-      lienzo.width = Math.round(rect.width * dpr);
-      lienzo.height = Math.round(rect.height * dpr);
+      for (const c of [lienzo, capaLaser]) { c.width = Math.round(rect.width * dpr); c.height = Math.round(rect.height * dpr); }
       g.setTransform(...transformacion(rect, dpr));
+      gl.setTransform(...transformacion(rect, dpr));
       dibujarTodo();
     }
     // Si el lienzo cambió de lugar o de tamaño (zoom, barra de Safari, rotación), se vuelve a medir.
@@ -233,6 +248,34 @@
       }
     }
 
+    // ── Puntero láser: un cuadro por vez mientras quede algún trazo visible ──────────────────
+    function dibujarLaser() {
+      gl.clearRect(rect.left, rect.top, rect.width, rect.height);
+      const ahora = performance.now(), v = vista(), color = COLOR_LASER[esOscuro() ? 'oscuro' : 'claro'];
+      laser = purgarLaser(laser, ahora);
+      gl.lineCap = 'round'; gl.lineJoin = 'round'; gl.strokeStyle = color;
+      for (const t of laser) {
+        const p = t.puntos;
+        for (let i = 1; i < p.length; i++) {
+          const a = alfaLaser(ahora - p[i].t);
+          if (a <= 0) continue;
+          const q0 = aPantalla(p[i - 1], v), q1 = aPantalla(p[i], v);
+          gl.globalAlpha = a * 0.25; gl.lineWidth = 12;         // resplandor
+          gl.beginPath(); gl.moveTo(q0.x, q0.y); gl.lineTo(q1.x, q1.y); gl.stroke();
+          gl.globalAlpha = a; gl.lineWidth = 3.5;                // núcleo
+          gl.beginPath(); gl.moveTo(q0.x, q0.y); gl.lineTo(q1.x, q1.y); gl.stroke();
+        }
+      }
+      gl.globalAlpha = 1;
+      return laser.length > 0;
+    }
+    function animarLaser() {
+      if (animando) return;
+      animando = true;
+      const cuadro = () => { if (dibujarLaser() || actual?.laser) requestAnimationFrame(cuadro); else animando = false; };
+      requestAnimationFrame(cuadro);
+    }
+
     let pendiente = false;
     const redibujar = () => {
       if (pendiente || lienzo.hidden) return;
@@ -249,6 +292,10 @@
       if (e.pointerType === 'touch') { dedoY = e.clientY; return; }
       const v = vista();
       const p = aDocumento(e.clientX, e.clientY, v);
+      if (herramienta === 'laser') {
+        actual = { laser: true, puntos: [{ ...p, t: performance.now() }] };
+        laser.push(actual); animarLaser(); return;
+      }
       if (herramienta === 'goma') {
         trazos = borrarParcial(trazos, p.x, p.y, RADIO_GOMA); gomaEn = { x: e.clientX, y: e.clientY };
         actual = { goma: true, ultimo: p }; redibujar(); return;
@@ -280,6 +327,10 @@
       }
       const juntos = e.getCoalescedEvents ? e.getCoalescedEvents() : [];   // trazo suave con el Pencil
       const eventos = juntos.length ? juntos : [e];
+      if (actual.laser) {
+        for (const ev of eventos) actual.puntos.push({ ...aDocumento(ev.clientX, ev.clientY, v), t: performance.now() });
+        return;                                                 // lo dibuja la animación del láser
+      }
       for (const ev of eventos) {
         const p = aDocumento(ev.clientX, ev.clientY, v);
         actual.puntos.push({ ...p, ancho: anchoTrazo(actual.herramienta, ev.pressure) });
@@ -289,14 +340,14 @@
     });
 
     const soltar = () => {
-      const habia = actual !== null;
+      const habia = actual !== null && !actual.laser;
       actual = null; dedoY = null; gomaEn = null;
       if (habia) redibujar();                                   // saca el círculo de la goma y agrega el halo del trazo nuevo
     };
     for (const tipo of ['pointerup', 'pointercancel', 'lostpointercapture']) lienzo.addEventListener(tipo, soltar);
 
     // En captura: el evento scroll no burbujea, así se oye el de la ventana y el de cualquier contenedor.
-    document.addEventListener('scroll', redibujar, { passive: true, capture: true });
+    document.addEventListener('scroll', () => { redibujar(); if (laser.length) animarLaser(); }, { passive: true, capture: true });
     const reajustar = () => { if (!lienzo.hidden) ajustar(); };
     window.addEventListener('resize', reajustar);
     window.visualViewport?.addEventListener('resize', reajustar);   // aparece o se oculta la barra de Safari

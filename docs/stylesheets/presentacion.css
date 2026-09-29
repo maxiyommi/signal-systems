@@ -50,3 +50,5 @@ html[data-pizarra="interactivo"] .pizarra-barra { bottom: 4rem; }
    elemento, no. (La clase en-presentacion la pone presentacion.js en <html>.) */
 html.en-presentacion { height: 100%; overflow: hidden; }
 html.en-presentacion body { height: 100%; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+/* La capa del puntero láser va encima y nunca recibe el lápiz (lo recibe el lienzo de abajo) */
+.pizarra-lienzo--laser, body.pizarra-activa .pizarra-lienzo--laser { pointer-events: none; }

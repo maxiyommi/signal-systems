@@ -79,3 +79,17 @@ test('transformación del lienzo: dibuja en coordenadas de pantalla aunque el li
   assert.equal(a * 10 + e, 0);
   assert.equal(d * 20 + f, 0);
 });
+
+test('puntero láser: se ve entero un momento y después se desvanece hasta desaparecer', () => {
+  assert.equal(P.alfaLaser(0), 1);
+  assert.equal(P.alfaLaser(1200), 1);
+  assert.ok(Math.abs(P.alfaLaser(1700) - 0.5) < 1e-9);
+  assert.equal(P.alfaLaser(2200), 0);
+  assert.equal(P.alfaLaser(9000), 0);
+});
+
+test('puntero láser: se descartan los trazos que ya se borraron del todo', () => {
+  const t = (edadUltimo) => ({ puntos: [{ x: 0, y: 0, t: 1000 - edadUltimo - 50 }, { x: 1, y: 0, t: 1000 - edadUltimo }] });
+  const quedan = P.purgarLaser([t(100), t(5000), t(2100)], 1000);
+  assert.equal(quedan.length, 2);
+});
