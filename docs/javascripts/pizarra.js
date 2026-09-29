@@ -13,9 +13,23 @@
 
   // La goma borra solo lo que toca: saca los puntos debajo de ella y parte el trazo ahí. Tampoco une
   // dos puntos que quedaron a ambos lados de la goma. Los trazos que no toca se devuelven tal cual.
+  // Recuadro del trazo (con margen por su grosor), guardado en el propio trazo mientras no cambie.
+  function caja(t) {
+    if (t._caja && t._n === t.puntos.length) return t._caja;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity, a = 0;
+    for (const q of t.puntos) {
+      if (q.x < x0) x0 = q.x; if (q.x > x1) x1 = q.x; if (q.y < y0) y0 = q.y; if (q.y > y1) y1 = q.y; if (q.ancho > a) a = q.ancho;
+    }
+    Object.defineProperty(t, '_caja', { value: { x0: x0 - a, y0: y0 - a, x1: x1 + a, y1: y1 + a }, writable: true, configurable: true });
+    Object.defineProperty(t, '_n', { value: t.puntos.length, writable: true, configurable: true });
+    return t._caja;
+  }
+
   function borrarParcial(trazos, x, y, radio) {
     const out = [];
     for (const t of trazos) {
+      const c = caja(t);
+      if (x < c.x0 - radio || x > c.x1 + radio || y < c.y0 - radio || y > c.y1 + radio) { out.push(t); continue; }   // lejos: ni se mira
       const p = t.puntos;
       const alcance = (q) => radio + q.ancho / 2;
       const toca = (q) => Math.hypot(q.x - x, q.y - y) <= alcance(q);
@@ -179,10 +193,14 @@
       const oscuro = esOscuro();
       g.lineCap = 'round'; g.lineJoin = 'round';
       g.strokeStyle = colorDe(t.color, oscuro) || colorDe('tinta', oscuro);
-      // En oscuro, el lápiz brilla como un marcador fluorescente (el resaltador no).
-      g.shadowColor = g.strokeStyle;
-      g.shadowBlur = oscuro && t.herramienta === 'lapiz' ? 6 : 0;
       const p = t.puntos;
+      // En oscuro, el lápiz brilla como un marcador fluorescente: un halo ancho y translúcido, dibujado
+      // una sola vez por trazo (una sombra difuminada por tramo era demasiado lenta en el iPad).
+      if (oscuro && t.herramienta === 'lapiz' && desde <= 1 && p.length > 1) {
+        g.globalAlpha = 0.22; g.lineWidth = p[p.length >> 1].ancho * 3.2; g.beginPath();
+        p.forEach((q, i) => { const r = aPantalla(q, v); if (i) g.lineTo(r.x, r.y); else g.moveTo(r.x, r.y); });
+        g.stroke(); g.globalAlpha = 1;
+      }
       if (p.length === 1) {
         const q = aPantalla(p[0], v);
         g.fillStyle = g.strokeStyle;
@@ -208,7 +226,6 @@
       // El resaltador va debajo de los trazos de lápiz para no taparlos.
       for (const t of trazos) if (t.herramienta === 'resaltador') trazar(t, v);
       for (const t of trazos) if (t.herramienta !== 'resaltador') trazar(t, v);
-      g.shadowBlur = 0;
       if (gomaEn) {                                            // dónde está borrando la goma
         g.strokeStyle = colorDe('tinta', esOscuro()); g.globalAlpha = 0.6; g.lineWidth = 1.5;
         g.beginPath(); g.arc(gomaEn.x, gomaEn.y, RADIO_GOMA, 0, 2 * Math.PI); g.stroke();
@@ -234,7 +251,7 @@
       const p = aDocumento(e.clientX, e.clientY, v);
       if (herramienta === 'goma') {
         trazos = borrarParcial(trazos, p.x, p.y, RADIO_GOMA); gomaEn = { x: e.clientX, y: e.clientY };
-        dibujarTodo(); actual = { goma: true }; return;
+        actual = { goma: true, ultimo: p }; redibujar(); return;
       }
       actual = { herramienta, color, puntos: [{ ...p, ancho: anchoTrazo(herramienta, e.pressure) }] };
       trazos.push(actual);
@@ -249,19 +266,33 @@
       }
       if (!actual) return;
       const v = vista();
+      if (actual.goma) {
+        // La goma recorre el camino desde su última posición en pasos de medio radio (sin mirar cada
+        // evento del Pencil) y se redibuja como mucho una vez por cuadro.
+        const p = aDocumento(e.clientX, e.clientY, v), a = actual.ultimo;
+        const pasos = Math.max(1, Math.ceil(Math.hypot(p.x - a.x, p.y - a.y) / (RADIO_GOMA / 2)));
+        for (let k = 1; k <= pasos; k++) {
+          trazos = borrarParcial(trazos, a.x + ((p.x - a.x) * k) / pasos, a.y + ((p.y - a.y) * k) / pasos, RADIO_GOMA);
+        }
+        actual.ultimo = p; gomaEn = { x: e.clientX, y: e.clientY };
+        redibujar();
+        return;
+      }
       const juntos = e.getCoalescedEvents ? e.getCoalescedEvents() : [];   // trazo suave con el Pencil
       const eventos = juntos.length ? juntos : [e];
       for (const ev of eventos) {
         const p = aDocumento(ev.clientX, ev.clientY, v);
-        if (actual.goma) { trazos = borrarParcial(trazos, p.x, p.y, RADIO_GOMA); gomaEn = { x: ev.clientX, y: ev.clientY }; continue; }
         actual.puntos.push({ ...p, ancho: anchoTrazo(actual.herramienta, ev.pressure) });
       }
-      if (actual.goma) dibujarTodo();
-      else if (actual.herramienta === 'resaltador') dibujarTodo();       // semitransparente: se redibuja entero
-      else trazar(actual, v, actual.puntos.length - eventos.length);
+      if (actual.herramienta === 'resaltador') redibujar();   // translúcido: se redibuja entero, una vez por cuadro
+      else trazar(actual, v, actual.puntos.length - eventos.length);   // de a tramos; el halo se agrega al soltar
     });
 
-    const soltar = () => { const eraGoma = actual?.goma; actual = null; dedoY = null; gomaEn = null; if (eraGoma) dibujarTodo(); };
+    const soltar = () => {
+      const habia = actual !== null;
+      actual = null; dedoY = null; gomaEn = null;
+      if (habia) redibujar();                                   // saca el círculo de la goma y agrega el halo del trazo nuevo
+    };
     for (const tipo of ['pointerup', 'pointercancel', 'lostpointercapture']) lienzo.addEventListener(tipo, soltar);
 
     // En captura: el evento scroll no burbujea, así se oye el de la ventana y el de cualquier contenedor.
