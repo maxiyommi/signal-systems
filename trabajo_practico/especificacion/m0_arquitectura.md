@@ -155,27 +155,115 @@ El template ya trae un README base con estas secciones: complétenlo.
 
 ### 2. Diagrama de arquitectura
 
-El diagrama se hace en **Mermaid** (embebido en el README; GitHub lo dibuja solo) o en **draw.io** (exportado a PNG e incluido en el README). Debe mostrar:
+El diagrama es el **plano de la API**: muestra qué capas tiene, qué archivos hay en cada carpeta, qué hace cada uno y por dónde viaja un pedido. Este es el de la API completa, con los mismos nombres que la implementación de referencia. Usá los botones para ver cómo se va armando milestone a milestone y el recorrido de un análisis de punta a punta.
 
-- **Capas del sistema**: routers (endpoints) → services (lógica) y schemas (validación).
-- **Módulos principales** y sus responsabilidades (generación, procesamiento, análisis).
-- **Flujo de datos** entre capas: request HTTP → validación Pydantic → service → respuesta.
-- **Entradas y salidas del sistema completo**: desde el archivo de audio hasta los parámetros acústicos calculados.
-- **Dependencias externas** relevantes (fastapi, numpy, scipy, pydantic, etc.).
+<div class="arq">
+<div class="arq-controles" role="group" aria-label="Qué mostrar"><span>Ver la API al terminar:</span><button type="button" data-ver="0">M0</button><button type="button" data-ver="1">M1</button><button type="button" data-ver="2">M2</button><button type="button" data-ver="3" aria-pressed="true">M3 (completa)</button><button type="button" data-ver="recorrido">Recorrido de un análisis</button></div>
+<p class="arq-leyenda" aria-live="polite"></p>
+<div class="arq-colores"><span data-m="0">M0 · El plano</span><span data-m="1">M1 · Generación</span><span data-m="2">M2 · Procesamiento</span><span data-m="3">M3 · Producto final</span></div>
+<div class="arq-capa arq-capa--cliente"><div class="arq-capa__nombre"><strong>Cliente</strong><span>quien usa la API</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">Swagger (/docs)</span><span class="arq-chip" data-m="0">frontend o script</span><span class="arq-chip" data-m="3" data-paso="1" data-explica="El cliente sube la respuesta al impulso grabada (un WAV) a POST /api/v1/acoustics/parameters.">sube un WAV</span><span class="arq-chip" data-m="3" data-paso="10" data-explica="El cliente recibe el JSON con EDT, T20, T30, D50 y C80 por banda, y los muestra.">recibe el JSON</span></div></div>
+<div class="arq-flecha"><span>↓ request HTTP (datos en JSON o un archivo) &nbsp;·&nbsp; ↑ respuesta en JSON</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Routers</strong><span>app/routers/ · reciben y responden</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">health.py</span><span class="arq-chip" data-m="0"><code>GET /health</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>POST /signals/pink-noise</code></span><span class="arq-chip" data-m="1"><code>POST /signals/sine-sweep/pair</code></span><span class="arq-chip" data-m="2"><code>POST /signals/synthetic-ir</code></span><span class="arq-chip" data-m="2"><code>POST /signals/convolve</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filters.py</span><span class="arq-chip" data-m="2"><code>POST /filters/single-band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="2"><code>POST /utils/log-scale</code></span><span class="arq-chip" data-m="3"><code>POST /utils/smoothing</code></span><span class="arq-chip" data-m="3"><code>POST /utils/schroeder</code></span><span class="arq-chip" data-m="3"><code>POST /utils/lundeby</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustics.py</span><span class="arq-chip" data-m="3" data-paso="2" data-explica="El router de acoustics.py recibe el archivo; no calcula nada: llama a los services en orden."><code>POST /acoustics/parameters</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ validan los datos con</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Schemas</strong><span>app/schemas/ · validan qué entra y qué sale</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">responses.py</span><span class="arq-chip" data-m="0"><code>HealthResponse</code></span><span class="arq-chip" data-m="3" data-paso="9" data-explica="El router arma la respuesta con el schema BandAnalysisResponse: Pydantic valida que el JSON tenga la forma prometida."><code>BandAnalysisResponse</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>PinkNoiseRequest</code></span><span class="arq-chip" data-m="1"><code>SineSweepRequest</code></span><span class="arq-chip" data-m="2"><code>SyntheticIRRequest</code></span><span class="arq-chip" data-m="2"><code>ConvolveRequest</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="2"><code>LogScaleResponse</code></span><span class="arq-chip" data-m="3"><code>SmoothingRequest</code></span><span class="arq-chip" data-m="3"><code>SchroederResponse</code></span><span class="arq-chip" data-m="3"><code>LundebyResponse</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ llaman a la función que hace el cálculo</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Services</strong><span>app/services/ · el procesamiento de señales</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">pink_noise.py</span><span class="arq-chip" data-m="1"><code>generate_pink_noise</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">sine_sweep.py</span><span class="arq-chip" data-m="1"><code>generate_sine_sweep_pair</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">audio_io.py</span><span class="arq-chip" data-m="1"><code>play_and_record</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signal_utils.py</span><span class="arq-chip" data-m="2" data-paso="3" data-explica="load_audio lee el WAV y lo convierte en un arreglo de NumPy (mono, normalizado)."><code>load_audio</code></span><span class="arq-chip" data-m="2"><code>generate_synthetic_ir</code></span><span class="arq-chip" data-m="2"><code>get_impulse_response</code></span><span class="arq-chip" data-m="2"><code>logarithmic_scale_conversion</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filter.py</span><span class="arq-chip" data-m="2" data-paso="4" data-explica="filter_single_band separa la RI en bandas de octava; el router lo repite para cada banda."><code>filter_single_band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustic_parameters.py</span><span class="arq-chip" data-m="3" data-paso="5" data-explica="apply_smoothing obtiene la envolvente de la RI de cada banda."><code>apply_smoothing</code></span><span class="arq-chip" data-m="3" data-paso="6" data-explica="apply_schroeder_integral calcula la curva de caída de cada banda."><code>apply_schroeder_integral</code></span><span class="arq-chip" data-m="3" data-paso="7" data-explica="linear_regression ajusta la recta de la caída: de su pendiente salen EDT, T20 y T30."><code>linear_regression</code></span><span class="arq-chip" data-m="3" data-paso="8" data-explica="calculate_parameters_from_ir junta todo y calcula también D50 y C80."><code>calculate_parameters_from_ir</code></span><span class="arq-chip" data-m="3"><code>apply_lundeby</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ usan</span></div>
+<div class="arq-capa arq-capa--libs"><div class="arq-capa__nombre"><strong>Librerías</strong><span>lo que usa cada capa</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">FastAPI</span><span class="arq-chip" data-m="0">Pydantic</span><span class="arq-chip" data-m="1">NumPy</span><span class="arq-chip" data-m="1">SciPy</span><span class="arq-chip" data-m="1">sounddevice</span><span class="arq-chip" data-m="2">soundfile</span></div></div>
+<ol class="arq-pasos" hidden></ol>
+</div>
 
-Ejemplo de estructura mínima en Mermaid:
+**Cómo leerlo:**
 
-```mermaid
-graph LR
-    Client[Cliente HTTP] --> R[Routers / Endpoints]
-    R --> S[Services]
-    S --> G[Generación de señales]
-    S --> P[Procesamiento de RI]
-    S --> A[Análisis acústico]
-    R --> Sch[Schemas Pydantic]
-```
+- **De arriba hacia abajo va el pedido**, de abajo hacia arriba vuelve la respuesta. Cada capa solo habla con la de al lado: el cliente nunca llama a un service directamente.
+- **Cada caja gris es un archivo** de su carpeta. Adentro, sus endpoints, schemas o funciones.
+- **Los colores son los milestones.** En M0 se dibuja **todo** el plano, aunque solo exista `/health`: el diagrama es el mapa de lo que van a construir, no de lo que ya hicieron.
 
-El diagrama debe reflejar **todos los módulos de M1, M2 y M3** (las funciones de cada uno están en las especificaciones de [M1](m1_generacion.md), [M2](m2_procesamiento.md) y [M3](m3_producto_final.md)).
+**Así lo arrancan en su README.** Este ejemplo tiene M1 completo y M2 y M3 como cajas punteadas. Copien el código y reemplacen cada caja punteada por los archivos y funciones que correspondan, siguiendo el diagrama de arriba. GitHub dibuja Mermaid solo, dentro del README.
+
+=== "Diagrama"
+
+    ```mermaid
+    flowchart TB
+        C["Cliente<br/>Swagger · frontend · script"]
+        subgraph API["RIR-API (FastAPI)"]
+            direction TB
+            subgraph R["app/routers/"]
+                RH["health.py<br/>GET /health"]
+                RS["signals.py<br/>POST /signals/pink-noise<br/>POST /signals/sine-sweep/pair"]
+                RM2["M2: /signals/convolve, /filters/single-band, ..."]
+                RM3["M3: /acoustics/parameters, ..."]
+            end
+            subgraph SC["app/schemas/"]
+                SS["signals.py<br/>PinkNoiseRequest<br/>SineSweepRequest"]
+                SM["M2 y M3: ..."]
+            end
+            subgraph SV["app/services/"]
+                PN["pink_noise.py<br/>generate_pink_noise"]
+                SW["sine_sweep.py<br/>generate_sine_sweep_pair"]
+                IO["audio_io.py<br/>play_and_record"]
+                VM2["M2: signal_utils.py, filter.py"]
+                VM3["M3: acoustic_parameters.py"]
+            end
+        end
+        L["NumPy · SciPy · sounddevice"]
+        C -->|"request HTTP + JSON"| RS
+        RS -->|"valida con"| SS
+        RS -->|"llama a"| PN
+        RS -->|"llama a"| SW
+        PN --> L
+        SW --> L
+        IO --> L
+        classDef pendiente stroke-dasharray: 5 5
+        class RM2,RM3,SM,VM2,VM3 pendiente
+    ```
+
+=== "Código para copiar"
+
+    ````markdown
+    ```mermaid
+    flowchart TB
+        C["Cliente<br/>Swagger · frontend · script"]
+        subgraph API["RIR-API (FastAPI)"]
+            direction TB
+            subgraph R["app/routers/"]
+                RH["health.py<br/>GET /health"]
+                RS["signals.py<br/>POST /signals/pink-noise<br/>POST /signals/sine-sweep/pair"]
+                RM2["M2: /signals/convolve, /filters/single-band, ..."]
+                RM3["M3: /acoustics/parameters, ..."]
+            end
+            subgraph SC["app/schemas/"]
+                SS["signals.py<br/>PinkNoiseRequest<br/>SineSweepRequest"]
+                SM["M2 y M3: ..."]
+            end
+            subgraph SV["app/services/"]
+                PN["pink_noise.py<br/>generate_pink_noise"]
+                SW["sine_sweep.py<br/>generate_sine_sweep_pair"]
+                IO["audio_io.py<br/>play_and_record"]
+                VM2["M2: signal_utils.py, filter.py"]
+                VM3["M3: acoustic_parameters.py"]
+            end
+        end
+        L["NumPy · SciPy · sounddevice"]
+        C -->|"request HTTP + JSON"| RS
+        RS -->|"valida con"| SS
+        RS -->|"llama a"| PN
+        RS -->|"llama a"| SW
+        PN --> L
+        SW --> L
+        IO --> L
+        classDef pendiente stroke-dasharray: 5 5
+        class RM2,RM3,SM,VM2,VM3 pendiente
+    ```
+    ````
+
+Si prefieren dibujarlo a mano, pueden usar **draw.io**, exportarlo a PNG e incluirlo en el README. Sea cual sea la herramienta, el diagrama de M0 tiene que mostrar:
+
+- **Las tres capas** (routers, schemas y services) y el cliente.
+- **Todos los archivos de M1, M2 y M3** con sus funciones (están en las especificaciones de [M1](m1_generacion.md), [M2](m2_procesamiento.md) y [M3](m3_producto_final.md)).
+- **El flujo de datos:** request HTTP → validación con Pydantic → service → respuesta.
+- **Entradas y salidas del sistema completo:** del archivo de audio a los parámetros acústicos.
+- **Las dependencias externas** relevantes (FastAPI, NumPy, SciPy, Pydantic, sounddevice).
 
 ### 3. GitHub Issues
 

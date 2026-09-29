@@ -66,6 +66,7 @@ extra_javascript:
   - javascripts/agenda.js
   - javascripts/enlaces.js
   - javascripts/viaje.js
+  - javascripts/arquitectura.js
   - path: javascripts/servicios.js
     type: module
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
@@ -104,7 +105,11 @@ markdown_extensions:
   - admonition
   - pymdownx.highlight:
       anchor_linenums: true
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.details
   - pymdownx.tabbed:
       alternate_style: true
