@@ -357,3 +357,75 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
   cursor: pointer; font: inherit; color: var(--md-default-fg-color--light); background: transparent;
 }
 @media (prefers-reduced-motion: reduce) { .agenda-progreso div { transition: none; } }
+
+/* ── M0 · Tres capas: analogía del restaurante y "el viaje de un pedido" ── */
+.md-typeset .capas-analogia { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin: 1.2rem 0 1.6rem; }
+.md-typeset .capa {
+  --capa: #63b3ed; --capa-fondo: #1c3a5f;
+  display: flex; flex-direction: column; gap: 0.35rem; padding: 1rem 1rem 0.9rem;
+  border: 1px solid var(--md-default-fg-color--lightest); border-top: 4px solid var(--capa); border-radius: 0.6rem;
+  background: var(--md-default-bg-color);
+}
+.md-typeset .capa--schema { --capa: #a78bfa; --capa-fondo: #2d2256; }
+.md-typeset .capa--service { --capa: #34d399; --capa-fondo: #1a3a2a; }
+[data-md-color-scheme="default"] .md-typeset .capa { --capa: #2563eb; --capa-fondo: #dbeafe; }
+[data-md-color-scheme="default"] .md-typeset .capa--schema { --capa: #7c3aed; --capa-fondo: #ede9fe; }
+[data-md-color-scheme="default"] .md-typeset .capa--service { --capa: #059669; --capa-fondo: #d1fae5; }
+.md-typeset .capa p { margin: 0; }
+.md-typeset .capa__icono { width: 2.8rem; height: 2.8rem; border-radius: 0.6rem; display: grid; place-items: center; color: var(--capa); background: var(--capa-fondo); }
+.md-typeset .capa__nombre { font-size: 1.05em; font-weight: 800; }
+.md-typeset .capa__rol { color: var(--capa); font-size: 0.95em; }
+.md-typeset .capa__no { color: var(--md-default-fg-color--light); font-style: italic; }
+.md-typeset .capa code { align-self: flex-start; margin-top: auto; }
+
+.md-typeset .viaje {
+  margin: 1rem 0 1.6rem; padding: 1rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 0.6rem;
+  background: var(--md-default-bg-color--light, transparent);
+}
+.md-typeset .viaje button {
+  font: 500 0.78rem var(--md-text-font-family, sans-serif); color: var(--md-default-fg-color); cursor: pointer;
+  background: var(--md-default-bg-color); border: 1px solid var(--md-default-fg-color--lightest); border-radius: 2rem; padding: 0.4em 1em;
+}
+.md-typeset .viaje button:hover:not(:disabled) { border-color: var(--md-primary-fg-color); }
+.md-typeset .viaje button[aria-pressed="true"] { background: var(--md-primary-fg-color); border-color: var(--md-primary-fg-color); color: #fff; }
+.md-typeset .viaje button:disabled { opacity: 0.4; cursor: default; }
+.md-typeset .viaje__casos { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
+.md-typeset ol.viaje__actores { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem; }
+.md-typeset ol.viaje__actores > li {
+  position: relative; margin: 0; padding: 0.7rem 0.4rem; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+  border: 2px solid var(--md-default-fg-color--lightest); border-radius: 0.6rem; background: var(--md-default-bg-color);
+  transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.md-typeset ol.viaje__actores > li span:last-child { font-size: 0.72em; color: var(--md-default-fg-color--light); }
+.md-typeset ol.viaje__actores > li:not(:last-child)::after {       /* flecha hacia el siguiente */
+  content: "⇄"; position: absolute; right: -1.2rem; top: 50%; transform: translateY(-50%);
+  color: var(--md-default-fg-color--lighter); font-size: 1rem;
+}
+.md-typeset .viaje__icono { color: var(--md-default-fg-color--light); }
+.md-typeset ol.viaje__actores > li.activo { border-color: var(--md-accent-fg-color); box-shadow: 0 0 0 4px color-mix(in srgb, var(--md-accent-fg-color) 25%, transparent); }
+.md-typeset ol.viaje__actores > li.activo .viaje__icono { color: var(--md-accent-fg-color); }
+.md-typeset ol.viaje__actores > li.omitido { opacity: 0.35; border-style: dashed; }
+.md-typeset ol.viaje__actores > li.activo::before {                  /* ida → / ← vuelta */
+  position: absolute; top: -0.75rem; padding: 0 0.5rem; border-radius: 1rem; font-size: 0.65rem; font-weight: 700;
+  background: var(--md-accent-fg-color); color: #fff;
+}
+.md-typeset ol.viaje__actores > li.activo[data-sentido="ida"]::before { content: "ida →"; }
+.md-typeset ol.viaje__actores > li.activo[data-sentido="vuelta"]::before { content: "← vuelta"; }
+.md-typeset .viaje__panel {
+  min-height: 7.5rem; margin-top: 1rem; padding: 0.8rem 1rem; border-radius: 0.5rem;
+  border-left: 4px solid var(--md-accent-fg-color); background: var(--md-default-bg-color);
+}
+.md-typeset .viaje__panel p { margin: 0 0 0.5rem; }
+.md-typeset .viaje__panel pre { margin: 0.4rem 0 0; }
+.md-typeset .viaje__nav { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-top: 0.8rem; }
+.md-typeset .viaje__contador { font-size: 0.75rem; color: var(--md-default-fg-color--light); }
+.md-typeset .viaje--js ol.viaje__pasos { display: none; }                /* con JS se muestran de a uno en el panel */
+.md-typeset .viaje:not(.viaje--js) .viaje__panel, .md-typeset .viaje:not(.viaje--js) .viaje__nav,
+.md-typeset .viaje:not(.viaje--js) .viaje__casos { display: none; }
+@media (max-width: 700px) {
+  .md-typeset .capas-analogia { grid-template-columns: 1fr; }
+  .md-typeset ol.viaje__actores { grid-template-columns: repeat(2, 1fr); gap: 0.9rem 1.2rem; }
+  .md-typeset ol.viaje__actores > li:nth-child(2)::after { content: none; }
+}
+@media (prefers-reduced-motion: reduce) { .md-typeset ol.viaje__actores > li { transition: none; } }

@@ -33,28 +33,102 @@ curl https://rir-api.onrender.com/health
 
 ## Tres capas
 
-Toda la API se organiza en tres capas. Cada módulo de M1, M2 y M3 es un *service*; los *routers* lo exponen y los *schemas* validan lo que entra y sale.
+Una API recibe pedidos y devuelve respuestas. Para que el código no sea un caos, cada pedido pasa por **tres capas**, y cada una hace **una sola cosa**. La forma más fácil de entenderlo es pensar en un restaurante.
 
-```text
-Cliente HTTP ──▶ Routers (endpoints) ──▶ Services (lógica) ──▶ M1 Generación
-                      │                                   ├──▶ M2 Procesamiento
-                      └──▶ Schemas (Pydantic)             └──▶ M3 Análisis
-```
+<div class="capas-analogia">
+<div class="capa capa--router">
+<div class="capa__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/><circle cx="5" cy="12" r="2"/></svg></div>
+<p class="capa__nombre">Router</p>
+<p class="capa__rol">El <strong>mozo</strong></p>
+<p>Recibe el pedido del cliente, lo lleva adentro y le trae la respuesta.</p>
+<p class="capa__no">No cocina.</p>
+<code>app/routers/</code>
+</div>
+<div class="capa capa--schema">
+<div class="capa__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="m9 14 2 2 4-4"/></svg></div>
+<p class="capa__nombre">Schema</p>
+<p class="capa__rol">El <strong>control de la comanda</strong></p>
+<p>Revisa que el pedido esté bien escrito: que estén todos los datos y que tengan sentido.</p>
+<p class="capa__no">No atiende ni cocina.</p>
+<code>app/schemas/</code>
+</div>
+<div class="capa capa--service">
+<div class="capa__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+<p class="capa__nombre">Service</p>
+<p class="capa__rol">La <strong>cocina</strong></p>
+<p>Hace el trabajo de verdad: acá está el procesamiento de señales de M1, M2 y M3.</p>
+<p class="capa__no">No sabe quién pidió ni cómo llegó el pedido.</p>
+<code>app/services/</code>
+</div>
+</div>
 
-=== "Routers · puerta de entrada"
+### El viaje de un pedido
 
-    Reciben el request, validan con un schema, llaman al service y devuelven JSON. **No calculan.**
+Seguí paso a paso qué pasa cuando alguien le pide ruido rosa a la API. Probá los dos casos: un pedido bien escrito y uno con un error.
+
+<div class="viaje">
+<div class="viaje__casos" role="group" aria-label="Caso">
+<button type="button" data-caso="valido" aria-pressed="true">Pedido válido</button>
+<button type="button" data-caso="invalido" aria-pressed="false">Pedido con un error</button>
+</div>
+<ol class="viaje__actores">
+<li data-actor="cliente"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H4z"/><path d="M9 20h6M12 16v4"/></svg></span><strong>Cliente</strong><span>navegador, script o frontend</span></li>
+<li data-actor="router"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/><circle cx="5" cy="12" r="2"/></svg></span><strong>Router</strong><span>el mozo</span></li>
+<li data-actor="schema"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="m9 14 2 2 4-4"/></svg></span><strong>Schema</strong><span>la comanda</span></li>
+<li data-actor="service"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></span><strong>Service</strong><span>la cocina</span></li>
+</ol>
+<ol class="viaje__pasos" data-caso="valido">
+<li data-actor="cliente" data-sentido="ida"><p>El cliente pide ruido rosa de 2 segundos. Manda un <strong>request</strong> a la dirección <code>POST /api/v1/signals/pink-noise</code> con los datos en JSON:</p><pre><code>{"duracion": 2, "fs": 44100}</code></pre></li>
+<li data-actor="router" data-sentido="ida"><p>El <strong>router</strong> recibe el pedido. No calcula nada: primero se lo pasa al schema para que lo controle.</p></li>
+<li data-actor="schema" data-sentido="ida"><p>El <strong>schema</strong> controla la comanda: ¿<code>duracion</code> es un número mayor que 0 y como mucho 60? ¿<code>fs</code> es un entero? Todo en orden: el pedido sigue.</p><pre><code>duracion = 2      ✓  (mayor que 0, hasta 60)
+fs       = 44100  ✓  (entero)</code></pre></li>
+<li data-actor="service" data-sentido="ida"><p>El <strong>service</strong> hace el trabajo: llama a la función de M1, que devuelve un arreglo de NumPy con 2 × 44 100 = 88 200 muestras. No sabe nada de HTTP ni de JSON.</p><pre><code>generar_ruido_rosa(2, 44100)  →  array([0.12, -0.03, 0.41, ...])</code></pre></li>
+<li data-actor="router" data-sentido="vuelta"><p>El router recibe el arreglo y lo convierte en JSON, el formato que entiende cualquier cliente.</p></li>
+<li data-actor="cliente" data-sentido="vuelta"><p>El cliente recibe la <strong>respuesta</strong> con el código <code>200 OK</code> (salió todo bien) y los datos:</p><pre><code>{"audio": [0.12, -0.03, 0.41, ...]}</code></pre></li>
+</ol>
+<ol class="viaje__pasos" data-caso="invalido">
+<li data-actor="cliente" data-sentido="ida"><p>Ahora el cliente se equivoca y pide una duración negativa:</p><pre><code>{"duracion": -1, "fs": 44100}</code></pre></li>
+<li data-actor="router" data-sentido="ida"><p>El router recibe el pedido y, como siempre, se lo pasa al schema.</p></li>
+<li data-actor="schema" data-sentido="ida"><p>El schema encuentra el error: <code>duracion = -1</code> no es mayor que 0. <strong>El pedido se frena acá.</strong></p><pre><code>duracion = -1     ✗  (tiene que ser mayor que 0)</code></pre></li>
+<li data-actor="cliente" data-sentido="vuelta"><p>La API responde <code>422</code> (datos inválidos) con una explicación del error. <strong>El service nunca se ejecutó</strong>: la cocina no recibe comandas mal escritas, y por eso sus funciones no tienen que andar revisando datos.</p><pre><code>{"detail": [{"loc": ["body", "duracion"],
+             "msg": "Input should be greater than 0"}]}</code></pre></li>
+</ol>
+<div class="viaje__panel" aria-live="polite"></div>
+<div class="viaje__nav">
+<button type="button" data-mover="-1">Anterior</button>
+<span class="viaje__contador"></span>
+<button type="button" data-mover="1">Siguiente</button>
+</div>
+</div>
+
+### Las tres capas en el código
+
+Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa en cada una (M0 no pide escribirlas todavía: es para que sepan dónde va cada cosa).
+
+=== "1 · Router (el mozo)"
+
+    En `app/routers/`. Recibe el request, lo pasa por el schema, llama al service y devuelve JSON. **No calcula.**
 
     ```python
     @router.post("/pink-noise")
-    async def pink_noise(req: PinkNoiseReq):
+    async def pink_noise(req: PinkNoiseReq):          # FastAPI valida req con el schema
         audio = services.generar_ruido_rosa(req.duracion, req.fs)
-        return {"audio": audio.tolist()}
+        return {"audio": audio.tolist()}             # arreglo de NumPy → lista → JSON
     ```
 
-=== "Services · cerebro"
+=== "2 · Schema (la comanda)"
 
-    Funciones puras: **no saben de HTTP ni de JSON**. Acá vive el procesamiento de señales.
+    En `app/schemas/`. Un modelo de Pydantic que describe cómo tiene que venir el pedido; si algo no cumple, FastAPI responde 422 solo.
+
+    ```python
+    class PinkNoiseReq(BaseModel):
+        duracion: float = Field(gt=0, le=60)          # mayor que 0 y hasta 60 segundos
+        fs: int = Field(default=44100)                 # si no viene, 44100
+    ```
+
+=== "3 · Service (la cocina)"
+
+    En `app/services/`. Funciones puras de procesamiento de señales: entra NumPy, sale NumPy. **No saben de HTTP ni de JSON**, y por eso se pueden testear solas.
 
     ```python
     def generar_ruido_rosa(duracion: float, fs: int) -> np.ndarray:
@@ -63,15 +137,8 @@ Cliente HTTP ──▶ Routers (endpoints) ──▶ Services (lógica) ──�
         return signal
     ```
 
-=== "Schemas · aduana"
-
-    Modelos Pydantic que validan que los datos entren y salgan con la forma correcta.
-
-    ```python
-    class PinkNoiseReq(BaseModel):
-        duracion: float = Field(gt=0, le=60)
-        fs: int = Field(default=44100)
-    ```
+!!! tip "Una regla para acordarse"
+    Si una función de `services/` importa algo de FastAPI, o un router hace cuentas con NumPy, algo está en el lugar equivocado.
 
 ## Entregables
 
