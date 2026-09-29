@@ -451,12 +451,34 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 }
 .md-typeset .definicion-boton:hover, .md-typeset .definicion-boton:focus-visible { background: var(--md-accent-fg-color); color: #fff; }
 .md-typeset .definicion {
+  --vidrio: color-mix(in srgb, var(--md-default-bg-color) 68%, transparent);
+  --vidrio-borde: rgba(255, 255, 255, 0.16);
   width: min(34rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); overflow: auto;
-  margin: auto; padding: 1rem 1.2rem; border: 1px solid var(--md-default-fg-color--lightest); border-top: 4px solid var(--md-accent-fg-color);
-  border-radius: 0.6rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45); font-size: 0.8rem;
+  margin: auto; padding: 1.2rem 1.4rem; border-radius: 1rem;
+  border: 1px solid var(--vidrio-borde); border-top: 3px solid var(--md-accent-fg-color);
+  background: var(--vidrio);
+  -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+  color: var(--md-default-fg-color);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  font-size: 0.8rem;
+  opacity: 1; transform: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, overlay 0.2s allow-discrete, display 0.2s allow-discrete;
 }
-.md-typeset .definicion::backdrop { background: rgba(0, 0, 0, 0.45); }
+[data-md-color-scheme="default"] .md-typeset .definicion { --vidrio: rgba(255, 255, 255, 0.72); --vidrio-borde: rgba(0, 0, 0, 0.08); }
+/* La página de fondo queda desenfocada y oscurecida: la vista va a la definición */
+.md-typeset .definicion::backdrop {
+  background: rgba(6, 8, 14, 0.45);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  transition: background 0.2s ease, backdrop-filter 0.2s ease;
+}
+[data-md-color-scheme="default"] .md-typeset .definicion::backdrop { background: rgba(30, 40, 70, 0.25); }
+/* Aparición suave (donde el navegador la soporta) */
+@starting-style {
+  .md-typeset .definicion:popover-open { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .definicion { transition: none; }
+}
 .md-typeset .definicion__titulo { margin: 0 0 0.4rem; font-size: 1.1em; font-weight: 800; color: var(--md-accent-fg-color); }
 .md-typeset .definicion__cerrar {
   display: block; margin: 0.6rem 0 0 auto; padding: 0.35em 1em; cursor: pointer;
