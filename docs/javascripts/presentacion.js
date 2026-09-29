@@ -44,7 +44,9 @@
     const botonPantalla = document.createElement('button');
     botonPantalla.type = 'button';
     botonPantalla.className = 'boton-pantalla-completa';
-    document.body.append(boton, botonPantalla);
+    // Botonera común del modo presentación (la comparten presentacion.js, agenda.js y pizarra.js).
+    const columna = document.querySelector('.botonera-presentacion') || document.body.appendChild(Object.assign(document.createElement('div'), { className: 'botonera-presentacion' }));
+    columna.append(boton, botonPantalla);
     const actualizarPantalla = () => {
       botonPantalla.hidden = !mostrarBotonPantalla({ presentacion: document.body.classList.contains(CLAVE), soportada: pantalla.soportada });
       const activa = pantalla.activa();
