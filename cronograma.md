@@ -9,7 +9,7 @@ Las semanas 1 a 6 (teoría + Prácticas 1 a 3) están a cargo de la Prof. Trina 
 
 | # | Fecha | Modalidad | En clase | Material de apoyo |
 |---|-------|-----------|---------|-------------------|
-| 1 | Mié 30/9 | Presencial | [Marco conceptual](trabajo_practico/marco_conceptual.md) + [Consigna del TP](trabajo_practico/README.md) + [M0](trabajo_practico/especificacion/m0_arquitectura.md) + setup del repo | [Clase 1](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_01) · [Clase 3](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_03) · [Clase 7](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_07) |
+| 1 | Mié 30/9 | Presencial | [Marco conceptual](trabajo_practico/marco_conceptual.md) + [Consigna del TP](trabajo_practico/README.md) + [M0](trabajo_practico/especificacion/m0_arquitectura.md) | [Clase 1](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_01) · [Clase 3](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_03) · [Clase 7](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_07) |
 | — | Mié 7/10 | Asincrónica | **Entrega M0** por Slack/GitHub (no hay clase) | — |
 | 2 | Mié 14/10 | Presencial | [M1](trabajo_practico/especificacion/m1_generacion.md) (generación de señales) | [Clase 4](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_04) · [Clase 6](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_06) |
 | 3 | Mié 21/10 | Virtual | [M2](trabajo_practico/especificacion/m2_procesamiento.md) (procesamiento de la RI) + taller M1 | [Clase 8](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_08) · [Clase 9](https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_09) |
