@@ -27,9 +27,10 @@ test('lejos de todo trazo, la goma no borra nada', () => {
   assert.equal(P.borrarCerca(trazos, 50, 60, 12).length, 1);
 });
 
-test('documento → pantalla: el trazo se mueve con el scroll y con el origen del contenido', () => {
-  assert.deepEqual({ ...P.aPantalla({ x: 10, y: 500 }, { scrollY: 300, origenX: 40 }) }, { x: 50, y: 200 });
-  assert.deepEqual({ ...P.aDocumento(50, 200, { scrollY: 300, origenX: 40 }) }, { x: 10, y: 500 });
+test('contenido → pantalla: el trazo sigue al contenido, se desplace la ventana o un contenedor', () => {
+  // origen = esquina del contenido en pantalla (cambia al hacer scroll, sea cual sea el elemento que se desplaza)
+  assert.deepEqual({ ...P.aPantalla({ x: 10, y: 500 }, { origenX: 40, origenY: -300 }) }, { x: 50, y: 200 });
+  assert.deepEqual({ ...P.aDocumento(50, 200, { origenX: 40, origenY: -300 }) }, { x: 10, y: 500 });
 });
 
 test('el grosor crece con la presión del lápiz y el resaltador es más ancho', () => {

@@ -7,10 +7,7 @@
   const presentacionEnUrl = (search) => /[?&]presentacion(=|&|$)/.test(search);
   const ofrecerPantallaCompleta = ({ presentacion, pantallaCompleta, soportada }) =>
     presentacion && !pantallaCompleta && soportada;
-  // En el iPad, deslizar hacia abajo estando arriba de todo cierra la pantalla completa (como un video).
-  // Si la página nunca queda en la posición 0, ese gesto se toma como scroll: devuelve a dónde moverla.
-  const scrollProtegido = ({ pantallaCompleta, scrollY }) => (pantallaCompleta && scrollY < 1 ? 1 : null);
-  window.PresentacionLogica = { presentacionEnUrl, ofrecerPantallaCompleta, scrollProtegido };
+  window.PresentacionLogica = { presentacionEnUrl, ofrecerPantallaCompleta };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
   const CLAVE = 'modo-presentacion';
@@ -56,17 +53,15 @@
         presentacion: document.body.classList.contains(CLAVE), pantallaCompleta: pantalla.activa(), soportada: pantalla.soportada,
       });
     };
-    const proteger = () => {
-      const y = scrollProtegido({ pantallaCompleta: pantalla.activa(), scrollY: window.scrollY });
-      if (y !== null) window.scrollTo(0, y);
-    };
-    const alCambiarPantalla = () => { actualizarPantalla(); proteger(); };
-    document.addEventListener('fullscreenchange', alCambiarPantalla);
-    document.addEventListener('webkitfullscreenchange', alCambiarPantalla);
-    window.addEventListener('scroll', proteger, { passive: true });
+    document.addEventListener('fullscreenchange', actualizarPantalla);
+    document.addEventListener('webkitfullscreenchange', actualizarPantalla);
     botonPantalla.addEventListener('click', () => pantalla.entrar());
     // porUsuario: solo con un toque o una tecla el navegador permite entrar a pantalla completa.
     const aplicar = (activo, porUsuario = false) => {
+      // Al cambiar quién se desplaza (ventana ↔ body) se conserva la posición de lectura.
+      const antes = activo ? window.scrollY : document.body.scrollTop;
+      raiz.classList.toggle('en-presentacion', activo);
+      if (activo) document.body.scrollTop = antes; else window.scrollTo(0, antes);
       if (porUsuario) { if (activo) pantalla.entrar(); else pantalla.salir(); }
       document.body.classList.toggle(CLAVE, activo);
       boton.setAttribute('aria-pressed', String(activo));
