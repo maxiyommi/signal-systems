@@ -134,3 +134,26 @@ main.interactivo { max-width: 1200px; margin: 0 auto; padding: 1.6rem 1.2rem 2.4
 .convolucion canvas { display: block; width: 100%; height: auto; margin-bottom: 0.5em; background: var(--superficie); border: 1px solid var(--borde); border-radius: 0.6rem; }
 .controles button[data-escuchar][aria-pressed="true"] { background: var(--primario); border-color: var(--primario); color: #fff; }
 code { font-size: 0.9em; padding: 0.05em 0.3em; border-radius: 0.25rem; background: var(--superficie); border: 1px solid var(--borde); }
+
+/* "Para pensar": como las admonitions de pregunta del sitio. En modo presentación, de a una y más grandes. */
+.para-pensar {
+  margin: 1.6rem 0 1rem; padding: 0.9rem 1.1rem; border: 1px solid var(--borde); border-left: 4px solid #34d399;
+  border-radius: 0.6rem; background: var(--superficie);
+}
+[data-tema="claro"] .para-pensar { border-left-color: #059669; }
+.para-pensar h2 { margin: 0 0 0.5rem; font-size: 1rem; font-weight: 800; color: #34d399; }
+[data-tema="claro"] .para-pensar h2 { color: #059669; }
+.para-pensar ol { margin: 0; padding-left: 1.3rem; }
+.para-pensar li { margin: 0.35rem 0; }
+.para-pensar__nav { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.8rem; }
+.para-pensar__nav[hidden] { display: none; }
+.para-pensar__nav span { font-size: 0.85rem; color: var(--texto-tenue); }
+.para-pensar__nav button {
+  font: 500 0.9rem var(--f-texto); color: var(--texto); background: var(--fondo); cursor: pointer;
+  border: 1px solid var(--borde); border-radius: 2rem; padding: 0.4em 1em;
+}
+.para-pensar__nav button:hover:not(:disabled) { border-color: var(--primario); }
+.para-pensar__nav button:disabled { opacity: 0.4; cursor: default; }
+.modo-presentacion .para-pensar li { font-size: 1.35rem; line-height: 1.45; margin: 0.6rem 0; }
+.modo-presentacion .para-pensar li.ultima { color: var(--texto); font-weight: 700; }
+.modo-presentacion .para-pensar li:not(.ultima) { color: var(--texto-tenue); }

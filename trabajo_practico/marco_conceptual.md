@@ -8,11 +8,7 @@ Tenemos dos grabaciones de la misma fuente: una **anecoica** (sin sala) y otra e
 
 <a class="interactivo-enlace" href="../interactivos/escucha.html" target="_blank" rel="noopener"><span class="interactivo-enlace__tag">Interactivo</span><span class="interactivo-enlace__info"><strong>Escucha a ciegas</strong><span>La misma fuente con y sin sala: escuchala y comparala en tiempo y en frecuencia. Se abre en una pestaña nueva.</span></span><span class="interactivo-enlace__flecha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a>
 
-!!! question "Para pensar"
-    - ¿Qué diferencias escuchamos? ¿Y qué diferencias vemos en la forma de onda? ¿Cuánto dura cada señal?
-    - ¿En qué bandas difieren los espectros?
-    - ¿Qué sentido nos da más información, el oído o la vista? ¿Qué dominio, el tiempo o la frecuencia?
-    - ¿Qué fenómeno físico estamos escuchando?
+Las preguntas **para pensar** están dentro del interactivo, al lado de lo que se escucha y se ve.
 
 ## 2. La reverberación: directo, reflexiones y cola
 
@@ -22,10 +18,7 @@ La **reverberación** es la suma del **sonido directo** y de las **reflexiones**
 
 Arrastrá el micrófono, cambiá la absorción de las paredes y escuchá el resultado. Compará la sala simulada con la **sala real** (respuesta medida) y con el **aire libre** (sin paredes: solo sonido directo).
 
-!!! question "Para pensar"
-    - ¿En qué tipo de recintos se da el fenómeno? ¿Qué pasa al aire libre?
-    - ¿Cómo afectan los materiales, las personas y los objetos del recinto?
-    - ¿Cómo adquirimos esta señal para estudiarla?
+Las preguntas **para pensar** están dentro del interactivo.
 
 **Resumen.** La reverberación es un fenómeno físico propio de los recintos cerrados: la suma del sonido directo y de las reflexiones. La percibimos con buena sensibilidad, pero de oído no podemos cuantificarla ni separar sus componentes. Necesitamos un **transductor electroacústico** para captarla y estudiarla en los dominios **temporal** y **espectral**.
 
@@ -45,10 +38,62 @@ Si el sistema es **lineal e invariante en el tiempo (LTI)**, $h(t)$ lo caracteri
 
 | Propiedad | Qué significa en la sala | Consecuencia práctica |
 |-----------|--------------------------|-----------------------|
-| **Linealidad** | Vale la superposición | No saturar ningún elemento de la cadena: por eso se ajustan los niveles |
-| **Invariancia en el tiempo** | La sala no cambia durante la medición | Se puede repetir la medición y promediar |
-| **Causalidad** | $h(t) = 0$ para $t < 0$ | Ninguna reflexión llega antes que el sonido directo |
-| **Estabilidad** | $h(t)$ decae: las superficies absorben energía | Cómo decae es el **tiempo de reverberación** |
+| **Linealidad** <button type="button" class="definicion-boton" popovertarget="def-linealidad" aria-label="Definición de linealidad" title="Definición">?</button> | Vale la superposición | No saturar ningún elemento de la cadena: por eso se ajustan los niveles |
+| **Invariancia en el tiempo** <button type="button" class="definicion-boton" popovertarget="def-invariancia" aria-label="Definición de invariancia en el tiempo" title="Definición">?</button> | La sala no cambia durante la medición | Se puede repetir la medición y promediar |
+| **Causalidad** <button type="button" class="definicion-boton" popovertarget="def-causalidad" aria-label="Definición de causalidad" title="Definición">?</button> | $h(t) = 0$ para $t < 0$ | Ninguna reflexión llega antes que el sonido directo |
+| **Estabilidad** <button type="button" class="definicion-boton" popovertarget="def-estabilidad" aria-label="Definición de estabilidad" title="Definición">?</button> | $h(t)$ decae: las superficies absorben energía | Cómo decae es el **tiempo de reverberación** |
+
+Tocá el **?** de cada propiedad para ver su definición.
+
+<div id="def-linealidad" popover="auto" class="definicion" markdown="1">
+<p class="definicion__titulo">Linealidad</p>
+
+Un sistema $T$ es **lineal** si cumple el **principio de superposición**: para cualquier par de entradas $x_1(t)$, $x_2(t)$ y constantes $a$, $b$,
+
+$$T\{a\,x_1(t) + b\,x_2(t)\} = a\,T\{x_1(t)\} + b\,T\{x_2(t)\}$$
+
+Reúne dos propiedades: **aditividad** (la respuesta a una suma es la suma de las respuestas) y **homogeneidad** (escalar la entrada escala la salida en la misma proporción).
+
+<button type="button" class="definicion__cerrar" popovertarget="def-linealidad" popovertargetaction="hide">Cerrar</button>
+</div>
+
+<div id="def-invariancia" popover="auto" class="definicion" markdown="1">
+<p class="definicion__titulo">Invariancia en el tiempo</p>
+
+Un sistema es **invariante en el tiempo** si un corrimiento de la entrada solo corre la salida, sin cambiarla: si $y(t) = T\{x(t)\}$, entonces para todo $t_0$
+
+$$T\{x(t - t_0)\} = y(t - t_0)$$
+
+El sistema se comporta igual hoy que dentro de un rato: sus parámetros no cambian con el tiempo.
+
+<button type="button" class="definicion__cerrar" popovertarget="def-invariancia" popovertargetaction="hide">Cerrar</button>
+</div>
+
+<div id="def-causalidad" popover="auto" class="definicion" markdown="1">
+<p class="definicion__titulo">Causalidad</p>
+
+Un sistema es **causal** si la salida en un instante $t$ depende solo de la entrada en ese instante y en los anteriores ($\tau \leq t$), nunca de valores futuros.
+
+Para un sistema LTI, esto equivale a que la respuesta al impulso sea nula antes de que llegue el impulso:
+
+$$h(t) = 0 \quad \text{para} \quad t < 0$$
+
+<button type="button" class="definicion__cerrar" popovertarget="def-causalidad" popovertargetaction="hide">Cerrar</button>
+</div>
+
+<div id="def-estabilidad" popover="auto" class="definicion" markdown="1">
+<p class="definicion__titulo">Estabilidad (BIBO)</p>
+
+Un sistema es **estable** en sentido BIBO (*bounded input, bounded output*) si toda entrada acotada produce una salida acotada:
+
+$$|x(t)| \leq M_x < \infty \;\Rightarrow\; |y(t)| \leq M_y < \infty$$
+
+Para un sistema LTI, esto equivale a que la respuesta al impulso sea absolutamente integrable:
+
+$$\int_{-\infty}^{\infty} |h(t)|\,dt < \infty$$
+
+<button type="button" class="definicion__cerrar" popovertarget="def-estabilidad" popovertargetaction="hide">Cerrar</button>
+</div>
 
 ## 5. La medición es una cadena de sistemas
 
@@ -73,44 +118,38 @@ Por **asociatividad y conmutatividad de la convolución**, toda la cadena equiva
 
 Subí el ruido de fondo: si el piso de ruido no queda al menos 10 dB por debajo del punto de −35 dB de la curva, la integral de Schroeder se "levanta" y **T30 deja de ser válido**. En M3 lo controlan recortando la RI antes de integrar; el método de Lundeby, que estima ese punto de corte automáticamente, es opcional.
 
-## 7. Qué hay que decidir para medir, y dónde lo resuelve el TP
+## 7. Cada pregunta de la medición, una técnica de Señales y Sistemas
 
-| Pregunta | Dónde se resuelve |
-|----------|-------------------|
-| ¿Qué señal reproducimos? | M1: ruido rosa y sine sweep |
-| ¿Los transductores son ideales? ¿Qué pasa con sus distorsiones? | M1: sine sweep + filtro inverso |
-| ¿Qué fuente usamos y a qué nivel de SPL? | Medición in situ (paso 2) |
-| ¿Cómo procesamos la señal? | M2: deconvolución y bandas de octava |
-| ¿Cómo afecta el ruido a nuestras mediciones? | M3: Schroeder y recorte de la RI (Lundeby, opcional) |
-| ¿Cómo estandarizamos el procedimiento (repetibilidad y reproducibilidad)? | ISO 3382: posiciones y repeticiones |
+Para medir hay que resolver una serie de preguntas. Cada una se responde con un concepto de la materia, y ese concepto se convierte en un **servicio** de la API:
+
+| Pregunta de la medición | Concepto de Señales y Sistemas | Servicio | Milestone |
+|-------------------------|--------------------------------|----------|-----------|
+| ¿Con qué señal excitamos la sala? | Señales aleatorias, densidad espectral $1/f$: energía pareja por octava | `generate_pink_noise` | [M1](especificacion/m1_generacion.md) |
+| ¿Cómo separamos la sala de las distorsiones del parlante? | Frecuencia instantánea, filtro inverso | `generate_sine_sweep_pair` | [M1](especificacion/m1_generacion.md) |
+| ¿Cómo emitimos y grabamos a la vez? | Muestreo, DAC/ADC, sistemas en cascada | `play_and_record` | [M1](especificacion/m1_generacion.md) |
+| ¿Qué fuente usamos y a qué nivel? | Relación señal/ruido (+45 dB sobre el ruido de fondo) | — | Medición in situ (paso 2) |
+| ¿Cómo leemos la grabación? | Señales discretas, cuantización | `load_audio` | [M2](especificacion/m2_procesamiento.md) |
+| ¿Cómo validamos sin ir a medir? | Sistemas LTI: una RI sintética con $T_{60}$ conocido | `generate_synthetic_ir` | [M2](especificacion/m2_procesamiento.md) |
+| ¿Cómo obtenemos $h(t)$ a partir de la grabación? | Convolución, delta, asociatividad | `get_impulse_response` | [M2](especificacion/m2_procesamiento.md) |
+| ¿Cómo analizamos la sala por bandas? | Filtros LTI (Butterworth, IEC 61260) | `filter_single_band` | [M2](especificacion/m2_procesamiento.md) |
+| ¿Cómo expresamos los niveles? | Escala logarítmica (dB) | `logarithmic_scale_conversion` | [M2](especificacion/m2_procesamiento.md) |
+| ¿Cómo vemos cómo decae la energía? | Señal analítica, transformada de Hilbert (envolvente) | `apply_smoothing` | [M3](especificacion/m3_producto_final.md) |
+| ¿Cómo obtenemos una curva de caída limpia? | Energía, integración (Schroeder) | `apply_schroeder_integral` | [M3](especificacion/m3_producto_final.md) |
+| ¿Cómo afecta el ruido a la medición? | Estimación del piso de ruido y recorte de la integral | `apply_lundeby` (opcional) | [M3](especificacion/m3_producto_final.md) |
+| ¿Cuánto tarda en caer 60 dB? | Mínimos cuadrados: pendiente de la curva (T30, T20, EDT) | `linear_regression` | [M3](especificacion/m3_producto_final.md) |
+| ¿Qué parámetros entregamos? | Energía en ventanas temporales: EDT, T20, T30, D50, C80 | `calculate_parameters_from_ir` | [M3](especificacion/m3_producto_final.md) |
+| ¿Cómo estandarizamos el procedimiento? | Repetibilidad y reproducibilidad (ISO 3382): posiciones y repeticiones | — | Medición in situ (paso 3) |
+| ¿Cómo lo automatizamos? | El sistema completo, módulo por módulo | API REST | [M3](especificacion/m3_producto_final.md) |
 
 ## 8. Cómo se mide en una sala real
 
-La medición in situ no forma parte del TP, pero da contexto a cada función que van a construir:
+La medición in situ no forma parte del TP, pero da contexto a cada servicio que van a construir:
 
 1. **Ruido de fondo.** Con un sonómetro clase 1 ajustado, medir el Leq en 2 puntos de la sala, 3 repeticiones por punto, ponderación Z, slow, integración de 30 s. *Cadena: sala → micrófono → sonómetro.*
 2. **Nivel de la fuente.** Con ruido rosa, ajustar la fuente a +45 dB sobre el ruido de fondo, medido a 1 m. Ajustar los niveles de reproducción y adquisición para evitar saturación. *Cadena: PC (ruido rosa) → amplificador → fuente → sonómetro a 1 m.*
 3. **Medición.** 3 posiciones de micrófono por posición de fuente, respetando las distancias mínimas de la norma; 5 repeticiones por punto con sine sweep + filtro inverso. *Cadena: PC (sine sweep) → amplificador → fuente → sala → micrófono → PC (grabación).*
 
-## 9. Cada módulo, una técnica de Señales y Sistemas
-
-| Concepto de la materia | Qué resuelve en la medición | Función del TP | Milestone |
-|------------------------|-----------------------------|----------------|-----------|
-| Señales aleatorias, densidad espectral $1/f$ | Excitar todas las bandas con energía pareja por octava | `generate_pink_noise` | [M1](especificacion/m1_generacion.md) |
-| Frecuencia instantánea, filtro inverso | Una excitación que separa la respuesta lineal de la distorsión | `generate_sine_sweep_pair` | [M1](especificacion/m1_generacion.md) |
-| Muestreo, DAC/ADC, sistemas en cascada | Emitir y grabar a la vez | `play_and_record` | [M1](especificacion/m1_generacion.md) |
-| Señales discretas, cuantización | Leer una grabación como un arreglo normalizado | `load_audio` | [M2](especificacion/m2_procesamiento.md) |
-| Sistemas LTI, respuesta al impulso | Una RI sintética con $T_{60}$ conocido para validar | `generate_synthetic_ir` | [M2](especificacion/m2_procesamiento.md) |
-| Convolución, delta, asociatividad | Recuperar $h(t)$ a partir de la grabación | `get_impulse_response` | [M2](especificacion/m2_procesamiento.md) |
-| Filtros LTI (Butterworth, IEC 61260) | Analizar la sala por bandas de octava | `filter_single_band` | [M2](especificacion/m2_procesamiento.md) |
-| Escala logarítmica | Expresar niveles en dB | `logarithmic_scale_conversion` | [M2](especificacion/m2_procesamiento.md) |
-| Señal analítica, transformada de Hilbert | Envolvente de $h(t)$ | `apply_smoothing` | [M3](especificacion/m3_producto_final.md) |
-| Energía, integración | Curva de decaimiento (Schroeder) | `apply_schroeder_integral` | [M3](especificacion/m3_producto_final.md) |
-| Mínimos cuadrados | Pendiente de la curva: T30, T20, EDT | `linear_regression` | [M3](especificacion/m3_producto_final.md) |
-| Energía en ventanas temporales | Parámetros por banda: EDT, T20, T30, D50, C80 | `calculate_parameters_from_ir` | [M3](especificacion/m3_producto_final.md) |
-| El sistema completo | Automatizar la medición y obtener datos | API REST | [M3](especificacion/m3_producto_final.md) |
-
-## 10. Cómo se baja un problema complejo
+## 9. Cómo se baja un problema complejo
 
 1. **Observar** el fenómeno físico: la reverberación.
 2. **Modelarlo** con Señales y Sistemas: la sala es un sistema LTI, $y = x * h$.

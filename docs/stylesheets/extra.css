@@ -465,3 +465,25 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 .md-typeset .servicio-demo__respuesta pre { margin: 0.4rem 0 0; }
 /* Rótulo de carpeta arriba de cada snippet: dónde va el código */
 .md-typeset .ruta-archivo { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.8rem 0 -0.4rem; padding: 0.15rem 0.6rem; border-radius: 0.4rem 0.4rem 0 0; font: 600 0.68rem var(--md-code-font-family); background: var(--md-code-bg-color); color: var(--md-default-fg-color--light); }
+
+/* ── Definiciones emergentes (marco conceptual, §4): botón "?" y ventana con la definición teórica ── */
+.md-typeset .definicion-boton {
+  display: inline-grid; place-items: center; width: 1.25rem; height: 1.25rem; margin-left: 0.25rem; vertical-align: 0.1em;
+  border: 1px solid var(--md-accent-fg-color); border-radius: 50%; cursor: pointer;
+  font: 700 0.7rem var(--md-text-font-family, sans-serif); color: var(--md-accent-fg-color); background: transparent;
+}
+.md-typeset .definicion-boton:hover, .md-typeset .definicion-boton:focus-visible { background: var(--md-accent-fg-color); color: #fff; }
+.md-typeset .definicion {
+  width: min(34rem, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); overflow: auto;
+  margin: auto; padding: 1rem 1.2rem; border: 1px solid var(--md-default-fg-color--lightest); border-top: 4px solid var(--md-accent-fg-color);
+  border-radius: 0.6rem; background: var(--md-default-bg-color); color: var(--md-default-fg-color);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45); font-size: 0.8rem;
+}
+.md-typeset .definicion::backdrop { background: rgba(0, 0, 0, 0.45); }
+.md-typeset .definicion__titulo { margin: 0 0 0.4rem; font-size: 1.1em; font-weight: 800; color: var(--md-accent-fg-color); }
+.md-typeset .definicion__cerrar {
+  display: block; margin: 0.6rem 0 0 auto; padding: 0.35em 1em; cursor: pointer;
+  font: 500 0.75rem var(--md-text-font-family, sans-serif); color: var(--md-default-fg-color);
+  background: transparent; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 2rem;
+}
+.md-typeset .definicion__cerrar:hover { border-color: var(--md-accent-fg-color); }
