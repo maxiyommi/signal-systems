@@ -119,7 +119,7 @@ Ingresar con el usuario personal al [**Aula virtual**](https://presenciales.untr
 
 Las consultas están centralizadas en [Slack](https://slack.com/intl/es-ar/). Ver las [reglas del espacio](reglas_slack.md).
 
-- [Unirte al espacio de trabajo](https://join.slack.com/t/senalesysistemas/shared_invite/zt-o44s05m8-Yhw_W10tEch6fBy~e8mo2w)
+- [Unirte al espacio de trabajo](https://join.slack.com/t/senalesysistemas/shared_invite/zt-4b8dg2vx3-E1FFLCoIbok2AB5Es5MeVQ)
 
 ## Herramientas del curso
 

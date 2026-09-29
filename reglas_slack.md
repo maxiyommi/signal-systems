@@ -7,5 +7,5 @@
 
 ## Cómo sumarse
 
-- [Unirse al espacio de trabajo de Slack](https://join.slack.com/t/senalesysistemas/shared_invite/zt-o44s05m8-Yhw_W10tEch6fBy~e8mo2w)
+- [Unirse al espacio de trabajo de Slack](https://join.slack.com/t/senalesysistemas/shared_invite/zt-4b8dg2vx3-E1FFLCoIbok2AB5Es5MeVQ)
 - Las dudas del TP van en el canal del TP, en hilos. La entrega de M0 (7/10) también se hace por Slack.
