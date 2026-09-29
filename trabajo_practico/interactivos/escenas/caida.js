@@ -18,32 +18,37 @@ export function crearCaida(seccion) {
     </div>`;
 
   function construir() {
+    // Controles integrados sobre el gráfico (como en la sala): barra arriba, panel plegable a la izquierda
+    // y resultados abajo. El gráfico reserva esos márgenes para no quedar tapado.
     raiz.innerHTML = `
-      <canvas role="img" aria-label="Curva de caída con integral de Schroeder"></canvas>
-      <div class="parametros">
-        <fieldset>
-          <legend>La sala</legend>
-          <label>T60 de la sala <input type="range" data-p="t60" min="0.3" max="3" step="0.1" value="${estado.t60}"><output data-o="t60"></output></label>
-          <label>Ruido de fondo <input type="range" data-p="pisoDb" min="-90" max="-20" step="1" value="${estado.pisoDb}"><output data-o="pisoDb"></output></label>
-          <button type="button" class="boton-chico" data-accion="realizacion">Otra realización del ruido</button>
-        </fieldset>
-        <fieldset>
-          <legend>Qué se calcula</legend>
-          ${segmentado('parametro', Object.keys(RANGOS).map((k) => [k, k]), estado.parametro)}
-          <p class="small" data-o="tramo"></p>
-        </fieldset>
-        <fieldset>
-          <legend>Dónde se corta la integral</legend>
-          ${segmentado('corte', [['ninguno', 'Sin cortar'], ['auto', 'Automático'], ['manual', 'A mano']], estado.corte)}
-          <label data-manual>Cortar en <input type="range" data-p="corteManual" min="0.1" max="5" step="0.05" value="${estado.corteManual}"><output data-o="corteManual"></output></label>
-          <p class="small" data-manual>También podés arrastrar la línea de corte sobre el gráfico.</p>
-        </fieldset>
-        <fieldset>
-          <legend>Mostrar</legend>
-          <label class="casilla"><input type="checkbox" data-ver="verNivel" checked> Nivel instantáneo</label>
-        </fieldset>
-      </div>
-      <div class="resultados" aria-live="polite"></div>`;
+      <div class="sim sim--caida">
+        <canvas role="img" aria-label="Curva de caída con integral de Schroeder"></canvas>
+        <div class="sim-capas">
+          <div class="sim-flotante sim-flotante--arriba">
+            ${segmentado('parametro', Object.keys(RANGOS).map((k) => [k, k]), estado.parametro)}
+            ${segmentado('corte', [['ninguno', 'Sin cortar'], ['auto', 'Corte automático'], ['manual', 'Corte a mano']], estado.corte)}
+            <div class="segmentado"><button type="button" data-ver="verNivel" aria-pressed="true">Nivel instantáneo</button></div>
+          </div>
+          <aside class="sim-flotante sim-panel" aria-label="Ajustes de la curva">
+            <button type="button" class="sim-panel__plegar" aria-expanded="true">Ajustes</button>
+            <div class="sim-panel__cuerpo parametros">
+              <fieldset>
+                <legend>La sala</legend>
+                <label>T60 de la sala <input type="range" data-p="t60" min="0.3" max="3" step="0.1" value="${estado.t60}"><output data-o="t60"></output></label>
+                <label>Ruido de fondo <input type="range" data-p="pisoDb" min="-90" max="-20" step="1" value="${estado.pisoDb}"><output data-o="pisoDb"></output></label>
+                <button type="button" class="boton-chico" data-accion="realizacion">Otra realización del ruido</button>
+              </fieldset>
+              <fieldset>
+                <legend>Tramo y corte</legend>
+                <p class="small" data-o="tramo"></p>
+                <label data-manual>Cortar en <input type="range" data-p="corteManual" min="0.1" max="5" step="0.05" value="${estado.corteManual}"><output data-o="corteManual"></output></label>
+                <p class="small" data-manual>También podés arrastrar la línea de corte sobre el gráfico.</p>
+              </fieldset>
+            </div>
+          </aside>
+          <div class="sim-flotante sim-flotante--abajo"><div class="resultados" aria-live="polite"></div></div>
+        </div>
+      </div>`;
     ui = {
       cv: raiz.querySelector('canvas'),
       res: raiz.querySelector('.resultados'),
@@ -57,7 +62,12 @@ export function crearCaida(seccion) {
     raiz.querySelectorAll('[data-parametro]').forEach((b) => b.addEventListener('click', () => { estado.parametro = b.dataset.parametro; calcular(false); }));
     raiz.querySelectorAll('[data-corte]').forEach((b) => b.addEventListener('click', () => { estado.corte = b.dataset.corte; calcular(false); }));
     raiz.querySelector('[data-accion="realizacion"]').addEventListener('click', () => { estado.semilla = ((estado.semilla * 7 + 3) % 9973) + 1; calcular(true); });
-    raiz.querySelector('[data-ver="verNivel"]').addEventListener('change', (e) => { estado.verNivel = e.target.checked; dibujar(); });
+    const bNivel = raiz.querySelector('[data-ver="verNivel"]');
+    bNivel.addEventListener('click', () => { estado.verNivel = !estado.verNivel; bNivel.setAttribute('aria-pressed', String(estado.verNivel)); dibujar(); });
+    const panel = raiz.querySelector('.sim-panel'), plegar = raiz.querySelector('.sim-panel__plegar');
+    const abrirPanel = (v) => { panel.dataset.abierto = String(v); plegar.setAttribute('aria-expanded', String(v)); dibujar(); };
+    panel.dataset.abierto = String(window.innerWidth > 900); plegar.setAttribute('aria-expanded', panel.dataset.abierto);
+    plegar.addEventListener('click', () => abrirPanel(panel.dataset.abierto !== 'true'));
 
     // Arrastrar la línea de corte sobre el gráfico (pasa a modo "a mano").
     let arrastrando = false;
@@ -124,20 +134,15 @@ export function crearCaida(seccion) {
 
     const e = datos.evals[estado.parametro];
     const error = e.tr != null ? (100 * (e.tr - estado.t60)) / estado.t60 : null;
-    const fila = ([k, v]) => `<tr class="${k === estado.parametro ? 'actual' : ''}">
-        <th scope="row">${k}</th><td>${v.tr != null ? `${v.tr.toFixed(2)} s` : '—'}</td>
-        <td>${v.tr != null ? pct((100 * (v.tr - estado.t60)) / estado.t60) : '—'}</td>
-        <td>${v.requerido} dB</td><td class="${v.valido ? 'ok' : 'mal'}">${v.valido ? 'Válido' : 'No válido'}</td></tr>`;
+    const chip = ([k, v]) => `<span class="chip-param${k === estado.parametro ? ' actual' : ''} ${v.valido ? 'ok' : 'mal'}" title="${v.valido ? 'Válido según la ISO 3382' : v.motivo}">
+        <strong>${k}</strong> ${v.tr != null ? `${v.tr.toFixed(2)} s` : '—'}${v.tr != null ? ` · ${pct((100 * (v.tr - estado.t60)) / estado.t60)}` : ''} · ${v.valido ? '✓' : '✗'}</span>`;
     const corte = corteActual();
     ui.res.innerHTML = `
       <p class="resultado ${e.valido ? '' : 'mal'}"><strong>${estado.parametro} = ${e.tr != null ? `${e.tr.toFixed(2)} s` : '—'}</strong>
         ${error != null ? ` · error ${pct(error)} respecto del T60 de la sala (${estado.t60.toFixed(1)} s)` : ''}
+        · rango dinámico ${Math.round(e.rangoDinamico)} dB${corte ? ` · integral cortada en ${(corte / FS).toFixed(2)} s` : ''}${datos.sinCorte?.tr != null ? ` (sin cortar daría ${datos.sinCorte.tr.toFixed(2)} s)` : ''}
         ${e.valido ? '' : `<br><span class="small">${e.motivo}</span>`}</p>
-      <p class="small">Rango dinámico: <strong>${Math.round(e.rangoDinamico)} dB</strong>${corte ? ` · integral cortada en ${(corte / FS).toFixed(2)} s` : ' · integral sin cortar'}${datos.sinCorte?.tr != null ? ` (sin cortar daría ${datos.sinCorte.tr.toFixed(2)} s)` : ''}.</p>
-      <table class="tabla-resultados">
-        <thead><tr><th>Parámetro</th><th>Valor</th><th>Error</th><th>Rango pedido</th><th>ISO 3382</th></tr></thead>
-        <tbody>${Object.entries(datos.evals).map(fila).join('')}</tbody>
-      </table>`;
+      <div class="chips-param">${Object.entries(datos.evals).map(chip).join('')}</div>`;
   }
 
   function dibujar() {
@@ -148,14 +153,24 @@ export function crearCaida(seccion) {
     const { desde, hasta } = RANGOS[estado.parametro];
     const corte = corteActual();
     const pisoRms = estado.pisoDb - 10 * Math.log10(3);
-    const { g, W, H, compacto } = prepararCanvas(ui.cv, { aspecto: 0.5, min: 280, max: 440 });
+    const capas = raiz.querySelector('.sim-capas');
+    const encima = getComputedStyle(capas).position === 'absolute';
+    const { g, W, H, compacto } = prepararCanvas(ui.cv, encima
+      ? { aspecto: 0.56, min: 520, max: Math.max(520, Math.min(860, window.innerHeight * 0.86)) }
+      : { aspecto: 0.5, min: 280, max: 440 });
+    // Espacio que ocupan los controles flotantes (arriba, a la izquierda y abajo)
+    const alto = (sel) => (encima ? capas.querySelector(sel).offsetHeight + 14 : 0);
+    const arriba = alto('.sim-flotante--arriba'), abajo = alto('.sim-flotante--abajo');
+    const panel = capas.querySelector('.sim-panel');
+    const izq = encima ? panel.offsetWidth + 14 : 0;
     const tt = compacto ? 11 : 13;
     g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
     const leyenda = [[COL.violeta, 'Integral de Schroeder'], [COL.tinta, `Regresión (${estado.parametro})`], [COL.senal, 'Ruido de fondo']];
     if (estado.verNivel) leyenda.unshift([COL.tenue, 'Nivel instantáneo']);
     if (corte) leyenda.push([COL.eje, 'Sin cortar (comparación)']);
-    const altoLeyenda = dibujarLeyenda(g, leyenda, { x0: compacto ? 36 : 56, y0: tt + 6, maxAncho: W - (compacto ? 44 : 70), tamano: tt });
-    const m = { l: compacto ? 36 : 56, r: 12, t: altoLeyenda + 14, b: compacto ? 38 : 44 }, dbMin = -90;
+    const base = compacto ? 36 : 56;
+    const altoLeyenda = dibujarLeyenda(g, leyenda, { x0: base + izq, y0: arriba + tt + 6, maxAncho: W - base - izq - 20, tamano: tt });
+    const m = { l: base + izq, r: 16, t: arriba + altoLeyenda + 14, b: (compacto ? 38 : 44) + abajo }, dbMin = -90;
     const xt = (t) => m.l + (t / dur) * (W - m.l - m.r);
     const yd = (d) => m.t + (Math.max(dbMin, Math.min(0, d)) / dbMin) * (H - m.t - m.b);
     geo = { xt, duracion: dur, tDeX: (x) => ((x - m.l) / (W - m.l - m.r)) * dur };
@@ -173,8 +188,8 @@ export function crearCaida(seccion) {
     for (let d = 0; d >= dbMin; d -= 15) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 5, yd(d) + 4); }
     g.textAlign = 'center';
     g.font = `600 ${tt}px ${FUENTE}`;
-    g.fillText('Tiempo (s)', m.l + (W - m.l - m.r) / 2, H - 4);
-    g.save(); g.translate(tt, m.t + (H - m.t - m.b) / 2); g.rotate(-Math.PI / 2); g.fillText('Nivel (dB)', 0, 0); g.restore();
+    g.fillText('Tiempo (s)', m.l + (W - m.l - m.r) / 2, H - m.b + (compacto ? 32 : 38));
+    g.save(); g.translate(izq + tt, m.t + (H - m.t - m.b) / 2); g.rotate(-Math.PI / 2); g.fillText('Nivel (dB)', 0, 0); g.restore();
     g.textAlign = 'left';
 
     if (estado.verNivel) {                                     // nivel instantáneo suavizado (10 ms)

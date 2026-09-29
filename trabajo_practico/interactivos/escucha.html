@@ -24,26 +24,22 @@
     <h1>Escucha a ciegas</h1>
     <p>Escuchá A y B sin mirar. Después revelá la forma de onda o el espectro: una es la grabación anecoica (sin sala) y la otra, la misma fuente en una sala polideportiva. Más abajo, armá tu propia sala y escuchá la convolución.</p>
   </header>
-  <div class="controles" role="group" aria-label="Dominio">
-    <button type="button" data-modo="temporal" aria-pressed="true">Dominio temporal</button>
-    <button type="button" data-modo="espectral" aria-pressed="false">Dominio espectral</button>
-  </div>
-  <div class="escucha"></div>
-  <div class="parametros">
-    <fieldset data-para="temporal">
-      <legend>Forma de onda</legend>
-      <label>Ventana de tiempo <input type="range" data-p="segundos" min="1" max="15" step="1" value="15"><output data-o="segundos"></output></label>
-      <p class="small">Achicá la ventana para ver el ataque y la cola de cerca.</p>
-    </fieldset>
-    <fieldset data-para="espectral">
-      <legend>Espectro</legend>
-      <div class="segmentado" role="group" aria-label="Tamaño de la FFT">
+  <div class="sim-escenario">
+    <div class="sim-flotante sim-barra">
+      <div class="segmentado" role="group" aria-label="Dominio">
+        <button type="button" data-modo="temporal" aria-pressed="true">Dominio temporal</button>
+        <button type="button" data-modo="espectral" aria-pressed="false">Dominio espectral</button>
+      </div>
+      <label class="sim-barra__rango" data-para="temporal">Ventana de tiempo <input type="range" data-p="segundos" min="1" max="15" step="1" value="15"><output data-o="segundos"></output></label>
+      <div class="segmentado" role="group" aria-label="Tamaño de la FFT" data-para="espectral">
         <button type="button" data-nfft="1024">N = 1024</button>
         <button type="button" data-nfft="8192">N = 8192</button>
         <button type="button" data-nfft="32768">N = 32768</button>
       </div>
-      <p class="small">Más muestras por ventana: mejor resolución en frecuencia (Δf = fs/N) y menos promedios.</p>
-    </fieldset>
+      <p class="small sim-barra__nota" data-para="temporal">Achicá la ventana para ver el ataque y la cola de cerca.</p>
+      <p class="small sim-barra__nota" data-para="espectral">Más muestras por ventana: mejor resolución en frecuencia (Δf = fs/N) y menos promedios.</p>
+    </div>
+    <div class="escucha"></div>
   </div>
   <aside class="para-pensar" aria-labelledby="pp-escucha">
     <h2 id="pp-escucha">Para pensar</h2>
