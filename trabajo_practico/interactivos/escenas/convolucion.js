@@ -19,25 +19,36 @@ export function crearConvolucion(seccion, { audios }) {
 
   function construir() {
     raiz.innerHTML = `
-      <div class="controles">
-        <button type="button" data-escuchar="x">Escuchar x(t) seca</button>
-        <button type="button" data-escuchar="y">Escuchar y(t) = x ∗ h</button>
-        <div class="segmentado" role="group" aria-label="Fuente seca">
-          <button type="button" data-audio="canto">Canto</button>
-          <button type="button" data-audio="bateria">Batería</button>
+      <div class="sim sim--conv">
+        <div class="sim-lienzos">
+          <canvas class="grafico-h" role="img" aria-label="Respuesta al impulso h(t) diseñada"></canvas>
+          <canvas class="grafico-xy" role="img" aria-label="Envolventes de la entrada x(t) y la salida y(t)"></canvas>
         </div>
-        <span class="estado small" aria-live="polite"></span>
-      </div>
-      <div class="parametros">
-        <fieldset>
-          <legend>La sala h(t)</legend>
-          <label>T60 <input type="range" data-p="t60" min="0.1" max="4" step="0.1" value="${estado.t60}"><output data-o="t60"></output></label>
-          <label>Sonido reverberado en la mezcla <input type="range" data-p="mezcla" min="0" max="1" step="0.05" value="${estado.mezcla}"><output data-o="mezcla"></output></label>
-          <p class="small">h(t) = ruido × envolvente exponencial, que cae 60 dB en T60: el mismo modelo que <code>generate_synthetic_ir</code> de M2.</p>
-        </fieldset>
-      </div>
-      <canvas class="grafico-h" role="img" aria-label="Respuesta al impulso h(t) diseñada"></canvas>
-      <canvas class="grafico-xy" role="img" aria-label="Envolventes de la entrada x(t) y la salida y(t)"></canvas>`;
+        <div class="sim-capas">
+          <div class="sim-flotante sim-flotante--arriba">
+            <div class="segmentado" role="group" aria-label="Escuchar">
+              <button type="button" data-escuchar="x">Escuchar x(t) seca</button>
+              <button type="button" data-escuchar="y">Escuchar y(t) = x ∗ h</button>
+            </div>
+            <div class="segmentado" role="group" aria-label="Fuente seca">
+              <button type="button" data-audio="canto">Canto</button>
+              <button type="button" data-audio="bateria">Batería</button>
+            </div>
+            <span class="estado small" aria-live="polite"></span>
+          </div>
+          <aside class="sim-flotante sim-panel" aria-label="La sala h(t)">
+            <button type="button" class="sim-panel__plegar" aria-expanded="true">La sala h(t)</button>
+            <div class="sim-panel__cuerpo parametros">
+              <fieldset>
+                <legend>Diseño de h(t)</legend>
+                <label>T60 <input type="range" data-p="t60" min="0.1" max="4" step="0.1" value="${estado.t60}"><output data-o="t60"></output></label>
+                <label>Reverberado en la mezcla <input type="range" data-p="mezcla" min="0" max="1" step="0.05" value="${estado.mezcla}"><output data-o="mezcla"></output></label>
+                <p class="small">h(t) = ruido × envolvente exponencial que cae 60 dB en T60: el mismo modelo que <code>generate_synthetic_ir</code> de M2.</p>
+              </fieldset>
+            </div>
+          </aside>
+        </div>
+      </div>`;
     const $ = (sel) => raiz.querySelector(sel);
     ui = { estado: $('.estado'), h: $('.grafico-h'), xy: $('.grafico-xy'), out: (k) => $(`[data-o="${k}"]`) };
 
@@ -50,6 +61,10 @@ export function crearConvolucion(seccion, { audios }) {
     t60.addEventListener('change', () => { calcularSalida(); if (estado.sonando === 'y') escuchar('y', true); });
     mezcla.addEventListener('input', () => { estado.mezcla = Number(mezcla.value); canal.ajustarMezcla(estado.mezcla); actualizarTexto(); });
     mezcla.addEventListener('change', () => calcularSalida());
+    const panel = $('.sim-panel'), plegar = $('.sim-panel__plegar');
+    const abrirPanel = (v) => { panel.dataset.abierto = String(v); plegar.setAttribute('aria-expanded', String(v)); dibujarH(); dibujarXY(); };
+    abrirPanel(window.innerWidth > 900);
+    plegar.addEventListener('click', () => abrirPanel(panel.dataset.abierto !== 'true'));
     alCambiarAncho(ui.h, dibujarH);
     alCambiarAncho(ui.xy, dibujarXY);
   }
@@ -112,6 +127,14 @@ export function crearConvolucion(seccion, { audios }) {
     } catch (e) { ui.estado.textContent = e.message; }
   }
 
+  // Espacio que ocupan los controles flotantes: la barra (solo sobre h(t)) y el panel de la izquierda.
+  function reservas() {
+    const capas = raiz.querySelector('.sim-capas');
+    if (!capas || getComputedStyle(capas).position !== 'absolute') return { arriba: 0, izq: 0, encima: false };
+    const panel = capas.querySelector('.sim-panel');
+    return { arriba: capas.querySelector('.sim-flotante--arriba').offsetHeight + 14, izq: panel.offsetWidth + 14, encima: true };
+  }
+
   function ejes(g, W, H, m, tt, dur, rotuloY) {
     const xt = (t) => m.l + (t / dur) * (W - m.l - m.r);
     g.font = `500 ${tt}px ${FUENTE}`; g.fillStyle = COL.eje; g.strokeStyle = COL.grilla; g.lineWidth = 1;
@@ -120,7 +143,7 @@ export function crearConvolucion(seccion, { audios }) {
     for (let t = 0; t <= dur + 1e-9; t += paso) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(`${+t.toFixed(2)}`, xt(t), H - m.b + tt + 4); }
     g.font = `600 ${tt}px ${FUENTE}`;
     g.fillText('Tiempo (s)', m.l + (W - m.l - m.r) / 2, H - 4);
-    g.save(); g.translate(tt, m.t + (H - m.t - m.b) / 2); g.rotate(-Math.PI / 2); g.fillText(rotuloY, 0, 0); g.restore();
+    g.save(); g.translate(m.l - m.base + tt, m.t + (H - m.t - m.b) / 2); g.rotate(-Math.PI / 2); g.fillText(rotuloY, 0, 0); g.restore();
     g.textAlign = 'left';
     return xt;
   }
@@ -139,12 +162,13 @@ export function crearConvolucion(seccion, { audios }) {
 
   function dibujarH() {
     if (!h) return;
-    const { g, W, H, compacto } = prepararCanvas(ui.h, { aspecto: 0.22, min: 150, max: 220 });
+    const r = reservas();
+    const { g, W, H, compacto } = prepararCanvas(ui.h, r.encima ? { aspecto: 0.28, min: 260, max: 320 } : { aspecto: 0.22, min: 150, max: 220 });
     const tt = compacto ? 11 : 13;
     g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
     const altoLeyenda = dibujarLeyenda(g, [[COL.violeta, 'h(t)'], [COL.senal, `Envolvente: cae 60 dB en T60 = ${estado.t60.toFixed(1)} s`]],
-      { x0: compacto ? 36 : 52, y0: tt + 6, maxAncho: W - 60, tamano: tt });
-    const m = { l: compacto ? 36 : 52, r: 12, t: altoLeyenda + 10, b: compacto ? 36 : 40 };
+      { x0: (compacto ? 36 : 52) + r.izq, y0: r.arriba + tt + 6, maxAncho: W - 60 - r.izq, tamano: tt });
+    const m = { l: (compacto ? 36 : 52) + r.izq, base: compacto ? 36 : 52, r: 12, t: r.arriba + altoLeyenda + 10, b: compacto ? 36 : 40 };
     const dur = h.datos.length / h.fs;
     const xt = ejes(g, W, H, m, tt, dur, 'h(t)');
     const y0 = (m.t + H - m.b) / 2, alto = (H - m.b - m.t) / 2 - 2;
@@ -164,12 +188,13 @@ export function crearConvolucion(seccion, { audios }) {
 
   function dibujarXY() {
     if (!salida) return;
+    const r = reservas();
     const { g, W, H, compacto } = prepararCanvas(ui.xy, { aspecto: 0.3, min: 180, max: 280 });
     const tt = compacto ? 11 : 13;
     g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
     const altoLeyenda = dibujarLeyenda(g, [[COL.tinta, 'x(t): seca'], [COL.violeta, 'y(t) = x ∗ h (con la mezcla elegida)']],
-      { x0: compacto ? 36 : 52, y0: tt + 6, maxAncho: W - 60, tamano: tt });
-    const m = { l: compacto ? 36 : 52, r: 12, t: altoLeyenda + 10, b: compacto ? 36 : 40 };
+      { x0: (compacto ? 36 : 52) + r.izq, y0: tt + 6, maxAncho: W - 60 - r.izq, tamano: tt });
+    const m = { l: (compacto ? 36 : 52) + r.izq, base: compacto ? 36 : 52, r: 12, t: altoLeyenda + 10, b: compacto ? 36 : 40 };
     const dur = salida.y.length / salida.fs;
     const xt = ejes(g, W, H, m, tt, dur, 'Amplitud');
     const alto = (H - m.b - m.t) / 4 - 2;

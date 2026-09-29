@@ -158,40 +158,68 @@ code { font-size: 0.9em; padding: 0.05em 0.3em; border-radius: 0.25rem; backgrou
 .modo-presentacion .para-pensar li.ultima { color: var(--texto); font-weight: 700; }
 .modo-presentacion .para-pensar li:not(.ultima) { color: var(--texto-tenue); }
 
-/* La sala: controles flotando sobre la simulación (vidrio), sin tapar el centro de la escena */
-.sala-simulacion { position: relative; margin-bottom: 0.6rem; }
-.sala-capas {
+/* Simuladores (la sala, la curva de caída…): controles flotando sobre la escena (vidrio), sin tapar el centro de la escena */
+.sala-simulacion, .sim { position: relative; margin-bottom: 0.6rem; }
+.sala-capas, .sim-capas {
   position: absolute; inset: 0; padding: 0.6rem; pointer-events: none;
   display: grid; grid-template-columns: minmax(0, auto) 1fr; grid-template-rows: auto minmax(0, 1fr) auto; gap: 0.6rem;
 }
-.sala-flotante {
+.sala-flotante, .sim-flotante {
   pointer-events: auto; border: 1px solid var(--borde); border-radius: 0.7rem; padding: 0.5rem 0.6rem;
   background: color-mix(in srgb, var(--superficie) 78%, transparent);
   -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
-.sala-flotante--arriba { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; justify-self: start; }
-.sala-flotante--abajo { grid-column: 1 / -1; grid-row: 3; display: flex; flex-direction: column; gap: 0.2rem; padding-bottom: 0.2rem; }
-.sala-lecturas { display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem; align-items: baseline; font-size: 0.82rem; }
-.sala-lecturas .datos { margin: 0; }
-.sala-flotante--abajo .ecograma { background: transparent; border: 0; margin: 0; }
-.sala-panel { grid-row: 2; align-self: start; max-height: 100%; overflow: auto; width: 16rem; padding: 0.45rem; }
-.sala-panel[data-abierto="false"] { width: auto; }
-.sala-panel[data-abierto="false"] .sala-panel__cuerpo { display: none; }
-.sala-panel__plegar {
+.sala-flotante--arriba, .sim-flotante--arriba { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; justify-self: start; }
+.sala-flotante--abajo, .sim-flotante--abajo { grid-column: 1 / -1; grid-row: 3; display: flex; flex-direction: column; gap: 0.2rem; padding-bottom: 0.2rem; }
+.sala-lecturas, .sim-lecturas { display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem; align-items: baseline; font-size: 0.82rem; }
+.sala-lecturas .datos, .sim-lecturas .datos { margin: 0; }
+.sala-flotante--abajo .ecograma, .sim-flotante--abajo .ecograma { background: transparent; border: 0; margin: 0; }
+.sala-panel, .sim-panel { grid-row: 2; align-self: start; max-height: 100%; overflow: auto; width: 16rem; padding: 0.45rem; }
+.sala-panel[data-abierto="false"], .sim-panel[data-abierto="false"] { width: auto; }
+.sala-panel[data-abierto="false"] .sala-panel__cuerpo, .sim-panel[data-abierto="false"] .sim-panel__cuerpo { display: none; }
+.sala-panel__plegar, .sim-panel__plegar {
   width: 100%; font: 600 0.8rem var(--f-texto); color: var(--texto); background: transparent; border: 0; cursor: pointer;
   display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; padding: 0.2rem 0.3rem;
 }
-.sala-panel__plegar::after { content: "‹"; font-size: 1.1rem; line-height: 1; transition: transform 0.2s; }
-.sala-panel[data-abierto="false"] .sala-panel__plegar::after { transform: rotate(180deg); }
-.sala-panel .parametros { grid-template-columns: 1fr; gap: 0.5rem; margin: 0.4rem 0 0; }
-.sala-panel .parametros fieldset { padding: 0.5rem 0.6rem; background: transparent; }
-.sala-panel .parametros label { font-size: 0.82rem; }
-.sala-simulacion .segmentado button { font-size: 0.8rem; padding: 0.3em 0.8em; }
+.sala-panel__plegar::after, .sim-panel__plegar::after { content: "‹"; font-size: 1.1rem; line-height: 1; transition: transform 0.2s; }
+.sala-panel[data-abierto="false"] .sala-panel__plegar::after, .sim-panel[data-abierto="false"] .sim-panel__plegar::after { transform: rotate(180deg); }
+.sala-panel .parametros, .sim-panel .parametros { grid-template-columns: 1fr; gap: 0.5rem; margin: 0.4rem 0 0; }
+.sala-panel .parametros fieldset, .sim-panel .parametros fieldset { padding: 0.5rem 0.6rem; background: transparent; }
+.sala-panel .parametros label, .sim-panel .parametros label { font-size: 0.82rem; }
+.sala-simulacion .segmentado button, .sim .segmentado button { font-size: 0.8rem; padding: 0.3em 0.8em; }
+/* En el celular los controles no entran encima: pasan debajo de la escena */
 @media (max-width: 700px) {
-  /* En el celular los controles no entran encima: pasan debajo de la escena */
-  .sala-capas { position: static; display: flex; flex-direction: column; padding: 0.5rem 0 0; }
-  .sala-flotante { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--superficie); box-shadow: none; }
-  .sala-panel { width: auto; max-height: none; }
+  .sala-capas, .sim-capas { position: static; display: flex; flex-direction: column; padding: 0.5rem 0 0; }
+  .sala-flotante, .sim-flotante { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--superficie); box-shadow: none; }
+  .sala-panel, .sim-panel { width: auto; max-height: none; }
 }
-@media (prefers-reduced-motion: reduce) { .sala-panel__plegar::after { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .sala-panel__plegar::after, .sim-panel__plegar::after { transition: none; } }
+
+/* La curva de caída como simulador: el gráfico es la escena */
+.sim > canvas { display: block; width: 100%; border-radius: 0.6rem; background: var(--superficie); border: 1px solid var(--borde); }
+.sim--caida .sim-flotante--abajo { justify-self: stretch; }
+.sim .resultados { margin: 0; }
+.sim .resultados .resultado { font-size: 0.9rem; margin: 0 0 0.35rem; }
+.chips-param { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip-param {
+  display: inline-flex; gap: 0.35rem; align-items: baseline; padding: 0.2rem 0.55rem; border-radius: 1rem;
+  font-size: 0.78rem; font-variant-numeric: tabular-nums; border: 1px solid var(--borde); background: var(--fondo);
+}
+.chip-param.ok { border-color: color-mix(in srgb, #3fb950 55%, var(--borde)); }
+.chip-param.mal { border-color: color-mix(in srgb, var(--g-mal) 55%, var(--borde)); color: var(--g-mal); }
+.chip-param.actual { box-shadow: 0 0 0 2px var(--acento); }
+
+/* Escucha: barra de controles pegada arriba del área (queda visible al bajar por las filas) */
+.sim-escenario { position: relative; margin: 0.4rem 0 1rem; }
+.sim-barra { position: sticky; top: 3.6rem; z-index: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-bottom: 0.8rem; }
+.sim-barra [hidden] { display: none !important; }
+.sim-barra__rango { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--texto-tenue); }
+.sim-barra__rango input { accent-color: var(--primario); width: 10rem; }
+.sim-barra__rango output { font-weight: 700; color: var(--texto); font-variant-numeric: tabular-nums; }
+html.en-presentacion .sim-barra { top: 0.6rem; }
+/* Convolución: dos gráficos como escenario, con los controles encima */
+.sim-lienzos { display: flex; flex-direction: column; gap: 0; border-radius: 0.6rem; overflow: hidden; border: 1px solid var(--borde); background: var(--superficie); }
+.sim-lienzos canvas { display: block; width: 100%; border: 0 !important; border-radius: 0 !important; margin: 0 !important; }
+@media (max-width: 700px) { .sim-barra { position: static; } .sim-barra__rango input { width: 100%; } }
+.sim-barra__nota { margin: 0; color: var(--texto-tenue); }
