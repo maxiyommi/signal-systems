@@ -217,29 +217,6 @@ html {
 }
 .md-typeset .ruta-tp p { margin: 0.4rem 0; }
 .md-typeset .ruta-tp--pie { margin: 2rem 0 0 0; }
-.md-typeset ol.ruta-tp__hilo {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));   /* las 7 etapas en una fila */
-  gap: 0.4rem;
-  list-style: none;
-  margin: 0.6rem 0;
-  padding: 0;
-  counter-reset: etapa;
-}
-.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa {
-  counter-increment: etapa;
-  margin: 0;
-  padding: 0.4rem 0.5rem;
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: 4px;
-  line-height: 1.3;
-  font-size: 0.64rem;
-}
-.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa::before { content: counter(etapa) " · "; font-weight: 700; color: var(--md-default-fg-color--light); }
-.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa span { display: block; color: var(--md-default-fg-color--light); }
-.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual { border: 2px solid var(--md-accent-fg-color); }
-.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual strong,
-.md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa.actual::before { color: var(--md-accent-fg-color); }
 
 /* === Interactivos (trabajo_practico/interactivos/*.html): tarjeta que los abre en una pestaña nueva,
        con el mismo diseño que las tarjetas de milestones de la landing === */
@@ -273,12 +250,8 @@ html {
 
 /* Hilo conductor compacto en pantallas chicas */
 @media (max-width: 960px) {
-  .md-typeset ol.ruta-tp__hilo { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
-  .md-typeset ol.ruta-tp__hilo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.3rem; }
-  .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa { padding: 0.25rem 0.4rem; }
-  .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa span { display: none; }
 }
 
 /* === Celular: tablas, figuras y tarjetas de sesiones === */
@@ -312,7 +285,6 @@ body.modo-presentacion .md-typeset { font-size: clamp(0.85rem, 1.45vw, 1.15rem);
 body.modo-presentacion .md-typeset h1 { font-size: 2.2em; }
 body.modo-presentacion .md-typeset h2 { font-size: 1.6em; margin-top: 2.2em; }
 body.modo-presentacion .md-typeset .ruta-tp { font-size: 0.85em; }
-body.modo-presentacion .md-typeset ol.ruta-tp__hilo li.ruta-tp__etapa { font-size: 0.8em; }
 body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: auto; margin: 0 auto; }
 
 
@@ -493,4 +465,40 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 }
 .md-typeset .definicion__cerrar:hover { border-color: var(--md-accent-fg-color); }
 /* Con el panel de la sesión abierto hay menos ancho: el hilo conductor pasa a 4 columnas */
-body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__hilo { grid-template-columns: repeat(4, 1fr); }
+
+/* ── Ruta del TP: los 6 pasos (encabezado de cada página y página Ruta del TP) ── */
+.md-typeset ol.ruta-tp__pasos { list-style: none; margin: 0.6rem 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.35rem; counter-reset: none; }
+.md-typeset ol.ruta-tp__pasos li.ruta-tp__paso {
+  margin: 0; padding: 0.35rem 0.4rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+  border: 1px solid var(--md-default-fg-color--lightest); border-radius: 2rem; font-size: 0.72rem; font-weight: 600;
+  color: var(--md-default-fg-color--light); background: var(--md-default-bg-color);
+}
+.md-typeset ol.ruta-tp__pasos li.ruta-tp__paso span {
+  display: inline-grid; place-items: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; font-size: 0.68rem;
+  background: var(--md-default-fg-color--lightest); color: var(--md-default-fg-color);
+}
+.md-typeset ol.ruta-tp__pasos li.ruta-tp__paso.hecho span { background: var(--md-default-fg-color--lighter); }
+.md-typeset ol.ruta-tp__pasos li.ruta-tp__paso.actual { border: 2px solid var(--md-accent-fg-color); color: var(--md-accent-fg-color); }
+.md-typeset ol.ruta-tp__pasos li.ruta-tp__paso.actual span { background: var(--md-accent-fg-color); color: #fff; }
+@media (max-width: 600px) { .md-typeset ol.ruta-tp__pasos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.md-typeset .ruta-pasos > ol { counter-reset: paso; list-style: none; padding: 0; margin: 1rem 0 1.4rem; }
+.md-typeset .ruta-pasos > ol > li {
+  position: relative; margin: 0 0 0.7rem; padding: 0.8rem 1rem 0.8rem 3.4rem;
+  border: 1px solid var(--md-default-fg-color--lightest); border-radius: 0.6rem; background: var(--md-default-bg-color);
+}
+.md-typeset .ruta-pasos > ol > li::before {
+  counter-increment: paso; content: counter(paso);
+  position: absolute; left: 0.9rem; top: 0.8rem; width: 1.8rem; height: 1.8rem; border-radius: 50%;
+  display: grid; place-items: center; font-weight: 800; color: #fff; background: var(--md-accent-fg-color);
+}
+.md-typeset .ruta-pasos > ol > li:not(:last-child)::after {     /* línea que une los pasos */
+  content: ""; position: absolute; left: 1.8rem; top: 2.7rem; bottom: -0.75rem; width: 2px; background: var(--md-default-fg-color--lightest);
+}
+.md-typeset .ruta-etiqueta {
+  display: inline-block; margin: 0.35rem 0.25rem 0 0; padding: 0.05rem 0.55rem; border-radius: 1rem;
+  font-size: 0.68rem; font-weight: 600; background: #2d2256; color: #a78bfa;
+}
+.md-typeset .ruta-etiqueta--general { background: var(--md-default-fg-color--lightest); color: var(--md-default-fg-color--light); }
+[data-md-color-scheme="default"] .md-typeset .ruta-etiqueta:not(.ruta-etiqueta--general) { background: #ede9fe; color: #7c3aed; }
+body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-template-columns: repeat(3, minmax(0, 1fr)); }   /* con el panel abierto hay menos ancho */

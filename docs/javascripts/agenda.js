@@ -172,7 +172,13 @@
     function actualizar() {
       const activo = enPresentacion();
       barra.hidden = !activo;
-      if (!activo) { panel.hidden = true; document.body.classList.remove('agenda-abierta'); boton.setAttribute('aria-expanded', 'false'); return; }
+      if (!activo) {
+        panel.hidden = true; boton.setAttribute('aria-expanded', 'false');
+        // toggle(…, false) no toca el atributo si la clase no está; remove() sí, y como este código corre
+        // cuando cambia la clase del body, eso generaba un bucle infinito que colgaba la página.
+        document.body.classList.toggle('agenda-abierta', false);
+        return;
+      }
       marcar(clave(AQUI, ''));
       // Lo que ya está en pantalla al entrar al modo presentación también cuenta.
       document.querySelectorAll('.md-content h2[id]').forEach((h) => {
