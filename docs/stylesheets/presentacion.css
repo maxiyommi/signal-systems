@@ -44,3 +44,10 @@ body:not(.pizarra-activa) .pizarra-boton:not(.pizarra-boton--principal) { displa
 body:not(.pizarra-activa) .pizarra-barra { background: transparent; box-shadow: none; }
 /* En los interactivos no está la agenda: el lápiz va justo encima del botón de presentación */
 html[data-pizarra="interactivo"] .pizarra-barra { bottom: 4rem; }
+
+/* En pantalla completa, sin "rebote" del scroll: en el iPad, tirar hacia abajo desde arriba la cerraba.
+   (Reglas separadas: si un navegador no entiende un selector, descarta toda la regla.) */
+:root:fullscreen { overscroll-behavior: none; }
+:root:-webkit-full-screen { overscroll-behavior: none; }
+:fullscreen body { overscroll-behavior: none; }
+:-webkit-full-screen body { overscroll-behavior: none; }

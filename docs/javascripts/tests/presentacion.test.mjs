@@ -20,3 +20,10 @@ test('se ofrece volver a pantalla completa solo en modo presentación, fuera de 
   assert.equal(P.ofrecerPantallaCompleta({ presentacion: false, pantallaCompleta: false, soportada: true }), false);
   assert.equal(P.ofrecerPantallaCompleta({ presentacion: true, pantallaCompleta: false, soportada: false }), false);
 });
+
+test('en pantalla completa la página nunca queda en la posición 0 (evita el gesto que la cierra en el iPad)', () => {
+  assert.equal(P.scrollProtegido({ pantallaCompleta: true, scrollY: 0 }), 1);
+  assert.equal(P.scrollProtegido({ pantallaCompleta: true, scrollY: 0.4 }), 1);
+  assert.equal(P.scrollProtegido({ pantallaCompleta: true, scrollY: 250 }), null);   // no hace falta mover
+  assert.equal(P.scrollProtegido({ pantallaCompleta: false, scrollY: 0 }), null);
+});
