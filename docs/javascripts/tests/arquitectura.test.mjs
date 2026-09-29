@@ -45,3 +45,15 @@ test('sin pasos de vuelta, un solo tramo', () => {
   assert.equal(tramos.length, 1);
   assert.equal(tramos[0].sentido, 'ida');
 });
+
+test('el paquete lleva la etiqueta del último recuadro por el que pasó', () => {
+  const hitos = [{ d: 0, etiqueta: 'WAV' }, { d: 100, etiqueta: 'np.ndarray' }, { d: 250, etiqueta: 'bandas' }];
+  assert.equal(A.etiquetaEn(0, hitos), 'WAV');
+  assert.equal(A.etiquetaEn(99, hitos), 'WAV');
+  assert.equal(A.etiquetaEn(100, hitos), 'np.ndarray');
+  assert.equal(A.etiquetaEn(400, hitos), 'bandas');
+});
+
+test('distancias de los recuadros sobre el camino en ángulo recto', () => {
+  assert.deepEqual([...A.distanciasAcumuladas([{ x: 0, y: 0 }, { x: 30, y: 40 }, { x: 30, y: 100 }])], [0, 70, 130]);
+});

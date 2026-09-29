@@ -31,7 +31,19 @@
     if (k <= 0) return [{ sentido: 'ida', elementos: [...elementos] }];
     return [{ sentido: 'ida', elementos: elementos.slice(0, k) }, { sentido: 'vuelta', elementos: elementos.slice(k - 1) }];
   }
-  window.ArquitecturaLogica = { estado, estadoArchivo, ordenRecorrido, caminoOrtogonal, tiemposDeLlegada, tramosIdaVuelta };
+  // Distancia sobre el camino en ángulo recto hasta cada recuadro.
+  function distanciasAcumuladas(centros) {
+    const acum = [0];
+    for (let i = 1; i < centros.length; i++) acum.push(acum[i - 1] + Math.abs(centros[i].x - centros[i - 1].x) + Math.abs(centros[i].y - centros[i - 1].y));
+    return acum;
+  }
+  // Qué lleva el paquete a una distancia dada: lo que dejó el último recuadro por el que pasó.
+  function etiquetaEn(d, hitos) {
+    let e = hitos.length ? hitos[0].etiqueta : '';
+    for (const h of hitos) if (h.d <= d) e = h.etiqueta;
+    return e;
+  }
+  window.ArquitecturaLogica = { estado, estadoArchivo, ordenRecorrido, caminoOrtogonal, tiemposDeLlegada, tramosIdaVuelta, distanciasAcumuladas, etiquetaEn };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
 
   function montar(arq) {
@@ -53,6 +65,7 @@
 
     function limpiarLinea() {
       animaciones.forEach((a) => a.cancel()); animaciones = [];
+      detenerPaquete();
       relojes.forEach(clearTimeout); relojes = [];
       svg.replaceChildren();
       items.forEach((el) => el.classList.remove('encendido'));
@@ -71,12 +84,16 @@
         return { x: Math.round(r.left - base.left + r.width / 2), y: Math.round(r.top - base.top + r.height / 2) };
       };
       let inicio = 0;
+      dibujados = [];
       for (const [n, tramo] of tramosIdaVuelta(elementos, elementos.map((el) => el.dataset.sentido)).entries()) {
         const centros = tramo.elementos.map(centro);
         const camino = document.createElementNS(NS, 'path');
         camino.setAttribute('class', tramo.sentido);
         camino.setAttribute('d', caminoOrtogonal(centros).map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' '));
         svg.appendChild(camino);
+        const dist = distanciasAcumuladas(centros);
+        dibujados.push({ sentido: tramo.sentido, camino, elementos: tramo.elementos, dist,
+          hitos: tramo.elementos.map((el, i) => ({ d: dist[i], etiqueta: el.dataset.lleva || '' })) });
         if (quieto) { tramo.elementos.forEach((el) => el.classList.add('encendido')); continue; }
         const duracion = Math.min(3500, 450 * tramo.elementos.length);
         const largo = camino.getTotalLength();
@@ -89,6 +106,48 @@
         });
         inicio += duracion;
       }
+      if (conPaquete && !quieto) relojes.push(setTimeout(viajarPaquete, inicio + 400));
+    }
+
+    // ── Paquete que viaja por la línea: muestra qué dato lleva en cada tramo ────────────────
+    const paquete = document.createElement('span');
+    paquete.className = 'arq-paquete';
+    paquete.hidden = true;
+    arq.appendChild(paquete);
+    let dibujados = [], conPaquete = false, rafPaquete = 0;
+    const VELOCIDAD = 0.32;                                   // px por ms
+
+    function viajarPaquete() {
+      if (!dibujados.length || !conPaquete) return;
+      let tramo = 0, t0 = performance.now(), ultimoHito = -1;
+      paquete.hidden = false;
+      const paso = (ahora) => {
+        const d = dibujados[tramo];
+        const largo = d.dist[d.dist.length - 1];
+        const recorrido = Math.min(largo, (ahora - t0) * VELOCIDAD);
+        const p = d.camino.getPointAtLength(recorrido);
+        paquete.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`;
+        paquete.dataset.sentido = d.sentido;
+        paquete.textContent = etiquetaEn(recorrido, d.hitos);
+        // Cada recuadro late cuando el paquete lo alcanza.
+        const i = d.dist.findLastIndex((x) => x <= recorrido);
+        if (i !== ultimoHito) {
+          ultimoHito = i;
+          const el = d.elementos[i];
+          el.classList.remove('pulso'); void el.offsetWidth; el.classList.add('pulso');
+        }
+        if (recorrido >= largo) {
+          if (tramo < dibujados.length - 1) { tramo++; t0 = ahora; ultimoHito = 0; }
+          else { paquete.hidden = true; rafPaquete = 0; relojes.push(setTimeout(viajarPaquete, 1500)); return; }   // pausa y de nuevo
+        }
+        rafPaquete = requestAnimationFrame(paso);
+      };
+      rafPaquete = requestAnimationFrame(paso);
+    }
+    function detenerPaquete() {
+      cancelAnimationFrame(rafPaquete); rafPaquete = 0;
+      paquete.hidden = true;
+      items.forEach((el) => el.classList.remove('pulso'));
     }
 
     // ── Estructura básica de cada recuadro (sin la implementación) ───────────────────────────
@@ -130,6 +189,7 @@
 
     function mostrarMilestone(m, animar = true) {
       const anterior = actual; actual = m;
+      conPaquete = false;
       arq.classList.remove('arq--recorrido');
       items.forEach((el) => el.classList.toggle('pendiente', estado(Number(el.dataset.m), m) === 'pendiente'));
       archivos.forEach((a) => {
@@ -153,6 +213,7 @@
       pasos.innerHTML = lista.map((p) => `<li>${p.texto}</li>`).join('');
       pasos.hidden = false;
       leyenda.innerHTML = 'El recorrido de un análisis: la línea <strong class="arq-ida">violeta</strong> es la ida del pedido (pasos 1 a 8) y la <strong class="arq-vuelta">ámbar</strong>, la vuelta con la respuesta (pasos 9 y 10).';
+      conPaquete = true;
       encender(ordenRecorrido([...arq.querySelectorAll('[data-paso]')].map((el) => ({ paso: Number(el.dataset.paso), el }))).map((x) => x.el));
       actual = 3;
     }
