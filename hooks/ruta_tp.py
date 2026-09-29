@@ -3,9 +3,9 @@ hooks/ruta_tp.py
 ───────────────────────────────────────────────────────────────────────────────
 Hook de MkDocs que agrega a cada página del Trabajo Práctico:
 
-  - al inicio, "Dónde estamos": posición en el orden de lectura, la etapa del
-    hilo conductor (del fenómeno físico a la medición automatizada) y el
-    material de apoyo que conviene leer antes;
+  - al inicio, "Dónde estamos": en qué paso de los 6 de la ruta está la página,
+    qué etapa del hilo conductor (del fenómeno físico a la medición
+    automatizada) trabaja y el material de apoyo que conviene leer antes;
   - al final, "Qué sigue": la próxima página y dónde buscar información.
 
 En trabajo_practico/ruta.md reemplaza el marcador <!-- ruta-completa --> por el
@@ -36,6 +36,7 @@ HILO = [
 RUTA = [
     {
         "src": "trabajo_practico/marco_conceptual.md",
+        "corto": "Marco",
         "titulo": "Marco conceptual",
         "tema": "El fenómeno y cómo se modela con Señales y Sistemas",
         "etapas": ["fenomeno", "modelo", "modulos"],
@@ -43,6 +44,7 @@ RUTA = [
     },
     {
         "src": "trabajo_practico/README.md",
+        "corto": "Consigna",
         "titulo": "Consigna",
         "tema": "Qué se construye, milestones y evaluación",
         "etapas": [],
@@ -50,6 +52,7 @@ RUTA = [
     },
     {
         "src": "trabajo_practico/especificacion/m0_arquitectura.md",
+        "corto": "M0",
         "titulo": "M0 · El plano (arquitectura)",
         "tema": "Arquitectura, repositorio, issues y /health",
         "etapas": ["modulos"],
@@ -57,6 +60,7 @@ RUTA = [
     },
     {
         "src": "trabajo_practico/especificacion/m1_generacion.md",
+        "corto": "M1",
         "titulo": "M1 · Generación de señales",
         "tema": "Ruido rosa, sine sweep y grabación",
         "etapas": ["excitacion"],
@@ -64,6 +68,7 @@ RUTA = [
     },
     {
         "src": "trabajo_practico/especificacion/m2_procesamiento.md",
+        "corto": "M2",
         "titulo": "M2 · Procesamiento de la RI",
         "tema": "Deconvolución, bandas de octava y escala en dB",
         "etapas": ["identificacion"],
@@ -71,6 +76,7 @@ RUTA = [
     },
     {
         "src": "trabajo_practico/especificacion/m3_producto_final.md",
+        "corto": "M3",
         "titulo": "M3 · Producto final",
         "tema": "Schroeder, parámetros ISO 3382 y API REST",
         "etapas": ["dato", "automatizacion"],
@@ -89,13 +95,23 @@ def _rel(desde, hacia):
     return posixpath.relpath(hacia, posixpath.dirname(desde))
 
 
-def _hilo(etapas):
+_POR_ID = {h["id"]: h for h in HILO}
+
+
+def _pasos(actual):
+    """Los 6 pasos de la ruta en una fila; el actual resaltado y los anteriores marcados como hechos."""
     items = "\n".join(
-        f'<li class="ruta-tp__etapa{" actual" if h["id"] in etapas else ""}">'
-        f'<strong>{h["titulo"]}</strong><span>{h["detalle"]}</span></li>'
-        for h in HILO
+        f'<li class="ruta-tp__paso{" actual" if i == actual else " hecho" if i < actual else ""}">'
+        f'<span>{i + 1}</span>{p["corto"]}</li>'
+        for i, p in enumerate(RUTA)
     )
-    return f'<ol class="ruta-tp__hilo">\n{items}\n</ol>'
+    return f'<ol class="ruta-tp__pasos">\n{items}\n</ol>'
+
+
+def _etapas_texto(etapas):
+    if not etapas:
+        return "reúne todo el recorrido: qué se construye, en qué milestones y cómo se evalúa."
+    return " · ".join(f'**{_POR_ID[e]["titulo"]}** ({_POR_ID[e]["detalle"]})' for e in etapas) + "."
 
 
 def encabezado(src):
@@ -106,8 +122,9 @@ def encabezado(src):
     ) or "no requiere lectura previa."
     return (
         '<div class="ruta-tp" markdown>\n\n'
-        f'**Ruta del TP · {i + 1} de {len(RUTA)} — {p["titulo"]}** · [Ver la ruta completa]({_rel(src, PAGINA_RUTA)})\n\n'
-        f'{_hilo(p["etapas"])}\n\n'
+        f'**Ruta del TP · Paso {i + 1} de {len(RUTA)}: {p["titulo"]}** · [Ver la ruta completa]({_rel(src, PAGINA_RUTA)})\n\n'
+        f'{_pasos(i)}\n\n'
+        f'**En el hilo conductor:** {_etapas_texto(p["etapas"])}\n\n'
         f'**Leer antes:** {antes}\n\n'
         '</div>\n'
     )
@@ -135,12 +152,19 @@ def pie(src):
 
 
 def ruta_completa():
-    """Recorrido completo para la página Ruta del TP."""
+    """Recorrido completo para la página Ruta del TP: los 6 pasos, cada uno con su etapa del hilo."""
+    def etiquetas(p):
+        if not p["etapas"]:
+            return '<span class="ruta-etiqueta ruta-etiqueta--general">Todo el recorrido</span>'
+        return " ".join(
+            f'<span class="ruta-etiqueta" title="{_POR_ID[e]["detalle"]}">{_POR_ID[e]["titulo"]}</span>'
+            for e in p["etapas"]
+        )
     pasos = "\n".join(
-        f'{i}. **[{p["titulo"]}]({_rel(PAGINA_RUTA, p["src"])})** — {p["tema"]}.'
+        f'{i}. **[{p["titulo"]}]({_rel(PAGINA_RUTA, p["src"])})**: {p["tema"]}.<br>{etiquetas(p)}'
         for i, p in enumerate(RUTA, 1)
     )
-    return f"{_hilo([])}\n\n{pasos}\n"
+    return f'<div class="ruta-pasos" markdown="1">\n\n{pasos}\n\n</div>\n'
 
 
 def agregar_ruta(markdown, src):

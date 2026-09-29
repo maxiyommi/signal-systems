@@ -28,12 +28,19 @@ class TestRuta(unittest.TestCase):
         texto = repr(ruta_tp.RUTA)
         self.assertNotRegex(texto, r"\b\d{1,2}/\d{1,2}\b")
 
-    def test_encabezado_marca_posicion_y_etapa(self):
+    def test_encabezado_marca_el_paso_actual_entre_los_seis(self):
         h = ruta_tp.encabezado("trabajo_practico/especificacion/m1_generacion.md")
-        self.assertIn("4 de 6", h)
-        self.assertEqual(h.count("ruta-tp__etapa actual"), 1)
-        self.assertIn("Excitación", h.split("ruta-tp__etapa actual")[1].split("</li>")[0])
+        self.assertIn("Paso 4 de 6", h)
+        self.assertEqual(h.count('<li class="ruta-tp__paso'), 6)      # los mismos 6 pasos, nunca 7 cajas
+        self.assertEqual(h.count("ruta-tp__paso actual"), 1)
+        self.assertIn("M1", h.split("ruta-tp__paso actual")[1].split("</li>")[0])
+        self.assertNotIn("ruta-tp__hilo", h)
         self.assertIn("(../ruta.md)", h)                 # link relativo a la ruta completa
+
+    def test_encabezado_dice_que_etapa_del_hilo_cubre(self):
+        h = ruta_tp.encabezado("trabajo_practico/especificacion/m1_generacion.md")
+        self.assertIn("En el hilo conductor:", h)
+        self.assertIn("Excitación", h)
 
     def test_encabezado_incluye_material_previo(self):
         h = ruta_tp.encabezado("trabajo_practico/especificacion/m2_procesamiento.md")
@@ -62,12 +69,19 @@ class TestRuta(unittest.TestCase):
         self.assertTrue(out.rstrip().endswith("</div>"))
 
 
-    def test_pagina_ruta_reemplaza_el_marcador(self):
+    def test_pagina_ruta_reemplaza_el_marcador_por_seis_pasos(self):
         out = ruta_tp.agregar_ruta("# Ruta\n\n<!-- ruta-completa -->\n", "trabajo_practico/ruta.md")
         self.assertNotIn("<!-- ruta-completa -->", out)
         self.assertIn("1. **[Marco conceptual](marco_conceptual.md)**", out)
         self.assertIn("6. **[M3 · Producto final](especificacion/m3_producto_final.md)**", out)
-        self.assertEqual(out.count("ruta-tp__etapa actual"), 0)
+        self.assertNotIn("ruta-tp__hilo", out)            # sin la grilla de 7 etapas
+        self.assertIn('class="ruta-pasos"', out)
+
+    def test_cada_paso_de_la_ruta_nombra_su_etapa_del_hilo(self):
+        out = ruta_tp.ruta_completa()
+        self.assertIn("Fenómeno físico", out)
+        self.assertIn("Automatización", out)
+        self.assertEqual(out.count('class="ruta-etiqueta"'), sum(len(p["etapas"]) for p in ruta_tp.RUTA))
 
 
 if __name__ == "__main__":

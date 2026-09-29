@@ -2,9 +2,9 @@
 
 El Trabajo Práctico **RIR-API** es un **caso de aplicación de Señales y Sistemas**: partimos de un fenómeno físico, la reverberación de una sala, lo modelamos con las herramientas de la materia, lo descomponemos en módulos, resolvemos cada módulo con una técnica de procesamiento digital de señales y los encadenamos en un software que automatiza la medición y entrega los parámetros de la ISO 3382.
 
-## El hilo conductor y el orden de lectura
+## Los 6 pasos, en orden
 
-Todo el material del TP está en esta sección del sitio. Conviene recorrerlo en este orden; cada página empieza indicando dónde está en el recorrido y termina con qué sigue.
+Todo el material del TP está en esta sección del sitio. Se lee en estos **6 pasos**. Las etiquetas violetas dicen qué parte del hilo conductor trabaja cada paso: del **fenómeno físico** a la **medición automatizada**. Cada página empieza mostrando en qué paso estás y termina con cuál sigue.
 
 <!-- ruta-completa -->
 
