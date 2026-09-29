@@ -7,7 +7,10 @@
   const presentacionEnUrl = (search) => /[?&]presentacion(=|&|$)/.test(search);
   const ofrecerPantallaCompleta = ({ presentacion, pantallaCompleta, soportada }) =>
     presentacion && !pantallaCompleta && soportada;
-  window.PresentacionLogica = { presentacionEnUrl, ofrecerPantallaCompleta };
+  // En el iPad, deslizar hacia abajo estando arriba de todo cierra la pantalla completa (como un video).
+  // Si la página nunca queda en la posición 0, ese gesto se toma como scroll: devuelve a dónde moverla.
+  const scrollProtegido = ({ pantallaCompleta, scrollY }) => (pantallaCompleta && scrollY < 1 ? 1 : null);
+  window.PresentacionLogica = { presentacionEnUrl, ofrecerPantallaCompleta, scrollProtegido };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
   const CLAVE = 'modo-presentacion';
@@ -53,8 +56,14 @@
         presentacion: document.body.classList.contains(CLAVE), pantallaCompleta: pantalla.activa(), soportada: pantalla.soportada,
       });
     };
-    document.addEventListener('fullscreenchange', actualizarPantalla);
-    document.addEventListener('webkitfullscreenchange', actualizarPantalla);
+    const proteger = () => {
+      const y = scrollProtegido({ pantallaCompleta: pantalla.activa(), scrollY: window.scrollY });
+      if (y !== null) window.scrollTo(0, y);
+    };
+    const alCambiarPantalla = () => { actualizarPantalla(); proteger(); };
+    document.addEventListener('fullscreenchange', alCambiarPantalla);
+    document.addEventListener('webkitfullscreenchange', alCambiarPantalla);
+    window.addEventListener('scroll', proteger, { passive: true });
     botonPantalla.addEventListener('click', () => pantalla.entrar());
     // porUsuario: solo con un toque o una tecla el navegador permite entrar a pantalla completa.
     const aplicar = (activo, porUsuario = false) => {
