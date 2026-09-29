@@ -115,7 +115,10 @@
     barra.className = 'pizarra-barra';
     barra.setAttribute('role', 'toolbar');
     barra.setAttribute('aria-label', 'Pizarra');
-    document.body.append(lienzo, capaLaser, barra);
+    // Botonera común del modo presentación (la comparten presentacion.js, agenda.js y pizarra.js).
+    const columna = document.querySelector('.botonera-presentacion') || document.body.appendChild(Object.assign(document.createElement('div'), { className: 'botonera-presentacion' }));
+    document.body.append(lienzo, capaLaser);
+    columna.append(barra);
 
     let trazos = [], actual = null, activo = false;
     let herramienta = 'lapiz', color = COLORES[0].clave;

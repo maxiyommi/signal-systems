@@ -106,7 +106,10 @@
     panel.className = 'agenda-panel';
     panel.setAttribute('aria-label', 'Contenido de la sesión');
     panel.hidden = true;
-    document.body.append(barra, panel);
+    // Botonera común del modo presentación (la comparten presentacion.js, agenda.js y pizarra.js).
+    const columna = document.querySelector('.botonera-presentacion') || document.body.appendChild(Object.assign(document.createElement('div'), { className: 'botonera-presentacion' }));
+    columna.append(barra);
+    document.body.append(panel);
 
     let indice = hoy;
 
