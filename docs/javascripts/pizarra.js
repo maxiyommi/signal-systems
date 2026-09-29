@@ -1,6 +1,6 @@
 // Pizarra del modo presentación: dibujar con el Apple Pencil (o el mouse) sobre las páginas del TP
 // y sobre los interactivos (que también tienen modo presentación).
-// Los trazos se guardan en coordenadas del documento, así acompañan al contenido al desplazar.
+// Los trazos se guardan relativos al contenido, así lo acompañan al desplazar.
 // Con el dedo se desplaza la página; con el lápiz se dibuja. Al cambiar de página se borra todo.
 (function () {
   // ── Lógica pura (testeada en docs/javascripts/tests/pizarra.test.mjs) ──────────────────────
@@ -11,17 +11,36 @@
     return Math.hypot(px - (a.x + t * dx), py - (a.y + t * dy));
   }
 
-  // La goma borra trazos enteros: más rápido en clase que borrar de a pedacitos.
-  function borrarCerca(trazos, x, y, radio) {
-    return trazos.filter((t) => {
+  // La goma borra solo lo que toca: saca los puntos debajo de ella y parte el trazo ahí. Tampoco une
+  // dos puntos que quedaron a ambos lados de la goma. Los trazos que no toca se devuelven tal cual.
+  function borrarParcial(trazos, x, y, radio) {
+    const out = [];
+    for (const t of trazos) {
       const p = t.puntos;
-      if (p.length === 1) return Math.hypot(p[0].x - x, p[0].y - y) > radio + p[0].ancho / 2;
-      for (let i = 1; i < p.length; i++) {
-        if (distanciaASegmento(x, y, p[i - 1], p[i]) <= radio + p[i].ancho / 2) return false;
+      const alcance = (q) => radio + q.ancho / 2;
+      const toca = (q) => Math.hypot(q.x - x, q.y - y) <= alcance(q);
+      if (p.length === 1) { if (!toca(p[0])) out.push(t); continue; }
+      let tocado = false;
+      for (let i = 1; i < p.length && !tocado; i++) tocado = distanciaASegmento(x, y, p[i - 1], p[i]) <= alcance(p[i]);
+      if (!tocado) { out.push(t); continue; }
+      let tramo = [];
+      for (const q of p) {
+        if (toca(q)) { if (tramo.length) out.push({ ...t, puntos: tramo }); tramo = []; continue; }
+        if (tramo.length && distanciaASegmento(x, y, tramo[tramo.length - 1], q) <= alcance(q)) { out.push({ ...t, puntos: tramo }); tramo = []; }
+        tramo.push(q);
       }
-      return true;
-    });
+      if (tramo.length) out.push({ ...t, puntos: tramo });
+    }
+    return out;
   }
+
+  // Colores según el tema: en oscuro, fluorescentes (con brillo al dibujar); en claro, más profundos.
+  // Los trazos guardan la clave, así al cambiar de tema se redibujan con la paleta que corresponde.
+  const PALETA = {
+    oscuro: { violeta: '#d17bff', rojo: '#ff4f7b', tinta: '#f5f7fa', resaltador: 'rgba(234, 255, 0, 0.22)' },
+    claro: { violeta: '#6d28d9', rojo: '#dc2626', tinta: '#111827', resaltador: 'rgba(255, 200, 0, 0.30)' },
+  };
+  const colorDe = (clave, oscuro) => PALETA[oscuro ? 'oscuro' : 'claro'][clave];
 
   // Coordenadas relativas a la esquina del contenido: siguen al texto se desplace la ventana o un
   // contenedor (en modo presentación se desplaza el body, no la ventana).
@@ -41,17 +60,21 @@
   // de iPad pueden no coincidir con el lienzo (barra del navegador, zoom).
   const transformacion = (rect, dpr) => [dpr, 0, 0, dpr, -rect.left * dpr, -rect.top * dpr];
 
-  window.PizarraLogica = { borrarCerca, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion };
+  window.PizarraLogica = { borrarParcial, colorDe, aPantalla, aDocumento, anchoTrazo, debeMostrar, transformacion };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
   if (!location.pathname.includes('/trabajo_practico/')) return;
 
   // ── Interfaz ───────────────────────────────────────────────────────────────────────────────
   const COLORES = [
-    { nombre: 'Violeta', valor: '#9B59D0' },
-    { nombre: 'Rojo', valor: '#E5484D' },
-    { nombre: 'Tinta', valor: null },                    // el color del texto (sirve en modo claro y oscuro)
+    { nombre: 'Violeta', clave: 'violeta' },
+    { nombre: 'Rojo', clave: 'rojo' },
+    { nombre: 'Tinta', clave: 'tinta' },
   ];
-  const RESALTADOR = 'rgba(255, 214, 0, 0.38)';
+  const RADIO_GOMA = 14;
+  const ICONO_GOMA = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l10-10a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L13 19"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>';
+  // Tema actual: el sitio lo marca en el body (Material) y los interactivos en <html data-tema>.
+  const esOscuro = () => document.body.getAttribute('data-md-color-scheme') === 'slate'
+    || document.documentElement.dataset.tema === 'oscuro';
 
   function iniciar() {
     let enIframe = true;
@@ -69,10 +92,9 @@
     document.body.append(lienzo, barra);
 
     let trazos = [], actual = null, activo = false;
-    let herramienta = 'lapiz', color = COLORES[0].valor;
-    let dedoY = null;
+    let herramienta = 'lapiz', color = COLORES[0].clave;
+    let dedoY = null, gomaEn = null;
 
-    const colorTinta = () => getComputedStyle(document.body).color;
     // Lo que se desplaza: el body en modo presentación (ver presentacion.css), si no la página.
     const desplazable = () => {
       const b = document.body;
@@ -97,22 +119,30 @@
     }
 
     const bLapiz = boton('✎', 'Lápiz: dibujar sobre la página', () => activar(!activo), 'pizarra-boton--principal');
-    const herramientas = [];
+    const herramientas = [], muestras = [];
     for (const c of COLORES) {
-      const b = boton(`<i style="background:${c.valor || 'currentColor'}"></i>`, `Lápiz ${c.nombre.toLowerCase()}`,
-        () => elegir('lapiz', c.valor, b));
+      const b = boton('<i></i>', `Lápiz ${c.nombre.toLowerCase()}`, () => elegir('lapiz', c.clave, b));
+      muestras.push([b.querySelector('i'), c.clave]);
       herramientas.push(b);
     }
-    const bResaltador = boton('<i class="pizarra-resaltador"></i>', 'Resaltador', () => elegir('resaltador', RESALTADOR, bResaltador));
-    const bGoma = boton('⌫', 'Goma: tocá un trazo para borrarlo', () => elegir('goma', null, bGoma));
+    const bResaltador = boton('<i class="pizarra-resaltador"></i>', 'Resaltador', () => elegir('resaltador', 'resaltador', bResaltador));
+    muestras.push([bResaltador.querySelector('i'), 'resaltador']);
+    const bGoma = boton(ICONO_GOMA, 'Goma: frotá sobre lo que quieras borrar', () => elegir('goma', null, bGoma));
     herramientas.push(bResaltador, bGoma);
+    // Las muestras de color siguen al tema (claro u oscuro).
+    // (el resaltador se muestra casi opaco en el botón para que se distinga; al dibujar es translúcido)
+    const pintarMuestras = () => muestras.forEach(([i, clave]) => {
+      const c = colorDe(clave, esOscuro());
+      i.style.background = clave === 'resaltador' ? c.replace(/[\d.]+\)$/, '0.85)') : c;
+    });
+    pintarMuestras();
     boton('<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>', 'Borrar todo', () => { trazos = []; dibujarTodo(); }, 'pizarra-boton--borrar');
 
     function elegir(h, c, b) {
       herramienta = h; color = c;
       herramientas.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     }
-    elegir('lapiz', COLORES[0].valor, herramientas[0]);
+    elegir('lapiz', COLORES[0].clave, herramientas[0]);
 
     function activar(v) {
       activo = v;
@@ -146,13 +176,23 @@
     }
 
     function trazar(t, v, desde = 1) {
+      const oscuro = esOscuro();
       g.lineCap = 'round'; g.lineJoin = 'round';
-      g.strokeStyle = t.color || colorTinta();
+      g.strokeStyle = colorDe(t.color, oscuro) || colorDe('tinta', oscuro);
+      // En oscuro, el lápiz brilla como un marcador fluorescente (el resaltador no).
+      g.shadowColor = g.strokeStyle;
+      g.shadowBlur = oscuro && t.herramienta === 'lapiz' ? 6 : 0;
       const p = t.puntos;
       if (p.length === 1) {
         const q = aPantalla(p[0], v);
         g.fillStyle = g.strokeStyle;
         g.beginPath(); g.arc(q.x, q.y, p[0].ancho / 2, 0, 2 * Math.PI); g.fill();
+        return;
+      }
+      if (t.herramienta === 'resaltador') {                  // un solo trazo: la transparencia no se acumula
+        g.lineWidth = p[0].ancho; g.beginPath();
+        p.forEach((q, i) => { const r = aPantalla(q, v); if (i) g.lineTo(r.x, r.y); else g.moveTo(r.x, r.y); });
+        g.stroke();
         return;
       }
       for (let i = Math.max(1, desde); i < p.length; i++) {
@@ -168,6 +208,12 @@
       // El resaltador va debajo de los trazos de lápiz para no taparlos.
       for (const t of trazos) if (t.herramienta === 'resaltador') trazar(t, v);
       for (const t of trazos) if (t.herramienta !== 'resaltador') trazar(t, v);
+      g.shadowBlur = 0;
+      if (gomaEn) {                                            // dónde está borrando la goma
+        g.strokeStyle = colorDe('tinta', esOscuro()); g.globalAlpha = 0.6; g.lineWidth = 1.5;
+        g.beginPath(); g.arc(gomaEn.x, gomaEn.y, RADIO_GOMA, 0, 2 * Math.PI); g.stroke();
+        g.globalAlpha = 1;
+      }
     }
 
     let pendiente = false;
@@ -186,7 +232,10 @@
       if (e.pointerType === 'touch') { dedoY = e.clientY; return; }
       const v = vista();
       const p = aDocumento(e.clientX, e.clientY, v);
-      if (herramienta === 'goma') { trazos = borrarCerca(trazos, p.x, p.y, 10); dibujarTodo(); actual = { goma: true }; return; }
+      if (herramienta === 'goma') {
+        trazos = borrarParcial(trazos, p.x, p.y, RADIO_GOMA); gomaEn = { x: e.clientX, y: e.clientY };
+        dibujarTodo(); actual = { goma: true }; return;
+      }
       actual = { herramienta, color, puntos: [{ ...p, ancho: anchoTrazo(herramienta, e.pressure) }] };
       trazos.push(actual);
       trazar(actual, v);
@@ -204,7 +253,7 @@
       const eventos = juntos.length ? juntos : [e];
       for (const ev of eventos) {
         const p = aDocumento(ev.clientX, ev.clientY, v);
-        if (actual.goma) { trazos = borrarCerca(trazos, p.x, p.y, 10); continue; }
+        if (actual.goma) { trazos = borrarParcial(trazos, p.x, p.y, RADIO_GOMA); gomaEn = { x: ev.clientX, y: ev.clientY }; continue; }
         actual.puntos.push({ ...p, ancho: anchoTrazo(actual.herramienta, ev.pressure) });
       }
       if (actual.goma) dibujarTodo();
@@ -212,7 +261,7 @@
       else trazar(actual, v, actual.puntos.length - eventos.length);
     });
 
-    const soltar = () => { actual = null; dedoY = null; };
+    const soltar = () => { const eraGoma = actual?.goma; actual = null; dedoY = null; gomaEn = null; if (eraGoma) dibujarTodo(); };
     for (const tipo of ['pointerup', 'pointercancel', 'lostpointercapture']) lienzo.addEventListener(tipo, soltar);
 
     // En captura: el evento scroll no burbujea, así se oye el de la ventana y el de cualquier contenedor.
@@ -224,6 +273,9 @@
     // Se muestra solo en modo presentación (lo maneja presentacion.js con una clase en el body).
     const actualizar = () => mostrar(debeMostrar({ enIframe, enPresentacion: document.body.classList.contains('modo-presentacion') }));
     new MutationObserver(actualizar).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    // Cambio de tema en el sitio: se repintan las muestras y los trazos con la otra paleta.
+    new MutationObserver(() => { pintarMuestras(); if (!lienzo.hidden) dibujarTodo(); })
+      .observe(document.body, { attributes: true, attributeFilter: ['data-md-color-scheme'] });
     actualizar();
   }
 

@@ -10,21 +10,47 @@ const P = ctx.window.PizarraLogica;
 
 const trazo = (puntos, herramienta = 'lapiz') => ({ herramienta, color: '#000', puntos: puntos.map(([x, y]) => ({ x, y, ancho: 3 })) });
 
-test('la goma borra el trazo completo que toca y deja los demás', () => {
-  const trazos = [trazo([[0, 0], [100, 0]]), trazo([[0, 200], [100, 200]])];
-  const quedan = P.borrarCerca(trazos, 50, 5, 12);
+// Trazo denso (un punto cada 2 px), como los que genera el lápiz.
+const linea = (x0, x1, y) => trazo(Array.from({ length: (x1 - x0) / 2 + 1 }, (_, k) => [x0 + 2 * k, y]));
+
+test('la goma borra solo lo que toca: frotar en el medio parte el trazo en dos', () => {
+  const quedan = P.borrarParcial([linea(0, 200, 0)], 100, 0, 10);
+  assert.equal(quedan.length, 2);
+  assert.ok(Math.max(...quedan[0].puntos.map((p) => p.x)) < 100 - 10);
+  assert.ok(Math.min(...quedan[1].puntos.map((p) => p.x)) > 100 + 10);
+});
+
+test('la goma en la punta acorta el trazo sin partirlo', () => {
+  const quedan = P.borrarParcial([linea(0, 200, 0)], 200, 0, 10);
   assert.equal(quedan.length, 1);
-  assert.equal(quedan[0].puntos[0].y, 200);
+  assert.ok(Math.max(...quedan[0].puntos.map((p) => p.x)) < 200 - 10);
 });
 
-test('la goma detecta el cruce entre dos puntos lejanos del trazo, no solo los vértices', () => {
-  const quedan = P.borrarCerca([trazo([[0, 0], [400, 0]])], 200, 4, 10);
-  assert.equal(quedan.length, 0);
+test('la goma no une puntos que quedaron a ambos lados de ella', () => {
+  // Dos puntos lejanos, sin puntos intermedios: el segmento cruza la goma y se corta.
+  const quedan = P.borrarParcial([trazo([[0, 0], [400, 0]])], 200, 0, 10);
+  assert.equal(quedan.length, 2);
+  assert.equal(quedan[0].puntos.length, 1);
+  assert.equal(quedan[1].puntos.length, 1);
 });
 
-test('lejos de todo trazo, la goma no borra nada', () => {
-  const trazos = [trazo([[0, 0], [100, 0]])];
-  assert.equal(P.borrarCerca(trazos, 50, 60, 12).length, 1);
+test('lejos de todo trazo, la goma no cambia nada; encima de un punto suelto, lo borra', () => {
+  const t = linea(0, 100, 0);
+  assert.equal(P.borrarParcial([t], 50, 60, 10)[0], t);
+  assert.equal(P.borrarParcial([trazo([[5, 5]])], 5, 5, 10).length, 0);
+});
+
+test('los trazos conservan herramienta y color al partirse', () => {
+  const t = { ...linea(0, 200, 0), herramienta: 'resaltador', color: 'violeta' };
+  for (const q of P.borrarParcial([t], 100, 0, 10)) { assert.equal(q.herramienta, 'resaltador'); assert.equal(q.color, 'violeta'); }
+});
+
+test('colores según el tema: en oscuro más brillantes que en claro, el resaltador translúcido', () => {
+  const brillo = (hex) => { const n = parseInt(hex.slice(1), 16); return ((n >> 16) & 255) + ((n >> 8) & 255) + (n & 255); };
+  for (const c of ['violeta', 'rojo']) assert.ok(brillo(P.colorDe(c, true)) > brillo(P.colorDe(c, false)), c);
+  const alfa = (rgba) => Number(rgba.match(/[\d.]+\)$/)[0].replace(')', ''));
+  assert.ok(alfa(P.colorDe('resaltador', true)) <= 0.25);
+  assert.ok(alfa(P.colorDe('resaltador', false)) <= 0.35);
 });
 
 test('contenido → pantalla: el trazo sigue al contenido, se desplace la ventana o un contenedor', () => {
