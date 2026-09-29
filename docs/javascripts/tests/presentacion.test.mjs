@@ -14,9 +14,8 @@ test('una pestaña abierta desde el modo presentación trae ?presentacion en la 
   assert.equal(P.presentacionEnUrl('?sin3d'), false);
 });
 
-test('se ofrece volver a pantalla completa solo en modo presentación, fuera de ella y si el navegador puede', () => {
-  assert.equal(P.ofrecerPantallaCompleta({ presentacion: true, pantallaCompleta: false, soportada: true }), true);
-  assert.equal(P.ofrecerPantallaCompleta({ presentacion: true, pantallaCompleta: true, soportada: true }), false);
-  assert.equal(P.ofrecerPantallaCompleta({ presentacion: false, pantallaCompleta: false, soportada: true }), false);
-  assert.equal(P.ofrecerPantallaCompleta({ presentacion: true, pantallaCompleta: false, soportada: false }), false);
+test('el botón de pantalla completa es una herramienta del modo presentación (si el navegador puede)', () => {
+  assert.equal(P.mostrarBotonPantalla({ presentacion: true, soportada: true }), true);
+  assert.equal(P.mostrarBotonPantalla({ presentacion: false, soportada: true }), false);
+  assert.equal(P.mostrarBotonPantalla({ presentacion: true, soportada: false }), false);
 });

@@ -289,7 +289,7 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 
 
 /* ── Agenda de la sesión (modo presentación): contenido del día, visto en verde, pendiente en gris ── */
-.agenda-barra { position: fixed; right: 1rem; bottom: 4rem; z-index: 10; padding: 0.35rem; }
+.agenda-barra { position: fixed; right: 1rem; bottom: 7rem; z-index: 10; padding: 0.35rem; }   /* encima de pantalla completa */
 .agenda-barra[hidden], .agenda-panel[hidden] { display: none; }
 .agenda-boton {
   width: 2.6rem; height: 2.6rem; border: 0; border-radius: 50%; cursor: pointer; display: grid; place-items: center;
@@ -299,7 +299,7 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 .agenda-boton:focus-visible { outline: 3px solid var(--md-primary-fg-color); outline-offset: 2px; }
 .agenda-panel {
   --agenda-vista: #2E9E5B; --agenda-pendiente: #8A8A99;
-  position: fixed; right: 4.8rem; bottom: 4rem; z-index: 11;   /* no tapa el botón de modo presentación */
+  position: fixed; right: 4.8rem; bottom: 1rem; z-index: 11;   /* a la izquierda de la columna de botones */
   width: min(23rem, calc(100vw - 6rem)); max-height: calc(100vh - 5rem); overflow: auto;
   padding: 0.9rem 1rem 1rem; border-radius: 0.8rem;
   background: var(--md-default-bg-color); color: var(--md-default-fg-color);
