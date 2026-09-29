@@ -45,9 +45,8 @@ body:not(.pizarra-activa) .pizarra-barra { background: transparent; box-shadow: 
 /* En los interactivos no está la agenda: el lápiz va justo encima del botón de presentación */
 html[data-pizarra="interactivo"] .pizarra-barra { bottom: 4rem; }
 
-/* En pantalla completa, sin "rebote" del scroll: en el iPad, tirar hacia abajo desde arriba la cerraba.
-   (Reglas separadas: si un navegador no entiende un selector, descarta toda la regla.) */
-:root:fullscreen { overscroll-behavior: none; }
-:root:-webkit-full-screen { overscroll-behavior: none; }
-:fullscreen body { overscroll-behavior: none; }
-:-webkit-full-screen body { overscroll-behavior: none; }
+/* En modo presentación no se desplaza la página sino el body, como un contenedor propio. En el iPad, en
+   pantalla completa, deslizar la página entera se toma como el gesto de cerrarla; el scroll de un
+   elemento, no. (La clase en-presentacion la pone presentacion.js en <html>.) */
+html.en-presentacion { height: 100%; overflow: hidden; }
+html.en-presentacion body { height: 100%; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }

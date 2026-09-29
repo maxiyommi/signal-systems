@@ -23,8 +23,10 @@
     });
   }
 
-  const aPantalla = (p, { scrollY, origenX }) => ({ x: p.x + origenX, y: p.y - scrollY });
-  const aDocumento = (x, y, { scrollY, origenX }) => ({ x: x - origenX, y: y + scrollY });
+  // Coordenadas relativas a la esquina del contenido: siguen al texto se desplace la ventana o un
+  // contenedor (en modo presentación se desplaza el body, no la ventana).
+  const aPantalla = (p, { origenX, origenY }) => ({ x: p.x + origenX, y: p.y + origenY });
+  const aDocumento = (x, y, { origenX, origenY }) => ({ x: x - origenX, y: y - origenY });
 
   function anchoTrazo(herramienta, presion) {
     const p = presion > 0 ? presion : 0.5;              // el mouse informa 0 o 0.5
@@ -71,9 +73,15 @@
     let dedoY = null;
 
     const colorTinta = () => getComputedStyle(document.body).color;
+    // Lo que se desplaza: el body en modo presentación (ver presentacion.css), si no la página.
+    const desplazable = () => {
+      const b = document.body;
+      return /(auto|scroll)/.test(getComputedStyle(b).overflowY) && b.scrollHeight > b.clientHeight ? b : (document.scrollingElement || document.documentElement);
+    };
     const vista = () => {
       const cont = document.querySelector('.md-content__inner') || document.querySelector('main') || document.body;
-      return { scrollY: window.scrollY, origenX: cont.getBoundingClientRect().left };
+      const r = cont.getBoundingClientRect();
+      return { origenX: r.left, origenY: r.top };
     };
 
     function boton(html, titulo, accion, clase = '') {
@@ -187,7 +195,7 @@
     lienzo.addEventListener('pointermove', (e) => {
       if (!activo) return;
       if (e.pointerType === 'touch') {
-        if (dedoY !== null) { window.scrollBy({ top: dedoY - e.clientY, behavior: 'instant' }); dedoY = e.clientY; }
+        if (dedoY !== null) { desplazable().scrollBy({ top: dedoY - e.clientY, behavior: 'instant' }); dedoY = e.clientY; }
         return;
       }
       if (!actual) return;
@@ -207,7 +215,8 @@
     const soltar = () => { actual = null; dedoY = null; };
     for (const tipo of ['pointerup', 'pointercancel', 'lostpointercapture']) lienzo.addEventListener(tipo, soltar);
 
-    window.addEventListener('scroll', redibujar, { passive: true });
+    // En captura: el evento scroll no burbujea, así se oye el de la ventana y el de cualquier contenedor.
+    document.addEventListener('scroll', redibujar, { passive: true, capture: true });
     const reajustar = () => { if (!lienzo.hidden) ajustar(); };
     window.addEventListener('resize', reajustar);
     window.visualViewport?.addEventListener('resize', reajustar);   // aparece o se oculta la barra de Safari
