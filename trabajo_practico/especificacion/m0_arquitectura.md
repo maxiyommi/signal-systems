@@ -140,22 +140,76 @@ Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa 
 !!! tip "Una regla para acordarse"
     Si una función de `services/` importa algo de FastAPI, o un router hace cuentas con NumPy, algo está en el lugar equivocado.
 
-## Entregables
+## Entregables, paso a paso
 
-### 1. README.md del repositorio
+M0 se arma en este orden: primero el **repositorio** con su estructura, después el **plano** (el diagrama), después el **plan de trabajo** (los issues) y las **reglas para trabajar en equipo** (la branching strategy). Al final, la entrega por Slack.
 
-El archivo `README.md` en la raíz del repositorio debe contener:
+### 1. Crear el repositorio del grupo
+
+Una persona del grupo crea en GitHub un repositorio **vacío**, por ejemplo `rir-api`, sin README ni `.gitignore` (los trae el template en el paso siguiente). Después agrega como colaboradores al resto del grupo y a los docentes.
+
+!!! tip "No olvidar a los docentes"
+    Agregar como **colaboradores** del repositorio a **@maxiyommi** y **@jero-scafati** (*Settings → Collaborators → Add people*). Sin esto no podemos ver el repo ni darles feedback.
+
+### 2. Copiar la estructura del template
+
+La estructura **no se escribe desde cero**: el [template del repositorio](https://github.com/maxiyommi/signal-systems/tree/master/trabajo_practico/template_repo) ya la trae, con las tres capas, los services de M1 a M3 listos para completar, los tests y el CI. No se forkea: se copia su contenido adentro del repositorio que crearon en el paso 1.
+
+```bash
+# 1. Bajar el repositorio de la materia (solo la última versión)
+git clone --depth 1 https://github.com/maxiyommi/signal-systems.git
+
+# 2. Clonar el repositorio (vacío) del grupo y copiar el template, con los archivos ocultos
+git clone https://github.com/<usuario>/rir-api.git
+cp -r signal-systems/trabajo_practico/template_repo/. rir-api/
+
+# 3. Primer commit
+cd rir-api
+git add .
+git commit -m "chore: estructura inicial desde el template de la cátedra"
+git branch -M main
+git push -u origin main
+
+# 4. Probar que anda
+uv sync
+uv run uvicorn app.main:app --reload     # abrir http://localhost:8000/docs
+uv run pytest -v
+```
+
+Así queda el repositorio:
+
+```text
+rir-api/
+├── pyproject.toml          # Dependencias: fastapi, numpy, scipy, pydantic, sounddevice… y las de desarrollo
+├── README.md               # Lo completan en este paso
+├── app/
+│   ├── main.py             # Punto de entrada FastAPI: responde en / y /health
+│   ├── settings.py         # Configuración (pydantic-settings)
+│   ├── routers/            # Endpoints (por ahora, /health)
+│   ├── schemas/            # Modelos de Pydantic
+│   └── services/           # Un módulo por tema: los services de M1, M2 y M3, para completar
+├── tests/                  # test_placeholder.py pasa; los de M1-M3 quedan como xfail hasta implementarlos
+├── docs/                   # Evidencia de validación (gráficos, capturas)
+├── data/
+└── .github/workflows/ci.yml   # Lint + tests en cada push
+```
+
+Si `http://localhost:8000/health` responde `200 OK` y `pytest` termina sin fallas (los tests de M1 a M3 aparecen como `xfailed` hasta que implementen cada función), la estructura está lista. El paso a paso completo está en el README del template.
+
+#### Completar el README
+
+El template trae un `README.md` base con estas secciones; complétenlo:
 
 - **Nombre del proyecto** y descripción breve (1-2 párrafos).
-- **Integrantes del grupo** con nombre completo, legajo y rol asignado (por ejemplo: responsable de generación de señales, de procesamiento, de testing/CI, de documentación).
-- **Instrucciones de instalación**: cómo clonar el repo, instalar dependencias y ejecutar el proyecto. Deben funcionar copiando y pegando los comandos.
-- **Estructura del proyecto**: árbol de directorios con una breve explicación de cada carpeta y archivo principal.
+- **Integrantes del grupo** con nombre completo, legajo y rol (por ejemplo: generación de señales, procesamiento, testing/CI, documentación).
+- **Instrucciones de instalación**: cómo clonar, instalar dependencias y ejecutar. Tienen que funcionar copiando y pegando los comandos.
+- **Estructura del proyecto**: el árbol de carpetas de arriba, con una línea por carpeta.
 
-El template ya trae un README base con estas secciones: complétenlo.
+En el mismo README va el diagrama del paso siguiente.
 
-### 2. Diagrama de arquitectura
+### 3. Diagrama de arquitectura
 
-El diagrama es el **plano de la API**: muestra qué capas tiene, qué archivos hay en cada carpeta, qué hace cada uno y por dónde viaja un pedido. Este es el de la API completa, con los mismos nombres que la implementación de referencia. Usá los botones para ver cómo se va armando milestone a milestone y el recorrido de un análisis de punta a punta.
+Con la estructura en su lugar, el diagrama explica **cómo se van a llenar esas carpetas**. Es el **plano de la API**: muestra qué capas tiene, qué archivos hay en cada carpeta, qué hace cada uno y por dónde viaja un pedido. Este es el de la API completa, con los mismos nombres que la implementación de referencia. Usá los botones para ver cómo se va armando milestone a milestone y el recorrido de un análisis de punta a punta.
 
 <div class="arq">
 <div class="arq-controles" role="group" aria-label="Qué mostrar"><span>Ver la API al terminar:</span><button type="button" data-ver="0">M0</button><button type="button" data-ver="1">M1</button><button type="button" data-ver="2">M2</button><button type="button" data-ver="3" aria-pressed="true">M3 (completa)</button><button type="button" data-ver="recorrido">Recorrido de un análisis</button></div>
@@ -265,9 +319,9 @@ Si prefieren dibujarlo a mano, pueden usar **draw.io**, exportarlo a PNG e inclu
 - **Entradas y salidas del sistema completo:** del archivo de audio a los parámetros acústicos.
 - **Las dependencias externas** relevantes (FastAPI, NumPy, SciPy, Pydantic, sounddevice).
 
-### 3. GitHub Issues
+### 4. GitHub Issues
 
-Crear al menos **10 issues** en el repositorio de GitHub, cada uno con:
+El diagrama dice **qué** hay que construir; los issues lo convierten en **tareas con dueño**. Crear al menos **10 issues** en el repositorio de GitHub, cada uno con:
 
 - **Título descriptivo**: por ejemplo, "Implementar generación de ruido rosa con algoritmo Voss-McCartney".
 - **Descripción** con los requisitos funcionales y criterios de aceptación.
@@ -281,86 +335,19 @@ Crear al menos **10 issues** en el repositorio de GitHub, cada uno con:
 
 **Regla de oro:** un issue es algo que una persona puede terminar en una sesión de trabajo.
 
-### 4. Estructura del repositorio
+### 5. Branching strategy
 
-El repositorio debe tener esta estructura mínima funcional, orientada a una API REST con FastAPI:
+Con las tareas repartidas, falta acordar **cómo trabajan sobre el mismo código sin pisarse**. Documéntenlo en el README o en un archivo `CONTRIBUTING.md`:
 
-```
-rir-api/
-├── pyproject.toml
-├── README.md
-├── app/
-│   ├── __init__.py
-│   ├── main.py             # Punto de entrada FastAPI
-│   ├── settings.py         # Configuración (pydantic-settings)
-│   ├── routers/
-│   │   ├── __init__.py
-│   │   └── health.py       # Endpoint /health
-│   ├── schemas/
-│   │   └── __init__.py
-│   └── services/           # Un módulo por tema: stubs de M1, M2 y M3
-│       └── __init__.py
-├── tests/
-│   ├── test_placeholder.py
-│   └── ...                 # Tests de M1-M3, marcados como xfail hasta implementarlos
-├── docs/                   # Evidencia de validación (gráficos, capturas)
-├── data/
-│   └── .gitkeep
-└── .github/
-    └── workflows/
-        └── ci.yml          # Lint + tests en cada push
-```
-
-**Requisitos específicos:**
-
-- `pyproject.toml` con las dependencias mínimas (fastapi, uvicorn, numpy, scipy, pydantic, sounddevice, matplotlib) y las de desarrollo (pytest, httpx, ruff).
-- `app/main.py` con una aplicación FastAPI mínima que responda en `/` y `/health`.
-- `tests/test_placeholder.py` con al menos un test que pase.
-- El proyecto se ejecuta con `uv run uvicorn app.main:app --reload`.
-
-**Buena noticia: la estructura ya está hecha.** El [template del repositorio](https://github.com/maxiyommi/signal-systems/tree/master/trabajo_practico/template_repo) trae todo lo anterior. No se forkea: cada grupo crea un repositorio **vacío** propio (por ejemplo `rir-api`) y copia adentro el contenido del template:
-
-```bash
-# 1. Bajar el repositorio de la materia (solo la última versión)
-git clone --depth 1 https://github.com/maxiyommi/signal-systems.git
-
-# 2. Clonar el repositorio (vacío) del grupo y copiar el template, con los archivos ocultos
-git clone https://github.com/<usuario>/rir-api.git
-cp -r signal-systems/trabajo_practico/template_repo/. rir-api/
-
-# 3. Primer commit
-cd rir-api
-git add .
-git commit -m "chore: estructura inicial desde el template de la cátedra"
-git branch -M main
-git push -u origin main
-
-# 4. Probar que anda
-uv sync
-uv run uvicorn app.main:app --reload     # abrir http://localhost:8000/docs
-uv run pytest -v
-```
-
-Si el endpoint `/health` responde `200 OK` y `pytest` termina sin fallas (los tests de M1-M3 aparecen como `xfailed` hasta que implementen cada función), cumplieron los requisitos técnicos de M0. El paso a paso completo está en el README del template.
-
-!!! tip "No olvidar"
-    Agregar a los docentes como **colaboradores** del repositorio: **@maxiyommi** y **@jero-scafati** (*Settings → Collaborators → Add people*). Sin esto no podemos ver el repo ni dar feedback.
-
-> **Referencia**: explorar la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) para entender la estructura de una API REST con FastAPI.
-
-### 5. Branching strategy documentada
-
-En el README o en un archivo `CONTRIBUTING.md`:
-
-- Rama `main` protegida (solo merge vía pull request).
-- Ramas de feature con convención de nombres: `feature/nombre-descriptivo`.
+- Rama `main` protegida: solo se modifica con un merge vía pull request.
+- Una rama por issue, con convención de nombres: `feature/nombre-descriptivo`.
 - Convención de commits (recomendada: [Conventional Commits](https://www.conventionalcommits.org/)).
 
 La [guía de Git](../../guias/git_basico.md) explica el flujo `main` + feature + pull request.
 
 ## Cómo entregar M0
 
-El miércoles 7 de octubre no hay clase. Antes del final del día, cada grupo publica en Slack un único mensaje con:
+El miércoles 7 de octubre no hay clase. Antes del final del día, cada grupo publica en Slack **un único mensaje** con:
 
 1. El **link al repositorio** (con los docentes ya agregados como colaboradores).
 2. Una **captura** de `http://localhost:8000/health` respondiendo, o del CI en verde.
@@ -370,14 +357,16 @@ El feedback llega en el hilo de ese mensaje. Si algo no les anda, pregunten ante
 
 ## Checklist de entrega
 
-- [ ] Repositorio accesible por los docentes (@maxiyommi y @jero-scafati como colaboradores)
-- [ ] README completo, claro y con instrucciones que funcionan
-- [ ] Diagrama de arquitectura que muestre todos los módulos de M1, M2 y M3
-- [ ] Al menos 10 issues creados con labels y asignaciones
-- [ ] El proyecto se ejecuta con `uv run uvicorn app.main:app --reload`
-- [ ] Endpoint `/health` responde correctamente
-- [ ] `pytest` termina sin fallas
-- [ ] Branching strategy documentada
+En el mismo orden que los pasos:
+
+- [ ] **1.** Repositorio creado, con los docentes (@maxiyommi y @jero-scafati) como colaboradores
+- [ ] **2.** Estructura del template copiada y en `main`
+- [ ] **2.** `uv run uvicorn app.main:app --reload` levanta la API y `/health` responde
+- [ ] **2.** `pytest` termina sin fallas
+- [ ] **2.** README completo: integrantes y roles, instalación que funciona, estructura
+- [ ] **3.** Diagrama de arquitectura en el README, con todos los archivos de M1, M2 y M3
+- [ ] **4.** Al menos 10 issues con labels y asignaciones
+- [ ] **5.** Branching strategy documentada
 - [ ] Mensaje de entrega publicado en Slack
 
 ## Recursos recomendados
