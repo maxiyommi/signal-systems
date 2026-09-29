@@ -585,3 +585,21 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
   .md-typeset .arq-capa { grid-template-columns: 1fr; gap: 0.4rem; }
 }
 @media (prefers-reduced-motion: reduce) { .md-typeset .arq-chip, .md-typeset .arq-archivo { transition: none; } }
+
+/* Línea "de circuito" que recorre y enciende los recuadros del diagrama de arquitectura */
+.md-typeset .arq { position: relative; }
+.md-typeset .arq-linea { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 2; }
+/* La línea pasa por encima de las cajas de archivo pero por detrás de los recuadros: entra y sale de ellos */
+.md-typeset .arq-chip { z-index: 3; }
+.md-typeset .arq-linea path {
+  fill: none; stroke: var(--md-accent-fg-color); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round;
+  filter: drop-shadow(0 0 4px var(--md-accent-fg-color)); opacity: 0.8;
+}
+.md-typeset .arq-chip.encendido {
+  border-color: var(--color-m); color: var(--md-default-fg-color);
+  box-shadow: 0 0 0 1px var(--color-m), 0 0 14px color-mix(in srgb, var(--color-m) 70%, transparent);
+  background: color-mix(in srgb, var(--color-m) 16%, var(--md-default-bg-color));
+  animation: arq-encender 0.45s ease-out;
+}
+@keyframes arq-encender { from { transform: scale(1.12); box-shadow: 0 0 0 1px var(--color-m), 0 0 26px var(--color-m); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .md-typeset .arq-chip.encendido { animation: none; } }
