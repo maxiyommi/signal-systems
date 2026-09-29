@@ -603,3 +603,17 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
 }
 @keyframes arq-encender { from { transform: scale(1.12); box-shadow: 0 0 0 1px var(--color-m), 0 0 26px var(--color-m); } to { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .md-typeset .arq-chip.encendido { animation: none; } }
+/* Recorrido: ida violeta, vuelta ámbar */
+.md-typeset .arq-linea path.vuelta { stroke: var(--m3); filter: drop-shadow(0 0 4px var(--m3)); }
+.md-typeset .arq-leyenda .arq-ida { color: var(--md-accent-fg-color); }
+.md-typeset .arq-leyenda .arq-vuelta { color: var(--m3); }
+/* Recuadros que abren su estructura */
+.md-typeset .arq--js .arq-chip[role="button"] { cursor: pointer; }
+.md-typeset .arq--js .arq-chip[role="button"]:hover { border-color: var(--color-m); }
+.md-typeset .arq--js .arq-chip[role="button"]:focus-visible { outline: 2px solid var(--md-accent-fg-color); outline-offset: 2px; }
+.md-typeset .arq-detalle { width: min(40rem, calc(100vw - 2rem)); }
+.md-typeset .arq-detalle__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0 0 0.5rem; }
+.md-typeset .arq-detalle__m { padding: 0.1rem 0.5rem; border-radius: 0.3rem; font-size: 0.68rem; font-weight: 700; background: color-mix(in srgb, var(--color-m) 22%, transparent); color: var(--color-m); }
+.md-typeset .arq-detalle pre { margin: 0.6rem 0; max-height: 45vh; overflow: auto; }
+.md-typeset .arq-detalle pre code { font-size: 0.72rem; white-space: pre; }
+.md-typeset .arq-detalle__nota { font-size: 0.72rem; color: var(--md-default-fg-color--light); }

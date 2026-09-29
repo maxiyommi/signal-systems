@@ -24,7 +24,14 @@
     const total = acum[acum.length - 1] || 1;
     return acum.map((d) => (d / total) * duracion);
   }
-  window.ArquitecturaLogica = { estado, estadoArchivo, ordenRecorrido, caminoOrtogonal, tiemposDeLlegada };
+  // El recorrido se parte en ida (hasta el último paso antes de la vuelta) y vuelta, que arranca en ese
+  // mismo punto para que la línea quede continua.
+  function tramosIdaVuelta(elementos, sentidos) {
+    const k = sentidos.findIndex((s) => s === 'vuelta');
+    if (k <= 0) return [{ sentido: 'ida', elementos: [...elementos] }];
+    return [{ sentido: 'ida', elementos: elementos.slice(0, k) }, { sentido: 'vuelta', elementos: elementos.slice(k - 1) }];
+  }
+  window.ArquitecturaLogica = { estado, estadoArchivo, ordenRecorrido, caminoOrtogonal, tiemposDeLlegada, tramosIdaVuelta };
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
 
   function montar(arq) {
@@ -35,7 +42,7 @@
     const pasos = arq.querySelector('.arq-pasos');
     const botones = [...arq.querySelectorAll('.arq-controles button')];
     const quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let actual = 3, animacion = null, relojes = [];
+    let actual = 3, animaciones = [], relojes = [];
 
     // Capa SVG sobre el diagrama para la línea que va encendiendo los recuadros.
     const NS = 'http://www.w3.org/2000/svg';
@@ -45,36 +52,75 @@
     arq.appendChild(svg);
 
     function limpiarLinea() {
-      animacion?.cancel(); animacion = null;
+      animaciones.forEach((a) => a.cancel()); animaciones = [];
       relojes.forEach(clearTimeout); relojes = [];
       svg.replaceChildren();
       items.forEach((el) => el.classList.remove('encendido'));
     }
 
-    // Dibuja la línea que recorre los elementos en orden y enciende cada uno cuando llega.
+    // Dibuja la línea que recorre los elementos en orden y enciende cada uno cuando llega. Si hay
+    // pasos de vuelta (data-sentido="vuelta"), la vuelta se dibuja después y de otro color.
     function encender(elementos) {
       limpiarLinea();
       if (!elementos.length) return;
       const base = arq.getBoundingClientRect();
       svg.setAttribute('width', base.width); svg.setAttribute('height', base.height);
       svg.setAttribute('viewBox', `0 0 ${base.width} ${base.height}`);
-      const centros = elementos.map((el) => {
+      const centro = (el) => {
         const r = el.getBoundingClientRect();
         return { x: Math.round(r.left - base.left + r.width / 2), y: Math.round(r.top - base.top + r.height / 2) };
-      });
-      const puntos = caminoOrtogonal(centros);
-      const camino = document.createElementNS(NS, 'path');
-      camino.setAttribute('d', puntos.map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' '));
-      svg.appendChild(camino);
-      if (quieto) { elementos.forEach((el) => el.classList.add('encendido')); return; }
-      const duracion = Math.min(3500, 450 * elementos.length);
-      const largo = camino.getTotalLength();
-      camino.style.strokeDasharray = `${largo}`;
-      animacion = camino.animate([{ strokeDashoffset: largo }, { strokeDashoffset: 0 }], { duration: duracion, easing: 'linear', fill: 'forwards' });
-      tiemposDeLlegada(centros, duracion).forEach((t, i) => {
-        relojes.push(setTimeout(() => elementos[i].classList.add('encendido'), t));
-      });
+      };
+      let inicio = 0;
+      for (const [n, tramo] of tramosIdaVuelta(elementos, elementos.map((el) => el.dataset.sentido)).entries()) {
+        const centros = tramo.elementos.map(centro);
+        const camino = document.createElementNS(NS, 'path');
+        camino.setAttribute('class', tramo.sentido);
+        camino.setAttribute('d', caminoOrtogonal(centros).map((p, i) => `${i ? 'L' : 'M'}${p.x} ${p.y}`).join(' '));
+        svg.appendChild(camino);
+        if (quieto) { tramo.elementos.forEach((el) => el.classList.add('encendido')); continue; }
+        const duracion = Math.min(3500, 450 * tramo.elementos.length);
+        const largo = camino.getTotalLength();
+        camino.style.strokeDasharray = `${largo}`;
+        animaciones.push(camino.animate([{ strokeDashoffset: largo }, { strokeDashoffset: 0 }],
+          { duration: duracion, delay: inicio, easing: 'linear', fill: 'both' }));
+        tiemposDeLlegada(centros, duracion).forEach((t, i) => {
+          if (n > 0 && i === 0) return;                      // el primero de la vuelta ya se encendió en la ida
+          relojes.push(setTimeout(() => tramo.elementos[i].classList.add('encendido'), inicio + t));
+        });
+        inicio += duracion;
+      }
     }
+
+    // ── Estructura básica de cada recuadro (sin la implementación) ───────────────────────────
+    const detalle = document.createElement('div');
+    detalle.className = 'definicion arq-detalle';
+    detalle.setAttribute('popover', 'auto');
+    arq.appendChild(detalle);
+    const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const NOMBRE_M = ['M0 · El plano', 'M1 · Generación', 'M2 · Procesamiento', 'M3 · Producto final'];
+    function abrirDetalle(chip) {
+      const clave = chip.textContent.trim();
+      const d = (window.ARQ_ESQUELETOS || {})[clave];
+      if (!d || !detalle.showPopover) return;
+      const m = Number(chip.dataset.m);
+      detalle.innerHTML = `
+        <p class="definicion__titulo">${esc(clave)}</p>
+        <p class="arq-detalle__meta"><span class="arq-detalle__m" data-m="${m}">${NOMBRE_M[m]}</span><code>${esc(d.archivo)}</code></p>
+        <p>${esc(d.que)}</p>
+        <pre><code>${esc(d.codigo)}</code></pre>
+        <p class="arq-detalle__nota">Es la estructura, no la solución: lo que va adentro lo escriben ustedes.${d.spec ? ` <a href="${d.spec}">Ver la especificación de M${m}</a>.` : ''}</p>
+        <button type="button" class="definicion__cerrar">Cerrar</button>`;
+      detalle.querySelector('.definicion__cerrar').addEventListener('click', () => detalle.hidePopover());
+      detalle.showPopover();
+    }
+    items.forEach((chip) => {
+      if (!(window.ARQ_ESQUELETOS || {})[chip.textContent.trim()]) return;
+      chip.setAttribute('role', 'button'); chip.tabIndex = 0;
+      chip.setAttribute('aria-haspopup', 'dialog');
+      chip.title = 'Ver la estructura';
+      chip.addEventListener('click', () => abrirDetalle(chip));
+      chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirDetalle(chip); } });
+    });
 
     // Elementos en orden de lectura: capa por capa (de arriba abajo) y de izquierda a derecha.
     const enOrden = (lista) => lista
@@ -106,7 +152,7 @@
       const lista = ordenRecorrido([...arq.querySelectorAll('[data-paso]')].map((el) => ({ paso: Number(el.dataset.paso), texto: el.dataset.explica })));
       pasos.innerHTML = lista.map((p) => `<li>${p.texto}</li>`).join('');
       pasos.hidden = false;
-      leyenda.textContent = 'El recorrido de un análisis: los números marcan por dónde pasa el pedido, de arriba hacia abajo y de vuelta.';
+      leyenda.innerHTML = 'El recorrido de un análisis: la línea <strong class="arq-ida">violeta</strong> es la ida del pedido (pasos 1 a 8) y la <strong class="arq-vuelta">ámbar</strong>, la vuelta con la respuesta (pasos 9 y 10).';
       encender(ordenRecorrido([...arq.querySelectorAll('[data-paso]')].map((el) => ({ paso: Number(el.dataset.paso), el }))).map((x) => x.el));
       actual = 3;
     }
