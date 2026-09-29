@@ -83,8 +83,10 @@ Seguí paso a paso qué pasa cuando alguien le pide ruido rosa a la API. Probá 
 <li data-actor="schema" data-sentido="ida"><p>El <strong>schema</strong> controla la comanda: ¿<code>duration</code> es un número mayor que 0 y como mucho 60? ¿<code>sample_rate</code> es un entero? Todo en orden: el pedido sigue.</p><pre><code>duration    = 2      ✓  (mayor que 0, hasta 60)
 sample_rate = 44100  ✓  (entero)</code></pre></li>
 <li data-actor="service" data-sentido="ida"><p>El <strong>service</strong> hace el trabajo: llama a la función de M1, que devuelve un arreglo de NumPy con 2 × 44 100 = 88 200 muestras. No sabe nada de HTTP ni de JSON.</p><pre><code>generate_pink_noise(2, 44100)  →  array([0.12, -0.03, 0.41, ...])</code></pre></li>
-<li data-actor="router" data-sentido="vuelta"><p>El router recibe el arreglo y lo convierte en JSON, el formato que entiende cualquier cliente.</p></li>
-<li data-actor="cliente" data-sentido="vuelta"><p>El cliente recibe la <strong>respuesta</strong> con el código <code>200 OK</code> (salió todo bien) y los datos:</p><pre><code>{"audio": [0.12, -0.03, 0.41, ...]}</code></pre></li>
+<li data-actor="router" data-sentido="vuelta"><p>El router recibe el arreglo y lo convierte en un archivo <strong>WAV</strong>, algo que cualquier cliente puede guardar o reproducir.</p></li>
+<li data-actor="cliente" data-sentido="vuelta"><p>El cliente recibe la <strong>respuesta</strong> con el código <code>200 OK</code> (salió todo bien) y el audio:</p><pre><code>200 OK
+Content-Type: audio/wav
+pink_noise.wav  (2 s · 88 200 muestras)</code></pre></li>
 </ol>
 <ol class="viaje__pasos" data-caso="invalido">
 <li data-actor="cliente" data-sentido="ida"><p>Ahora el cliente se equivoca y pide una duración negativa:</p><pre><code>{"duration": -1, "sample_rate": 44100}</code></pre></li>
@@ -103,18 +105,20 @@ sample_rate = 44100  ✓  (entero)</code></pre></li>
 
 ### Las tres capas en el código
 
-Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa en cada una (M0 no pide escribirlas todavía: es para que sepan dónde va cada cosa).
+Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa en cada una. M0 no pide escribirlas: es para que sepan dónde va cada cosa. Es, casi línea por línea, el primer endpoint que escriben en M1.
 
 === "1 · Router (el mozo)"
 
-    En `app/routers/`. Recibe el request, lo pasa por el schema, llama al service y devuelve JSON. **No calcula.**
+    En `app/routers/`. Recibe el request, lo pasa por el schema, llama al service y devuelve la respuesta. **No calcula.**
 
     ```python
     @router.post("/pink-noise")
     async def pink_noise(req: PinkNoiseRequest):      # FastAPI valida req con el schema
-        audio = services.generate_pink_noise(req.duration, req.sample_rate)
-        return {"audio": audio.tolist()}              # arreglo de NumPy → lista → JSON
+        audio = generate_pink_noise(req.duration, req.sample_rate)
+        return wav_response(audio, req.sample_rate)   # arreglo de NumPy → archivo WAV
     ```
+
+    `wav_response` ya viene en el template (`app/routers/audio_http.py`): convertir un arreglo en WAV no es parte de la materia.
 
 === "2 · Schema (la comanda)"
 
@@ -185,7 +189,7 @@ rir-api/
 ├── app/
 │   ├── main.py             # Punto de entrada FastAPI: responde en / y /health
 │   ├── settings.py         # Configuración (pydantic-settings)
-│   ├── routers/            # Endpoints (por ahora, /health)
+│   ├── routers/            # Endpoints (por ahora /health) y audio_http.py, que ayuda a responder WAV
 │   ├── schemas/            # Modelos de Pydantic
 │   └── services/           # Un módulo por tema: los services de M1, M2 y M3, para completar
 ├── tests/                  # test_placeholder.py pasa; los de M1-M3 quedan como xfail hasta implementarlos
@@ -219,7 +223,7 @@ Con la estructura en su lugar, el diagrama explica **cómo se van a llenar esas 
 - **Cada caja gris es un archivo** de su carpeta. Adentro, sus endpoints, schemas o funciones.
 - **Los colores son los milestones.** En M0 se dibuja **todo** el plano, aunque solo exista `/health`: el diagrama es el mapa de lo que van a construir, no de lo que ya hicieron.
 
-**Así lo arrancan en su README.** Este ejemplo tiene M0 y M1 completos (el `/health` y los tres services de generación) y lo que viene como cajas punteadas: los services de M2 y M3 y todos los endpoints, que se escriben en M3. Copien el código y reemplacen cada caja punteada por los archivos y funciones que correspondan, siguiendo el diagrama de arriba. GitHub dibuja Mermaid solo, dentro del README.
+**Así lo arrancan en su README.** Este ejemplo tiene M0 y M1 completos (el `/health`, los tres services de generación y los dos endpoints que los exponen) y lo que viene de M2 y M3 como cajas punteadas. Copien el código y reemplacen cada caja punteada por los archivos y funciones que correspondan, siguiendo el diagrama de arriba. GitHub dibuja Mermaid solo, dentro del README.
 
 === "Diagrama"
 
@@ -230,11 +234,13 @@ Con la estructura en su lugar, el diagrama explica **cómo se van a llenar esas 
             direction TB
             subgraph R["app/routers/"]
                 RH["health.py<br/>GET /health"]
-                RM3["M3: signals.py, filters.py, utils.py, acoustics.py"]
+                RS["signals.py<br/>POST /signals/pink-noise<br/>POST /signals/sine-sweep"]
+                RM2["M2: /signals/synthetic-ir, filters.py"]
+                RM3["M3: acoustics.py, utils.py"]
             end
             subgraph SC["app/schemas/"]
-                SH["responses.py<br/>HealthResponse"]
-                SM3["M3: signals.py, utils.py, ..."]
+                SS["signals.py<br/>PinkNoiseRequest<br/>SineSweepRequest"]
+                SM["M2 y M3: ..."]
             end
             subgraph SV["app/services/"]
                 PN["pink_noise.py<br/>generate_pink_noise"]
@@ -245,14 +251,15 @@ Con la estructura en su lugar, el diagrama explica **cómo se van a llenar esas 
             end
         end
         L["NumPy · SciPy · sounddevice"]
-        C -->|"request HTTP + JSON"| RH
-        RH -->|"valida con"| SH
-        RM3 -.->|"llama a"| SV
+        C -->|"request HTTP + JSON"| RS
+        RS -->|"valida con"| SS
+        RS -->|"llama a"| PN
+        RS -->|"llama a"| SW
         PN --> L
         SW --> L
         IO --> L
         classDef pendiente stroke-dasharray: 5 5
-        class RM3,SM3,VM2,VM3 pendiente
+        class RM2,RM3,SM,VM2,VM3 pendiente
     ```
 
 === "Código para copiar"
@@ -265,11 +272,13 @@ Con la estructura en su lugar, el diagrama explica **cómo se van a llenar esas 
             direction TB
             subgraph R["app/routers/"]
                 RH["health.py<br/>GET /health"]
-                RM3["M3: signals.py, filters.py, utils.py, acoustics.py"]
+                RS["signals.py<br/>POST /signals/pink-noise<br/>POST /signals/sine-sweep"]
+                RM2["M2: /signals/synthetic-ir, filters.py"]
+                RM3["M3: acoustics.py, utils.py"]
             end
             subgraph SC["app/schemas/"]
-                SH["responses.py<br/>HealthResponse"]
-                SM3["M3: signals.py, utils.py, ..."]
+                SS["signals.py<br/>PinkNoiseRequest<br/>SineSweepRequest"]
+                SM["M2 y M3: ..."]
             end
             subgraph SV["app/services/"]
                 PN["pink_noise.py<br/>generate_pink_noise"]
@@ -280,14 +289,15 @@ Con la estructura en su lugar, el diagrama explica **cómo se van a llenar esas 
             end
         end
         L["NumPy · SciPy · sounddevice"]
-        C -->|"request HTTP + JSON"| RH
-        RH -->|"valida con"| SH
-        RM3 -.->|"llama a"| SV
+        C -->|"request HTTP + JSON"| RS
+        RS -->|"valida con"| SS
+        RS -->|"llama a"| PN
+        RS -->|"llama a"| SW
         PN --> L
         SW --> L
         IO --> L
         classDef pendiente stroke-dasharray: 5 5
-        class RM3,SM3,VM2,VM3 pendiente
+        class RM2,RM3,SM,VM2,VM3 pendiente
     ```
     ````
 

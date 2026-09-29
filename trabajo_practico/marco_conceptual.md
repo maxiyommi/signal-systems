@@ -139,7 +139,7 @@ Para medir hay que resolver una serie de preguntas. Cada una se responde con un 
 | ¿Cuánto tarda en caer 60 dB? | Mínimos cuadrados: pendiente de la curva (T30, T20, EDT) | `linear_regression` | [M3](especificacion/m3_producto_final.md) |
 | ¿Qué parámetros entregamos? | Energía en ventanas temporales: EDT, T20, T30, D50, C80 | `calculate_parameters_from_ir` | [M3](especificacion/m3_producto_final.md) |
 | ¿Cómo estandarizamos el procedimiento? | Repetibilidad y reproducibilidad (ISO 3382): posiciones y repeticiones | — | Medición in situ (paso 3) |
-| ¿Cómo lo automatizamos? | El sistema completo, módulo por módulo | API REST | [M3](especificacion/m3_producto_final.md) |
+| ¿Cómo lo automatizamos? | El sistema completo, módulo por módulo | API REST: cada milestone expone lo suyo | [M1](especificacion/m1_generacion.md) → [M3](especificacion/m3_producto_final.md) |
 
 ## 8. Cómo se mide en una sala real
 

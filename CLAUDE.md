@@ -50,9 +50,9 @@ El TP pide a los alumnos desarrollar una API REST para cálculo de parámetros a
 | Milestone | Presentación → Entrega (2C 2026) | Contenido |
 |-----------|----------------------------------|-----------|
 | M0 | 30/9 → 7/10 (async, Slack/GitHub) | Arquitectura, repo, /health endpoint |
-| M1 | 14/10 → 28/10 | Ruido rosa, sine sweep, play_and_record (services) |
-| M2 | 21/10 → 4/11 | load_audio, generate_synthetic_ir, deconvolución, bandas de octava, dB (services) |
-| M3 | 28/10 → 18/11 | API REST completa, endpoints, validación, demo + oral |
+| M1 | 14/10 → 28/10 | Ruido rosa, sine sweep, play_and_record (services) + endpoints `/signals/pink-noise` y `/signals/sine-sweep` |
+| M2 | 21/10 → 4/11 | load_audio, generate_synthetic_ir, deconvolución, bandas de octava, dB (services) + endpoints `/signals/synthetic-ir` y `/filters/single-band` |
+| M3 | 28/10 → 18/11 | Análisis ISO 3382 + endpoints `/acoustics/parameters`, `/utils/schroeder`, `/utils/smoothing`; validación, demo + oral |
 
 Evaluación 2C 2026: M0-M2 seguimiento sin nota; nota del TP = 60 % M3 + 40 % oral (`AI_LOG.md` obligatorio sin nota; sin informe escrito). La landing (`docs/overrides/home.html`) lista las sesiones de la cursada actual a mano. Todo el material del TP está en páginas del sitio (sección Trabajo Práctico); `hooks/ruta_tp.py` agrega a cada página "Dónde estamos" (orden de lectura + hilo conductor) y "Qué sigue". Lo interactivo vive en `trabajo_practico/interactivos/`: páginas sueltas con el estilo de la landing (tema según la elección del sitio) que se abren en pestaña aparte desde tarjetas. El modo presentación (`docs/javascripts/presentacion.js`), la pizarra (`pizarra.js`) y la agenda de la sesión (`agenda.js`, fechas y páginas por sesión) se comparten entre el sitio y los interactivos (salvo la agenda).
 
