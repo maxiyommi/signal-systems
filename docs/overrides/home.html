@@ -129,6 +129,12 @@
       color: var(--md-default-fg-color--light);
       margin: 0 0 0.8rem; line-height: 1.5;
     }
+    .start-here__desc a { color: var(--md-typeset-a-color); font-weight: 600; text-decoration: none; }
+    .start-here__desc a:hover { text-decoration: underline; }
+    .start-here__desc code {
+      font-size: 0.8rem; padding: 0.05rem 0.3rem; border-radius: 0.25rem;
+      background: var(--md-code-bg-color); color: var(--md-code-fg-color);
+    }
     .start-here__steps { display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .start-here__step {
       display: inline-flex; align-items: center; gap: 0.4rem;
@@ -299,10 +305,72 @@
     .nav-item .icon { width: 1.15rem; height: 1.15rem; flex-shrink: 0; color: var(--md-default-fg-color--light); }
     .nav-item:hover .icon { color: var(--md-primary-fg-color); }
 
+    /* ===== REFERENCIAS DEL TP ===== */
+    .refs__note {
+      font-size: 0.85rem; color: var(--md-default-fg-color--light);
+      margin: 0 0 1rem; line-height: 1.5;
+    }
+    .refs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .ref-card {
+      display: flex; flex-direction: column; gap: 0.6rem;
+      padding: 1.3rem 1.4rem;
+      border-radius: 0.85rem;
+      background: var(--md-default-bg-color);
+      border: 1px solid var(--md-default-fg-color--lightest);
+      border-top: 3px solid #2ea043;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+    }
+    .ref-card__top { display: flex; align-items: center; gap: 0.7rem; }
+    .ref-card__icon { color: #2ea043; display: flex; }
+    .ref-card__icon .icon { width: 1.8rem; height: 1.8rem; stroke-width: 1.5; }
+    .ref-card__title { font-size: 1.05rem; font-weight: 700; color: var(--md-default-fg-color); margin: 0; }
+    .ref-card__status {
+      margin-left: auto;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.72rem; font-weight: 600; color: #2ea043;
+      background: rgba(46, 160, 67, 0.12);
+      padding: 0.2rem 0.6rem; border-radius: 2rem;
+      white-space: nowrap;
+    }
+    .ref-card__dot {
+      width: 0.5rem; height: 0.5rem; border-radius: 50%;
+      background: #2ea043;
+      animation: ref-pulso 2s ease-in-out infinite;
+    }
+    @keyframes ref-pulso {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.5); }
+      50% { box-shadow: 0 0 0 4px rgba(46, 160, 67, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) { .ref-card__dot { animation: none; } }
+    .ref-card__url {
+      font-family: var(--md-code-font-family, monospace);
+      font-size: 0.82rem; color: var(--md-typeset-a-color);
+      text-decoration: none; word-break: break-all;
+    }
+    .ref-card__url:hover { text-decoration: underline; }
+    .ref-card__desc { font-size: 0.85rem; color: var(--md-default-fg-color--light); margin: 0; line-height: 1.5; flex: 1; }
+    .ref-card__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .ref-card__btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.45rem 1rem; border-radius: 2rem;
+      font-size: 0.82rem; font-weight: 600; text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid var(--md-default-fg-color--lightest);
+      color: var(--md-default-fg-color);
+    }
+    .ref-card__btn:hover { border-color: #2ea043; color: #2ea043; transform: translateY(-1px); }
+    .ref-card__btn--main { background: #2ea043; border-color: #2ea043; color: #fff; }
+    .ref-card__btn--main:hover { color: #fff; box-shadow: 0 4px 12px rgba(46, 160, 67, 0.3); }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .hero__title { font-size: 2rem; }
       .pillars { grid-template-columns: 1fr; }
+      .refs { grid-template-columns: 1fr; }
       .start-here { flex-direction: column; text-align: center; }
       .start-here__steps { justify-content: center; }
       .nav-grid { grid-template-columns: 1fr 1fr; }
@@ -339,7 +407,10 @@
     <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
     <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
     <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
-    <symbol id="i-map" viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></symbol>
+    <symbol id="i-external-link" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3"/></symbol>
+    <symbol id="i-map"viewBox="0 0 24 24"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></symbol>
   </svg>
 
   <!-- ===== HERO ===== -->
@@ -361,8 +432,9 @@
         <svg aria-hidden="true" class="icon"><use href="#i-compass"/></svg>
       </span>
       <div class="start-here__content">
-        <h2 class="start-here__title">¿Primera vez? Arrancá por acá</h2>
-        <p class="start-here__desc">Antes del 30/9: instalá el entorno, repasá Git, sumate al Slack y leé la ruta del TP.</p>
+        <!-- Título y texto cambian por semana: ver AVISOS en el script del final -->
+        <h2 class="start-here__title" id="aviso-titulo">¿Primera vez? Arrancá por acá</h2>
+        <p class="start-here__desc" id="aviso-texto">Instalá el entorno, repasá Git, sumate al Slack y leé la ruta del TP.</p>
         <div class="start-here__steps">
           <a href="{{ 'guias/setup_entorno/' | url }}" class="start-here__step start-here__step--1">
             <span class="start-here__num">1</span> Instalar el entorno
@@ -379,6 +451,41 @@
         </div>
       </div>
     </div>
+
+    <!-- ===== REFERENCIAS DEL TP ===== -->
+    <div class="section-header">
+      <svg class="icon icon--lg"><use href="#i-target"/></svg>
+      <h2 class="section-header__title">Referencias del TP — la RIR-API funcionando</h2>
+    </div>
+    <p class="refs__note">La implementación de la cátedra, en producción: es lo que van a construir. Úsenla en cada milestone para ver cómo debe responder la API y para comparar sus resultados con los de ustedes.</p>
+
+    <section class="refs">
+      <div class="ref-card">
+        <div class="ref-card__top">
+          <span class="ref-card__icon"><svg class="icon"><use href="#i-monitor"/></svg></span>
+          <h3 class="ref-card__title">App en producción</h3>
+          <span class="ref-card__status"><span class="ref-card__dot"></span>En producción</span>
+        </div>
+        <a class="ref-card__url" href="https://rir-api-frontend.onrender.com">rir-api-frontend.onrender.com</a>
+        <p class="ref-card__desc">La aplicación web que consume la API: generen señales, suban una respuesta al impulso y vean los parámetros acústicos que tiene que devolver su implementación.</p>
+        <div class="ref-card__actions">
+          <a class="ref-card__btn ref-card__btn--main" href="https://rir-api-frontend.onrender.com">Abrir la app <svg class="icon"><use href="#i-external-link"/></svg></a>
+        </div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-card__top">
+          <span class="ref-card__icon"><svg class="icon"><use href="#i-server"/></svg></span>
+          <h3 class="ref-card__title">API que consume</h3>
+          <span class="ref-card__status"><span class="ref-card__dot"></span>En producción</span>
+        </div>
+        <a class="ref-card__url" href="https://rir-api.onrender.com">rir-api.onrender.com</a>
+        <p class="ref-card__desc">La API de referencia (FastAPI). En Swagger UI están todos los endpoints, sus parámetros y sus respuestas, y se pueden probar desde el navegador.</p>
+        <div class="ref-card__actions">
+          <a class="ref-card__btn ref-card__btn--main" href="https://rir-api.onrender.com/docs">Swagger UI <svg class="icon"><use href="#i-external-link"/></svg></a>
+          <a class="ref-card__btn" href="https://rir-api.onrender.com/health">/health</a>
+        </div>
+      </div>
+    </section>
 
     <!-- ===== PILARES ===== -->
     <section class="pillars">
@@ -551,6 +658,56 @@
     </div>
 
   </div>
+
+  <!-- ===== AVISO DE LA SEMANA ===== -->
+  <script>
+    (function() {
+      // Cada aviso rige desde su fecha (inclusive) hasta la del siguiente.
+      // Al cambiar de cuatrimestre, actualizar junto con cronograma.md y la lista de sesiones.
+      var AVISOS = [
+        { desde: null,
+          titulo: '¿Primera vez? Arrancá por acá',
+          texto: 'Antes del 30/9: instalá el entorno, repasá Git, sumate al Slack y leé la ruta del TP.' },
+        { desde: '2026-09-30',
+          titulo: 'Esta semana: entrega de M0',
+          texto: 'El miércoles 7/10 entregan <a href="{{ 'trabajo_practico/especificacion/m0_arquitectura/' | url }}">M0 · El plano</a> por Slack/GitHub. Ese día no hay clase.' },
+        { desde: '2026-10-08',
+          titulo: 'Mié 14/10: presentación de M1',
+          texto: 'Clase presencial: <a href="{{ 'trabajo_practico/especificacion/m1_generacion/' | url }}">M1 · Generación de señales</a>. Para llegar con base, trabajá el material de apoyo de las Clases 4 y 6.' },
+        { desde: '2026-10-15',
+          titulo: 'Mié 21/10: presentación de M2 (virtual)',
+          texto: 'Clase por Meet: <a href="{{ 'trabajo_practico/especificacion/m2_procesamiento/' | url }}">M2 · Procesamiento de la RI</a> + taller de M1. Mientras tanto, avanzá con M1 (entrega 28/10).' },
+        { desde: '2026-10-22',
+          titulo: 'Mié 28/10: entrega de M1 + presentación de M3',
+          texto: 'Clase presencial: entregan M1 (tag <code>v0.1.0</code> en <code>main</code>) y se presenta <a href="{{ 'trabajo_practico/especificacion/m3_producto_final/' | url }}">M3 · Producto final</a>.' },
+        { desde: '2026-10-29',
+          titulo: 'Mié 4/11: entrega de M2 (virtual)',
+          texto: 'Clase por Meet: entregan M2 (tag <code>v0.2.0</code> en <code>main</code>) + taller del producto (API, deploy).' },
+        { desde: '2026-11-05',
+          titulo: 'Mié 11/11: taller de cierre',
+          texto: 'Clase presencial de taller y consultas (semana del Parcial 2). Es la última antes del Demo Day: traigan sus dudas de M3.' },
+        { desde: '2026-11-12',
+          titulo: 'Mié 18/11: Demo Day',
+          texto: 'Clase por Meet: entrega final de <a href="{{ 'trabajo_practico/especificacion/m3_producto_final/' | url }}">M3</a> (tag <code>v1.0.0</code> en <code>main</code>) y presentación oral. Revisá la <a href="{{ 'trabajo_practico/rubrica/' | url }}">rúbrica</a>.' },
+        { desde: '2026-11-19',
+          titulo: 'Terminó la cursada 2C 2026',
+          texto: 'Gracias por el cuatrimestre. Todo el material del curso sigue disponible en el sitio.' }
+      ];
+
+      var hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      var aviso = AVISOS[0];
+      AVISOS.forEach(function(a) {
+        if (a.desde && hoy >= new Date(a.desde + 'T00:00:00')) aviso = a;
+      });
+
+      document.getElementById('aviso-titulo').textContent = aviso.titulo;
+      var texto = aviso.texto;
+      // Durante la cursada, los pasos quedan para quien recién se suma.
+      if (aviso !== AVISOS[0] && aviso !== AVISOS[AVISOS.length - 1]) texto += ' ¿Recién te sumás? Empezá por estos pasos:';
+      document.getElementById('aviso-texto').innerHTML = texto;
+    })();
+  </script>
 
   <!-- ===== DATE TRACKING SCRIPT ===== -->
   <script>
