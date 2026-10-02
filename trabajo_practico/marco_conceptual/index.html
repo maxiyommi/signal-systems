@@ -1,0 +1,1758 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Material práctico de Señales y Sistemas — Ingeniería de Sonido — UNTREF">
+      
+      
+      
+        <link rel="canonical" href="https://maxiyommi.github.io/signal-systems/trabajo_practico/marco_conceptual/">
+      
+      
+        <link rel="prev" href="../ruta/">
+      
+      
+        <link rel="next" href="../">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../LogoPractica.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>1 · Marco conceptual - Señales y Sistemas — UNTREF</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/presentacion.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#marco-conceptual-la-reverberacion" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../.." title="Señales y Sistemas — UNTREF" class="md-header__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../LogoPractica.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Señales y Sistemas — UNTREF
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1 · Marco conceptual
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../clases/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Clases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../ruta/" class="md-tabs__link">
+          
+  
+  
+  Trabajo Práctico
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guias/setup_entorno/" class="md-tabs__link">
+          
+  
+  
+  Guías
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../extras/" class="md-tabs__link">
+          
+  
+  
+  Extras
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../reglas_slack/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reglas Slack
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Señales y Sistemas — UNTREF" class="md-nav__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../LogoPractica.png" alt="logo">
+
+    </a>
+    Señales y Sistemas — UNTREF
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../clases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trabajo Práctico
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Trabajo Práctico
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ruta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ruta del TP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Marco conceptual
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Marco conceptual
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-escuchemos-y-observemos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Escuchemos y observemos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-la-reverberacion-directo-reflexiones-y-cola" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. La reverberación: directo, reflexiones y cola
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-para-que-medirla" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ¿Para qué medirla?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-la-sala-es-un-sistema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. La sala es un sistema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-la-medicion-es-una-cadena-de-sistemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. La medición es una cadena de sistemas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-tiempo-de-reverberacion-de-la-curva-de-caida-a-t30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Tiempo de reverberación: de la curva de caída a T30
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-cada-pregunta-de-la-medicion-una-tecnica-de-senales-y-sistemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Cada pregunta de la medición, una técnica de Señales y Sistemas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-como-se-mide-en-una-sala-real" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Cómo se mide en una sala real
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-como-se-baja-un-problema-complejo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Cómo se baja un problema complejo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · Consigna
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Milestones
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Milestones
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../especificacion/m0_arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M0 · El plano (arquitectura)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../especificacion/m1_generacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M1 · Generación de señales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../especificacion/m2_procesamiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M2 · Procesamiento de la RI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../especificacion/m3_producto_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M3 · Producto final
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rubrica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rúbrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guías
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guías
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/setup_entorno/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup del Entorno
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/git_basico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Básico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/marimo_intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marimo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guias/quarto_informe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quarto (opcional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extras/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extras/ggwave/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ggwave — Datos por Audio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extras/recursos_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos de IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extras/intro_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción a la IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../extras/efectos_audio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Efectos de Audio en Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reglas_slack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reglas Slack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="marco-conceptual-la-reverberacion">Marco conceptual: la reverberación<a class="headerlink" href="#marco-conceptual-la-reverberacion" title="Permanent link">&para;</a></h1>
+<div class="ruta-tp">
+<p><strong>Ruta del TP · Paso 1 de 6: Marco conceptual</strong> · <a href="../ruta/">Ver la ruta completa</a></p>
+<ol class="ruta-tp__pasos">
+<li class="ruta-tp__paso actual"><span>1</span>Marco</li>
+<li class="ruta-tp__paso"><span>2</span>Consigna</li>
+<li class="ruta-tp__paso"><span>3</span>M0</li>
+<li class="ruta-tp__paso"><span>4</span>M1</li>
+<li class="ruta-tp__paso"><span>5</span>M2</li>
+<li class="ruta-tp__paso"><span>6</span>M3</li>
+</ol>
+<p><strong>En el hilo conductor:</strong> <strong>Fenómeno físico</strong> (la reverberación en un recinto) · <strong>Modelo</strong> (la sala como sistema LTI: y = x ∗ h) · <strong>Módulos</strong> (la medición como cadena de sistemas).</p>
+<p><strong>Leer antes:</strong> no requiere lectura previa.</p>
+</div>
+<p>Esta página explica el <strong>fenómeno</strong> que mide el TP y cómo se lo <strong>modela con Señales y Sistemas</strong>. Está pensada como una dinámica de preguntas: antes de leer cada respuesta, intentá responderla.</p>
+<h2 id="1-escuchemos-y-observemos">1. Escuchemos y observemos<a class="headerlink" href="#1-escuchemos-y-observemos" title="Permanent link">&para;</a></h2>
+<p>Tenemos dos grabaciones de la misma fuente: una <strong>anecoica</strong> (sin sala) y otra en una <strong>sala polideportiva</strong>. Abrí el interactivo, escuchalas sin mirar y después revelá la forma de onda; cambiá a <em>Dominio espectral</em> para comparar los espectros.</p>
+<p><a class="interactivo-enlace" href="../interactivos/escucha.html" target="_blank" rel="noopener"><span class="interactivo-enlace__tag">Interactivo</span><span class="interactivo-enlace__info"><strong>Escucha a ciegas</strong><span>La misma fuente con y sin sala: escuchala y comparala en tiempo y en frecuencia. Se abre en una pestaña nueva.</span></span><span class="interactivo-enlace__flecha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a></p>
+<p>Las preguntas <strong>para pensar</strong> están dentro del interactivo, al lado de lo que se escucha y se ve.</p>
+<h2 id="2-la-reverberacion-directo-reflexiones-y-cola">2. La reverberación: directo, reflexiones y cola<a class="headerlink" href="#2-la-reverberacion-directo-reflexiones-y-cola" title="Permanent link">&para;</a></h2>
+<p>La <strong>reverberación</strong> es la suma del <strong>sonido directo</strong> y de las <strong>reflexiones</strong> en las superficies del recinto. El micrófono no recibe un único evento, sino una sucesión de llegadas: primero el sonido directo, después las primeras reflexiones y finalmente una cola densa que decae. Esa sucesión en el tiempo es el <strong>ecograma</strong>.</p>
+<p><a class="interactivo-enlace" href="../interactivos/sala.html" target="_blank" rel="noopener"><span class="interactivo-enlace__tag">Interactivo</span><span class="interactivo-enlace__info"><strong>La sala: directo, reflexiones y cola</strong><span>Simulación 3D por fuentes imagen: ecograma y auralización. Se abre en una pestaña nueva.</span></span><span class="interactivo-enlace__flecha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a></p>
+<p>Arrastrá el micrófono, cambiá la absorción de las paredes y escuchá el resultado. Compará la sala simulada con la <strong>sala real</strong> (respuesta medida) y con el <strong>aire libre</strong> (sin paredes: solo sonido directo).</p>
+<p>Las preguntas <strong>para pensar</strong> están dentro del interactivo.</p>
+<p><strong>Resumen.</strong> La reverberación es un fenómeno físico propio de los recintos cerrados: la suma del sonido directo y de las reflexiones. La percibimos con buena sensibilidad, pero de oído no podemos cuantificarla ni separar sus componentes. Necesitamos un <strong>transductor electroacústico</strong> para captarla y estudiarla en los dominios <strong>temporal</strong> y <strong>espectral</strong>.</p>
+<h2 id="3-para-que-medirla">3. ¿Para qué medirla?<a class="headerlink" href="#3-para-que-medirla" title="Permanent link">&para;</a></h2>
+<p>La reverberación modifica el sonido de la fuente y le agrega características propias del recinto. A veces ayuda (la música en una sala de conciertos) y a veces perjudica (la inteligibilidad de la palabra en un aula). Para <strong>evaluarla</strong> hay que <strong>cuantificarla</strong>: energía, potencia, valores máximo y mínimo y, sobre todo, <strong>cómo decae el nivel en el tiempo</strong>.</p>
+<h2 id="4-la-sala-es-un-sistema">4. La sala es un sistema<a class="headerlink" href="#4-la-sala-es-un-sistema" title="Permanent link">&para;</a></h2>
+<p>Acá está el paso clave: pasamos de un fenómeno físico a un <strong>modelo de Señales y Sistemas</strong>. Si <span class="arithmatex">\(x(t)\)</span> es lo que emite la fuente e <span class="arithmatex">\(y(t)\)</span> lo que capta el micrófono, la sala es un sistema con respuesta al impulso <span class="arithmatex">\(h(t)\)</span>:</p>
+<div class="arithmatex">\[
+y(t) = (x * h)(t) \quad\Longleftrightarrow\quad Y(f) = X(f)\,H(f)
+\]</div>
+<p>Si el sistema es <strong>lineal e invariante en el tiempo (LTI)</strong>, <span class="arithmatex">\(h(t)\)</span> lo caracteriza por completo: <strong>medir la sala es medir su respuesta al impulso</strong>. Todos los parámetros de la ISO 3382 se calculan a partir de <span class="arithmatex">\(h(t)\)</span>. Las propiedades que vimos en clase tienen consecuencias concretas en la medición:</p>
+<table>
+<thead>
+<tr>
+<th>Propiedad</th>
+<th>Qué significa en la sala</th>
+<th>Consecuencia práctica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Linealidad</strong> <button type="button" class="definicion-boton" popovertarget="def-linealidad" aria-label="Definición de linealidad" title="Definición">?</button></td>
+<td>Vale la superposición</td>
+<td>No saturar ningún elemento de la cadena: por eso se ajustan los niveles</td>
+</tr>
+<tr>
+<td><strong>Invariancia en el tiempo</strong> <button type="button" class="definicion-boton" popovertarget="def-invariancia" aria-label="Definición de invariancia en el tiempo" title="Definición">?</button></td>
+<td>La sala no cambia durante la medición</td>
+<td>Se puede repetir la medición y promediar</td>
+</tr>
+<tr>
+<td><strong>Causalidad</strong> <button type="button" class="definicion-boton" popovertarget="def-causalidad" aria-label="Definición de causalidad" title="Definición">?</button></td>
+<td><span class="arithmatex">\(h(t) = 0\)</span> para <span class="arithmatex">\(t &lt; 0\)</span></td>
+<td>Ninguna reflexión llega antes que el sonido directo</td>
+</tr>
+<tr>
+<td><strong>Estabilidad</strong> <button type="button" class="definicion-boton" popovertarget="def-estabilidad" aria-label="Definición de estabilidad" title="Definición">?</button></td>
+<td><span class="arithmatex">\(h(t)\)</span> decae: las superficies absorben energía</td>
+<td>Cómo decae es el <strong>tiempo de reverberación</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Tocá el <strong>?</strong> de cada propiedad para ver su definición.</p>
+<div class="definicion" id="def-linealidad" popover="auto">
+<p class="definicion__titulo">Linealidad</p>
+<p>Un sistema <span class="arithmatex">\(T\)</span> es <strong>lineal</strong> si cumple el <strong>principio de superposición</strong>: para cualquier par de entradas <span class="arithmatex">\(x_1(t)\)</span>, <span class="arithmatex">\(x_2(t)\)</span> y constantes <span class="arithmatex">\(a\)</span>, <span class="arithmatex">\(b\)</span>,</p>
+<div class="arithmatex">\[T\{a\,x_1(t) + b\,x_2(t)\} = a\,T\{x_1(t)\} + b\,T\{x_2(t)\}\]</div>
+<p>Reúne dos propiedades: <strong>aditividad</strong> (la respuesta a una suma es la suma de las respuestas) y <strong>homogeneidad</strong> (escalar la entrada escala la salida en la misma proporción).</p>
+<p><button type="button" class="definicion__cerrar" popovertarget="def-linealidad" popovertargetaction="hide">Cerrar</button></p>
+</div>
+<div class="definicion" id="def-invariancia" popover="auto">
+<p class="definicion__titulo">Invariancia en el tiempo</p>
+<p>Un sistema es <strong>invariante en el tiempo</strong> si un corrimiento de la entrada solo corre la salida, sin cambiarla: si <span class="arithmatex">\(y(t) = T\{x(t)\}\)</span>, entonces para todo <span class="arithmatex">\(t_0\)</span></p>
+<div class="arithmatex">\[T\{x(t - t_0)\} = y(t - t_0)\]</div>
+<p>El sistema se comporta igual hoy que dentro de un rato: sus parámetros no cambian con el tiempo.</p>
+<p><button type="button" class="definicion__cerrar" popovertarget="def-invariancia" popovertargetaction="hide">Cerrar</button></p>
+</div>
+<div class="definicion" id="def-causalidad" popover="auto">
+<p class="definicion__titulo">Causalidad</p>
+<p>Un sistema es <strong>causal</strong> si la salida en un instante <span class="arithmatex">\(t\)</span> depende solo de la entrada en ese instante y en los anteriores (<span class="arithmatex">\(\tau \leq t\)</span>), nunca de valores futuros.</p>
+<p>Para un sistema LTI, esto equivale a que la respuesta al impulso sea nula antes de que llegue el impulso:</p>
+<div class="arithmatex">\[h(t) = 0 \quad \text{para} \quad t &lt; 0\]</div>
+<p><button type="button" class="definicion__cerrar" popovertarget="def-causalidad" popovertargetaction="hide">Cerrar</button></p>
+</div>
+<div class="definicion" id="def-estabilidad" popover="auto">
+<p class="definicion__titulo">Estabilidad (BIBO)</p>
+<p>Un sistema es <strong>estable</strong> en sentido BIBO (<em>bounded input, bounded output</em>) si toda entrada acotada produce una salida acotada:</p>
+<div class="arithmatex">\[|x(t)| \leq M_x &lt; \infty \;\Rightarrow\; |y(t)| \leq M_y &lt; \infty\]</div>
+<p>Para un sistema LTI, esto equivale a que la respuesta al impulso sea absolutamente integrable:</p>
+<div class="arithmatex">\[\int_{-\infty}^{\infty} |h(t)|\,dt &lt; \infty\]</div>
+<p><button type="button" class="definicion__cerrar" popovertarget="def-estabilidad" popovertargetaction="hide">Cerrar</button></p>
+</div>
+<h2 id="5-la-medicion-es-una-cadena-de-sistemas">5. La medición es una cadena de sistemas<a class="headerlink" href="#5-la-medicion-es-una-cadena-de-sistemas" title="Permanent link">&para;</a></h2>
+<p>Entre la señal que generamos y la que grabamos hay varios sistemas en cascada. Cada uno es un <strong>módulo</strong> que se puede estudiar por separado:</p>
+<p><strong>PC</strong> (genera <span class="arithmatex">\(x[n]\)</span>) → <strong>DAC</strong> → <strong>amplificador</strong> → <strong>parlante</strong> → <strong>sala</strong> → <strong>micrófono</strong> → <strong>ADC</strong> → <strong>PC</strong> (graba <span class="arithmatex">\(y[n]\)</span>)</p>
+<div class="arithmatex">\[
+y = x * h_\text{DAC} * h_\text{amp} * h_\text{parl} * h_\text{sala} * h_\text{mic} * h_\text{ADC} = x * h_\text{total}
+\]</div>
+<p>Por <strong>asociatividad y conmutatividad de la convolución</strong>, toda la cadena equivale a un único sistema <span class="arithmatex">\(h_\text{total}\)</span>. Si los transductores son aproximadamente ideales en la banda de interés (<span class="arithmatex">\(h_i \approx \delta\)</span>), entonces <span class="arithmatex">\(h_\text{total} \approx h_\text{sala}\)</span>. Lo que no es ideal también se resuelve con Señales y Sistemas: la distorsión del parlante queda separada en el tiempo con el <strong>sine sweep y su filtro inverso</strong> (M1-M2), y el ruido de fondo se controla en el cálculo (M3).</p>
+<h2 id="6-tiempo-de-reverberacion-de-la-curva-de-caida-a-t30">6. Tiempo de reverberación: de la curva de caída a T30<a class="headerlink" href="#6-tiempo-de-reverberacion-de-la-curva-de-caida-a-t30" title="Permanent link">&para;</a></h2>
+<div class="admonition quote">
+<p class="admonition-title">Definiciones</p>
+<p><strong>ISO 354:</strong> <em>es el tiempo necesario para que el nivel de presión sonora disminuya 60 dB después del cese de la fuente.</em></p>
+<p><strong>ISO 3382 (T30):</strong> <em>es el tiempo, expresado en segundos, que se requiere para que el nivel de presión sonora disminuya en 60 dB, calculado sobre una recta obtenida de la regresión lineal por mínimos cuadrados de una curva de caída medida desde un nivel 5 dB por debajo del nivel inicial, hasta un nivel de 30 dB inferior a dicho nivel</em> (UNE-EN ISO 3382, 2010).</p>
+</div>
+<p><a class="interactivo-enlace" href="../interactivos/caida.html" target="_blank" rel="noopener"><span class="interactivo-enlace__tag">Interactivo</span><span class="interactivo-enlace__info"><strong>De la curva de caída a T30</strong><span>Integral de Schroeder, regresión y el efecto del ruido de fondo. Se abre en una pestaña nueva.</span></span><span class="interactivo-enlace__flecha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span></a></p>
+<p>Subí el ruido de fondo: si el piso de ruido no queda al menos 10 dB por debajo del punto de −35 dB de la curva, la integral de Schroeder se "levanta" y <strong>T30 deja de ser válido</strong>. En M3 lo controlan recortando la RI antes de integrar; el método de Lundeby, que estima ese punto de corte automáticamente, es opcional.</p>
+<h2 id="7-cada-pregunta-de-la-medicion-una-tecnica-de-senales-y-sistemas">7. Cada pregunta de la medición, una técnica de Señales y Sistemas<a class="headerlink" href="#7-cada-pregunta-de-la-medicion-una-tecnica-de-senales-y-sistemas" title="Permanent link">&para;</a></h2>
+<p>Para medir hay que resolver una serie de preguntas. Cada una se responde con un concepto de la materia, y ese concepto se convierte en un <strong>servicio</strong> de la API:</p>
+<table>
+<thead>
+<tr>
+<th>Pregunta de la medición</th>
+<th>Concepto de Señales y Sistemas</th>
+<th>Servicio</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>¿Con qué señal excitamos la sala?</td>
+<td>Señales aleatorias, densidad espectral <span class="arithmatex">\(1/f\)</span>: energía pareja por octava</td>
+<td><code>generate_pink_noise</code></td>
+<td><a href="../especificacion/m1_generacion/">M1</a></td>
+</tr>
+<tr>
+<td>¿Cómo separamos la sala de las distorsiones del parlante?</td>
+<td>Frecuencia instantánea, filtro inverso</td>
+<td><code>generate_sine_sweep_pair</code></td>
+<td><a href="../especificacion/m1_generacion/">M1</a></td>
+</tr>
+<tr>
+<td>¿Cómo emitimos y grabamos a la vez?</td>
+<td>Muestreo, DAC/ADC, sistemas en cascada</td>
+<td><code>play_and_record</code></td>
+<td><a href="../especificacion/m1_generacion/">M1</a></td>
+</tr>
+<tr>
+<td>¿Qué fuente usamos y a qué nivel?</td>
+<td>Relación señal/ruido (+45 dB sobre el ruido de fondo)</td>
+<td>—</td>
+<td>Medición in situ (paso 2)</td>
+</tr>
+<tr>
+<td>¿Cómo leemos la grabación?</td>
+<td>Señales discretas, cuantización</td>
+<td><code>load_audio</code></td>
+<td><a href="../especificacion/m2_procesamiento/">M2</a></td>
+</tr>
+<tr>
+<td>¿Cómo validamos sin ir a medir?</td>
+<td>Sistemas LTI: una RI sintética con <span class="arithmatex">\(T_{60}\)</span> conocido</td>
+<td><code>generate_synthetic_ir</code></td>
+<td><a href="../especificacion/m2_procesamiento/">M2</a></td>
+</tr>
+<tr>
+<td>¿Cómo obtenemos <span class="arithmatex">\(h(t)\)</span> a partir de la grabación?</td>
+<td>Convolución, delta, asociatividad</td>
+<td><code>get_impulse_response</code></td>
+<td><a href="../especificacion/m2_procesamiento/">M2</a></td>
+</tr>
+<tr>
+<td>¿Cómo analizamos la sala por bandas?</td>
+<td>Filtros LTI (Butterworth, IEC 61260)</td>
+<td><code>filter_single_band</code></td>
+<td><a href="../especificacion/m2_procesamiento/">M2</a></td>
+</tr>
+<tr>
+<td>¿Cómo expresamos los niveles?</td>
+<td>Escala logarítmica (dB)</td>
+<td><code>logarithmic_scale_conversion</code></td>
+<td><a href="../especificacion/m2_procesamiento/">M2</a></td>
+</tr>
+<tr>
+<td>¿Cómo vemos cómo decae la energía?</td>
+<td>Señal analítica, transformada de Hilbert (envolvente)</td>
+<td><code>apply_smoothing</code></td>
+<td><a href="../especificacion/m3_producto_final/">M3</a></td>
+</tr>
+<tr>
+<td>¿Cómo obtenemos una curva de caída limpia?</td>
+<td>Energía, integración (Schroeder)</td>
+<td><code>apply_schroeder_integral</code></td>
+<td><a href="../especificacion/m3_producto_final/">M3</a></td>
+</tr>
+<tr>
+<td>¿Cómo afecta el ruido a la medición?</td>
+<td>Estimación del piso de ruido y recorte de la integral</td>
+<td><code>apply_lundeby</code> (opcional)</td>
+<td><a href="../especificacion/m3_producto_final/">M3</a></td>
+</tr>
+<tr>
+<td>¿Cuánto tarda en caer 60 dB?</td>
+<td>Mínimos cuadrados: pendiente de la curva (T30, T20, EDT)</td>
+<td><code>linear_regression</code></td>
+<td><a href="../especificacion/m3_producto_final/">M3</a></td>
+</tr>
+<tr>
+<td>¿Qué parámetros entregamos?</td>
+<td>Energía en ventanas temporales: EDT, T20, T30, D50, C80</td>
+<td><code>calculate_parameters_from_ir</code></td>
+<td><a href="../especificacion/m3_producto_final/">M3</a></td>
+</tr>
+<tr>
+<td>¿Cómo estandarizamos el procedimiento?</td>
+<td>Repetibilidad y reproducibilidad (ISO 3382): posiciones y repeticiones</td>
+<td>—</td>
+<td>Medición in situ (paso 3)</td>
+</tr>
+<tr>
+<td>¿Cómo lo automatizamos?</td>
+<td>El sistema completo, módulo por módulo</td>
+<td>API REST: cada milestone expone lo suyo</td>
+<td><a href="../especificacion/m1_generacion/">M1</a> → <a href="../especificacion/m3_producto_final/">M3</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-como-se-mide-en-una-sala-real">8. Cómo se mide en una sala real<a class="headerlink" href="#8-como-se-mide-en-una-sala-real" title="Permanent link">&para;</a></h2>
+<p>La medición in situ no forma parte del TP, pero da contexto a cada servicio que van a construir:</p>
+<ol>
+<li><strong>Ruido de fondo.</strong> Con un sonómetro clase 1 ajustado, medir el Leq en 2 puntos de la sala, 3 repeticiones por punto, ponderación Z, slow, integración de 30 s. <em>Cadena: sala → micrófono → sonómetro.</em></li>
+<li><strong>Nivel de la fuente.</strong> Con ruido rosa, ajustar la fuente a +45 dB sobre el ruido de fondo, medido a 1 m. Ajustar los niveles de reproducción y adquisición para evitar saturación. <em>Cadena: PC (ruido rosa) → amplificador → fuente → sonómetro a 1 m.</em></li>
+<li><strong>Medición.</strong> 3 posiciones de micrófono por posición de fuente, respetando las distancias mínimas de la norma; 5 repeticiones por punto con sine sweep + filtro inverso. <em>Cadena: PC (sine sweep) → amplificador → fuente → sala → micrófono → PC (grabación).</em></li>
+</ol>
+<h2 id="9-como-se-baja-un-problema-complejo">9. Cómo se baja un problema complejo<a class="headerlink" href="#9-como-se-baja-un-problema-complejo" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Observar</strong> el fenómeno físico: la reverberación.</li>
+<li><strong>Modelarlo</strong> con Señales y Sistemas: la sala es un sistema LTI, <span class="arithmatex">\(y = x * h\)</span>.</li>
+<li><strong>Descomponer</strong> la medición en módulos: una cadena de sistemas.</li>
+<li><strong>Resolver cada módulo</strong> con una técnica de procesamiento digital de señales.</li>
+<li><strong>Encadenar</strong> los módulos en un software.</li>
+<li><strong>Automatizar</strong> la medición para obtener datos según la norma (ISO 3382).</li>
+</ol>
+<p>El TP es un caso de aplicación: el mismo método sirve para cualquier problema de ingeniería de sonido que se pueda modelar como señales que atraviesan sistemas.</p>
+<p><small>Audios: OpenAIR Library (grabación anecoica y Sports Centre, University of York). Criterio del piso de ruido: NTi Audio. Contenido basado en la presentación conceptual de la cátedra.</small></p>
+<div class="ruta-tp ruta-tp--pie">
+<p><strong>Qué sigue:</strong> <a href="../">Consigna</a> — Qué se construye, milestones y evaluación.</p>
+<p><strong>Dónde buscar:</strong> <a href="../ruta/">Ruta del TP</a> · <a href="../rubrica/">Rúbrica</a> · <a href="../../cronograma/">Cronograma (fechas)</a> · <a href="https://senalesysistemas.slack.com">Consultas en Slack</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Desarrollado y diseñado por <a href="https://github.com/maxiyommi">maxiyommi</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/maxiyommi/signal-systems" target="_blank" rel="noopener" title="Repositorio del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://senalesysistemas.slack.com" target="_blank" rel="noopener" title="Slack del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.tabs", "search.highlight", "search.suggest", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="../../javascripts/presentacion.js"></script>
+      
+        <script src="../../javascripts/pizarra.js"></script>
+      
+        <script src="../../javascripts/agenda.js"></script>
+      
+        <script src="../../javascripts/enlaces.js"></script>
+      
+        <script src="../../javascripts/viaje.js"></script>
+      
+        <script src="../../javascripts/arquitectura-esqueletos.js"></script>
+      
+        <script src="../../javascripts/arquitectura.js"></script>
+      
+        <script src="../../javascripts/servicios.js" type="module"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2000 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Material práctico de Señales y Sistemas — Ingeniería de Sonido — UNTREF">
+      
+      
+      
+        <link rel="canonical" href="https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m0_arquitectura/">
+      
+      
+        <link rel="prev" href="../../">
+      
+      
+        <link rel="next" href="../m1_generacion/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../LogoPractica.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>M0 · El plano (arquitectura) - Señales y Sistemas — UNTREF</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/presentacion.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#m0-el-plano-arquitectura" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-header__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Señales y Sistemas — UNTREF
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              M0 · El plano (arquitectura)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../clases/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Clases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../ruta/" class="md-tabs__link">
+          
+  
+  
+  Trabajo Práctico
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guias/setup_entorno/" class="md-tabs__link">
+          
+  
+  
+  Guías
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../extras/" class="md-tabs__link">
+          
+  
+  
+  Extras
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../reglas_slack/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reglas Slack
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-nav__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    Señales y Sistemas — UNTREF
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../clases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trabajo Práctico
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Trabajo Práctico
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ruta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ruta del TP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../marco_conceptual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Marco conceptual
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · Consigna
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Milestones
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Milestones
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M0 · El plano (arquitectura)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M0 · El plano (arquitectura)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#por-que-importa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por qué importa
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-estan-construyendo-una-api-rest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué están construyendo: una API REST
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tres-capas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tres capas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tres capas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#el-viaje-de-un-pedido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El viaje de un pedido
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#las-tres-capas-en-el-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Las tres capas en el código
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entregables-paso-a-paso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entregables, paso a paso
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entregables, paso a paso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-crear-el-repositorio-del-grupo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Crear el repositorio del grupo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-copiar-la-estructura-del-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Copiar la estructura del template
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Copiar la estructura del template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completar-el-readme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Completar el README
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-diagrama-de-arquitectura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Diagrama de arquitectura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-github-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. GitHub Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-branching-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Branching strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-entregar-m0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cómo entregar M0
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-de-entrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist de entrega
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recursos-recomendados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recursos recomendados
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m1_generacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M1 · Generación de señales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m2_procesamiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M2 · Procesamiento de la RI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m3_producto_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M3 · Producto final
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rubrica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rúbrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guías
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guías
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/setup_entorno/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup del Entorno
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/git_basico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Básico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/marimo_intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marimo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/quarto_informe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quarto (opcional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/ggwave/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ggwave — Datos por Audio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/recursos_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos de IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/intro_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción a la IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/efectos_audio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Efectos de Audio en Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reglas_slack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reglas Slack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="m0-el-plano-arquitectura">M0 · El plano (arquitectura)<a class="headerlink" href="#m0-el-plano-arquitectura" title="Permanent link">&para;</a></h1>
+<div class="ruta-tp">
+<p><strong>Ruta del TP · Paso 3 de 6: M0 · El plano (arquitectura)</strong> · <a href="../../ruta/">Ver la ruta completa</a></p>
+<ol class="ruta-tp__pasos">
+<li class="ruta-tp__paso hecho"><span>1</span>Marco</li>
+<li class="ruta-tp__paso hecho"><span>2</span>Consigna</li>
+<li class="ruta-tp__paso actual"><span>3</span>M0</li>
+<li class="ruta-tp__paso"><span>4</span>M1</li>
+<li class="ruta-tp__paso"><span>5</span>M2</li>
+<li class="ruta-tp__paso"><span>6</span>M3</li>
+</ol>
+<p><strong>En el hilo conductor:</strong> <strong>Módulos</strong> (la medición como cadena de sistemas).</p>
+<p><strong>Leer antes:</strong> <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_01">Clase 1 · entorno, Git y GitHub</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_03">Clase 3 · módulos y testing</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_07">Clase 7 · sistemas y respuesta al impulso</a></p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Fechas y evaluación</p>
+<ul>
+<li><strong>Presentación de la consigna:</strong> miércoles 30 de septiembre de 2026 (presencial)</li>
+<li><strong>Entrega:</strong> miércoles 7 de octubre de 2026, asincrónica por Slack/GitHub (ese día no hay clase)</li>
+<li><strong>Evaluación:</strong> seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)</li>
+</ul>
+</div>
+<h2 id="objetivo">Objetivo<a class="headerlink" href="#objetivo" title="Permanent link">&para;</a></h2>
+<p>Planificar la arquitectura del software antes de escribir una sola línea de código. Este milestone busca que el grupo defina la estructura del proyecto, distribuya responsabilidades y establezca las bases para un desarrollo organizado y colaborativo.</p>
+<h2 id="por-que-importa">Por qué importa<a class="headerlink" href="#por-que-importa" title="Permanent link">&para;</a></h2>
+<p>Nadie construye un edificio sin un plano. Con software pasa lo mismo: arrancar a codear sin plan termina en un proyecto que colapsa en M2. M0 <strong>no es un milestone de código</strong>: es el acuerdo del grupo sobre qué se construye, cómo se organizan las partes, quién hace qué y en qué orden. En el hilo conductor del TP, es la etapa de <strong>descomponer el problema en módulos</strong>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Señales de un plano flojo</p>
+<p>Nadie sabe qué carpeta toca · tres personas tocan el mismo archivo · issues vagos ("hacer M1") · para M2 el código es un caos.</p>
+</div>
+<h2 id="que-estan-construyendo-una-api-rest">Qué están construyendo: una API REST<a class="headerlink" href="#que-estan-construyendo-una-api-rest" title="Permanent link">&para;</a></h2>
+<p>Un servidor que recibe pedidos HTTP y devuelve datos en JSON. Abran la <a href="https://rir-api.onrender.com/docs">API de referencia</a> en el navegador o pruébenla desde la terminal:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>curl<span class="w"> </span>https://rir-api.onrender.com/health
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># {"status": "healthy", "version": "0.1.0", "timestamp": "..."}</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Concepto</th>
+<th>Qué es</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Endpoint</strong></td>
+<td>Una URL que hace una cosa. <code>GET /health</code> devuelve "estoy vivo".</td>
+</tr>
+<tr>
+<td><strong>Request / response</strong></td>
+<td>El cliente manda audio y parámetros; la API responde con T30, C80, etc.</td>
+</tr>
+<tr>
+<td><strong>JSON</strong></td>
+<td>El formato para pasar datos: <code>{"t30": 1.2, "c80": 5.4}</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tres-capas">Tres capas<a class="headerlink" href="#tres-capas" title="Permanent link">&para;</a></h2>
+<p>Una API recibe pedidos y devuelve respuestas. Para que el código no sea un caos, cada pedido pasa por <strong>tres capas</strong>, y cada una hace <strong>una sola cosa</strong>. La forma más fácil de entenderlo es pensar en un restaurante.</p>
+<div class="capas-analogia">
+<div class="capa capa--router">
+<div class="capa__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/><circle cx="5" cy="12" r="2"/></svg></div>
+<p class="capa__nombre">Router</p>
+<p class="capa__rol">El <strong>mozo</strong></p>
+<p>Recibe el pedido del cliente, lo lleva adentro y le trae la respuesta.</p>
+<p class="capa__no">No cocina.</p>
+<code>app/routers/</code>
+</div>
+<div class="capa capa--schema">
+<div class="capa__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="m9 14 2 2 4-4"/></svg></div>
+<p class="capa__nombre">Schema</p>
+<p class="capa__rol">El <strong>control de la comanda</strong></p>
+<p>Revisa que el pedido esté bien escrito: que estén todos los datos y que tengan sentido.</p>
+<p class="capa__no">No atiende ni cocina.</p>
+<code>app/schemas/</code>
+</div>
+<div class="capa capa--service">
+<div class="capa__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></div>
+<p class="capa__nombre">Service</p>
+<p class="capa__rol">La <strong>cocina</strong></p>
+<p>Hace el trabajo de verdad: acá está el procesamiento de señales de M1, M2 y M3.</p>
+<p class="capa__no">No sabe quién pidió ni cómo llegó el pedido.</p>
+<code>app/services/</code>
+</div>
+</div>
+
+<h3 id="el-viaje-de-un-pedido">El viaje de un pedido<a class="headerlink" href="#el-viaje-de-un-pedido" title="Permanent link">&para;</a></h3>
+<p>Seguí paso a paso qué pasa cuando alguien le pide ruido rosa a la API. Probá los dos casos: un pedido bien escrito y uno con un error.</p>
+<div class="viaje">
+<div class="viaje__casos" role="group" aria-label="Caso">
+<button type="button" data-caso="valido" aria-pressed="true">Pedido válido</button>
+<button type="button" data-caso="invalido" aria-pressed="false">Pedido con un error</button>
+</div>
+<ol class="viaje__actores">
+<li data-actor="cliente"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H4z"/><path d="M9 20h6M12 16v4"/></svg></span><strong>Cliente</strong><span>navegador, script o frontend</span></li>
+<li data-actor="router"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/><circle cx="5" cy="12" r="2"/></svg></span><strong>Router</strong><span>el mozo</span></li>
+<li data-actor="schema"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="m9 14 2 2 4-4"/></svg></span><strong>Schema</strong><span>la comanda</span></li>
+<li data-actor="service"><span class="viaje__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></span><strong>Service</strong><span>la cocina</span></li>
+</ol>
+<ol class="viaje__pasos" data-caso="valido">
+<li data-actor="cliente" data-sentido="ida"><p>El cliente pide ruido rosa de 2 segundos. Manda un <strong>request</strong> a la dirección <code>POST /api/v1/signals/pink-noise</code> con los datos en JSON:</p><pre><code>{"duration": 2, "sample_rate": 44100}</code></pre></li>
+<li data-actor="router" data-sentido="ida"><p>El <strong>router</strong> recibe el pedido. No calcula nada: primero se lo pasa al schema para que lo controle.</p></li>
+<li data-actor="schema" data-sentido="ida"><p>El <strong>schema</strong> controla la comanda: ¿<code>duration</code> es un número mayor que 0 y como mucho 60? ¿<code>sample_rate</code> es un entero? Todo en orden: el pedido sigue.</p><pre><code>duration    = 2      ✓  (mayor que 0, hasta 60)
+sample_rate = 44100  ✓  (entero)</code></pre></li>
+<li data-actor="service" data-sentido="ida"><p>El <strong>service</strong> hace el trabajo: llama a la función de M1, que devuelve un arreglo de NumPy con 2 × 44 100 = 88 200 muestras. No sabe nada de HTTP ni de JSON.</p><pre><code>generate_pink_noise(2, 44100)  →  array([0.12, -0.03, 0.41, ...])</code></pre></li>
+<li data-actor="router" data-sentido="vuelta"><p>El router recibe el arreglo y lo convierte en un archivo <strong>WAV</strong>, algo que cualquier cliente puede guardar o reproducir.</p></li>
+<li data-actor="cliente" data-sentido="vuelta"><p>El cliente recibe la <strong>respuesta</strong> con el código <code>200 OK</code> (salió todo bien) y el audio:</p><pre><code>200 OK
+Content-Type: audio/wav
+pink_noise.wav  (2 s · 88 200 muestras)</code></pre></li>
+</ol>
+<ol class="viaje__pasos" data-caso="invalido">
+<li data-actor="cliente" data-sentido="ida"><p>Ahora el cliente se equivoca y pide una duración negativa:</p><pre><code>{"duration": -1, "sample_rate": 44100}</code></pre></li>
+<li data-actor="router" data-sentido="ida"><p>El router recibe el pedido y, como siempre, se lo pasa al schema.</p></li>
+<li data-actor="schema" data-sentido="ida"><p>El schema encuentra el error: <code>duration = -1</code> no es mayor que 0. <strong>El pedido se frena acá.</strong></p><pre><code>duration = -1     ✗  (tiene que ser mayor que 0)</code></pre></li>
+<li data-actor="cliente" data-sentido="vuelta"><p>La API responde <code>422</code> (datos inválidos) con una explicación del error. <strong>El service nunca se ejecutó</strong>: la cocina no recibe comandas mal escritas, y por eso sus funciones no tienen que andar revisando datos.</p><pre><code>{"detail": [{"loc": ["body", "duration"],
+             "msg": "Input should be greater than 0"}]}</code></pre></li>
+</ol>
+<div class="viaje__panel" aria-live="polite"></div>
+<div class="viaje__nav">
+<button type="button" data-mover="-1">Anterior</button>
+<span class="viaje__contador"></span>
+<button type="button" data-mover="1">Siguiente</button>
+</div>
+</div>
+
+<h3 id="las-tres-capas-en-el-codigo">Las tres capas en el código<a class="headerlink" href="#las-tres-capas-en-el-codigo" title="Permanent link">&para;</a></h3>
+<p>Cada capa es un archivo en su carpeta. Así se ve el mismo pedido de ruido rosa en cada una. M0 no pide escribirlas: es para que sepan dónde va cada cosa. Es, casi línea por línea, el primer endpoint que escriben en M1.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">1 · Router (el mozo)</label><label for="__tabbed_1_2">2 · Schema (la comanda)</label><label for="__tabbed_1_3">3 · Service (la cocina)</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>En <code>app/routers/</code>. Recibe el request, lo pasa por el schema, llama al service y devuelve la respuesta. <strong>No calcula.</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/pink-noise"</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">pink_noise</span><span class="p">(</span><span class="n">req</span><span class="p">:</span> <span class="n">PinkNoiseRequest</span><span class="p">):</span>      <span class="c1"># FastAPI valida req con el schema</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">audio</span> <span class="o">=</span> <span class="n">generate_pink_noise</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="k">return</span> <span class="n">wav_response</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>   <span class="c1"># arreglo de NumPy → archivo WAV</span>
+</code></pre></div>
+<p><code>wav_response</code> ya viene en el template (<code>app/routers/audio_http.py</code>): convertir un arreglo en WAV no es parte de la materia.</p>
+</div>
+<div class="tabbed-block">
+<p>En <code>app/schemas/</code>. Un modelo de Pydantic que describe cómo tiene que venir el pedido; si algo no cumple, FastAPI responde 422 solo.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">PinkNoiseRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">gt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>           <span class="c1"># mayor que 0 y hasta 60 segundos</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">sample_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">44100</span><span class="p">)</span>        <span class="c1"># si no viene, 44100</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>En <code>app/services/</code>. Funciones puras de procesamiento de señales: entra NumPy, sale NumPy. <strong>No saben de HTTP ni de JSON</strong>, y por eso se pueden testear solas.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">generate_pink_noise</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">duration</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="c1"># algoritmo Voss-McCartney</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="k">return</span> <span class="n">signal</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Una regla para acordarse</p>
+<p>Si una función de <code>services/</code> importa algo de FastAPI, o un router hace cuentas con NumPy, algo está en el lugar equivocado.</p>
+</div>
+<h2 id="entregables-paso-a-paso">Entregables, paso a paso<a class="headerlink" href="#entregables-paso-a-paso" title="Permanent link">&para;</a></h2>
+<p>M0 se arma en este orden: primero el <strong>repositorio</strong> con su estructura, después el <strong>plano</strong> (el diagrama), después el <strong>plan de trabajo</strong> (los issues) y las <strong>reglas para trabajar en equipo</strong> (la branching strategy). Al final, la entrega por Slack.</p>
+<h3 id="1-crear-el-repositorio-del-grupo">1. Crear el repositorio del grupo<a class="headerlink" href="#1-crear-el-repositorio-del-grupo" title="Permanent link">&para;</a></h3>
+<p>Una persona del grupo crea en GitHub un repositorio <strong>vacío</strong>, por ejemplo <code>rir-api</code>, sin README ni <code>.gitignore</code> (los trae el template en el paso siguiente). Después agrega como colaboradores al resto del grupo y a los docentes.</p>
+<div class="admonition tip">
+<p class="admonition-title">No olvidar a los docentes</p>
+<p>Agregar como <strong>colaboradores</strong> del repositorio a <strong>@maxiyommi</strong> y <strong>@jero-scafati</strong> (<em>Settings → Collaborators → Add people</em>). Sin esto no podemos ver el repo ni darles feedback.</p>
+</div>
+<h3 id="2-copiar-la-estructura-del-template">2. Copiar la estructura del template<a class="headerlink" href="#2-copiar-la-estructura-del-template" title="Permanent link">&para;</a></h3>
+<p>La estructura <strong>no se escribe desde cero</strong>: el <a href="https://github.com/maxiyommi/signal-systems/tree/master/trabajo_practico/template_repo">template del repositorio</a> ya la trae, con las tres capas, los services de M1 a M3 listos para completar, los tests y el CI. No se forkea: se copia su contenido adentro del repositorio que crearon en el paso 1.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># 1. Bajar el repositorio de la materia (solo la última versión)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/maxiyommi/signal-systems.git
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># 2. Clonar el repositorio (vacío) del grupo y copiar el template, con los archivos ocultos</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/&lt;usuario&gt;/rir-api.git
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>cp<span class="w"> </span>-r<span class="w"> </span>signal-systems/trabajo_practico/template_repo/.<span class="w"> </span>rir-api/
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># 3. Primer commit</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="nb">cd</span><span class="w"> </span>rir-api
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>git<span class="w"> </span>add<span class="w"> </span>.
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"chore: estructura inicial desde el template de la cátedra"</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>git<span class="w"> </span>branch<span class="w"> </span>-M<span class="w"> </span>main
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>main
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="c1"># 4. Probar que anda</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>uv<span class="w"> </span>sync
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>uv<span class="w"> </span>run<span class="w"> </span>uvicorn<span class="w"> </span>app.main:app<span class="w"> </span>--reload<span class="w">     </span><span class="c1"># abrir http://localhost:8000/docs</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v
+</code></pre></div>
+<p>Así queda el repositorio:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>rir-api/
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>├── pyproject.toml          # Dependencias: fastapi, numpy, scipy, pydantic, sounddevice… y las de desarrollo
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├── README.md               # Lo completan en este paso
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>├── app/
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>│   ├── main.py             # Punto de entrada FastAPI: responde en / y /health
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>│   ├── settings.py         # Configuración (pydantic-settings)
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>│   ├── routers/            # Endpoints (por ahora /health) y audio_http.py, que ayuda a responder WAV
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>│   ├── schemas/            # Modelos de Pydantic
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>│   └── services/           # Un módulo por tema: los services de M1, M2 y M3, para completar
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>├── tests/                  # test_placeholder.py pasa; los de M1-M3 quedan como xfail hasta implementarlos
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>├── docs/                   # Evidencia de validación (gráficos, capturas)
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>├── data/
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>└── .github/workflows/ci.yml   # Lint + tests en cada push
+</code></pre></div>
+<p>Si <code>http://localhost:8000/health</code> responde <code>200 OK</code> y <code>pytest</code> termina sin fallas (los tests de M1 a M3 aparecen como <code>xfailed</code> hasta que implementen cada función), la estructura está lista. El paso a paso completo está en el README del template.</p>
+<h4 id="completar-el-readme">Completar el README<a class="headerlink" href="#completar-el-readme" title="Permanent link">&para;</a></h4>
+<p>El template trae un <code>README.md</code> base con estas secciones; complétenlo:</p>
+<ul>
+<li><strong>Nombre del proyecto</strong> y descripción breve (1-2 párrafos).</li>
+<li><strong>Integrantes del grupo</strong> con nombre completo, legajo y rol (por ejemplo: generación de señales, procesamiento, testing/CI, documentación).</li>
+<li><strong>Instrucciones de instalación</strong>: cómo clonar, instalar dependencias y ejecutar. Tienen que funcionar copiando y pegando los comandos.</li>
+<li><strong>Estructura del proyecto</strong>: el árbol de carpetas de arriba, con una línea por carpeta.</li>
+</ul>
+<p>En el mismo README va el diagrama del paso siguiente.</p>
+<h3 id="3-diagrama-de-arquitectura">3. Diagrama de arquitectura<a class="headerlink" href="#3-diagrama-de-arquitectura" title="Permanent link">&para;</a></h3>
+<p>Con la estructura en su lugar, el diagrama explica <strong>cómo se van a llenar esas carpetas</strong>. Es el <strong>plano de la API</strong>: muestra qué capas tiene, qué archivos hay en cada carpeta, qué hace cada uno y por dónde viaja un pedido. Este es el de la API completa, con los mismos nombres que la implementación de referencia. Usá los botones para ver cómo se va armando milestone a milestone y el recorrido de un análisis de punta a punta, y <strong>tocá cualquier recuadro</strong> para ver su estructura básica.</p>
+<div class="arq">
+<div class="arq-controles" role="group" aria-label="Qué mostrar"><span>Ver la API al terminar:</span><button type="button" data-ver="0">M0</button><button type="button" data-ver="1">M1</button><button type="button" data-ver="2">M2</button><button type="button" data-ver="3" aria-pressed="true">M3 (completa)</button><button type="button" data-ver="recorrido">Recorrido de un análisis</button></div>
+<p class="arq-leyenda" aria-live="polite"></p>
+<div class="arq-colores"><span data-m="0">M0 · El plano</span><span data-m="1">M1 · Generación</span><span data-m="2">M2 · Procesamiento</span><span data-m="3">M3 · Producto final</span></div>
+<div class="arq-capa arq-capa--cliente"><div class="arq-capa__nombre"><strong>Cliente</strong><span>quien usa la API</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">Swagger (/docs)</span><span class="arq-chip" data-m="0">frontend o script</span><span class="arq-chip" data-m="3" data-paso="1" data-lleva="WAV" data-explica="El cliente sube la respuesta al impulso grabada (un WAV) a POST /api/v1/acoustics/parameters.">sube un WAV</span><span class="arq-chip" data-m="3" data-paso="10" data-lleva="✓" data-sentido="vuelta" data-explica="El cliente recibe el JSON con EDT, T20, T30, D50 y C80 por banda, y los muestra.">recibe el JSON</span></div></div>
+<div class="arq-flecha"><span>↓ request HTTP (datos en JSON o un archivo) &nbsp;·&nbsp; ↑ respuesta en JSON</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Routers</strong><span>app/routers/ · reciben y responden</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">health.py</span><span class="arq-chip" data-m="0"><code>GET /health</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">audio_http.py</span><span class="arq-chip" data-m="0"><code>wav_response</code></span><span class="arq-chip" data-m="0"><code>uploaded_file</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>POST /signals/pink-noise</code></span><span class="arq-chip" data-m="1"><code>POST /signals/sine-sweep</code></span><span class="arq-chip" data-m="2"><code>POST /signals/synthetic-ir</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filters.py</span><span class="arq-chip" data-m="2"><code>POST /filters/single-band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="3"><code>POST /utils/smoothing</code></span><span class="arq-chip" data-m="3"><code>POST /utils/schroeder</code></span><span class="arq-chip" data-m="3"><code>POST /utils/lundeby</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustics.py</span><span class="arq-chip" data-m="3" data-paso="2" data-lleva="archivo" data-explica="El router de acoustics.py recibe el archivo; no calcula nada: llama a los services en orden."><code>POST /acoustics/parameters</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ validan los datos con</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Schemas</strong><span>app/schemas/ · validan qué entra y qué sale</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">responses.py</span><span class="arq-chip" data-m="0"><code>HealthResponse</code></span><span class="arq-chip" data-m="3" data-paso="9" data-lleva="JSON" data-sentido="vuelta" data-explica="El router arma la respuesta con el schema BandAnalysisResponse: Pydantic valida que el JSON tenga la forma prometida."><code>BandAnalysisResponse</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>PinkNoiseRequest</code></span><span class="arq-chip" data-m="1"><code>SineSweepRequest</code></span><span class="arq-chip" data-m="2"><code>SyntheticIRRequest</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="3"><code>SmoothingRequest</code></span><span class="arq-chip" data-m="3"><code>SchroederResponse</code></span><span class="arq-chip" data-m="3"><code>LundebyResponse</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ llaman a la función que hace el cálculo</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Services</strong><span>app/services/ · el procesamiento de señales</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">pink_noise.py</span><span class="arq-chip" data-m="1"><code>generate_pink_noise</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">sine_sweep.py</span><span class="arq-chip" data-m="1"><code>generate_sine_sweep_pair</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">audio_io.py</span><span class="arq-chip" data-m="1"><code>play_and_record</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signal_utils.py</span><span class="arq-chip" data-m="2" data-paso="3" data-lleva="np.ndarray" data-explica="load_audio lee el WAV y lo convierte en un arreglo de NumPy (mono, normalizado)."><code>load_audio</code></span><span class="arq-chip" data-m="2"><code>generate_synthetic_ir</code></span><span class="arq-chip" data-m="2"><code>get_impulse_response</code></span><span class="arq-chip" data-m="2"><code>logarithmic_scale_conversion</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filter.py</span><span class="arq-chip" data-m="2" data-paso="4" data-lleva="bandas" data-explica="filter_single_band separa la RI en bandas de octava; el router lo repite para cada banda."><code>filter_single_band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustic_parameters.py</span><span class="arq-chip" data-m="3" data-paso="5" data-lleva="envolventes" data-explica="apply_smoothing obtiene la envolvente de la RI de cada banda."><code>apply_smoothing</code></span><span class="arq-chip" data-m="3" data-paso="6" data-lleva="curvas de caída" data-explica="apply_schroeder_integral calcula la curva de caída de cada banda."><code>apply_schroeder_integral</code></span><span class="arq-chip" data-m="3" data-paso="7" data-lleva="pendientes" data-explica="linear_regression ajusta la recta de la caída: de su pendiente salen EDT, T20 y T30."><code>linear_regression</code></span><span class="arq-chip" data-m="3" data-paso="8" data-lleva="dict" data-explica="calculate_parameters_from_ir junta todo y calcula también D50 y C80."><code>calculate_parameters_from_ir</code></span><span class="arq-chip" data-m="3"><code>apply_lundeby</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ usan</span></div>
+<div class="arq-capa arq-capa--libs"><div class="arq-capa__nombre"><strong>Librerías</strong><span>lo que usa cada capa</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">FastAPI</span><span class="arq-chip" data-m="0">Pydantic</span><span class="arq-chip" data-m="1">NumPy</span><span class="arq-chip" data-m="1">SciPy</span><span class="arq-chip" data-m="1">sounddevice</span><span class="arq-chip" data-m="1">soundfile</span></div></div>
+<ol class="arq-pasos" hidden></ol>
+</div>
+
+<p><strong>Cómo leerlo:</strong></p>
+<ul>
+<li><strong>De arriba hacia abajo va el pedido</strong>, de abajo hacia arriba vuelve la respuesta. Cada capa solo habla con la de al lado: el cliente nunca llama a un service directamente.</li>
+<li><strong>Cada caja gris es un archivo</strong> de su carpeta. Adentro, sus endpoints, schemas o funciones.</li>
+<li><strong>Los colores son los milestones.</strong> En M0 se dibuja <strong>todo</strong> el plano, aunque solo exista <code>/health</code>: el diagrama es el mapa de lo que van a construir, no de lo que ya hicieron.</li>
+</ul>
+<p><strong>Así lo arrancan en su README.</strong> Este ejemplo tiene M0 y M1 completos (el <code>/health</code>, los tres services de generación y los dos endpoints que los exponen) y lo que viene de M2 y M3 como cajas punteadas. Copien el código y reemplacen cada caja punteada por los archivos y funciones que correspondan, siguiendo el diagrama de arriba. GitHub dibuja Mermaid solo, dentro del README.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Diagrama</label><label for="__tabbed_2_2">Código para copiar</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<pre class="mermaid"><code>flowchart TB
+    C["Cliente&lt;br/&gt;Swagger · frontend · script"]
+    subgraph API["RIR-API (FastAPI)"]
+        direction TB
+        subgraph R["app/routers/"]
+            RH["health.py&lt;br/&gt;GET /health"]
+            RS["signals.py&lt;br/&gt;POST /signals/pink-noise&lt;br/&gt;POST /signals/sine-sweep"]
+            RM2["M2: /signals/synthetic-ir, filters.py"]
+            RM3["M3: acoustics.py, utils.py"]
+        end
+        subgraph SC["app/schemas/"]
+            SS["signals.py&lt;br/&gt;PinkNoiseRequest&lt;br/&gt;SineSweepRequest"]
+            SM["M2 y M3: ..."]
+        end
+        subgraph SV["app/services/"]
+            PN["pink_noise.py&lt;br/&gt;generate_pink_noise"]
+            SW["sine_sweep.py&lt;br/&gt;generate_sine_sweep_pair"]
+            IO["audio_io.py&lt;br/&gt;play_and_record"]
+            VM2["M2: signal_utils.py, filter.py"]
+            VM3["M3: acoustic_parameters.py"]
+        end
+    end
+    L["NumPy · SciPy · sounddevice"]
+    C --&gt;|"request HTTP + JSON"| RS
+    RS --&gt;|"valida con"| SS
+    RS --&gt;|"llama a"| PN
+    RS --&gt;|"llama a"| SW
+    PN --&gt; L
+    SW --&gt; L
+    IO --&gt; L
+    classDef pendiente stroke-dasharray: 5 5
+    class RM2,RM3,SM,VM2,VM3 pendiente</code></pre>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="sb">```mermaid</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="s">flowchart TB</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="s">    C["Cliente&lt;br/&gt;Swagger · frontend · script"]</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="s">    subgraph API["RIR-API (FastAPI)"]</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="s">        direction TB</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="s">        subgraph R["app/routers/"]</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="s">            RH["health.py&lt;br/&gt;GET /health"]</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="s">            RS["signals.py&lt;br/&gt;POST /signals/pink-noise&lt;br/&gt;POST /signals/sine-sweep"]</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="s">            RM2["M2: /signals/synthetic-ir, filters.py"]</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="s">            RM3["M3: acoustics.py, utils.py"]</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="s">        end</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="s">        subgraph SC["app/schemas/"]</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="s">            SS["signals.py&lt;br/&gt;PinkNoiseRequest&lt;br/&gt;SineSweepRequest"]</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="s">            SM["M2 y M3: ..."]</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="s">        end</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="s">        subgraph SV["app/services/"]</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="s">            PN["pink_noise.py&lt;br/&gt;generate_pink_noise"]</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="s">            SW["sine_sweep.py&lt;br/&gt;generate_sine_sweep_pair"]</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="s">            IO["audio_io.py&lt;br/&gt;play_and_record"]</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="s">            VM2["M2: signal_utils.py, filter.py"]</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a><span class="s">            VM3["M3: acoustic_parameters.py"]</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a><span class="s">        end</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="s">    end</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="s">    L["NumPy · SciPy · sounddevice"]</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="s">    C --&gt;|"request HTTP + JSON"| RS</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="s">    RS --&gt;|"valida con"| SS</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="s">    RS --&gt;|"llama a"| PN</span>
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a><span class="s">    RS --&gt;|"llama a"| SW</span>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a><span class="s">    PN --&gt; L</span>
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a><span class="s">    SW --&gt; L</span>
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a><span class="s">    IO --&gt; L</span>
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a><span class="s">    classDef pendiente stroke-dasharray: 5 5</span>
+<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a><span class="s">    class RM2,RM3,SM,VM2,VM3 pendiente</span>
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a><span class="sb">```</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>Si prefieren dibujarlo a mano, pueden usar <strong>draw.io</strong>, exportarlo a PNG e incluirlo en el README. Sea cual sea la herramienta, el diagrama de M0 tiene que mostrar:</p>
+<ul>
+<li><strong>Las tres capas</strong> (routers, schemas y services) y el cliente.</li>
+<li><strong>Todos los archivos de M1, M2 y M3</strong> con sus funciones (están en las especificaciones de <a href="../m1_generacion/">M1</a>, <a href="../m2_procesamiento/">M2</a> y <a href="../m3_producto_final/">M3</a>).</li>
+<li><strong>El flujo de datos:</strong> request HTTP → validación con Pydantic → service → respuesta.</li>
+<li><strong>Entradas y salidas del sistema completo:</strong> del archivo de audio a los parámetros acústicos.</li>
+<li><strong>Las dependencias externas</strong> relevantes (FastAPI, NumPy, SciPy, Pydantic, sounddevice).</li>
+</ul>
+<h3 id="4-github-issues">4. GitHub Issues<a class="headerlink" href="#4-github-issues" title="Permanent link">&para;</a></h3>
+<p>El diagrama dice <strong>qué</strong> hay que construir; los issues lo convierten en <strong>tareas con dueño</strong>. Crear al menos <strong>10 issues</strong> en el repositorio de GitHub, cada uno con:</p>
+<ul>
+<li><strong>Título descriptivo</strong>: por ejemplo, "Implementar generación de ruido rosa con algoritmo Voss-McCartney".</li>
+<li><strong>Descripción</strong> con los requisitos funcionales y criterios de aceptación.</li>
+<li><strong>Labels</strong> que indiquen el milestone correspondiente: <code>milestone-1</code>, <code>milestone-2</code>, <code>milestone-3</code>.</li>
+<li><strong>Asignación</strong> a uno o más integrantes del grupo.</li>
+<li><strong>Estimación</strong> de complejidad (opcional pero recomendada): labels como <code>complejidad-baja</code>, <code>complejidad-media</code>, <code>complejidad-alta</code>.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Malo</th>
+<th>Bueno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Hacer M1": demasiado grande, nadie sabe qué entra ni cuándo está listo.</td>
+<td>"Implementar <code>generate_pink_noise</code> con Voss-McCartney". Criterios: recibe <code>(duration, fs)</code> y devuelve <code>np.ndarray</code>; el espectro cae ~3 dB/octava; tiene un test unitario. Labels <code>milestone-1</code>, <code>complejidad-media</code>, asignado.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Regla de oro:</strong> un issue es algo que una persona puede terminar en una sesión de trabajo.</p>
+<h3 id="5-branching-strategy">5. Branching strategy<a class="headerlink" href="#5-branching-strategy" title="Permanent link">&para;</a></h3>
+<p>Con las tareas repartidas, falta acordar <strong>cómo trabajan sobre el mismo código sin pisarse</strong>. Documéntenlo en el README o en un archivo <code>CONTRIBUTING.md</code>:</p>
+<ul>
+<li>Rama <code>main</code> protegida: solo se modifica con un merge vía pull request.</li>
+<li>Una rama por issue, con convención de nombres: <code>feature/nombre-descriptivo</code>.</li>
+<li>Convención de commits (recomendada: <a href="https://www.conventionalcommits.org/">Conventional Commits</a>).</li>
+</ul>
+<p>La <a href="../../../guias/git_basico/">guía de Git</a> explica el flujo <code>main</code> + feature + pull request.</p>
+<h2 id="como-entregar-m0">Cómo entregar M0<a class="headerlink" href="#como-entregar-m0" title="Permanent link">&para;</a></h2>
+<p>El miércoles 7 de octubre no hay clase. Antes del final del día, cada grupo publica en Slack <strong>un único mensaje</strong> con:</p>
+<ol>
+<li>El <strong>link al repositorio</strong> (con los docentes ya agregados como colaboradores).</li>
+<li>Una <strong>captura</strong> de <code>http://localhost:8000/health</code> respondiendo, o del CI en verde.</li>
+<li>Los <strong>integrantes</strong> y el rol de cada uno.</li>
+</ol>
+<p>El feedback llega en el hilo de ese mensaje. Si algo no les anda, pregunten antes en Slack, en hilos (ver las <a href="../../../reglas_slack/">reglas</a>).</p>
+<h2 id="checklist-de-entrega">Checklist de entrega<a class="headerlink" href="#checklist-de-entrega" title="Permanent link">&para;</a></h2>
+<p>En el mismo orden que los pasos:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>1.</strong> Repositorio creado, con los docentes (@maxiyommi y @jero-scafati) como colaboradores</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>2.</strong> Estructura del template copiada y en <code>main</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>2.</strong> <code>uv run uvicorn app.main:app --reload</code> levanta la API y <code>/health</code> responde</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>2.</strong> <code>pytest</code> termina sin fallas</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>2.</strong> README completo: integrantes y roles, instalación que funciona, estructura</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>3.</strong> Diagrama de arquitectura en el README, con todos los archivos de M1, M2 y M3</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>4.</strong> Al menos 10 issues con labels y asignaciones</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <strong>5.</strong> Branching strategy documentada</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Mensaje de entrega publicado en Slack</li>
+</ul>
+<h2 id="recursos-recomendados">Recursos recomendados<a class="headerlink" href="#recursos-recomendados" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://rir-api.onrender.com/docs">API de referencia de la cátedra (Swagger UI)</a></li>
+<li><a href="https://fastapi.tiangolo.com/">FastAPI: documentación oficial</a></li>
+<li><a href="https://docs.pydantic.dev/">Pydantic: validación de datos</a></li>
+<li><a href="https://docs.astral.sh/uv/">uv: gestor de paquetes rápido para Python</a></li>
+<li><a href="https://www.conventionalcommits.org/">Conventional Commits</a></li>
+<li><a href="https://mermaid.js.org/">Mermaid: diagramas en Markdown</a></li>
+<li><a href="https://docs.github.com/en/issues">GitHub Issues: documentación</a></li>
+</ul>
+<div class="ruta-tp ruta-tp--pie">
+<p><strong>Qué sigue:</strong> <a href="../m1_generacion/">M1 · Generación de señales</a> — Ruido rosa, sine sweep, grabación y los primeros endpoints.</p>
+<p><strong>Dónde buscar:</strong> <a href="../../ruta/">Ruta del TP</a> · <a href="../../rubrica/">Rúbrica</a> · <a href="../../../cronograma/">Cronograma (fechas)</a> · <a href="https://senalesysistemas.slack.com">Consultas en Slack</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Desarrollado y diseñado por <a href="https://github.com/maxiyommi">maxiyommi</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/maxiyommi/signal-systems" target="_blank" rel="noopener" title="Repositorio del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://senalesysistemas.slack.com" target="_blank" rel="noopener" title="Slack del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.tabs", "search.highlight", "search.suggest", "content.code.copy", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="../../../javascripts/presentacion.js"></script>
+      
+        <script src="../../../javascripts/pizarra.js"></script>
+      
+        <script src="../../../javascripts/agenda.js"></script>
+      
+        <script src="../../../javascripts/enlaces.js"></script>
+      
+        <script src="../../../javascripts/viaje.js"></script>
+      
+        <script src="../../../javascripts/arquitectura-esqueletos.js"></script>
+      
+        <script src="../../../javascripts/arquitectura.js"></script>
+      
+        <script src="../../../javascripts/servicios.js" type="module"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

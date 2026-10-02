@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delay — Visualización Interactiva</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #f8f9fb;
+    --surface: #ffffff;
+    --border:  #d0d7de;
+    --text:    #1c2128;
+    --muted:   #57606a;
+    --red:     #c0392b;
+    --green:   #1a7f37;
+    --blue:    #0553b1;
+    --amber:   #875500;
+    --canvas-bg: #f0f3f7;
+    --grid:    #dce1e8;
+    --radius:  6px;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+    font-size: 13px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 7px 16px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: .03em;
+    transition: opacity .15s;
+    white-space: nowrap;
+  }
+  .btn:hover { opacity: .85; }
+  .btn:active { transform: scale(.97); }
+
+  .ctrl { display: flex; flex-direction: column; gap: 3px; min-width: 130px; }
+  .ctrl label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+  .ctrl input[type=range] { accent-color: var(--blue); cursor: pointer; width: 100%; }
+  .ctrl .val { font-size: 13px; font-weight: 700; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-height: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  .panel-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+  }
+  canvas {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    border-radius: 3px;
+    background: var(--canvas-bg);
+    display: block;
+  }
+  .eq {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: sans-serif;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <button class="btn" id="btn-impulse">▶ Impulso x[n]</button>
+
+  <div class="ctrl">
+    <label>Retardo D [muestras]</label>
+    <input type="range" id="delay" min="10" max="150" step="1" value="60">
+    <div class="val" style="color:var(--green)">D = <span id="dv">60</span></div>
+  </div>
+
+  <div class="ctrl">
+    <label>Ganancia g</label>
+    <input type="range" id="gain" min="0" max="0.95" step="0.05" value="0.70">
+    <div class="val" style="color:var(--amber)">g = <span id="gv">0.70</span></div>
+  </div>
+
+  <div class="eq">
+    <span style="color:var(--blue)">y[n]</span> = 
+    <span style="color:var(--red)">x[n]</span> + 
+    <span style="color:var(--amber)">g</span> · 
+    <span style="color:var(--blue)">y</span>[n −
+    <span style="color:var(--green)">D</span>]
+  </div>
+</div>
+
+<div class="panel" style="border-left: 3px solid var(--red);">
+  <div class="panel-title" style="color:var(--red)">x[n] — Entrada</div>
+  <canvas id="cv-in"></canvas>
+</div>
+
+<div class="panel" style="border-left: 3px solid var(--green);">
+  <div class="panel-title" style="color:var(--green)">y[n − D] — Retroalimentación retardada</div>
+  <canvas id="cv-del"></canvas>
+</div>
+
+<div class="panel" style="border-left: 3px solid var(--blue);">
+  <div class="panel-title" style="color:var(--blue)">y[n] — Salida (ecos decayentes)</div>
+  <canvas id="cv-out"></canvas>
+</div>
+
+<script>
+const MAX_D = 200;
+const HIST  = 240;
+
+let buffer   = new Float32Array(MAX_D);
+let writePtr = 0;
+let histIn   = new Float32Array(HIST);
+let histDel  = new Float32Array(HIST);
+let histOut  = new Float32Array(HIST);
+let pending  = false;
+
+const slD = document.getElementById('delay');
+const slG = document.getElementById('gain');
+const dvEl = document.getElementById('dv');
+const gvEl = document.getElementById('gv');
+
+slD.addEventListener('input', () => dvEl.textContent = slD.value);
+slG.addEventListener('input', () => gvEl.textContent = parseFloat(slG.value).toFixed(2));
+document.getElementById('btn-impulse').addEventListener('click', () => pending = true);
+
+const cvIn  = document.getElementById('cv-in');
+const cvDel = document.getElementById('cv-del');
+const cvOut = document.getElementById('cv-out');
+
+function drawStem(canvas, data, color) {
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  // grid lines
+  ctx.strokeStyle = '#dce1e8';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const y = i * H / 4;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  const baseY = H - 4;
+  const step  = W / data.length;
+
+  ctx.strokeStyle = '#c8d0da';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, baseY); ctx.lineTo(W, baseY); ctx.stroke();
+
+  ctx.strokeStyle = color;
+  ctx.fillStyle   = color;
+  ctx.lineWidth   = 1.5;
+
+  for (let i = 0; i < data.length; i++) {
+    const v = data[i];
+    if (Math.abs(v) < 0.003) continue;
+    const x = i * step + step / 2;
+    const y = baseY - v * (H - 10);
+    ctx.beginPath(); ctx.moveTo(x, baseY); ctx.lineTo(x, y); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, 2, 0, 2 * Math.PI); ctx.fill();
+  }
+}
+
+function resizeCanvases() {
+  [cvIn, cvDel, cvOut].forEach(cv => {
+    cv.width  = cv.offsetWidth  || 600;
+    cv.height = cv.offsetHeight || 80;
+  });
+}
+
+function tick() {
+  const D = parseInt(slD.value);
+  const g = parseFloat(slG.value);
+
+  let xn = 0;
+  if (pending) { xn = 1.0; pending = false; }
+
+  const readPtr  = (writePtr - D + MAX_D) % MAX_D;
+  const yDelayed = buffer[readPtr];
+  const yn       = xn + g * yDelayed;
+
+  buffer[writePtr] = yn;
+  writePtr = (writePtr + 1) % MAX_D;
+
+  histIn.copyWithin(0, 1);  histIn[HIST - 1]  = xn;
+  histDel.copyWithin(0, 1); histDel[HIST - 1] = yDelayed;
+  histOut.copyWithin(0, 1); histOut[HIST - 1]  = yn;
+
+  for (let i = 0; i < MAX_D; i++) buffer[i] *= 0.995;
+
+  drawStem(cvIn,  histIn,  '#c0392b');
+  drawStem(cvDel, histDel, '#1a7f37');
+  drawStem(cvOut, histOut, '#0553b1');
+
+  requestAnimationFrame(tick);
+}
+
+const ro = new ResizeObserver(() => resizeCanvases());
+[cvIn, cvDel, cvOut].forEach(cv => ro.observe(cv));
+resizeCanvases();
+tick();
+</script>
+</body>
+</html>

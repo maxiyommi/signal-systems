@@ -1,0 +1,2785 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Material práctico de Señales y Sistemas — Ingeniería de Sonido — UNTREF">
+      
+      
+      
+        <link rel="canonical" href="https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m3_producto_final/">
+      
+      
+        <link rel="prev" href="../m2_procesamiento/">
+      
+      
+        <link rel="next" href="../../rubrica/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../LogoPractica.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>M3 · Producto final - Señales y Sistemas — UNTREF</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/presentacion.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#m3-producto-final" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-header__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Señales y Sistemas — UNTREF
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              M3 · Producto final
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../clases/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Clases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../ruta/" class="md-tabs__link">
+          
+  
+  
+  Trabajo Práctico
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guias/setup_entorno/" class="md-tabs__link">
+          
+  
+  
+  Guías
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../extras/" class="md-tabs__link">
+          
+  
+  
+  Extras
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../reglas_slack/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reglas Slack
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-nav__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    Señales y Sistemas — UNTREF
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../clases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trabajo Práctico
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Trabajo Práctico
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ruta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ruta del TP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../marco_conceptual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Marco conceptual
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · Consigna
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Milestones
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Milestones
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m0_arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M0 · El plano (arquitectura)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m1_generacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M1 · Generación de señales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m2_procesamiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M2 · Procesamiento de la RI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M3 · Producto final
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M3 · Producto final
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#en-el-plano-de-la-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        En el plano de la API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-cambia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué cambia
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Qué cambia">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#de-funciones-a-producto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        De funciones a producto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tres-capas-un-flujo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tres capas. Un flujo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conceptos-y-figuras" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conceptos y figuras
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conceptos y figuras">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcion-01-de-la-ri-al-decaimiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Función 01 · de la RI al decaimiento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dos-miradas-a-la-misma-curva" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dos miradas a la misma curva
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tres-tramos-tres-parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tres tramos, tres parámetros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#el-eje-frecuencial-filtrado-por-bandas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El eje frecuencial · filtrado por bandas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#el-output-final" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El output final
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validacion-lo-que-separa-un-tp-de-un-producto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validación · lo que separa un TP de un producto
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#funciones-a-implementar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funciones a implementar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Funciones a implementar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-apply_smoothingsignal-fs-method-window_ms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. apply_smoothing(signal, fs, method, window_ms)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-apply_schroeder_integralir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. apply_schroeder_integral(ir)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-linear_regressionx-y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. linear_regression(x, y)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-calculate_parameters_from_irir-fs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. calculate_parameters_from_ir(ir, fs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. calculate_parameters_from_ir(ir, fs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-edt-early-decay-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        a) EDT (Early Decay Time)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-t_10-t_20-t_30-tiempos-de-reverberacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        b) \(T_{10}\), \(T_{20}\), \(T_{30}\) (Tiempos de reverberación)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-t_60-tiempo-de-reverberacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        c) \(T_{60}\) (Tiempo de reverberación)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-d_50-definicion-deutlichkeit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        d) \(D_{50}\) (Definición / Deutlichkeit)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-c_80-claridad-clarity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        e) \(C_{80}\) (Claridad / Clarity)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-api-rest-completar-la-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. API REST - Completar la API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#funcion-extra-opcional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Función extra (opcional)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Función extra (opcional)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply_lundebyir-fs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        apply_lundeby(ir, fs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tests-requeridos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests requeridos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tests requeridos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-1-suavizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test 1: Suavizado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-2-integral-de-schroeder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test 2: Integral de Schroeder
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-3-regresion-lineal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test 3: Regresión lineal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-4-parametros-acusticos-con-ri-sintetizada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test 4: Parámetros acústicos con RI sintetizada
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-5-api-endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test 5: API endpoints
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validacion-final" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validación final
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validación final">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparacion-con-software-comercial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparación con software comercial
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validacion-y-resultados-en-el-readme" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validación y resultados en el README
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#calidad-de-codigo-requisitos-acumulativos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calidad de código (requisitos acumulativos)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#guia-de-entrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guía de entrega
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Guía de entrega">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#la-demo-en-vivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La demo en vivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tres-graficas-obligatorias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tres gráficas obligatorias
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lo-que-tiene-que-estar-el-18-de-noviembre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lo que tiene que estar el 18 de noviembre
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errores-frecuentes-de-cohortes-anteriores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errores frecuentes de cohortes anteriores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#presentacion-oral-1811-20-minutos-5-de-preguntas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Presentación oral (18/11): 20 minutos + 5 de preguntas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recursos
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rubrica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rúbrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guías
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guías
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/setup_entorno/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup del Entorno
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/git_basico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Básico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/marimo_intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marimo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/quarto_informe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quarto (opcional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/ggwave/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ggwave — Datos por Audio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/recursos_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos de IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/intro_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción a la IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/efectos_audio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Efectos de Audio en Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reglas_slack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reglas Slack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="m3-producto-final">M3 · Producto final<a class="headerlink" href="#m3-producto-final" title="Permanent link">&para;</a></h1>
+<div class="ruta-tp">
+<p><strong>Ruta del TP · Paso 6 de 6: M3 · Producto final</strong> · <a href="../../ruta/">Ver la ruta completa</a></p>
+<ol class="ruta-tp__pasos">
+<li class="ruta-tp__paso hecho"><span>1</span>Marco</li>
+<li class="ruta-tp__paso hecho"><span>2</span>Consigna</li>
+<li class="ruta-tp__paso hecho"><span>3</span>M0</li>
+<li class="ruta-tp__paso hecho"><span>4</span>M1</li>
+<li class="ruta-tp__paso hecho"><span>5</span>M2</li>
+<li class="ruta-tp__paso actual"><span>6</span>M3</li>
+</ol>
+<p><strong>En el hilo conductor:</strong> <strong>Del sistema al dato</strong> (envolvente, Schroeder y regresión) · <strong>Automatización</strong> (una API que mide y entrega datos).</p>
+<p><strong>Leer antes:</strong> <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_10">Clase 10 · envolvente, Schroeder y parámetros</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_11">Clase 11 · calidad y CI</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_12">Clase 12 · documentación</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_13">Clase 13 · API REST</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_14">Clase 14 · pulido</a></p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Fechas y evaluación</p>
+<ul>
+<li><strong>Presentación de la consigna:</strong> miércoles 28 de octubre 2026</li>
+<li><strong>Fecha de entrega:</strong> miércoles 18 de noviembre 2026, junto con la presentación oral (Demo Day)</li>
+<li><strong>Tag de versión:</strong> <code>v1.0.0</code></li>
+<li><strong>Evaluación:</strong> <strong>con nota</strong> — Nota del TP = 60% M3 + 40% presentación oral (ver <a href="../../rubrica/">rubrica</a>)</li>
+</ul>
+</div>
+<h2 id="objetivo">Objetivo<a class="headerlink" href="#objetivo" title="Permanent link">&para;</a></h2>
+<p>Completar el sistema RIR-API implementando las funciones de análisis acústico (suavizado de señal, integral de Schroeder, regresión lineal, cálculo de parámetros acústicos según ISO 3382) y <strong>completando la API REST</strong> que empezaron en M1: el endpoint que recibe una RI y devuelve los parámetros por banda, y dos de utilidades. Al finalizar este milestone, la API debe ser capaz de recibir una respuesta al impulso vía HTTP, procesarla y devolver todos los parámetros acústicos relevantes, con resultados validados contra software comercial.</p>
+<blockquote>
+<p><strong>Referencia</strong>: Explorar la <a href="https://rir-api.onrender.com/docs">documentación interactiva de la API de la cátedra</a> para entender la estructura de endpoints, schemas y respuestas esperadas.</p>
+</blockquote>
+<hr />
+<h2 id="en-el-plano-de-la-api">En el plano de la API<a class="headerlink" href="#en-el-plano-de-la-api" title="Permanent link">&para;</a></h2>
+<p>El mismo diagrama de M0, <strong>parado en M3</strong>: se encienden los services de análisis y los endpoints que faltaban (<code>acoustics.py</code> y <code>utils.py</code>, con sus schemas). Lo de M1 y M2 ya está sólido: la API existe desde hace dos milestones y en M3 se completa. Tocá <strong>Recorrido de un análisis</strong> para seguir un pedido de punta a punta: sube un WAV, pasa por cada capa y vuelve como JSON.</p>
+<div class="arq-marco" data-inicial="3">
+<div class="arq">
+<div class="arq-controles" role="group" aria-label="Qué mostrar"><span>Ver la API al terminar:</span><button type="button" data-ver="0">M0</button><button type="button" data-ver="1">M1</button><button type="button" data-ver="2">M2</button><button type="button" data-ver="3" aria-pressed="true">M3 (completa)</button><button type="button" data-ver="recorrido">Recorrido de un análisis</button></div>
+<p class="arq-leyenda" aria-live="polite"></p>
+<div class="arq-colores"><span data-m="0">M0 · El plano</span><span data-m="1">M1 · Generación</span><span data-m="2">M2 · Procesamiento</span><span data-m="3">M3 · Producto final</span></div>
+<div class="arq-capa arq-capa--cliente"><div class="arq-capa__nombre"><strong>Cliente</strong><span>quien usa la API</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">Swagger (/docs)</span><span class="arq-chip" data-m="0">frontend o script</span><span class="arq-chip" data-m="3" data-paso="1" data-lleva="WAV" data-explica="El cliente sube la respuesta al impulso grabada (un WAV) a POST /api/v1/acoustics/parameters.">sube un WAV</span><span class="arq-chip" data-m="3" data-paso="10" data-lleva="✓" data-sentido="vuelta" data-explica="El cliente recibe el JSON con EDT, T20, T30, D50 y C80 por banda, y los muestra.">recibe el JSON</span></div></div>
+<div class="arq-flecha"><span>↓ request HTTP (datos en JSON o un archivo) &nbsp;·&nbsp; ↑ respuesta en JSON</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Routers</strong><span>app/routers/ · reciben y responden</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">health.py</span><span class="arq-chip" data-m="0"><code>GET /health</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">audio_http.py</span><span class="arq-chip" data-m="0"><code>wav_response</code></span><span class="arq-chip" data-m="0"><code>uploaded_file</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>POST /signals/pink-noise</code></span><span class="arq-chip" data-m="1"><code>POST /signals/sine-sweep</code></span><span class="arq-chip" data-m="2"><code>POST /signals/synthetic-ir</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filters.py</span><span class="arq-chip" data-m="2"><code>POST /filters/single-band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="3"><code>POST /utils/smoothing</code></span><span class="arq-chip" data-m="3"><code>POST /utils/schroeder</code></span><span class="arq-chip" data-m="3"><code>POST /utils/lundeby</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustics.py</span><span class="arq-chip" data-m="3" data-paso="2" data-lleva="archivo" data-explica="El router de acoustics.py recibe el archivo; no calcula nada: llama a los services en orden."><code>POST /acoustics/parameters</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ validan los datos con</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Schemas</strong><span>app/schemas/ · validan qué entra y qué sale</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">responses.py</span><span class="arq-chip" data-m="0"><code>HealthResponse</code></span><span class="arq-chip" data-m="3" data-paso="9" data-lleva="JSON" data-sentido="vuelta" data-explica="El router arma la respuesta con el schema BandAnalysisResponse: Pydantic valida que el JSON tenga la forma prometida."><code>BandAnalysisResponse</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>PinkNoiseRequest</code></span><span class="arq-chip" data-m="1"><code>SineSweepRequest</code></span><span class="arq-chip" data-m="2"><code>SyntheticIRRequest</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="3"><code>SmoothingRequest</code></span><span class="arq-chip" data-m="3"><code>SchroederResponse</code></span><span class="arq-chip" data-m="3"><code>LundebyResponse</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ llaman a la función que hace el cálculo</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Services</strong><span>app/services/ · el procesamiento de señales</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">pink_noise.py</span><span class="arq-chip" data-m="1"><code>generate_pink_noise</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">sine_sweep.py</span><span class="arq-chip" data-m="1"><code>generate_sine_sweep_pair</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">audio_io.py</span><span class="arq-chip" data-m="1"><code>play_and_record</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signal_utils.py</span><span class="arq-chip" data-m="2" data-paso="3" data-lleva="np.ndarray" data-explica="load_audio lee el WAV y lo convierte en un arreglo de NumPy (mono, normalizado)."><code>load_audio</code></span><span class="arq-chip" data-m="2"><code>generate_synthetic_ir</code></span><span class="arq-chip" data-m="2"><code>get_impulse_response</code></span><span class="arq-chip" data-m="2"><code>logarithmic_scale_conversion</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filter.py</span><span class="arq-chip" data-m="2" data-paso="4" data-lleva="bandas" data-explica="filter_single_band separa la RI en bandas de octava; el router lo repite para cada banda."><code>filter_single_band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustic_parameters.py</span><span class="arq-chip" data-m="3" data-paso="5" data-lleva="envolventes" data-explica="apply_smoothing obtiene la envolvente de la RI de cada banda."><code>apply_smoothing</code></span><span class="arq-chip" data-m="3" data-paso="6" data-lleva="curvas de caída" data-explica="apply_schroeder_integral calcula la curva de caída de cada banda."><code>apply_schroeder_integral</code></span><span class="arq-chip" data-m="3" data-paso="7" data-lleva="pendientes" data-explica="linear_regression ajusta la recta de la caída: de su pendiente salen EDT, T20 y T30."><code>linear_regression</code></span><span class="arq-chip" data-m="3" data-paso="8" data-lleva="dict" data-explica="calculate_parameters_from_ir junta todo y calcula también D50 y C80."><code>calculate_parameters_from_ir</code></span><span class="arq-chip" data-m="3"><code>apply_lundeby</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ usan</span></div>
+<div class="arq-capa arq-capa--libs"><div class="arq-capa__nombre"><strong>Librerías</strong><span>lo que usa cada capa</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">FastAPI</span><span class="arq-chip" data-m="0">Pydantic</span><span class="arq-chip" data-m="1">NumPy</span><span class="arq-chip" data-m="1">SciPy</span><span class="arq-chip" data-m="1">sounddevice</span><span class="arq-chip" data-m="1">soundfile</span></div></div>
+<ol class="arq-pasos" hidden></ol>
+</div>
+
+</div>
+
+<hr />
+<h2 id="que-cambia">Qué cambia<a class="headerlink" href="#que-cambia" title="Permanent link">&para;</a></h2>
+<h3 id="de-funciones-a-producto">De funciones a producto<a class="headerlink" href="#de-funciones-a-producto" title="Permanent link">&para;</a></h3>
+<p>Hasta M2 construyeron los services y una API chica que ya genera señales, sintetiza RIs y filtra un WAV subido. En M3 la API responde <strong>la pregunta de la medición</strong>: le suben una RI y devuelve sus parámetros acústicos por banda. Eso la convierte en un <em>producto</em>: un servicio web que cualquiera puede usar por HTTP, con resultados validados contra software comercial.</p>
+<p>M3 son cuatro cosas encadenadas:</p>
+<ul>
+<li><strong>Análisis acústico</strong> — las funciones que faltan para calcular T30/T20/EDT por banda</li>
+<li><strong>API REST</strong> — completarla: el endpoint de parámetros y los de utilidades, con errores claros y la documentación de <code>/docs</code></li>
+<li><strong>Validación</strong> — comparar contra REW/Aurora sobre RIs reales</li>
+<li><strong>Comunicación</strong> — validación en el README + demo en vivo y oral</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">El objetivo, en una frase</p>
+<p>Una API que <strong>recibe una respuesta al impulso vía HTTP, la procesa y devuelve todos los parámetros acústicos relevantes</strong>, con resultados que coinciden con los de un software comercial de referencia.</p>
+<p>Su propia versión de <code>rir-api.onrender.com</code> — la misma API de referencia de la cátedra que vienen comparando desde M0.</p>
+</div>
+<h3 id="tres-capas-un-flujo">Tres capas. Un flujo<a class="headerlink" href="#tres-capas-un-flujo" title="Permanent link">&para;</a></h3>
+<p>FastAPI organiza el código en tres capas que ya vienen en el template:</p>
+<div class="admonition note">
+<p class="admonition-title">routers/ → services/ → schemas/</p>
+<p><strong>routers</strong> reciben el request HTTP y validan · <strong>services</strong> es el DSP puro que ya escribieron (M1+M2) · <strong>schemas</strong> son los modelos Pydantic de entrada/salida.</p>
+</div>
+<p>La clave de M3: <strong>no reescriben el DSP</strong>. Envuelven lo que ya tienen. Un router llama a un service y serializa el resultado con un schema.</p>
+<div class="admonition note">
+<p class="admonition-title">Endpoints mínimos: cada milestone expone lo que construye</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /health</code></td>
+<td>M0</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/signals/pink-noise</code> · <code>/signals/sine-sweep</code></td>
+<td>M1</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/signals/synthetic-ir</code> · <code>/filters/single-band</code></td>
+<td>M2</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/acoustics/parameters</code></td>
+<td><strong>M3</strong> · el principal</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/utils/schroeder</code> · <code>/utils/smoothing</code></td>
+<td><strong>M3</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Con validación Pydantic, errores HTTP (400/422/500), Swagger en <code>/docs</code> y ReDoc en <code>/redoc</code> generados automáticamente.</p>
+</div>
+<h2 id="conceptos-y-figuras">Conceptos y figuras<a class="headerlink" href="#conceptos-y-figuras" title="Permanent link">&para;</a></h2>
+<p>Lo que hay que entender antes de implementar, con los gráficos de la implementación de referencia de la cátedra.</p>
+<h3 id="funcion-01-de-la-ri-al-decaimiento">Función 01 · de la RI al decaimiento<a class="headerlink" href="#funcion-01-de-la-ri-al-decaimiento" title="Permanent link">&para;</a></h3>
+<figure class="figura-tp">
+<p><a href="../../img/m3/rir_vs_envolvente.png"><img alt="Respuesta al impulso cruda superpuesta con su envolvente de Hilbert" src="../../img/m3/rir_vs_envolvente.png" /></a></p>
+<figcaption>RI <strong>sintética</strong> (T60 conocido) · <code>apply_smoothing</code> con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
+</figure>
+<p>El primer paso del análisis es <strong>suavizar</strong> la RI para ver su decaimiento. La <strong>envolvente de Hilbert</strong> es preferible a la media móvil: no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal.</p>
+<div class="arithmatex">\[
+\text{env}(t) = \big|\, h(t) + j\,\mathcal{H}\{h(t)\} \,\big| \qquad \text{(módulo de la señal analítica)}
+\]</div>
+<p><strong>Tip de comunicación:</strong> en el README y en la demo, muestren la <em>envolvente / curva de decaimiento</em>, nunca el audio crudo. El waveform crudo "lleno" no comunica nada; la envolvente muestra exactamente cómo cae la energía.</p>
+<p><small>Especificación (m3_producto_final) §1 — <code>scipy.signal.hilbert</code> devuelve la señal analítica; su módulo es la envolvente.</small></p>
+<h3 id="dos-miradas-a-la-misma-curva">Dos miradas a la misma curva<a class="headerlink" href="#dos-miradas-a-la-misma-curva" title="Permanent link">&para;</a></h3>
+<figure class="figura-tp">
+<p><a href="../../img/m3/schroeder_completo.png"><img alt="Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito" src="../../img/m3/schroeder_completo.png" /></a></p>
+<figcaption>Completa · sin truncar — el decaimiento entra en el ruido (codo) y, al agotarse la energía, la curva cae a −∞. Por eso NO se integra hasta el final.</figcaption>
+</figure>
+<figure class="figura-tp">
+<p><a href="../../img/m3/schroeder_regresiones.png"><img alt="Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal" src="../../img/m3/schroeder_regresiones.png" /></a></p>
+<figcaption>Acotada · sobre el tramo lineal se ajusta la recta (mínimos cuadrados) y se extrapola a −60 dB → T20, T30, EDT.</figcaption>
+</figure>
+<p><strong>Integral de Schroeder</strong> · integración inversa de la energía (<code>np.cumsum(energia[::-1])[::-1]</code>), en dB normalizada a 0 dB. Sobre el tramo recto, <strong>regresión lineal</strong> → pendiente <span class="arithmatex">\(m\)</span> → <span class="arithmatex">\(T_{60} = -60/m\)</span> (con <span class="arithmatex">\(R^2 &gt; 0.99\)</span>).</p>
+<div class="arithmatex">\[
+E[n] = \sum_{k=n}^{N-1} h^2[k], \qquad L[n] = 10\,\log_{10}\!\frac{E[n]}{E[0]}, \qquad T_{60} = \frac{-60}{m}
+\]</div>
+<p><small>Nunca se integra hasta el final (primera figura: la curva se desploma a −∞). Se trunca en el cruce con el ruido —con el método de Lundeby (opcional) o donde la curva deja de ser lineal— y se mide sobre el tramo lineal (segunda figura). RI sintética con T60 conocido · Especificación (m3_producto_final) §2–3 · Schroeder 1965.</small></p>
+<h3 id="tres-tramos-tres-parametros">Tres tramos, tres parámetros<a class="headerlink" href="#tres-tramos-tres-parametros" title="Permanent link">&para;</a></h3>
+<p>Cada parámetro es una regresión sobre un tramo distinto de la curva de Schroeder. Todos se extrapolan a −60 dB.</p>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Tramo de la curva</th>
+<th>Qué mide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EDT</strong> (Early Decay Time)</td>
+<td>0 a −10 dB</td>
+<td>Percepción <em>subjetiva</em> de la reverberación. Sensible a las primeras reflexiones.</td>
+</tr>
+<tr>
+<td><strong>T10</strong></td>
+<td>−5 a −15 dB</td>
+<td>Tiempo de reverberación con muy poco rango dinámico.</td>
+</tr>
+<tr>
+<td><strong>T20</strong></td>
+<td>−5 a −25 dB</td>
+<td>Tiempo de reverberación con menos rango dinámico requerido. Útil con SNR limitado.</td>
+</tr>
+<tr>
+<td><strong>T30</strong></td>
+<td>−5 a −35 dB</td>
+<td><strong>El estándar.</strong> Preferido cuando SNR &gt; 45 dB. Es el que se reporta como T60.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>En ningún caso</strong> se mide directamente un decaimiento de 60 dB — no hay rango dinámico para eso en una sala real. Siempre se mide un tramo corto y se <strong>extrapola</strong> con la pendiente. Todo se calcula <strong>por banda de octava</strong>.</p>
+</blockquote>
+<h3 id="el-eje-frecuencial-filtrado-por-bandas">El eje frecuencial · filtrado por bandas<a class="headerlink" href="#el-eje-frecuencial-filtrado-por-bandas" title="Permanent link">&para;</a></h3>
+<figure class="figura-tp">
+<p><a href="../../img/m3/filtros_octava.png"><img alt="Respuestá en frecuencia del banco de filtros de octava IEC 61260" src="../../img/m3/filtros_octava.png" /></a></p>
+<figcaption>Banco de filtros Butterworth de octava · IEC 61260 · cada banda cruza a −3 dB en sus flancos</figcaption>
+</figure>
+<p>Los parámetros acústicos se calculan <strong>banda por banda</strong>: primero se filtra la RI en cada octava (IEC 61260), y sobre cada banda filtrada se corre el pipeline Schroeder → regresión. Esto ya lo tienen de M2.</p>
+<p><strong>Detalle crítico que se arrastra a M3:</strong> usen <code>sosfiltfilt</code> (fase cero, forward + backward), nunca <code>lfilter</code>. El retardo de grupo de un filtro causal desplaza el inicio del decaimiento y les infla el T60 en graves un 5–15%.</p>
+<p><small>Clase 9 · m3 reutiliza <code>filter_single_band</code> de M2 · frecuencias centrales IEC 61260 (125 Hz a 4 kHz para la tabla de validación).</small></p>
+<h3 id="el-output-final">El output final<a class="headerlink" href="#el-output-final" title="Permanent link">&para;</a></h3>
+<figure class="figura-tp">
+<p><a href="../../img/m3/parametros_por_banda.png"><img alt="EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte" src="../../img/m3/parametros_por_banda.png" /></a></p>
+<figcaption>EDT · T20 · T30 por banda (125 Hz – 4 kHz) · <strong>RI real</strong> medida en la Usina del Arte (sala sinfónica, Buenos Aires)</figcaption>
+</figure>
+<p>Este es el <strong>producto final del análisis</strong>: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve <code>calculate_parameters_from_ir</code> y lo que su API expone en <code>/api/v1/acoustics/parameters</code>.</p>
+<p>Acá se ve una <strong>sala real</strong>: la Usina del Arte, con T30 ≈ 2 s y la forma de <em>campana</em> típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de las figuras anteriores (donde <code>EDT ≈ T20 ≈ T30</code>), acá los parámetros <strong>se separan</strong>: cuando <code>EDT</code> es menor que <code>T30</code> domina la energía temprana (cerca de la fuente o con reflexiones tempranas fuertes); cuando es mayor, la energía temprana es débil (lejos de la fuente o con volúmenes acoplados). Las diferencias entre bandas son información acústica real de la sala.</p>
+<p><small>ISO 3382 · el mismo gráfico que van a ver en el frontend de cátedra cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</small></p>
+<h3 id="validacion-lo-que-separa-un-tp-de-un-producto">Validación · lo que separa un TP de un producto<a class="headerlink" href="#validacion-lo-que-separa-un-tp-de-un-producto" title="Permanent link">&para;</a></h3>
+<figure class="figura-tp">
+<p><a href="../../img/m3/validacion_comercial.png"><img alt="Comparación de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte" src="../../img/m3/validacion_comercial.png" /></a></p>
+<figcaption>T30 por banda · <strong>Usina del Arte</strong> (RI real) · RIR-API vs. software de referencia — el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
+</figure>
+<p>No alcanza con que los tests pasen. Hay que demostrar que los números <strong>coinciden con un software profesional</strong> sobre RIs reales.</p>
+<ul>
+<li>Al menos <strong>2 RIs</strong>: una sintética y una real (OpenAIR)</li>
+<li>Comparar contra <strong>REW, ARTA, Aurora o Dirac</strong></li>
+<li>Bandas 125, 250, 500, 1000, 2000, 4000 Hz</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Criterio de aceptación</p>
+<p>Los tiempos de reverberación (<strong>EDT, T20, T30</strong>) no deben diferir en más de <strong>±0,5 s</strong> respecto de la referencia, y <strong>C80</strong> no más de <strong>±1 dB</strong>.</p>
+<p>Si su pendiente da la mitad que la de REW, hay un bug — probablemente en el filtrado o en los límites de Schroeder.</p>
+</div>
+<blockquote>
+<p><strong>Grupos con validación sólida:</strong> lúzcanla en la presentación. Una tabla RIR-API vs REW banda por banda con diferencias &lt; 0.5 s es lo más convincente que pueden mostrar.</p>
+</blockquote>
+<h2 id="funciones-a-implementar">Funciones a implementar<a class="headerlink" href="#funciones-a-implementar" title="Permanent link">&para;</a></h2>
+<h3 id="1-apply_smoothingsignal-fs-method-window_ms">1. <code>apply_smoothing(signal, fs, method, window_ms)</code><a class="headerlink" href="#1-apply_smoothingsignal-fs-method-window_ms" title="Permanent link">&para;</a></h3>
+<p><strong>Firma sugerida:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">apply_smoothing</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"hilbert"</span><span class="p">,</span> <span class="n">window_ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="sd">    Suaviza una senal para reducir fluctuaciones del ruido.</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="sd">    ----------</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="sd">    signal : np.ndarray</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="sd">        Senal de entrada (tipicamente una RI filtrada por banda).</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="sd">    fs : int</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="sd">        Frecuencia de muestreo en Hz.</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="sd">    method : str</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="sd">        'hilbert' (por defecto): envolvente de Hilbert.</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="sd">        'moving_average': media movil de largo window_ms.</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="sd">    window_ms : float</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="sd">        Largo de la ventana de media movil en milisegundos (por defecto 10).</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="sd">        No se usa con 'hilbert'.</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="sd">    Returns</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="sd">    -------</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="sd">    np.ndarray</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="sd">        Envolvente de amplitud de la señal (misma unidad que `signal`).</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="sd">        Para llevarla a dB usar 20·log10.</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="sd">    """</span>
+</code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Equivalencia con la API de referencia</p>
+<p>Mismo nombre y firma que <code>apply_smoothing</code> de RIR-API. La de cátedra acepta más métodos (<code>'hilbert'</code>, <code>'rms'</code>, <code>'median'</code>, <code>'savgol'</code>); acá se piden dos: <code>'hilbert'</code> y <code>'moving_average'</code> (esta última equivale al <code>'rms'</code> de la referencia si la implementan como envolvente RMS).</p>
+</div>
+<p><strong>Fundamento matemático:</strong></p>
+<p><strong>Opción A - Media movil:</strong></p>
+<p>La media movil de una señal <span class="arithmatex">\(x[n]\)</span> con ventana de tamaño <span class="arithmatex">\(M\)</span> muestras (con <code>method='moving_average'</code>, <span class="arithmatex">\(M = \text{window\_ms} \cdot f_s / 1000\)</span>) es:</p>
+<div class="arithmatex">\[y[n] = \sqrt{\frac{1}{M} \sum_{k=0}^{M-1} x^2[n-k]}\]</div>
+<p>Se promedia la energía (<span class="arithmatex">\(x^2\)</span>) y se toma la raíz: así la salida es una envolvente de <strong>amplitud</strong> (valor eficaz local), comparable con la de Hilbert. Ambas opciones devuelven amplitud; en dB, usar <span class="arithmatex">\(20\log_{10}\)</span>.</p>
+<p><strong>Importante:</strong> <code>apply_smoothing</code> se usa para <strong>visualizar</strong> el decaimiento. La integral de Schroeder (función 2) se calcula sobre la <strong>RI</strong> filtrada por banda (<span class="arithmatex">\(h^2\)</span>), no sobre la envolvente.</p>
+<p><strong>Opción B - Envolvente de Hilbert (recomendada):</strong></p>
+<p>La envolvente de Hilbert proporciona la envolvente instantanea de la señal mediante la señal analítica:</p>
+<div class="arithmatex">\[z(t) = x(t) + j \hat{x}(t)\]</div>
+<p>donde <span class="arithmatex">\(\hat{x}(t)\)</span> es la transformada de Hilbert de <span class="arithmatex">\(x(t)\)</span>, definida como:</p>
+<div class="arithmatex">\[\hat{x}(t) = \frac{1}{\pi} \text{v.p.} \int_{-\infty}^{\infty} \frac{x(\tau)}{t - \tau} d\tau\]</div>
+<p>La envolvente instantanea es:</p>
+<div class="arithmatex">\[A(t) = |z(t)| = \sqrt{x^2(t) + \hat{x}^2(t)}\]</div>
+<p>En Python, se obtiene con <code>scipy.signal.hilbert</code>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">analitica</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">hilbert</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">envolvente</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">analitica</span><span class="p">)</span>
+</code></pre></div></p>
+<p>La envolvente de Hilbert es preferible porque no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal del decaimiento.</p>
+<hr />
+<h3 id="2-apply_schroeder_integralir">2. <code>apply_schroeder_integral(ir)</code><a class="headerlink" href="#2-apply_schroeder_integralir" title="Permanent link">&para;</a></h3>
+<p><strong>Firma sugerida:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">apply_schroeder_integral</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="sd">    Calcula la integral de Schroeder (integracion inversa).</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="sd">    ----------</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="sd">    ir : np.ndarray</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="sd">        Respuesta al impulso (o RI filtrada por banda).</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="sd">    Returns</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="sd">    -------</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="sd">    np.ndarray</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="sd">        Curva de decaimiento de Schroeder en dB, normalizada a 0 dB.</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="sd">    """</span>
+</code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Equivalencia con la API de referencia</p>
+<p>En RIR-API la firma es <code>apply_schroeder_integral(impulse, t, fs, lundeby=False)</code>: recibe también el vector de tiempo y puede truncar con Lundeby antes de integrar. Acá solo se pide la RI; el truncamiento es el extra opcional <code>apply_lundeby</code>.</p>
+</div>
+<p><strong>Fundamento matemático:</strong></p>
+<p>La integral de Schroeder representa la curva de decaimiento de la energía acústica en un recinto. Se obtiene mediante la integración inversa (de atrás hacia adelante) de la energía de la respuesta al impulso:</p>
+<div class="arithmatex">\[E(t) = \int_{t}^{\infty} h^2(\tau) \, d\tau\]</div>
+<p>En la práctica, con señales discretas de duración finita <span class="arithmatex">\(T\)</span>:</p>
+<div class="arithmatex">\[E[n] = \sum_{k=n}^{N-1} h^2[k]\]</div>
+<p>donde <span class="arithmatex">\(N\)</span> es el número total de muestras.</p>
+<p>La curva de decaimiento en dB, normalizada respecto a la energía total:</p>
+<div class="arithmatex">\[L(t) = 10 \log_{10}\left(\frac{E(t)}{E(0)}\right) = 10 \log_{10}\left(\frac{\sum_{k=n}^{N-1} h^2[k]}{\sum_{k=0}^{N-1} h^2[k]}\right)\]</div>
+<p><strong>Implementación eficiente:</strong></p>
+<p>La integral se calcula eficientemente usando <code>np.cumsum</code> sobre la señal invertida:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">energia</span> <span class="o">=</span> <span class="n">ir</span> <span class="o">**</span> <span class="mi">2</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">integral_inversa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">energia</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">integral_db</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">integral_inversa</span> <span class="o">/</span> <span class="n">integral_inversa</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+</code></pre></div>
+<p>donde <code>eps</code> es un valor pequeño para evitar logaritmo de cero.</p>
+<p><strong>Nota importante:</strong> La calidad de la integral de Schroeder depende fuertemente de que la RI tenga suficiente relación señal a ruido (SNR). Si el ruido de fondo es significativo, la curva de decaimiento se aplana al final en lugar de seguir decayendo. Esto afecta directamente el cálculo de <span class="arithmatex">\(T_{60}\)</span>.</p>
+<p><strong>Referencia:</strong> Schroeder, M. R. (1965). "New method of measuring reverberation time." <em>Journal of the Acoustical Society of América</em>, 37(3), 409-412.</p>
+<hr />
+<h3 id="3-linear_regressionx-y">3. <code>linear_regression(x, y)</code><a class="headerlink" href="#3-linear_regressionx-y" title="Permanent link">&para;</a></h3>
+<p><strong>Firma sugerida:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">linear_regression</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="sd">    Calcula la regresion lineal por minimos cuadrados.</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="sd">    ----------</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="sd">    x : np.ndarray</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="sd">        Variable independiente (tipicamente tiempo en segundos).</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="sd">    y : np.ndarray</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="sd">        Variable dependiente (tipicamente curva de Schroeder en dB).</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="sd">    Returns</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="sd">    -------</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="sd">    tuple[float, float, float]</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="sd">        (slope, intercept, r2)</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="sd">        pendiente en dB/s, ordenada al origen en dB, coeficiente de determinacion.</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="sd">    """</span>
+</code></pre></div></p>
+<div class="admonition warning">
+<p class="admonition-title">Diferencia con la API de referencia</p>
+<p><code>linear_regression</code> de RIR-API recibe los argumentos al revés, <code>(signal_values, x_values=None)</code>, y devuelve solo <code>(m, b)</code>. Acá el orden es el matemático <code>(x, y)</code> y se devuelve también <span class="arithmatex">\(R^2\)</span>: <code>slope, intercept, r2 = linear_regression(x, y)</code>. Si copian código de la referencia, ojo con el orden.</p>
+</div>
+<p><strong>Fundamento matemático:</strong></p>
+<p>La regresión lineal por mínimos cuadrados ajusta una recta <span class="arithmatex">\(y = mx + b\)</span> minimizando la suma de errores cuadráticos:</p>
+<div class="arithmatex">\[m = \frac{N \sum x_i y_i - \sum x_i \sum y_i}{N \sum x_i^2 - (\sum x_i)^2}\]</div>
+<div class="arithmatex">\[b = \frac{\sum y_i - m \sum x_i}{N}\]</div>
+<p>El coeficiente de determinación <span class="arithmatex">\(R^2\)</span> indica la calidad del ajuste:</p>
+<div class="arithmatex">\[R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}\]</div>
+<p>donde <span class="arithmatex">\(\hat{y}_i = m x_i + b\)</span> es el valor predicho e <span class="arithmatex">\(\bar{y}\)</span> es el promedio de <span class="arithmatex">\(y\)</span>.</p>
+<p><strong>Uso en el contexto acústico:</strong></p>
+<p>La pendiente <span class="arithmatex">\(m\)</span> de la recta ajustada a la curva de Schroeder se usa para calcular el tiempo de reverberación:</p>
+<div class="arithmatex">\[T_{60} = \frac{-60}{m}\]</div>
+<p>Un <span class="arithmatex">\(R^2 &gt; 0.99\)</span> indica un decaimiento bien definido. Valores menores sugieren problemas con la medición o la señal.</p>
+<p><strong>Implementación:</strong> Se puede usar <code>np.polyfit(x, y, 1)</code> o implementarlo manualmente con las formulas anteriores. Se recomienda la implementación manual para demostrar comprensión del método.</p>
+<hr />
+<h3 id="4-calculate_parameters_from_irir-fs">4. <code>calculate_parameters_from_ir(ir, fs)</code><a class="headerlink" href="#4-calculate_parameters_from_irir-fs" title="Permanent link">&para;</a></h3>
+<p><strong>Firma sugerida:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_parameters_from_ir</span><span class="p">(</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">ir</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="sd">    Calcula los parametros acusticos ISO 3382 por banda de octava.</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="sd">    ----------</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="sd">    ir : np.ndarray</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="sd">        Respuesta al impulso.</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="sd">    fs : int</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="sd">        Frecuencia de muestreo en Hz.</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="sd">    Returns</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="sd">    -------</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="sd">    dict[str, dict[float, float]]</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="sd">        Diccionario con parametros acusticos por banda.</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="sd">        Estructura: {parametro: {frecuencia_central: valor}}</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="sd">        Ejemplo: {'T30': {125: 1.5, 250: 1.3, ...}, 'EDT': {...}, ...}</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="sd">    """</span>
+</code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Equivalencia con la API de referencia</p>
+<p><code>calculate_parameters_from_ir</code> de RIR-API calcula los parámetros de <strong>una</strong> señal (ya filtrada; acepta <code>t_max</code> y <code>freq</code> opcionales) y el recorrido por bandas lo hace otra función. Acá la función recibe la RI de banda ancha y devuelve directamente <strong>todas las bandas</strong> de octava.</p>
+</div>
+<p><strong>Parámetros a calcular:</strong></p>
+<h4 id="a-edt-early-decay-time">a) EDT (Early Decay Time)<a class="headerlink" href="#a-edt-early-decay-time" title="Permanent link">&para;</a></h4>
+<p>El EDT se calcula a partir de la pendiente de la curva de Schroeder entre <strong>0 dB y -10 dB</strong>, extrapolada a -60 dB:</p>
+<div class="arithmatex">\[\text{EDT} = \frac{-60}{m_{0,-10}}\]</div>
+<p>donde <span class="arithmatex">\(m_{0,-10}\)</span> es la pendiente de la regresión lineal entre los puntos de 0 dB y -10 dB.</p>
+<p>El EDT es un indicador de la percepción subjetiva de la reverberación, más relevante para la experiencia auditiva que el <span class="arithmatex">\(T_{60}\)</span>.</p>
+<h4 id="b-t_10-t_20-t_30-tiempos-de-reverberacion">b) <span class="arithmatex">\(T_{10}\)</span>, <span class="arithmatex">\(T_{20}\)</span>, <span class="arithmatex">\(T_{30}\)</span> (Tiempos de reverberación)<a class="headerlink" href="#b-t_10-t_20-t_30-tiempos-de-reverberacion" title="Permanent link">&para;</a></h4>
+<p>Se calculan a partir de diferentes rangos de la curva de Schroeder:</p>
+<ul>
+<li>
+<p><strong><span class="arithmatex">\(T_{10}\)</span></strong>: pendiente entre <strong>-5 dB y -15 dB</strong>, extrapolada a -60 dB:
+  $<span class="arithmatex">\(T_{10} = \frac{-60}{m_{-5,-15}}\)</span>$</p>
+</li>
+<li>
+<p><strong><span class="arithmatex">\(T_{20}\)</span></strong>: pendiente entre <strong>-5 dB y -25 dB</strong>, extrapolada a -60 dB:
+  $<span class="arithmatex">\(T_{20} = \frac{-60}{m_{-5,-25}}\)</span>$</p>
+</li>
+<li>
+<p><strong><span class="arithmatex">\(T_{30}\)</span></strong>: pendiente entre <strong>-5 dB y -35 dB</strong>, extrapolada a -60 dB:
+  $<span class="arithmatex">\(T_{30} = \frac{-60}{m_{-5,-35}}\)</span>$</p>
+</li>
+</ul>
+<p>La norma ISO 3382 establece que <strong><span class="arithmatex">\(T_{30}\)</span> es el parámetro preferido</strong> cuando la relación señal a ruido lo permite (SNR &gt; 45 dB).</p>
+<h4 id="c-t_60-tiempo-de-reverberacion">c) <span class="arithmatex">\(T_{60}\)</span> (Tiempo de reverberación)<a class="headerlink" href="#c-t_60-tiempo-de-reverberacion" title="Permanent link">&para;</a></h4>
+<p>El <span class="arithmatex">\(T_{60}\)</span> se reporta típicamente como <span class="arithmatex">\(T_{30}\)</span> (extrapolado) o <span class="arithmatex">\(T_{20}\)</span> si la SNR es insuficiente para <span class="arithmatex">\(T_{30}\)</span>:</p>
+<div class="arithmatex">\[T_{60} \approx T_{30} \quad \text{(preferido)}$$
+$$T_{60} \approx T_{20} \quad \text{(alternativa)}\]</div>
+<p>En ningún caso se mide directamente el decaimiento de 60 dB, ya que requeriria una SNR impracticable.</p>
+<h4 id="d-d_50-definicion-deutlichkeit">d) <span class="arithmatex">\(D_{50}\)</span> (Definición / Deutlichkeit)<a class="headerlink" href="#d-d_50-definicion-deutlichkeit" title="Permanent link">&para;</a></h4>
+<p>La Definición <span class="arithmatex">\(D_{50}\)</span> es la relación entre la energía en los primeros 50 ms y la energía total:</p>
+<div class="arithmatex">\[D_{50} = \frac{\int_0^{50\text{ms}} h^2(t) \, dt}{\int_0^{\infty} h^2(t) \, dt} \times 100\%\]</div>
+<p>En forma discreta:</p>
+<div class="arithmatex">\[D_{50} = \frac{\sum_{n=0}^{N_{50}} h^2[n]}{\sum_{n=0}^{N-1} h^2[n]} \times 100\%\]</div>
+<p>donde <span class="arithmatex">\(N_{50} = \lfloor 0.050 \cdot f_s \rfloor\)</span> es el número de muestras correspondiente a 50 ms.</p>
+<p><span class="arithmatex">\(D_{50}\)</span> es un parámetro relacionado con la <strong>inteligibilidad de la palabra</strong>. Valores altos indican buena claridad del habla.</p>
+<h4 id="e-c_80-claridad-clarity">e) <span class="arithmatex">\(C_{80}\)</span> (Claridad / Clarity)<a class="headerlink" href="#e-c_80-claridad-clarity" title="Permanent link">&para;</a></h4>
+<p>La Claridad <span class="arithmatex">\(C_{80}\)</span> es la relación en dB entre la energía temprana (primeros 80 ms) y la energía tardia (después de 80 ms):</p>
+<div class="arithmatex">\[C_{80} = 10 \log_{10}\left(\frac{\int_0^{80\text{ms}} h^2(t) \, dt}{\int_{80\text{ms}}^{\infty} h^2(t) \, dt}\right) \text{ [dB]}\]</div>
+<p>En forma discreta:</p>
+<div class="arithmatex">\[C_{80} = 10 \log_{10}\left(\frac{\sum_{n=0}^{N_{80}} h^2[n]}{\sum_{n=N_{80}+1}^{N-1} h^2[n]}\right)\]</div>
+<p>donde <span class="arithmatex">\(N_{80} = \lfloor 0.080 \cdot f_s \rfloor\)</span>.</p>
+<p><span class="arithmatex">\(C_{80}\)</span> es un parámetro fundamental para la <strong>calidad musical</strong>. Valores típicos:
+- Música sinfónica: -2 a +2 dB
+- Música de camara: +2 a +5 dB
+- Palabra hablada: &gt; +5 dB</p>
+<hr />
+<h3 id="5-api-rest-completar-la-api">5. API REST - Completar la API<a class="headerlink" href="#5-api-rest-completar-la-api" title="Permanent link">&para;</a></h3>
+<p>En M1 y M2 la API ya expone la generación de señales y el filtrado. En M3 se agregan los endpoints que responden la pregunta de la medición, con la misma arquitectura de capas: <strong>routers</strong> (endpoints) → <strong>services</strong> (lógica) → <strong>schemas</strong> (validación con Pydantic).</p>
+<p><strong>Estructura de la API:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>app/
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>├── main.py                    # Punto de entrada FastAPI + CORS
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>├── settings.py                # Configuracion con pydantic-settings
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>├── routers/
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>│   ├── health.py              # GET /health                          (M0)
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>│   ├── audio_http.py          # wav_response, uploaded_file          (template)
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>│   ├── signals.py             # POST /api/v1/signals/*               (M1, M2)
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>│   ├── filters.py             # POST /api/v1/filters/single-band     (M2)
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>│   ├── acoustics.py           # POST /api/v1/acoustics/parameters    (M3)
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>│   └── utils.py               # POST /api/v1/utils/*                 (M3)
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>├── schemas/
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>│   ├── signals.py             # Pedidos de generacion                (M1, M2)
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>│   ├── utils.py               # Respuestas de schroeder y smoothing  (M3)
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>│   └── responses.py           # HealthResponse, BandAnalysisResponse (M3)
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>└── services/
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    ├── audio_io.py            # Reproducción y grabación (M1)
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    ├── pink_noise.py          # Generacion de ruido rosa (M1)
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    ├── sine_sweep.py          # Generacion de sine sweep (M1)
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    ├── filter.py              # Filtros de banda (M2)
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>    ├── signal_utils.py        # Utilidades de procesamiento (M2)
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>    └── acoustic_parameters.py # Calculo de parametros acusticos (M3)
+</code></pre></div>
+<p><strong>Endpoints mínimos requeridos:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Grupo</th>
+<th>Endpoint</th>
+<th>Método</th>
+<th>Descripción</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td><code>/health</code></td>
+<td>GET</td>
+<td>Health check</td>
+<td>M0</td>
+</tr>
+<tr>
+<td>Signals</td>
+<td><code>/api/v1/signals/pink-noise</code></td>
+<td>POST</td>
+<td>Genera ruido rosa (WAV)</td>
+<td>M1</td>
+</tr>
+<tr>
+<td>Signals</td>
+<td><code>/api/v1/signals/sine-sweep</code></td>
+<td>POST</td>
+<td>Genera el sweep o su filtro inverso (WAV)</td>
+<td>M1</td>
+</tr>
+<tr>
+<td>Signals</td>
+<td><code>/api/v1/signals/synthetic-ir</code></td>
+<td>POST</td>
+<td>Genera una RI sintética (WAV)</td>
+<td>M2</td>
+</tr>
+<tr>
+<td>Filters</td>
+<td><code>/api/v1/filters/single-band</code></td>
+<td>POST</td>
+<td>Filtra un WAV subido en una banda de octava</td>
+<td>M2</td>
+</tr>
+<tr>
+<td>Acoustics</td>
+<td><code>/api/v1/acoustics/parameters</code></td>
+<td>POST</td>
+<td>Recibe una RI y devuelve EDT, T20, T30, D50 y C80 por banda (JSON)</td>
+<td><strong>M3</strong></td>
+</tr>
+<tr>
+<td>Utils</td>
+<td><code>/api/v1/utils/schroeder</code></td>
+<td>POST</td>
+<td>Curva de caída de Schroeder de una RI (JSON)</td>
+<td><strong>M3</strong></td>
+</tr>
+<tr>
+<td>Utils</td>
+<td><code>/api/v1/utils/smoothing</code></td>
+<td>POST</td>
+<td>Envolvente de una señal (JSON)</td>
+<td><strong>M3</strong></td>
+</tr>
+</tbody>
+</table>
+<p>El endpoint principal, <code>/acoustics/parameters</code>, sigue el mismo patrón que <code>/filters/single-band</code> de M2: recibe el archivo con <code>uploaded_file</code>, lo lee con <code>load_audio</code> (422 si no es audio), filtra por bandas y llama a <code>calculate_parameters_from_ir</code> en cada una. Lo nuevo es la respuesta: un JSON validado con un schema (<code>BandAnalysisResponse</code>) en lugar de un WAV.</p>
+<div class="admonition note">
+<p class="admonition-title">Opcionales (suman en Funcionalidad)</p>
+<p>Los que tiene la API de referencia y no son mínimos: <code>/utils/lundeby</code>, <code>/utils/log-scale</code>, <code>/filters/band</code> (todas las bandas de una vez), <code>/filters/frequencies</code> y <code>/analysis/impulse-response</code>.</p>
+</div>
+<p><strong>Requisitos de la API:</strong></p>
+<ul>
+<li>Documentación automática vía Swagger UI (<code>/docs</code>) y ReDoc (<code>/redoc</code>).</li>
+<li>Validación de entrada con schemas Pydantic (tipos, rangos, formatos).</li>
+<li>Manejo de errores con códigos HTTP apropiados (400, 422, 500).</li>
+<li>Configuración vía variables de entorno (CORS, límites de archivo, etc.).</li>
+<li>Los endpoints que reciben audio lo aceptan vía <code>multipart/form-data</code> (como <code>/filters/single-band</code>).</li>
+<li>Los endpoints de generación devuelven archivos WAV descargables (como los de M1 y M2).</li>
+<li>Debe poder ejecutarse con <code>uvicorn app.main:app --reload</code>.</li>
+</ul>
+<hr />
+<h2 id="funcion-extra-opcional">Función extra (opcional)<a class="headerlink" href="#funcion-extra-opcional" title="Permanent link">&para;</a></h2>
+<p>No es obligatoria. Si la implementan, se valora dentro del criterio <strong>Funcionalidad</strong> de la rúbrica (resultados robustos frente al ruido de fondo).</p>
+<h3 id="apply_lundebyir-fs"><code>apply_lundeby(ir, fs)</code><a class="headerlink" href="#apply_lundebyir-fs" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">apply_lundeby</span><span class="p">(</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">ir</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="sd">    Determina el punto de truncamiento de la RI usando el metodo de Lundeby.</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="sd">    ----------</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="sd">    ir : np.ndarray</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="sd">        Respuesta al impulso.</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="sd">    fs : int</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="sd">        Frecuencia de muestreo en Hz.</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="sd">    Returns</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="sd">    -------</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="sd">    tuple[int, float]</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="sd">        (index, noise_level_db)</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="sd">        Indice de la muestra donde la RI se cruza con el ruido de fondo</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="sd">        y el nivel estimado de ruido en dB.</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="sd">    """</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Equivalencia con la API de referencia</p>
+<p>En RIR-API la firma es <code>apply_lundeby(impulse, max_tries=10, fs=44100)</code> y devuelve solo el <strong>tiempo</strong> de cruce en segundos. Acá <code>fs</code> va en segundo lugar y se devuelve el índice de muestra junto con el nivel de ruido.</p>
+</div>
+<p><strong>Fundamento matemático:</strong></p>
+<p>El método de Lundeby busca iterativamente el punto donde la curva de decaimiento de la RI se encuentra con el nivel de ruido de fondo. Esto permite definir límites de integración más precisos para la integral de Schroeder.</p>
+<p><strong>Algoritmo:</strong></p>
+<ol>
+<li>Calcular la curva de decaimiento promediada en intervalos (por ejemplo, intervalos de 10-30 ms).</li>
+<li>Estimar el nivel de ruido de fondo como el promedio de los últimos 10% de la señal.</li>
+<li>Encontrar el punto de cruce preliminar entre la curva de decaimiento y el nivel de ruido + 10 dB.</li>
+<li>Realizar una regresión lineal desde el inicio hasta el punto de cruce.</li>
+<li>Iterar: recalcular el nivel de ruido, el punto de cruce y la regresión hasta convergencia.</li>
+<li>El punto de truncamiento final es donde la recta de regresión cruza el nivel de ruido.</li>
+</ol>
+<p><strong>Uso:</strong> El punto de truncamiento se usa para corregir la integral de Schroeder. Las muestras después del punto de truncamiento se reemplazan por la extrapolación de la recta de regresión antes de integrar.</p>
+<p><strong>Referencia:</strong> Lundeby, A., et al. (1995). "Uncertainties of measurements in room acoustics." <em>Acústica</em>, 81(4), 344-355.</p>
+<hr />
+<h2 id="tests-requeridos">Tests requeridos<a class="headerlink" href="#tests-requeridos" title="Permanent link">&para;</a></h2>
+<h3 id="test-1-suavizado">Test 1: Suavizado<a class="headerlink" href="#test-1-suavizado" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_smoothing_hilbert_envelope</span><span class="p">():</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="sd">"""La envolvente debe ser no negativa y suave."""</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_smoothing_moving_average_length</span><span class="p">():</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">    </span><span class="sd">"""La salida debe tener la misma longitud que la entrada."""</span>
+</code></pre></div>
+<h3 id="test-2-integral-de-schroeder">Test 2: Integral de Schroeder<a class="headerlink" href="#test-2-integral-de-schroeder" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_schroeder_max_zero_db</span><span class="p">():</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="sd">"""El primer valor de la integral de Schroeder debe ser 0 dB."""</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_schroeder_decreasing</span><span class="p">():</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span><span class="sd">"""La integral de Schroeder debe ser monotonamente decreciente."""</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_schroeder_synthetic_ir</span><span class="p">():</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="sd">    Para una RI sintetizada con T60 conocido,</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="sd">    la curva de Schroeder debe ser aproximadamente lineal</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="sd">    con pendiente -60/T60 dB/s.</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="sd">    """</span>
+</code></pre></div>
+<h3 id="test-3-regresion-lineal">Test 3: Regresión lineal<a class="headerlink" href="#test-3-regresion-lineal" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_linear_regression_exact</span><span class="p">():</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="sd">"""Para datos perfectamente lineales, R^2 debe ser 1.0."""</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_linear_regression_slope</span><span class="p">():</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="sd">"""Verificar pendiente con datos conocidos."""</span>
+</code></pre></div>
+<h3 id="test-4-parametros-acusticos-con-ri-sintetizada">Test 4: Parámetros acústicos con RI sintetizada<a class="headerlink" href="#test-4-parametros-acusticos-con-ri-sintetizada" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_parameters_synthetic_ir</span><span class="p">():</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="sd">    Sintetizar una RI con T60 = 2.0 s, calcular parametros</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="sd">    y verificar que T30 esta dentro del +-10% del valor conocido.</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="sd">    """</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_d50_range</span><span class="p">():</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">    </span><span class="sd">"""D50 debe estar entre 0% y 100%."""</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_c80_consistency</span><span class="p">():</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span><span class="sd">"""Para una RI con mucha energia temprana, C80 debe ser positivo."""</span>
+</code></pre></div>
+<h3 id="test-5-api-endpoints">Test 5: API endpoints<a class="headerlink" href="#test-5-api-endpoints" title="Permanent link">&para;</a></h3>
+<p>Están en <code>tests/test_api.py</code>, uno por endpoint y marcados por milestone. En M3 sacan las marcas <code>@xfail_m3</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_acoustics_parameters_endpoint</span><span class="p">():</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span><span class="sd">"""Enviar una RI a /api/v1/acoustics/parameters devuelve los parametros por banda."""</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_utils_schroeder_endpoint</span><span class="p">():</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="sd">"""/api/v1/utils/schroeder devuelve la curva de caida."""</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_utils_smoothing_endpoint</span><span class="p">():</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">    </span><span class="sd">"""/api/v1/utils/smoothing devuelve la envolvente de la senal."""</span>
+</code></pre></div>
+<p>Los de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que seguir pasando: son la red que avisa si algo de M3 rompió lo anterior.</p>
+<p><strong>Nota:</strong> Usar <code>httpx.AsyncClient</code> o <code>fastapi.testclient.TestClient</code> para tests de API.</p>
+<hr />
+<h2 id="validacion-final">Validación final<a class="headerlink" href="#validacion-final" title="Permanent link">&para;</a></h2>
+<h3 id="comparacion-con-software-comercial">Comparación con software comercial<a class="headerlink" href="#comparacion-con-software-comercial" title="Permanent link">&para;</a></h3>
+<p>Los resultados de RIR-API deben compararse con al menos <strong>uno</strong> de los siguientes softwares de referencia:</p>
+<ul>
+<li><strong>REW (Room EQ Wizard)</strong> - gratuito</li>
+<li><strong>ARTA</strong> - versión de evaluación disponible</li>
+<li><strong>Aurora Plugins</strong> (para Audacity)</li>
+<li><strong>Dirac</strong> (Bruel &amp; Kjaer)</li>
+</ul>
+<p><strong>Criterio de aceptación:</strong></p>
+<blockquote>
+<p>Los resultados obtenidos no deben diferir en más de <strong>+-0.5 s</strong> de los arrojados por el software comercial para los tiempos de reverberación (<span class="arithmatex">\(T_{20}\)</span>, <span class="arithmatex">\(T_{30}\)</span>, EDT), y no más de <strong>+-1 dB</strong> para <span class="arithmatex">\(C_{80}\)</span>.</p>
+</blockquote>
+<p><strong>Tabla de validación requerida</strong> (incluir en el README y mostrar en la presentación oral):</p>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Banda (Hz)</th>
+<th>RIR-API</th>
+<th>Software ref.</th>
+<th>Diferencia</th>
+<th>Dentro de tolerancia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EDT</td>
+<td>125</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>EDT</td>
+<td>250</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>T30</td>
+<td>125</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>C80</td>
+<td>1000</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Completar la tabla para al menos las bandas de 125, 250, 500, 1000, 2000 y 4000 Hz, con al menos 2 RIs diferentes (una sintetizada y una real).</p>
+<hr />
+<h2 id="validacion-y-resultados-en-el-readme">Validación y resultados en el README<a class="headerlink" href="#validacion-y-resultados-en-el-readme" title="Permanent link">&para;</a></h2>
+<p>Este cuatrimestre <strong>no hay informe escrito</strong>. En su lugar, el README del repositorio debe incluir una sección <strong>Validación</strong> con:</p>
+<ul>
+<li>La tabla comparativa RIR-API vs. software de referencia (ver arriba).</li>
+<li>Al menos 3 gráficas: (1) curva de decaimiento, (2) comparación de filtros, (3) validación con software comercial.</li>
+<li>El diagrama de arquitectura actualizado.</li>
+</ul>
+<p>Estos mismos resultados se muestran en la presentación oral.</p>
+<hr />
+<h2 id="calidad-de-codigo-requisitos-acumulativos">Calidad de código (requisitos acumulativos)<a class="headerlink" href="#calidad-de-codigo-requisitos-acumulativos" title="Permanent link">&para;</a></h2>
+<p>Todos los requisitos de M1 y M2 aplican, más:</p>
+<ul>
+<li><strong>Cobertura de tests</strong>: objetivo 80 % en funciones de análisis y tests de API (es el nivel "Excelente" del criterio Testing de la rúbrica).</li>
+<li><strong>CI funcionando</strong>: GitHub Actions ejecutando tests y linting en cada push.</li>
+<li><strong>Documentación de API</strong>: Swagger UI y ReDoc generados automáticamente. Docstrings completos en funciones públicas.</li>
+<li><strong>README actualizado</strong> con instrucciones de ejecución de la API y ejemplos de uso con <code>curl</code>.</li>
+<li><strong>Tag <code>v1.0.0</code></strong> en la rama <code>main</code> al entregar.</li>
+<li><strong>Release en GitHub</strong> con changelog resumido.</li>
+</ul>
+<hr />
+<h2 id="guia-de-entrega">Guía de entrega<a class="headerlink" href="#guia-de-entrega" title="Permanent link">&para;</a></h2>
+<h3 id="la-demo-en-vivo">La demo en vivo<a class="headerlink" href="#la-demo-en-vivo" title="Permanent link">&para;</a></h3>
+<p>En el Demo Day, mostrar la API <em>corriendo</em> no es opcional. Es parte central de la nota de presentación.</p>
+<p>Guion sugerido de la demo (≈ 8 min):</p>
+<ol>
+<li>Levantar la API: <code>uvicorn app.main:app --reload</code></li>
+<li>Abrir <code>/docs</code> (Swagger) y recorrer los endpoints</li>
+<li>Subir un WAV real a <code>/acoustics/parameters</code></li>
+<li>Mostrar la respuesta JSON con los parámetros por banda</li>
+<li>Un <code>curl</code> desde la terminal para el mismo endpoint</li>
+</ol>
+<p>Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. Durante la demo no depuren código.</p>
+<div class="admonition note">
+<p class="admonition-title">La referencia de cátedra</p>
+<p>Úsenla como <strong>referencia de resultados</strong> (no como contrato de endpoints: los paths que pide esta especificación mandan). Compárense contra ella hasta el final:</p>
+<p><a href="https://rir-api.onrender.com/docs">rir-api.onrender.com/docs</a></p>
+<p>Suban la misma RI a su API y a la de cátedra. Si los números coinciden (dentro de las tolerancias), están listos.</p>
+</div>
+<h3 id="tres-graficas-obligatorias">Tres gráficas obligatorias<a class="headerlink" href="#tres-graficas-obligatorias" title="Permanent link">&para;</a></h3>
+<p>Son el corazón de la validación en el README y de la presentación oral — las mismas que vieron en esta página.</p>
+<figure class="figura-tp">
+<p><a href="../../img/m3/schroeder_regresiones.png"><img alt="Curva de decaimiento de Schroeder" src="../../img/m3/schroeder_regresiones.png" /></a></p>
+<figcaption>1 · Curva de decaimiento (Schroeder + regresiones)</figcaption>
+</figure>
+<figure class="figura-tp">
+<p><a href="../../img/m3/filtros_octava.png"><img alt="Comparación de filtros de octava" src="../../img/m3/filtros_octava.png" /></a></p>
+<figcaption>2 · Comparación de filtros por banda</figcaption>
+</figure>
+<figure class="figura-tp">
+<p><a href="../../img/m3/validacion_comercial.png"><img alt="Validación contra software comercial" src="../../img/m3/validacion_comercial.png" /></a></p>
+<figcaption>3 · Validación vs. software comercial</figcaption>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">También conviene incluir</p>
+<p>Diagrama de arquitectura del software · RI vs. envolvente · parámetros por banda · tabla comparativa RIR-API vs. referencia.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Cómo presentarlas</p>
+<p>Título y ejes rotulados <strong>con unidades</strong> · legibles al proyectar · para la RI mostrar <strong>envolvente/decaimiento</strong>, nunca audio crudo · una idea por figura.</p>
+</div>
+<h3 id="lo-que-tiene-que-estar-el-18-de-noviembre">Lo que tiene que estar el 18 de noviembre<a class="headerlink" href="#lo-que-tiene-que-estar-el-18-de-noviembre" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Las 4 funciones de análisis + los 3 endpoints de M3 (y los de M1 y M2 andando)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <code>pytest</code> en verde · cobertura objetivo 80 % en análisis y API</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> CI de GitHub Actions <strong>verde</strong> en cada push</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Swagger (<code>/docs</code>) y ReDoc (<code>/redoc</code>) funcionando</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> README con instrucciones de ejecución y ejemplos <code>curl</code></p>
+</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> README con la sección <strong>Validación</strong>: 3 gráficas y tabla comparativa</p>
+</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <code>AI_LOG.md</code> <strong>en la raíz</strong>, con entradas de M0 a M3</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Tag <code>v1.0.0</code> en <code>main</code>, apuntando al commit final real</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Release en GitHub con changelog resumido</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Demo lista: WAV de prueba + API levantada</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">CI que engaña</p>
+<p>si <code>ruff</code> corta antes de <code>pytest</code>, los tests nunca corren en CI aunque pasen local. Y si el workflow lintea la carpeta equivocada (<code>src/</code> en vez de <code>app/</code>), no valida nada. Revisen el YAML.</p>
+</div>
+<h3 id="errores-frecuentes-de-cohortes-anteriores">Errores frecuentes de cohortes anteriores<a class="headerlink" href="#errores-frecuentes-de-cohortes-anteriores" title="Permanent link">&para;</a></h3>
+<p>Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP — todos son de proceso.</p>
+<div class="admonition note">
+<p class="admonition-title">Git y entrega</p>
+<ul>
+<li>Los tres tags apuntando al mismo commit de README, no al código</li>
+<li>Sin tag, o <code>pyproject.toml</code> desactualizado</li>
+<li>Merge a <code>main</code> dejado para la hora de cierre</li>
+<li>Marcador de conflicto (<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>) commiteado → rompe todos los tests</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Código y entorno</p>
+<ul>
+<li><code>ModuleNotFoundError: app</code> en CI → falta <code>pythonpath = ["."]</code> en <code>pyproject.toml</code></li>
+<li>Cientos de warnings de <code>ruff</code> sin resolver → <code>ruff check --fix</code> + <code>ruff format</code></li>
+<li><code>NotImplementedError</code> olvidado arriba de la función real</li>
+<li>Archivos basura versionados (rutas locales, <code>output.txt</code>, scripts de prueba)</li>
+</ul>
+</div>
+<blockquote>
+<p><strong>La lección transversal:</strong> lo que rompe las entregas casi nunca es el procesamiento de señales — es Git, CI y prolijidad. Resérvenle tiempo en las semanas previas a la entrega.</p>
+</blockquote>
+<h3 id="presentacion-oral-1811-20-minutos-5-de-preguntas">Presentación oral (18/11): 20 minutos + 5 de preguntas<a class="headerlink" href="#presentacion-oral-1811-20-minutos-5-de-preguntas" title="Permanent link">&para;</a></h3>
+<p>Es <strong>virtual</strong>, en la sesión del miércoles 18/11, con <strong>demo en vivo obligatoria</strong> de la API (Swagger UI o requests). La evaluación de la oral (40 % de la nota del TP) está en la <a href="../../rubrica/">rúbrica</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Parte</th>
+<th>Tiempo</th>
+<th>Contenido</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Introducción</strong></td>
+<td>3 min</td>
+<td>contexto, equipo, arquitectura</td>
+</tr>
+<tr>
+<td><strong>Desarrollo técnico</strong></td>
+<td>8 min</td>
+<td>demo en vivo de la API</td>
+</tr>
+<tr>
+<td><strong>Resultados</strong></td>
+<td>6 min</td>
+<td>validación, precisión</td>
+</tr>
+<tr>
+<td><strong>Reflexiones</strong></td>
+<td>3 min</td>
+<td>dificultades, aprendizajes</td>
+</tr>
+</tbody>
+</table>
+<p>Material visual legible al proyectar. Gráficos grandes, con ejes y unidades.</p>
+<div class="admonition note">
+<p class="admonition-title">Pregunta obligatoria</p>
+<p>Cada grupo tiene que estar preparado para responder:</p>
+<blockquote>
+<p><strong>¿Qué fue lo más valioso que aprendieron desarrollando este proyecto y cómo lo aplicarían en su carrera profesional?</strong></p>
+</blockquote>
+<p>No es un trámite. Piénsenla en grupo antes del Demo Day.</p>
+</div>
+<h2 id="recursos">Recursos<a class="headerlink" href="#recursos" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://rir-api.onrender.com/docs">API de referencia de la cátedra (Swagger UI)</a></li>
+<li><a href="https://fastapi.tiangolo.com/">FastAPI: documentación oficial</a></li>
+<li><a href="https://docs.pydantic.dev/">Pydantic: validación de datos</a></li>
+<li><a href="https://fastapi.tiangolo.com/tutorial/testing/">FastAPI TestClient</a></li>
+<li><a href="https://www.iso.org/standard/40979.html">ISO 3382-1:2009 - Measurement of room acoustic parameters</a></li>
+<li><a href="https://asa.scitation.org/doi/10.1121/1.1909343">Schroeder, M. R. (1965) - New method of measuring reverberation time</a></li>
+<li>Lundeby, A., Vigran, T. E., Bietz, H. y Vorländer, M. (1995). "Uncertainties of measurements in room acoustics." <em>Acta Acústica united with Acústica</em>, 81(4), 344–355.</li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html">scipy.signal.hilbert</a></li>
+<li><a href="https://www.roomeqwizard.com/">REW - Room EQ Wizard</a></li>
+</ul>
+<div class="ruta-tp ruta-tp--pie">
+<p><strong>Fin del recorrido.</strong> Lo que queda es construir, validar y presentar.</p>
+<p><strong>Dónde buscar:</strong> <a href="../../ruta/">Ruta del TP</a> · <a href="../../rubrica/">Rúbrica</a> · <a href="../../../cronograma/">Cronograma (fechas)</a> · <a href="https://senalesysistemas.slack.com">Consultas en Slack</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Desarrollado y diseñado por <a href="https://github.com/maxiyommi">maxiyommi</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/maxiyommi/signal-systems" target="_blank" rel="noopener" title="Repositorio del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://senalesysistemas.slack.com" target="_blank" rel="noopener" title="Slack del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.tabs", "search.highlight", "search.suggest", "content.code.copy", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="../../../javascripts/presentacion.js"></script>
+      
+        <script src="../../../javascripts/pizarra.js"></script>
+      
+        <script src="../../../javascripts/agenda.js"></script>
+      
+        <script src="../../../javascripts/enlaces.js"></script>
+      
+        <script src="../../../javascripts/viaje.js"></script>
+      
+        <script src="../../../javascripts/arquitectura-esqueletos.js"></script>
+      
+        <script src="../../../javascripts/arquitectura.js"></script>
+      
+        <script src="../../../javascripts/servicios.js" type="module"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

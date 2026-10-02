@@ -1,0 +1,1608 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Material práctico de Señales y Sistemas — Ingeniería de Sonido — UNTREF">
+      
+      
+      
+        <link rel="canonical" href="https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m2_algebra_deconvolucion/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../LogoPractica.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>El álgebra de la deconvolución vía sweep + filtro inverso - Señales y Sistemas — UNTREF</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/presentacion.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#el-algebra-de-la-deconvolucion-via-sweep-filtro-inverso" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-header__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Señales y Sistemas — UNTREF
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              El álgebra de la deconvolución vía sweep + filtro inverso
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../clases/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Clases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../ruta/" class="md-tabs__link">
+          
+  
+  
+  Trabajo Práctico
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guias/setup_entorno/" class="md-tabs__link">
+          
+  
+  
+  Guías
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../extras/" class="md-tabs__link">
+          
+  
+  
+  Extras
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../reglas_slack/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reglas Slack
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-nav__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    Señales y Sistemas — UNTREF
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../clases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trabajo Práctico
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Trabajo Práctico
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ruta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ruta del TP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../marco_conceptual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Marco conceptual
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · Consigna
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Milestones
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Milestones
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m0_arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M0 · El plano (arquitectura)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m1_generacion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M1 · Generación de señales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m2_procesamiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M2 · Procesamiento de la RI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m3_producto_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M3 · Producto final
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rubrica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rúbrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guías
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guías
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/setup_entorno/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup del Entorno
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/git_basico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Básico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/marimo_intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marimo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/quarto_informe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quarto (opcional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/ggwave/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ggwave — Datos por Audio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/recursos_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos de IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/intro_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción a la IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/efectos_audio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Efectos de Audio en Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reglas_slack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reglas Slack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="el-algebra-de-la-deconvolucion-via-sweep-filtro-inverso">El álgebra de la deconvolución vía sweep + filtro inverso<a class="headerlink" href="#el-algebra-de-la-deconvolucion-via-sweep-filtro-inverso" title="Permanent link">&para;</a></h1>
+<p>Material complementario de la página del Milestone 2 (RIR-API · Procesamiento de la Respuesta al Impulso). Cubre el fundamento teórico de la función <code>get_impulse_response(recording, inverse_filter)</code> que pide la spec.</p>
+<hr />
+<h2 id="1-modelo-la-sala-como-sistema-lti">1. Modelo: la sala como sistema LTI<a class="headerlink" href="#1-modelo-la-sala-como-sistema-lti" title="Permanent link">&para;</a></h2>
+<p>Para extraer parámetros acústicos con sentido físico, asumimos que la sala se comporta como un <strong>sistema lineal e invariante en el tiempo</strong> (LTI):</p>
+<ul>
+<li><strong>Lineal</strong> — si reproducís dos señales sumadas, la respuesta es la suma de las respuestas individuales (principio de superposición).</li>
+<li><strong>Invariante en el tiempo</strong> — la respuesta no cambia con el momento en que medís (la sala no "se cansa" ni "aprende").</li>
+</ul>
+<p>Bajo esa asunción, la sala queda completamente caracterizada por <strong>una única función</strong>: su <strong>respuesta al impulso</strong> <span class="arithmatex">\(h(t)\)</span>.</p>
+<p><span class="arithmatex">\(h(t)\)</span> es lo que saldría del micrófono si en el instante <span class="arithmatex">\(t = 0\)</span> explotase un impulso ideal <span class="arithmatex">\(\delta(t)\)</span> en el parlante. Contiene <strong>toda</strong> la información acústica de la sala: las primeras reflexiones, la cola difusa, los modos resonantes, la absorción por banda.</p>
+<p>Para cualquier entrada <span class="arithmatex">\(x(t)\)</span> que reproduzcas, la salida en el micrófono es la <strong>convolución</strong>:</p>
+<div class="arithmatex">\[
+y(t) = (x * h)(t) = \int_{-\infty}^{\infty} x(\tau)\, h(t - \tau)\, d\tau
+\]</div>
+<h3 id="notas-de-validez">Notas de validez<a class="headerlink" href="#notas-de-validez" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Linealidad falla cerca del clip (parlante saturado).</li>
+<li>Invariancia falla si hay movimiento (puertas abriendo, gente caminando) o cambios de temperatura/humedad apreciables durante la medición.</li>
+<li>En la práctica: nivel moderado, sala vacía, medir rápido. La asunción LTI vale con error &lt; 1 dB en condiciones razonables.</li>
+</ul>
+<hr />
+<h2 id="2-el-sueno-medir-ht-directamente-con-un-impulso">2. El sueño: medir <span class="arithmatex">\(h(t)\)</span> directamente con un impulso<a class="headerlink" href="#2-el-sueno-medir-ht-directamente-con-un-impulso" title="Permanent link">&para;</a></h2>
+<p>Como la convolución de cualquier función con un delta es la función misma:</p>
+<div class="arithmatex">\[
+\delta * h = h
+\]</div>
+<p><strong>Si pudieras reproducir un impulso ideal <span class="arithmatex">\(\delta(t)\)</span> en la sala</strong>, lo que sale del micrófono sería literalmente la respuesta al impulso. Acto de magia: grabar y abrir el WAV es leer <span class="arithmatex">\(h(t)\)</span>.</p>
+<h3 id="por-que-no-funciona-en-la-practica">Por qué no funciona en la práctica<a class="headerlink" href="#por-que-no-funciona-en-la-practica" title="Permanent link">&para;</a></h3>
+<p><span class="arithmatex">\(\delta(t)\)</span> tiene <strong>amplitud infinita</strong> en <span class="arithmatex">\(t = 0\)</span> y duración cero. Energía total finita pero potencia instantánea infinita. Los parlantes reales:</p>
+<ul>
+<li>No pueden mover la membrana infinitamente rápido (límite de slew rate).</li>
+<li>Distorsionan groseramente cerca del nivel máximo.</li>
+<li>Tienen su propia respuestá en frecuencia (no plana, especialmente en graves).</li>
+</ul>
+<h3 id="lo-mas-cercano-la-palmada">Lo más cercano: la palmada<a class="headerlink" href="#lo-mas-cercano-la-palmada" title="Permanent link">&para;</a></h3>
+<p>Una palmada (o un globo reventando) tiene espectro casi plano y duración corta — aproxima un <span class="arithmatex">\(\delta\)</span>. Pero tiene tres problemas:</p>
+<ul>
+<li><strong>Poca energía total</strong> → SNR bajo. La cola de reverberación se pierde en el ruido de fondo.</li>
+<li><strong>No es repetible</strong>: cada palmada es distinta, no podés promediar.</li>
+<li><strong>Respuesta no plana en bajas frecuencias</strong> (las palmas tienen poca energía debajo de 100 Hz).</li>
+</ul>
+<p>Por eso para medición precisa nadie usa palmadas — se usan <strong>señales largas y deterministas</strong> que después se "comprimen" matemáticamente al impulso. El sine sweep es la más popular.</p>
+<hr />
+<h2 id="3-la-magia-sine-sweep-filtro-inverso-delta">3. La magia: sine sweep + filtro inverso ≈ delta<a class="headerlink" href="#3-la-magia-sine-sweep-filtro-inverso-delta" title="Permanent link">&para;</a></h2>
+<p>En M1 implementaron <code>generate_sine_sweep_pair(duration, f1, f2, fs)</code> que devuelve <strong>dos</strong> señales:</p>
+<ul>
+<li><span class="arithmatex">\(x(t)\)</span> — el sweep logarítmico que barre de <span class="arithmatex">\(f_1\)</span> a <span class="arithmatex">\(f_2\)</span>.</li>
+<li><span class="arithmatex">\(x_{\text{inv}}(t)\)</span> — su filtro inverso (el mismo sweep invertido temporalmente, con envolvente compensada).</li>
+</ul>
+<p>La propiedad que justifica todo este método (debida a <strong>Farina, 2000</strong>):</p>
+<div class="arithmatex">\[
+\boxed{\;x(t) * x_{\text{inv}}(t) \approx \delta(t)\;}
+\]</div>
+<h3 id="por-que-vale-intuicion">Por qué vale (intuición)<a class="headerlink" href="#por-que-vale-intuicion" title="Permanent link">&para;</a></h3>
+<p>Pensá el sweep como <strong>una colección de tonos puros</strong>, cada uno apareciendo en un instante distinto: la frecuencia <span class="arithmatex">\(f\)</span> pasa por el sweep cuando <span class="arithmatex">\(t = T \cdot \log(f/f_1) / \log(f_2/f_1)\)</span>.</p>
+<p>Cuando convolucionás con el filtro inverso (que es el sweep invertido + corregido en amplitud), <strong>cada frecuencia se "apila" en <span class="arithmatex">\(t = 0\)</span></strong>: el tono de <span class="arithmatex">\(f\)</span> Hz que aparecía en <span class="arithmatex">\(t_f\)</span> del sweep ahora cae exactamente en <span class="arithmatex">\(t = 0\)</span> del resultado, porque el inverso tiene esa misma frecuencia en el instante <span class="arithmatex">\(T - t_f\)</span>.</p>
+<p>Todas las frecuencias suman en fase en <span class="arithmatex">\(t = 0\)</span> → pico angosto y alto.</p>
+<h3 id="por-que-es-y-no">Por qué es "≈" y no "="<a class="headerlink" href="#por-que-es-y-no" title="Permanent link">&para;</a></h3>
+<p>Tres motivos:</p>
+<ol>
+<li><strong>Banda finita</strong>: el sweep solo cubre de <span class="arithmatex">\(f_1\)</span> a <span class="arithmatex">\(f_2\)</span> (típicamente 20 Hz–20 kHz). Frecuencias fuera de esa banda no se cancelan; aparecen como un pequeño "ruido" en el resultado.</li>
+<li><strong>Discretización</strong>: estamos trabajando con muestras a <span class="arithmatex">\(f_s\)</span>, no con señales continuas. La FFT tiene su grilla.</li>
+<li><strong>Compensación de amplitud imperfecta</strong>: el filtro inverso compensa la "doble pasada" del sweep log por las bajas frecuencias, pero la corrección numérica no es exacta.</li>
+</ol>
+<p>En la práctica el resultado es un impulso con SNR &gt; 90 dB respecto del piso, que para efectos de medición <em>se comporta como</em> <span class="arithmatex">\(\delta\)</span>.</p>
+<h3 id="por-que-farina-2000-propuso-esto">Por qué Farina (2000) propuso esto<a class="headerlink" href="#por-que-farina-2000-propuso-esto" title="Permanent link">&para;</a></h3>
+<p>Antes del sweep + filtro inverso, lo estándar era:</p>
+<ul>
+<li><strong>MLS (Maximum Length Sequence)</strong>: ruido pseudo-aleatorio con autocorrelación ≈ <span class="arithmatex">\(\delta\)</span>. Funciona pero es sensible a no linealidades (la distorsión se reparte en todo el dominio temporal y arruina la cola).</li>
+<li><strong>Ruido rosa</strong>: similar problema, peor crest factor.</li>
+</ul>
+<p>La gran ventaja del sweep logarítmico es que <strong>la distorsión armónica queda separada en el tiempo</strong> del impulso principal. El armónico <span class="arithmatex">\(n\)</span>-ésimo aparece a un tiempo <span class="arithmatex">\(\Delta t_n &lt; 0\)</span> (negativo) respecto del pico, así que podés ventanearlo y descartarlo. Resultado: medición <strong>lineal</strong> aunque tu cadena tenga distorsión.</p>
+<p><strong>Referencia</strong>: Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. <a href="https://www.angelofarina.it/Public/Papers/134-AES00.PDF">PDF</a></p>
+<hr />
+<h2 id="4-la-cadena-de-la-medicion-el-algebra-paso-a-paso">4. La cadena de la medición — el álgebra paso a paso<a class="headerlink" href="#4-la-cadena-de-la-medicion-el-algebra-paso-a-paso" title="Permanent link">&para;</a></h2>
+<h3 id="lo-que-tenes">Lo que tenés<a class="headerlink" href="#lo-que-tenes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Símbolo</th>
+<th>Qué es</th>
+<th>De dónde viene</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(x(t)\)</span></td>
+<td>sweep sintético</td>
+<td>lo generaste en M1, lo reproducís en la sala</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(x_{\text{inv}}(t)\)</span></td>
+<td>filtro inverso del sweep</td>
+<td>lo generaste en M1 junto al sweep, lo guardás</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(y(t)\)</span></td>
+<td>grabación del micrófono</td>
+<td>la captura el mic durante el sweep</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(h(t)\)</span></td>
+<td>respuesta al impulso de la sala</td>
+<td><strong>desconocida — es lo que querés extraer</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="paso-i-reproducir-y-grabar">Paso (i) — reproducir y grabar<a class="headerlink" href="#paso-i-reproducir-y-grabar" title="Permanent link">&para;</a></h3>
+<p>Al pasar el sweep <span class="arithmatex">\(x(t)\)</span> por la sala (sistema LTI), el micrófono capta la convolución:</p>
+<div class="arithmatex">\[
+y(t) = (x * h)(t)
+\]</div>
+<p><span class="arithmatex">\(y(t)\)</span> queda en el archivo WAV. <span class="arithmatex">\(h(t)\)</span> sigue oculta.</p>
+<h3 id="paso-ii-convolucionar-con-el-filtro-inverso">Paso (ii) — convolucionar con el filtro inverso<a class="headerlink" href="#paso-ii-convolucionar-con-el-filtro-inverso" title="Permanent link">&para;</a></h3>
+<p>Tomás la grabación y le aplicás el filtro inverso (que sí conocés):</p>
+<div class="arithmatex">\[
+y(t) * x_{\text{inv}}(t) = \bigl((x * h) * x_{\text{inv}}\bigr)(t)
+\]</div>
+<h3 id="paso-iii-usar-las-propiedades-de-la-convolucion">Paso (iii) — usar las propiedades de la convolución<a class="headerlink" href="#paso-iii-usar-las-propiedades-de-la-convolucion" title="Permanent link">&para;</a></h3>
+<p>La convolución es <strong>conmutativa</strong> y <strong>asociativa</strong> (lo demostramos en la sección 5). Reordenamos los paréntesis:</p>
+<div class="arithmatex">\[
+\bigl(x * h\bigr) * x_{\text{inv}} = h * \bigl(x * x_{\text{inv}}\bigr)
+\]</div>
+<h3 id="paso-iv-aplicar-la-propiedad-del-sweep-inverso">Paso (iv) — aplicar la propiedad del sweep + inverso<a class="headerlink" href="#paso-iv-aplicar-la-propiedad-del-sweep-inverso" title="Permanent link">&para;</a></h3>
+<p>De la sección 3 sabemos que <span class="arithmatex">\(x * x_{\text{inv}} \approx \delta\)</span>. Sustituimos:</p>
+<div class="arithmatex">\[
+h * \bigl(x * x_{\text{inv}}\bigr) \approx h * \delta = h
+\]</div>
+<h3 id="resultado">Resultado<a class="headerlink" href="#resultado" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[
+\boxed{\;y(t) * x_{\text{inv}}(t) \approx h(t)\;}
+\]</div>
+<p>Del archivo grabado y del filtro inverso (que tenías guardado), <strong>obtuviste <span class="arithmatex">\(h(t)\)</span> directamente</strong> por convolución. Eso es lo que implementa <code>get_impulse_response(recording, inverse_filter)</code>.</p>
+<hr />
+<h2 id="5-por-que-la-convolucion-es-conmutativa-y-asociativa">5. Por qué la convolución es conmutativa y asociativa<a class="headerlink" href="#5-por-que-la-convolucion-es-conmutativa-y-asociativa" title="Permanent link">&para;</a></h2>
+<p>Los tres pasos del razonamiento anterior dependen de que podamos reordenar paréntesis. Acá la justificación.</p>
+<h3 id="conmutativa">Conmutativa<a class="headerlink" href="#conmutativa" title="Permanent link">&para;</a></h3>
+<p>Por definición:</p>
+<div class="arithmatex">\[
+(a * b)(t) = \int_{-\infty}^{\infty} a(\tau)\, b(t - \tau)\, d\tau
+\]</div>
+<p>Cambio de variable <span class="arithmatex">\(\sigma = t - \tau\)</span> (entonces <span class="arithmatex">\(\tau = t - \sigma\)</span>, <span class="arithmatex">\(d\tau = -d\sigma\)</span>):</p>
+<div class="arithmatex">\[
+\int_{-\infty}^{\infty} a(t - \sigma)\, b(\sigma)\, d\sigma = (b * a)(t)
+\]</div>
+<p>→ <span class="arithmatex">\(a * b = b * a\)</span>. ✓</p>
+<h3 id="asociativa">Asociativa<a class="headerlink" href="#asociativa" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[
+\bigl((a * b) * c\bigr)(t) = \int (a * b)(\tau)\, c(t - \tau)\, d\tau = \int \int a(\sigma)\, b(\tau - \sigma)\, d\sigma\, c(t - \tau)\, d\tau
+\]</div>
+<p>Aplicando <strong>Fubini</strong> (intercambio de integrales, vale para funciones bien comportadas):</p>
+<div class="arithmatex">\[
+= \int a(\sigma) \int b(\tau - \sigma)\, c(t - \tau)\, d\tau\, d\sigma
+\]</div>
+<p>La integral interna, con cambio <span class="arithmatex">\(\rho = \tau - \sigma\)</span>, da <span class="arithmatex">\((b * c)(t - \sigma)\)</span>. Entonces:</p>
+<div class="arithmatex">\[
+= \int a(\sigma)\, (b * c)(t - \sigma)\, d\sigma = \bigl(a * (b * c)\bigr)(t)
+\]</div>
+<p>→ <span class="arithmatex">\((a * b) * c = a * (b * c)\)</span>. ✓</p>
+<h3 id="la-forma-facil-de-verlo-en-frecuencia">La forma "fácil" de verlo: en frecuencia<a class="headerlink" href="#la-forma-facil-de-verlo-en-frecuencia" title="Permanent link">&para;</a></h3>
+<p>Las propiedades de la convolución son obvias si pasás al <strong>dominio de Fourier</strong>, donde la convolución se transforma en producto:</p>
+<div class="arithmatex">\[
+\mathcal{F}\{a * b\}(f) = A(f) \cdot B(f)
+\]</div>
+<p>(Teorema de convolución.) Y la multiplicación de números complejos es trivialmente conmutativa y asociativa:</p>
+<div class="arithmatex">\[
+A \cdot B = B \cdot A, \qquad (A \cdot B) \cdot C = A \cdot (B \cdot C)
+\]</div>
+<p>Aplicando la inversa de Fourier a cualquiera de esas igualdades recuperás las propiedades en el tiempo.</p>
+<h3 id="aplicado-a-nuestra-cadena">Aplicado a nuestra cadena<a class="headerlink" href="#aplicado-a-nuestra-cadena" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[
+\mathcal{F}\{y * x_{\text{inv}}\}(f) = Y(f) \cdot X_{\text{inv}}(f) = X(f) \cdot H(f) \cdot X_{\text{inv}}(f) = H(f) \cdot \underbrace{X(f) \cdot X_{\text{inv}}(f)}_{\approx\, 1}
+\]</div>
+<p>Por la propiedad de Farina del sweep, <span class="arithmatex">\(X(f) \cdot X_{\text{inv}}(f) \approx 1\)</span> en toda la banda útil → <span class="arithmatex">\(\mathcal{F}\{y * x_{\text{inv}}\} \approx H(f)\)</span> → inversa de Fourier → <span class="arithmatex">\(\approx h(t)\)</span>.</p>
+<hr />
+<h2 id="6-implementacion-practica">6. Implementación práctica<a class="headerlink" href="#6-implementacion-practica" title="Permanent link">&para;</a></h2>
+<h3 id="esqueleto-del-codigo">Esqueleto del código<a class="headerlink" href="#esqueleto-del-codigo" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.signal</span><span class="w"> </span><span class="kn">import</span> <span class="n">fftconvolve</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_impulse_response</span><span class="p">(</span><span class="n">recording</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">inverse_filter</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="sd">"""Extrae la respuesta al impulso de la sala vía deconvolución con filtro inverso."""</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="c1"># Paso 1: convolucion full (devuelve N + M - 1 muestras)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">ir_full</span> <span class="o">=</span> <span class="n">fftconvolve</span><span class="p">(</span><span class="n">recording</span><span class="p">,</span> <span class="n">inverse_filter</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"full"</span><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="c1"># Paso 2: ubicar el pico (es donde "aterriza" el impulso recuperado)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">peak_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ir_full</span><span class="p">)))</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="c1"># Paso 3: recortar desde el pico, descartando la pre-respuesta</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">max_ir_duration</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># segundos, ajustar según el T60 esperado</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">fs</span> <span class="o">=</span> <span class="mi">44100</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">end</span> <span class="o">=</span> <span class="n">peak_idx</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_ir_duration</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">ir</span> <span class="o">=</span> <span class="n">ir_full</span><span class="p">[</span><span class="n">peak_idx</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="c1"># Paso 4: normalizar al pico</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">ir</span> <span class="o">=</span> <span class="n">ir</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ir</span><span class="p">))</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="k">return</span> <span class="n">ir</span>
+</code></pre></div>
+<h3 id="detalles-que-importan">Detalles que importan<a class="headerlink" href="#detalles-que-importan" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong><code>fftconvolve</code> y no <code>convolve</code></strong> — para señales largas (sweep de 3-5 s a 48 kHz), <code>fftconvolve</code> es órdenes de magnitud más rápido. <code>np.convolve</code> tarda minutos donde <code>fftconvolve</code> tarda milisegundos.</p>
+</li>
+<li>
+<p><strong><code>mode="full"</code></strong> — devuelve la convolución completa. La longitud es <span class="arithmatex">\(N + M - 1\)</span>, donde <span class="arithmatex">\(N\)</span> es la longitud de la grabación y <span class="arithmatex">\(M\)</span> la del filtro. La RI útil está en la mitad de ese arreglo, alrededor del pico.</p>
+</li>
+<li>
+<p><strong>Ubicar el pico con <code>argmax(abs(...))</code></strong> — el pico es donde el impulso recuperado tiene su máximo. Antes del pico hay "pre-eco" (componentes no causales del filtro inverso), que se descarta.</p>
+</li>
+<li>
+<p><strong>Recortar a la duración útil</strong> — la RI tiene una cola que decae exponencialmente. Recortar a 2-3 veces el T60 esperado deja todo lo útil y descarta el ruido de fondo.</p>
+</li>
+<li>
+<p><strong>Normalizar al final</strong> — <code>ir = ir / np.max(np.abs(ir))</code>. Imprescindible para que el output sea homogéneo entre mediciones.</p>
+</li>
+</ol>
+<h3 id="verificacion-con-la-propia-spec">Verificación con la propia spec<a class="headerlink" href="#verificacion-con-la-propia-spec" title="Permanent link">&para;</a></h3>
+<p>El test 3 de M2 (<code>test_impulse_response_peak</code>) usa esta cadena:</p>
+<ol>
+<li>Armar una RI conocida (en el test: sonido directo + cola exponencial filtrada; también sirve una generada con <code>generate_synthetic_ir()</code>).</li>
+<li>Generar el sweep + filtro inverso con M1.</li>
+<li>Convolucionar <code>sweep * RI_sintetica</code> → simular la "grabación".</li>
+<li>Llamar <code>get_impulse_response(recording, inverse_filter)</code>.</li>
+<li>Verificar correlación cruzada con la RI original &gt; 0.9.</li>
+</ol>
+<p>Si el álgebra está bien implementada, la correlación queda &gt; 0.95 fácil. Si está &lt; 0.9, hay bug — probablemente en la ubicación del pico o en el modo de convolución.</p>
+<hr />
+<h2 id="7-lecturas-recomendadas">7. Lecturas recomendadas<a class="headerlink" href="#7-lecturas-recomendadas" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p><strong>Farina, A. (2000).</strong> "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. <a href="https://www.angelofarina.it/Public/Papers/134-AES00.PDF">PDF</a> — el paper original que estableció este método.</p>
+</li>
+<li>
+<p><strong>Müller, S. &amp; Massarani, P. (2001).</strong> "Transfer-function measurement with sweeps." <em>Journal of the Audio Engineering Society</em>, 49(6). — generalización y discusión de tradeoffs vs MLS.</p>
+</li>
+<li>
+<p><strong>Stan, G.-B., Embrechts, J.-J. &amp; Archambeau, D. (2002).</strong> "Comparison of different impulse response measurement techniques." <em>Journal of the Audio Engineering Society</em>, 50(4). — comparación cuantitativa entre sweep, MLS y otros métodos.</p>
+</li>
+<li>
+<p><strong>ISO 3382-1:2009</strong> — Norma internacional para medición de parámetros acústicos de salas. Define cómo procesar la RI una vez recuperada (lo que vienen en M3).</p>
+</li>
+<li>
+<p><strong>Oppenheim, A. V., Schafer, R. W., &amp; Buck, J. R. (1999).</strong> <em>Discrete-Time Signal Processing</em>. Capítulos 2 y 3 — convolución, propiedades, dominio frecuencia. La referencia clásica de DSP.</p>
+</li>
+</ul>
+<hr />
+<p><strong>Última actualización:</strong> Junio 2026 · Material de cátedra · Señales y Sistemas (UNTREF)</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Desarrollado y diseñado por <a href="https://github.com/maxiyommi">maxiyommi</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/maxiyommi/signal-systems" target="_blank" rel="noopener" title="Repositorio del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://senalesysistemas.slack.com" target="_blank" rel="noopener" title="Slack del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.tabs", "search.highlight", "search.suggest", "content.code.copy", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="../../../javascripts/presentacion.js"></script>
+      
+        <script src="../../../javascripts/pizarra.js"></script>
+      
+        <script src="../../../javascripts/agenda.js"></script>
+      
+        <script src="../../../javascripts/enlaces.js"></script>
+      
+        <script src="../../../javascripts/viaje.js"></script>
+      
+        <script src="../../../javascripts/arquitectura-esqueletos.js"></script>
+      
+        <script src="../../../javascripts/arquitectura.js"></script>
+      
+        <script src="../../../javascripts/servicios.js" type="module"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

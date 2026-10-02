@@ -1,0 +1,2234 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Material práctico de Señales y Sistemas — Ingeniería de Sonido — UNTREF">
+      
+      
+      
+        <link rel="canonical" href="https://maxiyommi.github.io/signal-systems/trabajo_practico/especificacion/m1_generacion/">
+      
+      
+        <link rel="prev" href="../m0_arquitectura/">
+      
+      
+        <link rel="next" href="../m2_procesamiento/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../LogoPractica.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>M1 · Generación de señales - Señales y Sistemas — UNTREF</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/presentacion.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#m1-generacion-de-senales" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-header__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Señales y Sistemas — UNTREF
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              M1 · Generación de señales
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo claro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo claro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Cambiar a modo oscuro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Cambiar a modo oscuro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../clases/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Clases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../ruta/" class="md-tabs__link">
+          
+  
+  
+  Trabajo Práctico
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guias/setup_entorno/" class="md-tabs__link">
+          
+  
+  
+  Guías
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../extras/" class="md-tabs__link">
+          
+  
+  
+  Extras
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../reglas_slack/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Reglas Slack
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Señales y Sistemas — UNTREF" class="md-nav__button md-logo" aria-label="Señales y Sistemas — UNTREF" data-md-component="logo">
+      
+  <img src="../../../LogoPractica.png" alt="logo">
+
+    </a>
+    Señales y Sistemas — UNTREF
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/maxiyommi/signal-systems" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    maxiyommi/signal-systems
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../clases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trabajo Práctico
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Trabajo Práctico
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ruta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ruta del TP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../marco_conceptual/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 · Marco conceptual
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 · Consigna
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Milestones
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Milestones
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m0_arquitectura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M0 · El plano (arquitectura)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M1 · Generación de señales
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M1 · Generación de señales
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#objetivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objetivo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#en-el-plano-de-la-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        En el plano de la API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#del-plano-al-primer-calculo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Del plano al primer cálculo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#servicio-1-generate_pink_noiseduration-fs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Servicio 1 · generate_pink_noise(duration, fs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Servicio 1 · generate_pink_noise(duration, fs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-es" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué es
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probalo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Probalo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#el-codigo-archivo-por-archivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El código, archivo por archivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#servicio-2-generate_sine_sweep_pairduration-f1-f2-fs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Servicio 2 · generate_sine_sweep_pair(duration, f1, f2, fs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Servicio 2 · generate_sine_sweep_pair(duration, f1, f2, fs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-es-el-sine-sweep-logaritmico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué es: el sine sweep logarítmico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#que-es-el-filtro-inverso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué es: el filtro inverso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probalo_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Probalo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#el-codigo-archivo-por-archivo_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El código, archivo por archivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#servicio-3-play_and_recordsignal-fs-record_duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Servicio 3 · play_and_record(signal, fs, record_duration)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Servicio 3 · play_and_record(signal, fs, record_duration)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-es_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué es
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#el-codigo-archivo-por-archivo_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El código, archivo por archivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#los-endpoints-de-m1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Los endpoints de M1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validación
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#calidad-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Calidad de código
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#guia-de-entrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Guía de entrega
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Guía de entrega">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evidencia-en-el-repositorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evidencia en el repositorio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buenas-practicas-que-ya-vimos-funcionar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buenas prácticas que ya vimos funcionar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lo-que-mira-el-docente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lo que mira el docente
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checklist-de-entrega" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checklist de entrega
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recursos
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m2_procesamiento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M2 · Procesamiento de la RI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../m3_producto_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    M3 · Producto final
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rubrica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rúbrica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guías
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guías
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/setup_entorno/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup del Entorno
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/git_basico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Básico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/marimo_intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marimo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guias/quarto_informe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quarto (opcional)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extras
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extras
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Material Extra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/ggwave/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ggwave — Datos por Audio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/recursos_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Recursos de IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/intro_ia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introducción a la IA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../extras/efectos_audio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Efectos de Audio en Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reglas_slack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reglas Slack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="m1-generacion-de-senales">M1 · Generación de señales<a class="headerlink" href="#m1-generacion-de-senales" title="Permanent link">&para;</a></h1>
+<div class="ruta-tp">
+<p><strong>Ruta del TP · Paso 4 de 6: M1 · Generación de señales</strong> · <a href="../../ruta/">Ver la ruta completa</a></p>
+<ol class="ruta-tp__pasos">
+<li class="ruta-tp__paso hecho"><span>1</span>Marco</li>
+<li class="ruta-tp__paso hecho"><span>2</span>Consigna</li>
+<li class="ruta-tp__paso hecho"><span>3</span>M0</li>
+<li class="ruta-tp__paso actual"><span>4</span>M1</li>
+<li class="ruta-tp__paso"><span>5</span>M2</li>
+<li class="ruta-tp__paso"><span>6</span>M3</li>
+</ol>
+<p><strong>En el hilo conductor:</strong> <strong>Excitación</strong> (diseñar x(t): ruido rosa y sine sweep).</p>
+<p><strong>Leer antes:</strong> <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_04">Clase 4 · generación de señales con NumPy</a> · <a href="https://github.com/maxiyommi/signal-systems/tree/master/clases/clase_06">Clase 6 · audio digital, ruido y sweep</a></p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Fechas y evaluación</p>
+<ul>
+<li><strong>Presentación de la consigna:</strong> miércoles 14 de octubre 2026</li>
+<li><strong>Fecha de entrega:</strong> miércoles 28 de octubre 2026 (en clase)</li>
+<li><strong>Tag de versión:</strong> <code>v0.1.0</code></li>
+<li><strong>Evaluación:</strong> seguimiento, sin nota (el grupo muestra su avance y recibe feedback por Slack)</li>
+</ul>
+</div>
+<h2 id="objetivo">Objetivo<a class="headerlink" href="#objetivo" title="Permanent link">&para;</a></h2>
+<p>Implementar los <strong>servicios de generación</strong> de señales de excitación que necesita una medición acústica según ISO 3382, y el servicio que reproduce y graba en simultáneo, y <strong>exponer los dos primeros endpoints</strong> de la API. Al terminar este milestone, la API sabe generar ruido rosa y un sine sweep logarítmico con su filtro inverso, los entrega como WAV por HTTP, y el grupo puede adquirir audio en tiempo real.</p>
+<hr />
+<h2 id="en-el-plano-de-la-api">En el plano de la API<a class="headerlink" href="#en-el-plano-de-la-api" title="Permanent link">&para;</a></h2>
+<p>Es el mismo diagrama que dibujaron en M0, ahora <strong>parado en M1</strong>: al verlo se encienden los recuadros de este milestone. Esta vez se encienden <strong>las tres capas</strong>: los services de generación, sus schemas y los dos endpoints que los exponen. Tocá cualquier recuadro para ver su estructura básica, o M0, M2 y M3 para ver de dónde vienen y adónde van.</p>
+<div class="arq-marco" data-inicial="1">
+<div class="arq">
+<div class="arq-controles" role="group" aria-label="Qué mostrar"><span>Ver la API al terminar:</span><button type="button" data-ver="0">M0</button><button type="button" data-ver="1">M1</button><button type="button" data-ver="2">M2</button><button type="button" data-ver="3" aria-pressed="true">M3 (completa)</button><button type="button" data-ver="recorrido">Recorrido de un análisis</button></div>
+<p class="arq-leyenda" aria-live="polite"></p>
+<div class="arq-colores"><span data-m="0">M0 · El plano</span><span data-m="1">M1 · Generación</span><span data-m="2">M2 · Procesamiento</span><span data-m="3">M3 · Producto final</span></div>
+<div class="arq-capa arq-capa--cliente"><div class="arq-capa__nombre"><strong>Cliente</strong><span>quien usa la API</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">Swagger (/docs)</span><span class="arq-chip" data-m="0">frontend o script</span><span class="arq-chip" data-m="3" data-paso="1" data-lleva="WAV" data-explica="El cliente sube la respuesta al impulso grabada (un WAV) a POST /api/v1/acoustics/parameters.">sube un WAV</span><span class="arq-chip" data-m="3" data-paso="10" data-lleva="✓" data-sentido="vuelta" data-explica="El cliente recibe el JSON con EDT, T20, T30, D50 y C80 por banda, y los muestra.">recibe el JSON</span></div></div>
+<div class="arq-flecha"><span>↓ request HTTP (datos en JSON o un archivo) &nbsp;·&nbsp; ↑ respuesta en JSON</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Routers</strong><span>app/routers/ · reciben y responden</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">health.py</span><span class="arq-chip" data-m="0"><code>GET /health</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">audio_http.py</span><span class="arq-chip" data-m="0"><code>wav_response</code></span><span class="arq-chip" data-m="0"><code>uploaded_file</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>POST /signals/pink-noise</code></span><span class="arq-chip" data-m="1"><code>POST /signals/sine-sweep</code></span><span class="arq-chip" data-m="2"><code>POST /signals/synthetic-ir</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filters.py</span><span class="arq-chip" data-m="2"><code>POST /filters/single-band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="3"><code>POST /utils/smoothing</code></span><span class="arq-chip" data-m="3"><code>POST /utils/schroeder</code></span><span class="arq-chip" data-m="3"><code>POST /utils/lundeby</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustics.py</span><span class="arq-chip" data-m="3" data-paso="2" data-lleva="archivo" data-explica="El router de acoustics.py recibe el archivo; no calcula nada: llama a los services en orden."><code>POST /acoustics/parameters</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ validan los datos con</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Schemas</strong><span>app/schemas/ · validan qué entra y qué sale</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">responses.py</span><span class="arq-chip" data-m="0"><code>HealthResponse</code></span><span class="arq-chip" data-m="3" data-paso="9" data-lleva="JSON" data-sentido="vuelta" data-explica="El router arma la respuesta con el schema BandAnalysisResponse: Pydantic valida que el JSON tenga la forma prometida."><code>BandAnalysisResponse</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signals.py</span><span class="arq-chip" data-m="1"><code>PinkNoiseRequest</code></span><span class="arq-chip" data-m="1"><code>SineSweepRequest</code></span><span class="arq-chip" data-m="2"><code>SyntheticIRRequest</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">utils.py</span><span class="arq-chip" data-m="3"><code>SmoothingRequest</code></span><span class="arq-chip" data-m="3"><code>SchroederResponse</code></span><span class="arq-chip" data-m="3"><code>LundebyResponse</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ llaman a la función que hace el cálculo</span></div>
+<div class="arq-capa"><div class="arq-capa__nombre"><strong>Services</strong><span>app/services/ · el procesamiento de señales</span></div><div class="arq-capa__contenido"><div class="arq-archivo"><span class="arq-archivo__nombre">pink_noise.py</span><span class="arq-chip" data-m="1"><code>generate_pink_noise</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">sine_sweep.py</span><span class="arq-chip" data-m="1"><code>generate_sine_sweep_pair</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">audio_io.py</span><span class="arq-chip" data-m="1"><code>play_and_record</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">signal_utils.py</span><span class="arq-chip" data-m="2" data-paso="3" data-lleva="np.ndarray" data-explica="load_audio lee el WAV y lo convierte en un arreglo de NumPy (mono, normalizado)."><code>load_audio</code></span><span class="arq-chip" data-m="2"><code>generate_synthetic_ir</code></span><span class="arq-chip" data-m="2"><code>get_impulse_response</code></span><span class="arq-chip" data-m="2"><code>logarithmic_scale_conversion</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">filter.py</span><span class="arq-chip" data-m="2" data-paso="4" data-lleva="bandas" data-explica="filter_single_band separa la RI en bandas de octava; el router lo repite para cada banda."><code>filter_single_band</code></span></div><div class="arq-archivo"><span class="arq-archivo__nombre">acoustic_parameters.py</span><span class="arq-chip" data-m="3" data-paso="5" data-lleva="envolventes" data-explica="apply_smoothing obtiene la envolvente de la RI de cada banda."><code>apply_smoothing</code></span><span class="arq-chip" data-m="3" data-paso="6" data-lleva="curvas de caída" data-explica="apply_schroeder_integral calcula la curva de caída de cada banda."><code>apply_schroeder_integral</code></span><span class="arq-chip" data-m="3" data-paso="7" data-lleva="pendientes" data-explica="linear_regression ajusta la recta de la caída: de su pendiente salen EDT, T20 y T30."><code>linear_regression</code></span><span class="arq-chip" data-m="3" data-paso="8" data-lleva="dict" data-explica="calculate_parameters_from_ir junta todo y calcula también D50 y C80."><code>calculate_parameters_from_ir</code></span><span class="arq-chip" data-m="3"><code>apply_lundeby</code></span></div></div></div>
+<div class="arq-flecha"><span>↓ usan</span></div>
+<div class="arq-capa arq-capa--libs"><div class="arq-capa__nombre"><strong>Librerías</strong><span>lo que usa cada capa</span></div><div class="arq-capa__contenido"><span class="arq-chip" data-m="0">FastAPI</span><span class="arq-chip" data-m="0">Pydantic</span><span class="arq-chip" data-m="1">NumPy</span><span class="arq-chip" data-m="1">SciPy</span><span class="arq-chip" data-m="1">sounddevice</span><span class="arq-chip" data-m="1">soundfile</span></div></div>
+<ol class="arq-pasos" hidden></ol>
+</div>
+
+</div>
+
+<hr />
+<h2 id="del-plano-al-primer-calculo">Del plano al primer cálculo<a class="headerlink" href="#del-plano-al-primer-calculo" title="Permanent link">&para;</a></h2>
+<p>En M0 dibujaron las tres capas. En M1 le ponen <strong>código real</strong> a las tres, en ese orden:</p>
+<ul>
+<li>El trabajo grueso son los <strong>servicios</strong> (<code>app/services/</code>): cada uno hace un cálculo, recibe NumPy y devuelve NumPy, sin saber nada de HTTP ni de JSON.</li>
+<li>Encima de dos de ellos va un <strong>endpoint</strong> chico: un <strong>schema</strong> (<code>app/schemas/</code>) que valida el pedido y un <strong>router</strong> (<code>app/routers/</code>) que llama al service y responde un WAV. Son pocas líneas: el cálculo ya lo hizo el service.</li>
+</ul>
+<p>M1 son <strong>tres servicios</strong>. Cada uno se presenta igual:</p>
+<ol>
+<li><strong>Qué es:</strong> el concepto de Señales y Sistemas detrás.</li>
+<li><strong>Probalo:</strong> generalo, escuchalo y miralo acá mismo, con el mismo algoritmo que la API de referencia.</li>
+<li><strong>El código, archivo por archivo:</strong> el service que implementan, el test que lo verifica y el endpoint que lo expone.</li>
+</ol>
+<p>Dónde va cada cosa en el repositorio:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>rir-api/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── app/
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   ├── services/
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   │   ├── pink_noise.py     ← Servicio 1 · generate_pink_noise          (M1)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   │   ├── sine_sweep.py     ← Servicio 2 · generate_sine_sweep_pair     (M1)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│   │   └── audio_io.py       ← Servicio 3 · play_and_record              (M1)
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   ├── schemas/signals.py    ← PinkNoiseRequest, SineSweepRequest        (M1)
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   ├── routers/signals.py    ← POST /api/v1/signals/pink-noise, /sine-sweep (M1)
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   └── main.py               ← registrar el router de signals             (M1)
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>└── tests/
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    ├── test_generacion.py    ← los tests de los tres servicios           (M1)
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    └── test_api.py           ← los tests de los dos endpoints            (M1)
+</code></pre></div>
+<p>El template ya trae los tres archivos de <code>services/</code> con la firma y el docstring, y los tests escritos: su trabajo es reemplazar el <code>raise NotImplementedError</code> por la implementación hasta que los tests pasen. Para los endpoints trae resuelta la parte que no es de la materia: <code>wav_response</code> (en <code>app/routers/audio_http.py</code>) convierte un array en un WAV descargable.</p>
+<div class="admonition note">
+<p class="admonition-title">Por qué importa</p>
+<p>Un servicio es una <strong>función pura</strong>: con los mismos datos devuelve siempre lo mismo. Es fácil de testear, se conecta a su endpoint sin cambios, y en M2 se puede combinar con otros servicios sin sorpresas.</p>
+<p><strong>Regla:</strong> la lógica de DSP no depende de HTTP ni de FastAPI. La entrada y salida (archivos, placa de audio) queda en funciones propias, separadas del cálculo: por eso <code>play_and_record</code> vive en su propio archivo.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Los nombres coinciden con la API de referencia</p>
+<p>Los servicios, sus parámetros y los endpoints usan los mismos nombres que la implementación de la cátedra (<a href="https://rir-api.onrender.com/docs">Swagger</a>): <code>generate_pink_noise</code> atiende <code>POST /api/v1/signals/pink-noise</code>, <code>generate_sine_sweep_pair</code> atiende <code>POST /api/v1/signals/sine-sweep</code> (con <code>inverse</code> se elige el sweep o su filtro inverso). Los nombres van en inglés; la documentación, en español.</p>
+</div>
+<hr />
+<h2 id="servicio-1-generate_pink_noiseduration-fs">Servicio 1 · <code>generate_pink_noise(duration, fs)</code><a class="headerlink" href="#servicio-1-generate_pink_noiseduration-fs" title="Permanent link">&para;</a></h2>
+<h3 id="que-es">Qué es<a class="headerlink" href="#que-es" title="Permanent link">&para;</a></h3>
+<p>El <strong>ruido rosa</strong> (o ruido <span class="arithmatex">\(1/f\)</span>) tiene una densidad espectral de potencia inversamente proporcional a la frecuencia:</p>
+<div class="arithmatex">\[S(f) = \frac{k}{f}\]</div>
+<p>Entre dos frecuencias separadas una octava (<span class="arithmatex">\(f_2 = 2 f_1\)</span>) el nivel cae</p>
+<div class="arithmatex">\[\Delta L = 10 \log_{10}\left(\frac{S(f_2)}{S(f_1)}\right) = 10 \log_{10}\left(\frac{1}{2}\right) \approx -3{,}01 \text{ dB}\]</div>
+<p>o sea <strong>−3 dB por octava</strong>. Como cada octava es el doble de ancha que la anterior, la energía <strong>por octava</strong> queda igual en todas: por eso se usa para medir salas, que se analizan por bandas de octava (M2).</p>
+<p>Hay dos formas de generarlo, y la API de referencia tiene las dos:</p>
+<ul>
+<li><strong>Voss-McCartney</strong> (<code>/pink-noise/voss</code>): se suman 16 a 20 generadores de ruido blanco; el generador <span class="arithmatex">\(i\)</span> se renueva cada <span class="arithmatex">\(2^i\)</span> muestras (cuando cambia el bit <span class="arithmatex">\(i\)</span> del índice <span class="arithmatex">\(n\)</span>). Los que cambian lento aportan los graves.</li>
+<li><strong>Filtrado de ruido blanco</strong> (<code>/pink-noise</code>): ruido blanco que pasa por un filtro con <span class="arithmatex">\(|H(f)| \propto 1/\sqrt{f}\)</span>, por ejemplo un IIR de tercer orden (<code>scipy.signal.lfilter</code>) o en frecuencia con la FFT: <span class="arithmatex">\(X_{rosa}(f) = X_{blanco}(f) / \sqrt{f}\)</span>.</li>
+</ul>
+<p><small>Voss, R. F. &amp; Clarke, J. (1978). "1/f noise" in music: Music from 1/f noise. <em>JASA</em>, 63(1), 258-263.</small></p>
+<h3 id="probalo">Probalo<a class="headerlink" href="#probalo" title="Permanent link">&para;</a></h3>
+<p>Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seguir la recta de −3 dB/octava. Probá los dos métodos y distintas duraciones (con más duración, más promedios y una curva más lisa).</p>
+<div class="servicio-demo" data-servicio="pink-noise"></div>
+
+<h3 id="el-codigo-archivo-por-archivo">El código, archivo por archivo<a class="headerlink" href="#el-codigo-archivo-por-archivo" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Service</label><label for="__tabbed_1_2">Test</label><label for="__tabbed_1_3">Endpoint</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><span class="ruta-archivo">app/services/pink_noise.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">generate_pink_noise</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="sd">"""Genera una senal de ruido rosa de la duracion especificada.</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="sd">    ----------</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="sd">    duration : float</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="sd">        Duracion de la senal en segundos.</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="sd">    fs : int</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="sd">        Frecuencia de muestreo en Hz.</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="sd">    Returns</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="sd">    -------</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="sd">    np.ndarray</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="sd">        Ruido rosa normalizado entre -1 y 1, de largo int(duration * fs).</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="sd">    """</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Implementar en Milestone 1"</span><span class="p">)</span>   <span class="c1"># ← acá va su implementación</span>
+</code></pre></div>
+<p>Mismo nombre y orden de argumentos que <code>generate_pink_noise</code> de la API de referencia. La de cátedra además acepta <code>output_path</code> para escribir el WAV; acá el service <strong>solo devuelve el array</strong> (convertirlo en WAV es tarea del router).</p>
+</div>
+<div class="tabbed-block">
+<p><span class="ruta-archivo">tests/test_generacion.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_pink_noise_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">"""La PSD cae aproximadamente -3 dB/octava entre 100 Hz y 10 kHz."""</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">fs</span> <span class="o">=</span> <span class="mi">44100</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">ruido</span> <span class="o">=</span> <span class="n">generate_pink_noise</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">f</span><span class="p">,</span> <span class="n">pxx</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">welch</span><span class="p">(</span><span class="n">ruido</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="mi">8192</span><span class="p">)</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">banda</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">&lt;=</span> <span class="mi">10000</span><span class="p">)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="c1"># Regresion de nivel (dB) contra octavas (log2 f): la pendiente es dB/octava.</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">pendiente</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">banda</span><span class="p">]),</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">pxx</span><span class="p">[</span><span class="n">banda</span><span class="p">]),</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="k">assert</span> <span class="o">-</span><span class="mf">4.0</span> <span class="o">&lt;=</span> <span class="n">pendiente</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"pendiente = </span><span class="si">{</span><span class="n">pendiente</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> dB/oct"</span>
+</code></pre></div>
+<p>Es lo mismo que calcula la demo: la densidad espectral con el método de Welch y la pendiente por regresión. En el mismo archivo están <code>test_pink_noise_duration</code>, <code>test_pink_noise_type</code> y <code>test_pink_noise_normalized</code> (largo, tipo y rango de la señal).</p>
+</div>
+<div class="tabbed-block">
+<p>El schema describe el pedido (y rechaza con 422 lo que no cumple) y el router llama al service y responde el WAV. Es el ejemplo completo: el del sweep se escribe igual.</p>
+<p><span class="ruta-archivo">app/schemas/signals.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">class</span><span class="w"> </span><span class="nc">PinkNoiseRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">gt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>            <span class="c1"># segundos</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">sample_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">192000</span><span class="p">)</span>
+</code></pre></div>
+<p><span class="ruta-archivo">app/routers/signals.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">app.routers.audio_http</span><span class="w"> </span><span class="kn">import</span> <span class="n">wav_response</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">app.schemas.signals</span><span class="w"> </span><span class="kn">import</span> <span class="n">PinkNoiseRequest</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">app.services.pink_noise</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_pink_noise</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/pink-noise"</span><span class="p">)</span>                         <span class="c1"># POST /api/v1/signals/pink-noise</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">pink_noise</span><span class="p">(</span><span class="n">req</span><span class="p">:</span> <span class="n">PinkNoiseRequest</span><span class="p">):</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">audio</span> <span class="o">=</span> <span class="n">generate_pink_noise</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="k">return</span> <span class="n">wav_response</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">,</span> <span class="s2">"pink_noise.wav"</span><span class="p">)</span>
+</code></pre></div>
+<p>El test es <code>test_signals_pink_noise_endpoint</code> en <code>tests/test_api.py</code>: pide 1 s y verifica que vuelva un WAV de 44100 muestras.</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="servicio-2-generate_sine_sweep_pairduration-f1-f2-fs">Servicio 2 · <code>generate_sine_sweep_pair(duration, f1, f2, fs)</code><a class="headerlink" href="#servicio-2-generate_sine_sweep_pairduration-f1-f2-fs" title="Permanent link">&para;</a></h2>
+<p>Devuelve <strong>dos señales</strong>: el sine sweep, que se reproduce en la sala, y su filtro inverso, que en M2 se usa para recuperar la respuesta al impulso.</p>
+<h3 id="que-es-el-sine-sweep-logaritmico">Qué es: el sine sweep logarítmico<a class="headerlink" href="#que-es-el-sine-sweep-logaritmico" title="Permanent link">&para;</a></h3>
+<p>Un seno cuya frecuencia sube de <span class="arithmatex">\(f_1\)</span> a <span class="arithmatex">\(f_2\)</span> en <span class="arithmatex">\(T\)</span> segundos, de forma exponencial:</p>
+<div class="arithmatex">\[x(t) = \sin\left[\frac{2\pi f_1 T}{\ln(f_2/f_1)} \left(e^{t \ln(f_2/f_1)/T} - 1\right)\right], \qquad 0 \leq t \leq T\]</div>
+<p>Su frecuencia instantánea es</p>
+<div class="arithmatex">\[f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}\]</div>
+<p>que tarda <strong>el mismo tiempo en recorrer cada octava</strong>: igual energía por octava, como el ruido rosa y como los filtros de bandas de la IEC 61260 que van a usar en M2.</p>
+<h3 id="que-es-el-filtro-inverso">Qué es: el filtro inverso<a class="headerlink" href="#que-es-el-filtro-inverso" title="Permanent link">&para;</a></h3>
+<p>Es el sweep <strong>invertido en el tiempo</strong> y multiplicado por una envolvente de amplitud:</p>
+<div class="arithmatex">\[x_{inv}(t) = x(T - t) \cdot A(t), \qquad A(t) = e^{-t \ln(f_2/f_1)/T}\]</div>
+<p>El sweep pasa más tiempo en los graves (cada octava grave dura lo mismo que una aguda, pero tiene menos ciclos), así que concentra más energía ahí. El sweep invertido recorre de <span class="arithmatex">\(f_2\)</span> a <span class="arithmatex">\(f_1\)</span>, y <span class="arithmatex">\(A(t)\)</span>, que decae de 1 a <span class="arithmatex">\(f_1/f_2\)</span>, atenúa los graves <span class="arithmatex">\(-6\)</span> dB/octava para compensar. Resultado: el sweep convolucionado con su filtro inverso da un <strong>impulso</strong>,</p>
+<div class="arithmatex">\[x(t) * x_{inv}(t) \approx \delta(t)\]</div>
+<p>y por eso en M2, convolucionando la grabación de la sala con el filtro inverso, se obtiene la respuesta al impulso de la sala.</p>
+<div class="admonition warning">
+<p class="admonition-title">Multiplicar, no dividir</p>
+<p>Dividir por <span class="arithmatex">\(A(t)\)</span> refuerza los graves en lugar de atenuarlos. Con la corrección bien aplicada, el pico del impulso queda ~90 dB por encima del resto; sin la corrección, ~50 dB; dividiendo, ~35 dB. El test pide 60 dB justamente para detectar estos errores.</p>
+</div>
+<p><small>Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." <em>108th AES Convention</em>.</small></p>
+<h3 id="probalo_1">Probalo<a class="headerlink" href="#probalo_1" title="Permanent link">&para;</a></h3>
+<p>Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro inverso, y mirá tres cosas: el espectrograma (la energía sigue la curva teórica <span class="arithmatex">\(f(t)\)</span>), la forma del filtro inverso (la amplitud baja hacia el final, en los graves) y la convolución de los dos, que da un impulso.</p>
+<div class="servicio-demo" data-servicio="sine-sweep"></div>
+
+<h3 id="el-codigo-archivo-por-archivo_1">El código, archivo por archivo<a class="headerlink" href="#el-codigo-archivo-por-archivo_1" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Service</label><label for="__tabbed_2_2">Tests</label><label for="__tabbed_2_3">Endpoint</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><span class="ruta-archivo">app/services/sine_sweep.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">generate_sine_sweep_pair</span><span class="p">(</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">f2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="sd">"""Genera un sine sweep logaritmico y su filtro inverso.</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="sd">    ----------</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="sd">    duration : float</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="sd">        Duracion del sweep en segundos.</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="sd">    f1, f2 : float</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="sd">        Frecuencias inicial y final en Hz.</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="sd">    fs : int</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="sd">        Frecuencia de muestreo en Hz.</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="sd">    Returns</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="sd">    -------</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="sd">    tuple[np.ndarray, np.ndarray]</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="sd">        (sweep, inverse_filter), ambos de largo int(duration * fs) y normalizados.</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="sd">    """</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Implementar en Milestone 1"</span><span class="p">)</span>   <span class="c1"># ← acá va su implementación</span>
+</code></pre></div>
+<p>Mismo nombre y orden de argumentos que <code>generate_sine_sweep_pair</code> de la API de referencia, que además define valores por defecto (<code>f1=20</code>, <code>f2=20000</code>, <code>fs=44100</code>). Pueden agregarlos: los tests pasan los cuatro argumentos.</p>
+</div>
+<div class="tabbed-block">
+<p><span class="ruta-archivo">tests/test_generacion.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_sine_sweep_frequency_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="sd">"""El sweep barre de f1 a f2 con frecuencia instantanea creciente."""</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="mi">44100</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">sweep</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">generate_sine_sweep_pair</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">f</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">sxx</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">spectrogram</span><span class="p">(</span><span class="n">sweep</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">nperseg</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="mi">2048</span><span class="p">)</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">f_pico</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sxx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>           <span class="c1"># frecuencia con mas energia en cada instante</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="k">assert</span> <span class="n">f_pico</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">200</span>                        <span class="c1"># arranca cerca de f1</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="k">assert</span> <span class="n">f_pico</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.75</span> <span class="o">*</span> <span class="n">f2</span>                 <span class="c1"># termina cerca de f2</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">f_pico</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">df</span><span class="p">)</span>     <span class="c1"># y siempre sube</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_sweep_convolution_impulse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="sd">"""sweep * inverse_filter aproxima un impulso (pico &gt;= 60 dB sobre el resto)."""</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="n">fs</span> <span class="o">=</span> <span class="mi">44100</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="n">sweep</span><span class="p">,</span> <span class="n">inverse_filter</span> <span class="o">=</span> <span class="n">generate_sine_sweep_pair</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="n">impulso</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">sweep</span><span class="p">,</span> <span class="n">inverse_filter</span><span class="p">)</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    <span class="n">energia</span> <span class="o">=</span> <span class="n">impulso</span><span class="o">**</span><span class="mi">2</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    <span class="n">i_pico</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">energia</span><span class="p">))</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>    <span class="n">ventana</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>                      <span class="c1"># se excluyen +-10 ms alrededor del pico</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>    <span class="n">resto</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">energia</span><span class="p">[:</span> <span class="n">i_pico</span> <span class="o">-</span> <span class="n">ventana</span><span class="p">],</span> <span class="n">energia</span><span class="p">[</span><span class="n">i_pico</span> <span class="o">+</span> <span class="n">ventana</span> <span class="p">:]])</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>    <span class="n">relacion_db</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">energia</span><span class="p">[</span><span class="n">i_pico</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">resto</span><span class="p">))</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>    <span class="k">assert</span> <span class="n">relacion_db</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"pico/resto = </span><span class="si">{</span><span class="n">relacion_db</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> dB"</span>
+</code></pre></div>
+<p>El primero es el espectrograma de la demo; el segundo, la convolución (la demo muestra la misma relación pico/resto). En el mismo archivo están <code>test_sine_sweep_pair_returns_tuple</code> y <code>test_sine_sweep_duration</code>.</p>
+</div>
+<div class="tabbed-block">
+<p>Un solo endpoint para el par: con <code>inverse</code> en <code>false</code> devuelve el sweep (lo que se reproduce en la sala) y en <code>true</code>, el filtro inverso (lo que se usa en M2 para obtener la RI).</p>
+<p><span class="ruta-archivo">app/schemas/signals.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">SineSweepRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">gt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">start_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">20000</span><span class="p">)</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">end_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">22050</span><span class="p">)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">sample_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">192000</span><span class="p">)</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">inverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>                           <span class="c1"># True: devuelve el filtro inverso</span>
+</code></pre></div>
+<p><span class="ruta-archivo">app/routers/signals.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># arriba del archivo: from fastapi import APIRouter, HTTPException</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1">#                     from app.services.sine_sweep import generate_sine_sweep_pair</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/sine-sweep"</span><span class="p">)</span>                         <span class="c1"># POST /api/v1/signals/sine-sweep</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">sine_sweep</span><span class="p">(</span><span class="n">req</span><span class="p">:</span> <span class="n">SineSweepRequest</span><span class="p">):</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">start_freq</span> <span class="o">&gt;=</span> <span class="n">req</span><span class="o">.</span><span class="n">end_freq</span><span class="p">:</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"start_freq tiene que ser menor que end_freq"</span><span class="p">)</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="n">sweep</span><span class="p">,</span> <span class="n">inverse_filter</span> <span class="o">=</span> <span class="n">generate_sine_sweep_pair</span><span class="p">(</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>        <span class="n">req</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">start_freq</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">end_freq</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">sample_rate</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="p">)</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="o">...</span>  <span class="c1"># devolver con wav_response el sweep o el filtro inverso, según req.inverse</span>
+</code></pre></div>
+<p>El test es <code>test_signals_sine_sweep_endpoint</code>: pide los dos y verifica que sean WAV distintos del largo pedido.</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="servicio-3-play_and_recordsignal-fs-record_duration">Servicio 3 · <code>play_and_record(signal, fs, record_duration)</code><a class="headerlink" href="#servicio-3-play_and_recordsignal-fs-record_duration" title="Permanent link">&para;</a></h2>
+<h3 id="que-es_1">Qué es<a class="headerlink" href="#que-es_1" title="Permanent link">&para;</a></h3>
+<p>Para medir una sala hay que <strong>reproducir</strong> la señal de excitación (el sweep) por un parlante y <strong>grabar al mismo tiempo</strong> lo que capta el micrófono. En la cadena de medición del <a href="../../marco_conceptual/#5-la-medicion-es-una-cadena-de-sistemas">marco conceptual</a>, este servicio es el tramo PC → DAC → … → ADC → PC.</p>
+<p>Con <code>sounddevice</code> se hace con una sola función, que reproduce y graba sobre el mismo dispositivo:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">sounddevice</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sd</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">recording</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">playrec</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">samplerate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p>Detalles que, si se olvidan, arruinan la medición:</p>
+<ul>
+<li><strong>Grabar más de lo que dura la señal</strong> (<code>record_duration</code> &gt; duración del sweep): después del sweep la sala sigue sonando, y esa cola de reverberación es justamente lo que se quiere medir.</li>
+<li><strong>Pre-roll:</strong> 0,5 a 1 s de silencio al inicio, para compensar la latencia del driver de audio.</li>
+<li><strong>Mono y estéreo:</strong> aceptar arrays 1D y 2D sin suponer la forma.</li>
+<li><strong>Error informativo</strong> (<code>RuntimeError</code> con un mensaje claro) si no hay dispositivo de audio.</li>
+<li>Documentar en el README la configuración: dispositivo, canales, frecuencia de muestreo y tamaño de buffer.</li>
+</ul>
+<p>Este servicio no tiene demo: necesita su placa de audio. La prueba real (parlante + micrófono, puede ser la PC) es parte de la validación de M1.</p>
+<div class="admonition note">
+<p class="admonition-title">Cómo lo hace la API de referencia</p>
+<p>RIR-API no tiene este servicio: en la versión de cátedra la grabación la hace el frontend, en el navegador, con la Web Audio API (<code>getUserMedia</code> para el micrófono, <code>AudioBufferSourceNode</code> para reproducir, <code>MediaRecorder</code> para grabar). Los cuidados son los mismos: frecuencia de muestreo explícita, permisos del micrófono y latencia entre reproducir y grabar. En este TP el servicio vive en el backend y usa <code>sounddevice</code>.</p>
+</div>
+<h3 id="el-codigo-archivo-por-archivo_2">El código, archivo por archivo<a class="headerlink" href="#el-codigo-archivo-por-archivo_2" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Service</label><label for="__tabbed_3_2">Test</label><label for="__tabbed_3_3">Endpoint</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><span class="ruta-archivo">app/services/audio_io.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">play_and_record</span><span class="p">(</span><span class="n">signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">record_duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="sd">"""Reproduce una senal y graba simultaneamente.</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="sd">    Parameters</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="sd">    ----------</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="sd">    signal : np.ndarray</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="sd">        Senal a reproducir (1D mono o 2D estereo).</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="sd">    fs : int</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="sd">        Frecuencia de muestreo en Hz.</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="sd">    record_duration : float</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="sd">        Duracion total de la grabacion en segundos (&gt;= duracion de la senal).</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="sd">    Returns</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="sd">    -------</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="sd">    np.ndarray</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="sd">        La senal grabada, de largo int(record_duration * fs).</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="sd">    Raises</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="sd">    ------</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="sd">    RuntimeError</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="sd">        Si no hay dispositivo de audio disponible.</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="sd">    """</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>    <span class="c1"># import sounddevice as sd   (adentro de la funcion: los tests lo reemplazan)</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Implementar en Milestone 1"</span><span class="p">)</span>   <span class="c1"># ← acá va su implementación</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><span class="ruta-archivo">tests/test_generacion.py</span></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_play_and_record_shape</span><span class="p">(</span><span class="n">monkeypatch</span><span class="p">):</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="sd">"""Acepta mono y estereo, respeta la duracion y falla informativamente sin dispositivo."""</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="n">fs</span><span class="p">,</span> <span class="n">record_duration</span> <span class="o">=</span> <span class="mi">44100</span><span class="p">,</span> <span class="mf">2.0</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">esperado</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">record_duration</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setitem</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">,</span> <span class="s2">"sounddevice"</span><span class="p">,</span> <span class="n">_sounddevice_falso</span><span class="p">())</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="n">mono</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">fs</span><span class="p">)</span>                           <span class="c1"># 1 s, array 1D</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">estereo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">fs</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>                   <span class="c1"># 1 s, array 2D (muestras, canales)</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="k">for</span> <span class="n">senal</span> <span class="ow">in</span> <span class="p">(</span><span class="n">mono</span><span class="p">,</span> <span class="n">estereo</span><span class="p">):</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>        <span class="n">recording</span> <span class="o">=</span> <span class="n">play_and_record</span><span class="p">(</span><span class="n">senal</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">record_duration</span><span class="p">)</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">recording</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">recording</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">esperado</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">esperado</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setitem</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">,</span> <span class="s2">"sounddevice"</span><span class="p">,</span> <span class="n">_sounddevice_falso</span><span class="p">(</span><span class="n">hay_dispositivo</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>        <span class="n">play_and_record</span><span class="p">(</span><span class="n">mono</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">record_duration</span><span class="p">)</span>
+</code></pre></div>
+<p>El test <strong>no usa la placa de audio</strong>: reemplaza <code>sounddevice</code> por un módulo falso (un <em>mock</em>), así corre también en el CI de GitHub, donde no hay parlantes. Por eso el <code>import sounddevice</code> va adentro de la función.</p>
+</div>
+<div class="tabbed-block">
+<p>No tiene endpoint: grabar con la placa de audio del servidor no tiene sentido en una API (el servidor está en un datacenter, no en la sala). La API recibe la grabación ya hecha como archivo, desde M2.</p>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="los-endpoints-de-m1">Los endpoints de M1<a class="headerlink" href="#los-endpoints-de-m1" title="Permanent link">&para;</a></h2>
+<p>Con los dos routers escritos, falta <strong>registrarlos</strong> y <strong>probarlos</strong>. Es la primera vez que la API hace algo más que <code>/health</code>.</p>
+<ol>
+<li>
+<p><strong>Registrar el router</strong> en <code>app/main.py</code> (el template tiene la línea comentada en el <code>TODO (M1)</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">app.routers</span><span class="w"> </span><span class="kn">import</span> <span class="n">health</span><span class="p">,</span> <span class="n">signals</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">signals</span><span class="o">.</span><span class="n">router</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"/api/v1/signals"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"signals"</span><span class="p">])</span>
+</code></pre></div>
+</li>
+<li>
+<p><strong>Probarlo en Swagger:</strong> <code>uv run uvicorn app.main:app --reload</code>, abrir <code>http://localhost:8000/docs</code>, desplegar <code>POST /api/v1/signals/pink-noise</code>, <em>Try it out</em>, y descargar el WAV. Pidan una duración negativa: tiene que volver <strong>422</strong> sin que escriban una línea de validación (lo hace el schema).</p>
+</li>
+<li>
+<p><strong>Probarlo desde la terminal</strong>, para el README:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/api/v1/signals/pink-noise<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">     </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">     </span>-d<span class="w"> </span><span class="s1">'{"duration": 5, "sample_rate": 44100}'</span><span class="w"> </span>-o<span class="w"> </span>pink_noise.wav
+</code></pre></div>
+</li>
+<li>
+<p><strong>Sacar las marcas <code>@xfail_m1</code></strong> de los tres tests de M1 en <code>tests/test_api.py</code> (los dos endpoints y el 422) y verlos pasar.</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Cuánto trabajo es</p>
+<p>El peso de M1 sigue estando en los servicios. Los endpoints son dos funciones de tres o cuatro líneas y dos schemas: el de ruido rosa está completo en esta página y el del sweep se escribe igual. Lo que ganan es que desde M1 la API <strong>hace algo</strong>, y en M2 y M3 agregar un endpoint ya es rutina.</p>
+</div>
+<hr />
+<h2 id="validacion">Validación<a class="headerlink" href="#validacion" title="Permanent link">&para;</a></h2>
+<p>Además de los tests automatizados, cada grupo debe realizar las siguientes validaciones manuales:</p>
+<ol>
+<li><strong>Comparación espectral con Audacity o REW:</strong></li>
+<li>Generar el ruido rosa <strong>con su endpoint</strong> (desde <code>/docs</code> o con <code>curl</code>) y abrir el WAV en Audacity.</li>
+<li>Analizar el espectro y verificar visualmente la pendiente de -3 dB/octava.</li>
+<li>
+<p>Repetir para el sine sweep: verificar que el espectrograma muestra un barrido logarítmico de <span class="arithmatex">\(f_1\)</span> a <span class="arithmatex">\(f_2\)</span>.</p>
+</li>
+<li>
+<p><strong>Verificación de la convolución:</strong></p>
+</li>
+<li>Graficar el resultado de la convolución sweep * filtro inverso.</li>
+<li>El resultado debe parecerse a un impulso con lóbulos laterales mínimos.</li>
+<li>
+<p>Guardar esta gráfica en <code>docs/m1/</code> y enlazarla desde el README.</p>
+</li>
+<li>
+<p><strong>Prueba de reproducción y grabación:</strong></p>
+</li>
+<li>Realizar una prueba real con un parlante y un micrófono (puede ser con la PC).</li>
+<li>Verificar que la señal grabada contiene la señal reproducida.</li>
+</ol>
+<p>Incluir capturas de pantalla o gráficas de todas las validaciones en la documentación del milestone.</p>
+<hr />
+<h2 id="calidad-de-codigo">Calidad de código<a class="headerlink" href="#calidad-de-codigo" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Docstrings</strong>: todas las funciones públicas deben tener docstrings en formato NumPy.</li>
+<li><strong>Type hints</strong>: todas las funciones deben tener anotaciones de tipos en parámetros y retorno.</li>
+<li><strong>PEP 8</strong>: el código debe pasar <code>ruff check</code> sin errores.</li>
+<li><strong>Commits</strong>: usar commits descriptivos y frecuentes. Se revisa el historial de Git (en M3 forma parte de la nota, criterio "Prácticas Git").</li>
+<li><strong>Pull requests</strong>: cada función debe desarrollarse en una rama separada y mergearse vía PR con al menos una revisión de otro integrante.</li>
+<li><strong>Tag</strong>: al completar el milestone, crear el tag <code>v0.1.0</code> en la rama <code>main</code>.</li>
+</ul>
+<hr />
+<h2 id="guia-de-entrega">Guía de entrega<a class="headerlink" href="#guia-de-entrega" title="Permanent link">&para;</a></h2>
+<h3 id="evidencia-en-el-repositorio">Evidencia en el repositorio<a class="headerlink" href="#evidencia-en-el-repositorio" title="Permanent link">&para;</a></h3>
+<p>Además de los tests automatizados, cada grupo entrega evidencia visual:</p>
+<ul>
+<li>Espectro del ruido rosa abierto en <strong>Audacity</strong> o REW, con la pendiente visible</li>
+<li>Espectrograma del sweep mostrando el barrido <span class="arithmatex">\(f_1 \to f_2\)</span></li>
+<li>Gráfica de la convolución sweep ∗ inverso (debe parecer un impulso)</li>
+<li>Prueba real con parlante + micrófono (puede ser la PC)</li>
+</ul>
+<p>Las capturas o PNG van en <code>docs/m1/</code> del repo y se enlazan desde el README.</p>
+<div class="admonition note">
+<p class="admonition-title">Referencia visual</p>
+<p>Comparen sus gráficos con las demos de los servicios 1 y 2 de esta página, que usan el algoritmo de la API de referencia. Los valores deberían estar en el mismo orden:</p>
+<ul>
+<li>Ruido rosa: -3 ± 1 dB/oct</li>
+<li>Sweep: barrido monótono visible</li>
+<li>Convolución: pico claro &gt; 60 dB sobre el piso</li>
+</ul>
+<p>Si su resultado se ve muy distinto al de las demos, hay un bug: empiecen por ahí.</p>
+</div>
+<h3 id="buenas-practicas-que-ya-vimos-funcionar">Buenas prácticas que ya vimos funcionar<a class="headerlink" href="#buenas-practicas-que-ya-vimos-funcionar" title="Permanent link">&para;</a></h3>
+<p>Patrones aplicados en la API de cátedra. No los pide la rúbrica — pero les ahorran trabajo en M2 y M3.</p>
+<div class="admonition note">
+<p class="admonition-title">01 · Metadatos en el router, no en el service</p>
+<p>La función devuelve el array (así lo piden la firma y los tests). El endpoint decide cómo responder: acá, un WAV con <code>wav_response</code>; la API de referencia responde un JSON con <code>sample_rate</code>, <code>num_samples</code>, <code>max_amplitude</code> y un link de descarga. En los dos casos el service no se toca.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">02 · Normalizar al 90% del máximo</p>
+<p><code>signal = signal / max(|signal|) * 0.9</code><br />
+Deja margen (<em>headroom</em>) para evitar saturación al guardar el WAV o reproducir.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">03 · Descartar el transitorio si filtran ruido blanco</p>
+<p>Si generan el ruido rosa filtrando ruido blanco con un filtro IIR (<code>scipy.signal.lfilter</code>), generen <code>N + N_trans</code> muestras y eliminen las primeras <code>N_trans</code>: los primeros milisegundos salen con el transitorio del filtro. Una regla práctica es <span class="arithmatex">\(N_{trans} = \ln(1000) / (1 - |p_{max}|)\)</span>, donde <span class="arithmatex">\(p_{max}\)</span> es el polo de mayor módulo (las muestras que tarda el transitorio en caer 60 dB). Para el filtro de la API de referencia da ~1430 muestras.</p>
+<p>Ojo con los paréntesis: en la API de referencia está escrito <code>np.log(1000)/1 - max(np.abs(np.roots(A)))</code>, que por precedencia de operadores da ~6 muestras en lugar de ~1430. Es un bug real: un test del transitorio lo habría detectado.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">04 · Generación ≠ Plotting</p>
+<p><code>pink_noise.py</code> genera. <code>signal_utils.py</code> grafica. Funciones distintas, archivos distintos. Si mañana cambian el plot, no rompen el generador.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">05 · Guardar WAV fuera del service</p>
+<p>El WAV lo arma el router, en memoria (<code>wav_response</code> usa un <code>io.BytesIO</code>), nunca en la carpeta de trabajo: los tests no ensucian el repo.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">06 · Dos implementaciones, mismo test</p>
+<p>Voss-McCartney y el filtrado de ruido blanco son válidos. El test es el contrato, no la implementación. Esto les da margen de optimizar después sin romper nada.</p>
+</div>
+<h3 id="lo-que-mira-el-docente">Lo que mira el docente<a class="headerlink" href="#lo-que-mira-el-docente" title="Permanent link">&para;</a></h3>
+<p><strong>Código</strong></p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Docstrings NumPy en toda función pública</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Type hints en parámetros y retorno</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Tests en <code>tests/</code> que pasen al correr <code>pytest -v</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Imports limpios, sin código muerto</li>
+</ul>
+<p><strong>Git</strong></p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Cada función en una rama propia</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Merge a <code>main</code> vía PR con review de otro integrante</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Historial coherente (no un commit gigante "M1")</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Tag <code>v0.1.0</code> anotado y empujado al remote</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Recordatorio · cómo correr los tests</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># desde la raiz del repo</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>uv<span class="w"> </span>sync<span class="w">                              </span><span class="c1"># asegurar dependencias instaladas</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v<span class="w">                     </span><span class="c1"># correr todos los tests con output verboso</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v<span class="w"> </span>tests/test_generacion.py<span class="w">  </span><span class="c1"># correr solo un archivo</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v<span class="w"> </span>-k<span class="w"> </span><span class="s2">"pink_noise"</span><span class="w">     </span><span class="c1"># correr tests que matchean el nombre</span>
+</code></pre></div>
+<p><code>-v</code> (verbose) muestra cada test con su nombre y si pasó; sin <code>-v</code> solo ven puntos. <code>-k</code> filtra tests por substring del nombre — útil para correr solo lo que están tocando. Si un test falla, <code>pytest --pdb</code> abre el debugger en el punto exacto de la falla, y <code>pytest -x</code> detiene la corrida en el primer fallo.</p>
+</div>
+<h3 id="checklist-de-entrega">Checklist de entrega<a class="headerlink" href="#checklist-de-entrega" title="Permanent link">&para;</a></h3>
+<p>Lo que tiene que estar en el tag <code>v0.1.0</code> el 28/10.</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <code>generate_pink_noise</code> con test pasando</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <code>generate_sine_sweep_pair</code> + filtro inverso con tests pasando</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <code>play_and_record</code> con test de forma</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Endpoints <code>POST /api/v1/signals/pink-noise</code> y <code>POST /api/v1/signals/sine-sweep</code> registrados en <code>main.py</code>, con sus schemas, devolviendo WAV</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Los tres tests de M1 de <code>tests/test_api.py</code> pasando (sin la marca <code>@xfail_m1</code>)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Un ejemplo <code>curl</code> en el README</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Las gráficas y la evidencia de validación en <code>docs/m1/</code>, enlazadas desde el README</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <code>pytest -v</code> en verde: los tests de los tres servicios y de los dos endpoints</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Docstrings y type hints en los 3 servicios</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> PRs mergeados, no commits directos a <code>main</code></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Tag <code>v0.1.0</code> anotado y empujado al remote</li>
+</ul>
+<h2 id="recursos">Recursos<a class="headerlink" href="#recursos" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://python-sounddevice.readthedocs.io/">sounddevice: documentación</a></li>
+<li><a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.welch.html">scipy.signal.welch</a></li>
+<li><a href="https://www.angelofarina.it/Public/Papers/134-AES00.PDF">Farina, A. (2000) - Swept-sine technique (PDF)</a></li>
+<li><a href="https://www.firstpr.com.au/dsp/pink-noise/">Voss-McCartney algorithm</a></li>
+<li><a href="https://manual.audacityteam.org/man/plot_spectrum.html">Audacity: análisis espectral</a></li>
+</ul>
+<div class="ruta-tp ruta-tp--pie">
+<p><strong>Qué sigue:</strong> <a href="../m2_procesamiento/">M2 · Procesamiento de la RI</a> — Deconvolución, bandas de octava, dB y un endpoint que recibe archivos.</p>
+<p><strong>Dónde buscar:</strong> <a href="../../ruta/">Ruta del TP</a> · <a href="../../rubrica/">Rúbrica</a> · <a href="../../../cronograma/">Cronograma (fechas)</a> · <a href="https://senalesysistemas.slack.com">Consultas en Slack</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Desarrollado y diseñado por <a href="https://github.com/maxiyommi">maxiyommi</a>
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/maxiyommi/signal-systems" target="_blank" rel="noopener" title="Repositorio del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://senalesysistemas.slack.com" target="_blank" rel="noopener" title="Slack del curso" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M94.1 315.1c0 25.9-21.2 47.1-47.1 47.1S0 341 0 315.1 21.2 268 47.1 268h47.1v47.1zm23.7 0c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1v117.8c0 25.9-21.2 47.1-47.1 47.1s-47.1-21.2-47.1-47.1zm47.1-189c-25.9 0-47.1-21.2-47.1-47.1s21.2-47 47.1-47S212 53.2 212 79.1v47.1h-47.1zm0 23.7c25.9 0 47.1 21.2 47.1 47.1S190.8 244 164.9 244H47.1C21.2 244 0 222.8 0 196.9s21.2-47.1 47.1-47.1zm189 47.1c0-25.9 21.2-47.1 47.1-47.1s47 21.2 47 47.1-21.2 47.1-47.1 47.1h-47.1v-47.1zm-23.7 0c0 25.9-21.2 47.1-47.1 47.1S236 222.8 236 196.9V79.1c0-25.9 21.2-47.1 47.1-47.1s47.1 21.2 47.1 47.1zm-47.1 189c25.9 0 47.1 21.2 47.1 47.1s-21.2 47-47.1 47-47.1-21.2-47.1-47.1v-47.1h47.1zm0-23.7c-25.9 0-47.1-21.2-47.1-47.1s21.2-47.1 47.1-47.1h117.8c25.9 0 47.1 21.2 47.1 47.1s-21.2 47.1-47.1 47.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "navigation.tabs", "search.highlight", "search.suggest", "content.code.copy", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="../../../javascripts/presentacion.js"></script>
+      
+        <script src="../../../javascripts/pizarra.js"></script>
+      
+        <script src="../../../javascripts/agenda.js"></script>
+      
+        <script src="../../../javascripts/enlaces.js"></script>
+      
+        <script src="../../../javascripts/viaje.js"></script>
+      
+        <script src="../../../javascripts/arquitectura-esqueletos.js"></script>
+      
+        <script src="../../../javascripts/arquitectura.js"></script>
+      
+        <script src="../../../javascripts/servicios.js" type="module"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
