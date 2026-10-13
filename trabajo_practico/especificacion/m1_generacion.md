@@ -92,8 +92,10 @@ o sea **−3 dB por octava**. Como cada octava es el doble de ancha que la anter
 
 Hay dos formas de generarlo, y la API de referencia tiene las dos:
 
-- **Voss-McCartney** (`/pink-noise/voss`): se suman 16 a 20 generadores de ruido blanco; el generador $i$ se renueva cada $2^i$ muestras (cuando cambia el bit $i$ del índice $n$). Los que cambian lento aportan los graves.
+- **Voss-McCartney** (`/pink-noise/voss`): se suman 16 a 20 generadores de ruido blanco; el generador $i$ se renueva cada $2^i$ muestras (cuando cambia el bit $i$ del índice $n$). Los que cambian lento aportan los graves. <a href="#voss-anim" class="voss-toggle" aria-controls="voss-anim" aria-expanded="false">ver animación</a>
 - **Filtrado de ruido blanco** (`/pink-noise`): ruido blanco que pasa por un filtro con $|H(f)| \propto 1/\sqrt{f}$, por ejemplo un IIR de tercer orden (`scipy.signal.lfilter`) o en frecuencia con la FFT: $X_{rosa}(f) = X_{blanco}(f) / \sqrt{f}$.
+
+<div class="voss-anim" id="voss-anim" hidden></div>
 
 <small>Voss, R. F. & Clarke, J. (1978). "1/f noise" in music: Music from 1/f noise. *JASA*, 63(1), 258-263.</small>
 

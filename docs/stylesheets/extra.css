@@ -632,3 +632,21 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
 .md-typeset .arq-chip.pulso { animation: arq-pulso 0.6s ease-out; }
 @keyframes arq-pulso { 0% { transform: scale(1.14); } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .md-typeset .arq-chip.pulso { animation: none; } }
+
+/* ── M1 · animación del método de Voss-McCartney (se despliega desde .voss-toggle) ── */
+.md-typeset .voss-toggle { font-size: 0.8em; font-weight: 600; white-space: nowrap; margin-left: 0.3em; }
+.md-typeset .voss-toggle::before { content: "▸ "; }
+.md-typeset .voss-toggle[aria-expanded="true"]::before { content: "▾ "; }
+.md-typeset .voss-anim {
+  margin: 0.4rem 0 1.4rem; padding: 0.8rem 1rem 0.9rem; border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.6rem; background: var(--md-default-bg-color);
+}
+.md-typeset .voss-anim canvas { display: block; width: 100%; margin-top: 0.6rem; border-radius: 0.4rem; }
+.md-typeset .voss-anim__controles { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; }
+.md-typeset .voss-anim__controles button {
+  font: 500 0.74rem var(--md-text-font-family, sans-serif); color: var(--md-default-fg-color); cursor: pointer;
+  background: transparent; border: 1px solid var(--md-default-fg-color--lightest); border-radius: 2rem; padding: 0.4em 1em;
+}
+.md-typeset .voss-anim__controles button:hover { border-color: var(--md-primary-fg-color); }
+.md-typeset .voss-anim__nota { font-size: 0.7rem; color: var(--md-default-fg-color--light); }
+.md-typeset .voss-anim__texto { margin: 0.6rem 0 0; font-size: 0.78rem; min-height: 2.6em; }
