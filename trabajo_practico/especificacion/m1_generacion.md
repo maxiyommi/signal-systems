@@ -31,9 +31,10 @@ En M0 dibujaron las tres capas. En M1 le ponen **código real** a las tres, en e
 
 M1 son **tres servicios**. Cada uno se presenta igual:
 
-1. **Qué es:** el concepto de Señales y Sistemas detrás.
-2. **Probalo:** generalo, escuchalo y miralo acá mismo, con el mismo algoritmo que la API de referencia.
-3. **El código, archivo por archivo:** el service que implementan, el test que lo verifica y el endpoint que lo expone.
+1. **Para qué sirve:** qué papel cumple en la medición y dónde se usa lo que devuelve.
+2. **Qué es:** el concepto de Señales y Sistemas detrás.
+3. **Probalo:** generalo, escuchalo y miralo acá mismo, con el mismo algoritmo que la API de referencia.
+4. **El código, archivo por archivo:** el service que implementan, el test que lo verifica y el endpoint que lo expone.
 
 Dónde va cada cosa en el repositorio:
 
@@ -65,6 +66,15 @@ El template ya trae los tres archivos de `services/` con la firma y el docstring
 ---
 
 ## Servicio 1 · `generate_pink_noise(duration, fs)`
+
+### Para qué sirve
+
+Es una **señal de prueba**: tiene la misma energía en todas las bandas de octava, así que ninguna banda queda por debajo de las otras.
+
+- **Antes de medir**, para ajustar el nivel de la fuente: +45 dB sobre el ruido de fondo, medido a 1 m, sin saturar la cadena PC → amplificador → parlante → sala → micrófono → PC. Es el paso 2 de [cómo se mide en una sala real](../marco_conceptual.md#8-como-se-mide-en-una-sala-real).
+- **Como excitación del método de ruido interrumpido** (ISO 3382): se reproduce el ruido, se corta y se graba cómo decae la sala. En este TP la respuesta al impulso se obtiene con el sine sweep (servicio 2), que da más relación señal/ruido.
+
+Ningún otro servicio usa su salida: el ruido rosa sale de la API como WAV (`POST /api/v1/signals/pink-noise`) para reproducirlo en la medición.
 
 ### Qué es
 
@@ -178,7 +188,15 @@ Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seg
 
 ## Servicio 2 · `generate_sine_sweep_pair(duration, f1, f2, fs)`
 
-Devuelve **dos señales**: el sine sweep, que se reproduce en la sala, y su filtro inverso, que en M2 se usa para recuperar la respuesta al impulso.
+### Para qué sirve
+
+Es la **señal de medición** del TP, y todo lo que sigue sale de ella:
+
+1. El **sweep** se reproduce en la sala y se graba al mismo tiempo (servicio 3, `play_and_record`). Es el paso 3 de [cómo se mide en una sala real](../marco_conceptual.md#8-como-se-mide-en-una-sala-real): 5 repeticiones por punto.
+2. La grabación, convolucionada con el **filtro inverso**, da la respuesta al impulso de la sala (`get_impulse_response`, M2).
+3. De esa respuesta al impulso, separada por bandas de octava (`filter_single_band`, M2), salen las curvas de caída y los parámetros EDT, T20, T30, C80 y D50 (M3).
+
+Por eso el servicio devuelve **el par**: el sweep va a la sala y el filtro inverso se guarda para el cálculo. Frente al ruido rosa, el sweep da más relación señal/ruido y deja la distorsión del parlante separada en el tiempo. En la API lo expone `POST /api/v1/signals/sine-sweep`, que con `inverse` elige el sweep o su filtro inverso.
 
 ### Qué es: el sine sweep logarítmico
 
@@ -318,6 +336,20 @@ Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro in
 
 ## Servicio 3 · `play_and_record(signal, fs, record_duration)`
 
+### Para qué sirve
+
+Es el tramo de la cadena que pasa por el mundo físico: **reproduce** el sweep por el parlante y **graba** con el micrófono, al mismo tiempo. Lo que devuelve, la grabación $y[n]$, es la entrada de `get_impulse_response` en M2, junto con el filtro inverso del servicio 2. Es el único servicio que no calcula: hace entrada y salida de audio.
+
+!!! warning "Corre en el cliente, no en el servidor"
+    El parlante y el micrófono están donde se mide, no en el servidor. Una API desplegada en la nube (como la de referencia, en Render) no tiene placa de audio: ahí `play_and_record` no tendría qué reproducir ni con qué grabar. Por eso **no tiene endpoint**: se ejecuta en la máquina que mide, del lado del cliente, y a la API se le manda la grabación como WAV.
+
+    Las librerías dependen de qué cliente sea:
+
+    - **Un script o un notebook de Python** en la PC que mide: `sounddevice`, como en esta función (`app/services/audio_io.py`).
+    - **Un navegador** (un frontend): la Web Audio API, con `getUserMedia` para el micrófono, `AudioBufferSourceNode` para reproducir y `MediaRecorder` (o un `AudioWorklet`) para grabar. Así lo hace el frontend de la API de referencia.
+
+    En este TP la función está en el repo para tenerla junto al resto y con su test, y la usan corriendo el código en su propia PC.
+
 ### Qué es
 
 Para medir una sala hay que **reproducir** la señal de excitación (el sweep) por un parlante y **grabar al mismo tiempo** lo que capta el micrófono. En la cadena de medición del [marco conceptual](../marco_conceptual.md#5-la-medicion-es-una-cadena-de-sistemas), este servicio es el tramo PC → DAC → … → ADC → PC.
@@ -339,8 +371,8 @@ Detalles que, si se olvidan, arruinan la medición:
 
 Este servicio no tiene demo: necesita su placa de audio. La prueba real (parlante + micrófono, puede ser la PC) es parte de la validación de M1.
 
-!!! note "Cómo lo hace la API de referencia"
-    RIR-API no tiene este servicio: en la versión de cátedra la grabación la hace el frontend, en el navegador, con la Web Audio API (`getUserMedia` para el micrófono, `AudioBufferSourceNode` para reproducir, `MediaRecorder` para grabar). Los cuidados son los mismos: frecuencia de muestreo explícita, permisos del micrófono y latencia entre reproducir y grabar. En este TP el servicio vive en el backend y usa `sounddevice`.
+!!! note "En el navegador, los mismos cuidados"
+    Si la grabación la hace un frontend con la Web Audio API, valen los mismos detalles de arriba: frecuencia de muestreo explícita, permisos del micrófono y latencia entre reproducir y grabar.
 
 ### El código, archivo por archivo
 
