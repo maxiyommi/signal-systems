@@ -268,7 +268,7 @@ y por eso en M2, convolucionando la grabación de la sala con el filtro inverso,
 
 ### Probalo
 
-Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro inverso, y mirá tres cosas: el espectrograma (la energía sigue la curva teórica $f(t)$), la forma del filtro inverso (la amplitud baja hacia el final, en los graves) y la convolución de los dos, que da un impulso.
+Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro inverso, y mirá cuatro cosas: el espectrograma (la energía sigue la curva teórica $f(t)$), la forma del filtro inverso (la amplitud baja hacia el final, en los graves), los espectros (el del sweep cae −3 dB/octava, el del filtro inverso sube +3 dB/octava y su producto queda **plano** entre $f_1$ y $f_2$) y la convolución de los dos, que da un impulso: multiplicar los espectros en frecuencia es convolucionar en el tiempo, y un espectro plano es el de un impulso.
 
 <div class="servicio-demo" data-servicio="sine-sweep"></div>
 
