@@ -86,6 +86,10 @@ donde $k$ es una constante que fija el **nivel** del ruido, no su pendiente: cam
 
 Entre dos frecuencias separadas una octava ($f_2 = 2 f_1$) el nivel cae
 
+$$\frac{S(f_2)}{S(f_1)} = \frac{k/f_2}{k/f_1} = \frac{f_1}{f_2} = \frac{f_1}{2 f_1} = \frac{1}{2}$$
+
+(la $k$ se cancela: por eso no afecta la pendiente). En decibeles:
+
 $$\Delta L = 10 \log_{10}\left(\frac{S(f_2)}{S(f_1)}\right) = 10 \log_{10}\left(\frac{1}{2}\right) \approx -3{,}01 \text{ dB}$$
 
 o sea **−3 dB por octava**. Como cada octava es el doble de ancha que la anterior, la energía **por octava** queda igual en todas: por eso se usa para medir salas, que se analizan por bandas de octava (M2).
