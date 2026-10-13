@@ -92,10 +92,35 @@ o sea **−3 dB por octava**. Como cada octava es el doble de ancha que la anter
 
 Hay dos formas de generarlo, y la API de referencia tiene las dos:
 
-- **Voss-McCartney** (`/pink-noise/voss`): se suman 16 a 20 generadores de ruido blanco; el generador $i$ se renueva cada $2^i$ muestras (cuando cambia el bit $i$ del índice $n$). Los que cambian lento aportan los graves. <a href="#voss-anim" class="voss-toggle" aria-controls="voss-anim" aria-expanded="false">ver animación</a>
+- **Voss-McCartney** (`/pink-noise/voss`): se suman 16 a 20 generadores de ruido blanco; el generador $i$ se renueva cada $2^i$ muestras (cuando cambia el bit $i$ del índice $n$). Los que cambian lento aportan los graves. <a href="#voss-anim" class="voss-toggle" aria-controls="voss-anim" aria-expanded="false">Explicación</a>
 - **Filtrado de ruido blanco** (`/pink-noise`): ruido blanco que pasa por un filtro con $|H(f)| \propto 1/\sqrt{f}$, por ejemplo un IIR de tercer orden (`scipy.signal.lfilter`) o en frecuencia con la FFT: $X_{rosa}(f) = X_{blanco}(f) / \sqrt{f}$.
 
-<div class="voss-anim" id="voss-anim" hidden></div>
+<div class="voss-anim" id="voss-anim" hidden markdown>
+<div class="voss-anim__vista"></div>
+<div class="voss-anim__expl" markdown>
+
+**Cómo se genera, muestra por muestra**
+
+1. Se arman $G$ **generadores** (16 en la API). Cada uno guarda un valor de ruido blanco: un número al azar, de media 0, todos con la misma varianza.
+2. Para cada muestra $n = 0, 1, 2, \dots$ se escribe $n$ en binario y se miran los **bits que cambiaron** respecto de $n-1$.
+3. El generador $i$ **sortea un valor nuevo solo si cambió el bit $i$**. El bit 0 cambia en cada muestra, el bit 1 cada 2, el bit $i$ cada $2^i$: el generador $i$ **mantiene su valor $2^i$ muestras**.
+4. La muestra de salida es la **suma** de todos: $x[n] = \sum_{i=0}^{G-1} g_i[n]$. Al final se resta la media y se normaliza.
+
+```python
+valores = [rng() for _ in range(G)]
+for n in range(N):
+    for i in range(G):
+        if (n ^ (n - 1)) >> i & 1:   # cambió el bit i
+            valores[i] = rng()
+    x[n] = sum(valores)
+```
+
+**Por qué da ruido rosa.** Un valor que se mantiene $2^i$ muestras es ruido blanco "estirado": su energía queda por debajo de unos $f_s / 2^{i+1}$. Cada generador cubre así una octava más grave que el anterior, y como todos tienen la misma varianza, **cada octava recibe la misma energía**: el espectro cae unos 3 dB por octava. Con más generadores se cubren más octavas hacia los graves.
+
+**La variante de McCartney**, que usa la API de referencia, renueva **un solo generador por muestra** (el del bit 1 de menor peso de $n$) y suma un ruido blanco nuevo en cada muestra. Reparte el trabajo y suaviza el espectro, con el mismo resultado: −3 dB/octava.
+
+</div>
+</div>
 
 <small>Voss, R. F. & Clarke, J. (1978). "1/f noise" in music: Music from 1/f noise. *JASA*, 63(1), 258-263.</small>
 

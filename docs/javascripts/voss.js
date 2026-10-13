@@ -30,7 +30,8 @@
   const css = (v, def) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || def;
 
   function montar(panel, link) {
-    panel.innerHTML = `
+    const vista = panel.querySelector('.voss-anim__vista') || panel;
+    vista.innerHTML = `
       <div class="voss-anim__controles">
         <button type="button" data-acc="play">▶ Reproducir</button>
         <button type="button" data-acc="paso">Paso</button>
@@ -39,8 +40,8 @@
       </div>
       <canvas aria-label="Animación del método de Voss-McCartney"></canvas>
       <p class="voss-anim__texto" aria-live="polite"></p>`;
-    const cv = panel.querySelector('canvas'), texto = panel.querySelector('.voss-anim__texto');
-    const bPlay = panel.querySelector('[data-acc="play"]');
+    const cv = vista.querySelector('canvas'), texto = vista.querySelector('.voss-anim__texto');
+    const bPlay = vista.querySelector('[data-acc="play"]');
     let sim, n, timer = null;
     const rng = () => Math.random() * 2 - 1;
 
@@ -51,7 +52,7 @@
     function dibujar() {
       const COL = { papel: css('--g-fondo', '#161b22'), tinta: css('--g-tinta', '#c9d1d9'), eje: css('--g-eje', '#8b949e'),
         grilla: css('--g-grilla', '#30363d'), violeta: css('--g-violeta', '#818cf8'), senal: css('--g-senal', '#fbbf24'), tenue: css('--g-tenue', '#6e7681') };
-      const W = Math.max(280, panel.clientWidth - 2), compacto = W < 560;
+      const W = Math.max(260, vista.clientWidth), compacto = W < 560;
       const filaH = compacto ? 34 : 40, cab = 46, sumaH = compacto ? 70 : 90, H = cab + G * filaH + sumaH + 34;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       cv.width = W * dpr; cv.height = H * dpr; cv.style.width = '100%'; cv.style.height = H + 'px';
@@ -103,18 +104,18 @@
         : `n = ${n} → <code>${binario(n, G)}</code>: ${cambia.length === 1 ? 'cambia el bit' : 'cambian los bits'} ${cambia.join(', ')}, así que ${cambia.length === 1 ? 'se renueva el generador' : 'se renuevan los generadores'} ${cambia.join(', ')}${quedan.length ? ` y ${quedan.length === 1 ? 'el' : 'los'} ${quedan.join(', ')} ${quedan.length === 1 ? 'mantiene' : 'mantienen'} su valor` : ''}. Los que cambian rápido aportan los agudos; los lentos, los graves. Sumados, la energía queda pareja por octava.`;
     }
 
-    panel.addEventListener('click', (e) => {
+    vista.addEventListener('click', (e) => {
       const acc = e.target.closest('[data-acc]')?.dataset.acc;
       if (acc === 'play') { if (timer) parar(); else { if (n >= N - 1) reiniciar(); timer = setInterval(avanzar, PASO_MS); bPlay.textContent = '⏸ Pausa'; } }
       if (acc === 'paso') { parar(); avanzar(); }
       if (acc === 'reset') { parar(); reiniciar(); }
     });
-    new ResizeObserver(() => sim && dibujar()).observe(panel);
+    new ResizeObserver(() => sim && !panel.hidden && dibujar()).observe(vista);
     link.addEventListener('click', (e) => {
       e.preventDefault();
       panel.hidden = !panel.hidden;
       link.setAttribute('aria-expanded', String(!panel.hidden));
-      link.textContent = panel.hidden ? 'ver animación' : 'ocultar animación';
+      link.textContent = panel.hidden ? 'Explicación' : 'Ocultar explicación';
       if (!panel.hidden && !sim) reiniciar();
       if (panel.hidden) parar();
     });

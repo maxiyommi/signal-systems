@@ -638,8 +638,19 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
 .md-typeset .voss-toggle::before { content: "▸ "; }
 .md-typeset .voss-toggle[aria-expanded="true"]::before { content: "▾ "; }
 .md-typeset .voss-anim {
+  display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 1.2rem; align-items: start;
   margin: 0.4rem 0 1.4rem; padding: 0.8rem 1rem 0.9rem; border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 0.6rem; background: var(--md-default-bg-color);
+}
+.md-typeset .voss-anim[hidden] { display: none; }
+.md-typeset .voss-anim__vista { min-width: 0; }
+.md-typeset .voss-anim__expl { min-width: 0; font-size: 0.78rem; border-left: 1px solid var(--md-default-fg-color--lightest); padding-left: 1.2rem; }
+.md-typeset .voss-anim__expl p, .md-typeset .voss-anim__expl ol { margin: 0.5em 0; }
+.md-typeset .voss-anim__expl li { margin-bottom: 0.35em; }
+.md-typeset .voss-anim__expl pre { margin: 0.6em 0; }
+@media (max-width: 900px) {
+  .md-typeset .voss-anim { grid-template-columns: minmax(0, 1fr); }
+  .md-typeset .voss-anim__expl { border-left: 0; padding-left: 0; border-top: 1px solid var(--md-default-fg-color--lightest); padding-top: 0.6rem; }
 }
 .md-typeset .voss-anim canvas { display: block; width: 100%; margin-top: 0.6rem; border-radius: 0.4rem; }
 .md-typeset .voss-anim__controles { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; }
