@@ -68,6 +68,7 @@ extra_javascript:
   - javascripts/enlaces.js
   - javascripts/viaje.js
   - javascripts/voss.js
+  - javascripts/sweep.js
   - javascripts/arquitectura-esqueletos.js
   - javascripts/arquitectura.js
   - path: javascripts/servicios.js

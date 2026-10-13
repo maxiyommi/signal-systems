@@ -661,3 +661,14 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
 .md-typeset .voss-anim__controles button:hover { border-color: var(--md-primary-fg-color); }
 .md-typeset .voss-anim__nota { font-size: 0.7rem; color: var(--md-default-fg-color--light); }
 .md-typeset .voss-anim__texto { margin: 0.6rem 0 0; font-size: 0.78rem; min-height: 2.6em; }
+
+/* ── M1 · sine sweep: señal y frecuencia instantánea (.sweep-fig) ── */
+.md-typeset .sweep-fig { margin: 1em 0; }
+.md-typeset .sweep-fig canvas { display: block; width: 100%; margin-top: 0.5rem; border-radius: 0.4rem; touch-action: pan-y; }
+.md-typeset .sweep-fig__controles { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; font-size: 0.75rem; }
+.md-typeset .sweep-fig__controles button {
+  font: inherit; padding: 0.15rem 0.6rem; border-radius: 0.3rem; cursor: pointer;
+  border: 1px solid var(--md-default-fg-color--lighter); background: transparent; color: var(--md-default-fg-color);
+}
+.md-typeset .sweep-fig__controles button[aria-pressed="true"] { border-color: var(--md-primary-fg-color); background: var(--md-primary-fg-color); color: var(--md-primary-bg-color); }
+.md-typeset .sweep-fig__texto { margin: 0.5rem 0 0; font-size: 0.75rem; color: var(--md-default-fg-color--light); }

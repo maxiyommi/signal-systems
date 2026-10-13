@@ -247,6 +247,8 @@ $$f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}$$
 
 que tarda **el mismo tiempo en recorrer cada octava**: igual energía por octava, como el ruido rosa y como los filtros de bandas de la IEC 61260 que van a usar en M2.
 
+<div class="sweep-fig"></div>
+
 ### Qué es: el filtro inverso
 
 Es el sweep **invertido en el tiempo** y multiplicado por una envolvente de amplitud:
