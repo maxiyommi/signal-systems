@@ -46,8 +46,8 @@ M3 son cuatro cosas encadenadas:
 
 FastAPI organiza el código en tres capas que ya vienen en el template:
 
-!!! note "routers/ → services/ → schemas/"
-    **routers** reciben el request HTTP y validan · **services** es el DSP puro que ya escribieron (M1+M2) · **schemas** son los modelos Pydantic de entrada/salida.
+!!! note "routers/ · schemas/ · services/"
+    **routers** reciben el request HTTP, lo validan con su schema y llaman al service · **schemas** son los modelos Pydantic de entrada/salida · **services** es el DSP puro que ya escribieron (M1+M2).
 
 La clave de M3: **no reescriben el DSP**. Envuelven lo que ya tienen. Un router llama a un service y serializa el resultado con un schema.
 

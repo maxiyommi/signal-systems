@@ -31,9 +31,10 @@ En M0 dibujaron las tres capas. En M1 le ponen **código real** a las tres, en e
 
 M1 son **tres servicios**. Cada uno se presenta igual:
 
-1. **Qué es:** el concepto de Señales y Sistemas detrás.
-2. **Probalo:** generalo, escuchalo y miralo acá mismo, con el mismo algoritmo que la API de referencia.
-3. **El código, archivo por archivo:** el service que implementan, el test que lo verifica y el endpoint que lo expone.
+1. **Para qué sirve:** qué papel cumple en la medición y dónde se usa lo que devuelve.
+2. **Qué es:** el concepto de Señales y Sistemas detrás.
+3. **Probalo:** generalo, escuchalo y miralo acá mismo, con el mismo algoritmo que la API de referencia.
+4. **El código, archivo por archivo:** en el orden en que viaja un pedido: el router que lo recibe, el schema que lo valida, el service que implementan y el test que lo verifica.
 
 Dónde va cada cosa en el repositorio:
 
@@ -66,13 +67,28 @@ El template ya trae los tres archivos de `services/` con la firma y el docstring
 
 ## Servicio 1 · `generate_pink_noise(duration, fs)`
 
+### Para qué sirve
+
+Es una **señal de prueba**: tiene la misma energía en todas las bandas de octava, así que ninguna banda queda por debajo de las otras.
+
+- **Antes de medir**, para ajustar el nivel de la fuente: +45 dB sobre el ruido de fondo, medido a 1 m, sin saturar la cadena PC → amplificador → parlante → sala → micrófono → PC. Es el paso 2 de [cómo se mide en una sala real](../marco_conceptual.md#8-como-se-mide-en-una-sala-real).
+- **Como excitación del método de ruido interrumpido** (ISO 3382): se reproduce el ruido, se corta y se graba cómo decae la sala. En este TP la respuesta al impulso se obtiene con el sine sweep (servicio 2), que da más relación señal/ruido.
+
+Ningún otro servicio usa su salida: el ruido rosa sale de la API como WAV (`POST /api/v1/signals/pink-noise`) para reproducirlo en la medición.
+
 ### Qué es
 
 El **ruido rosa** (o ruido $1/f$) tiene una densidad espectral de potencia inversamente proporcional a la frecuencia:
 
 $$S(f) = \frac{k}{f}$$
 
+donde $k$ es una constante que fija el **nivel** del ruido, no su pendiente: cambiarla sube o baja toda la curva, y en el servicio queda fijada por la normalización entre −1 y 1.
+
 Entre dos frecuencias separadas una octava ($f_2 = 2 f_1$) el nivel cae
+
+$$\frac{S(f_2)}{S(f_1)} = \frac{k/f_2}{k/f_1} = \frac{f_1}{f_2} = \frac{f_1}{2 f_1} = \frac{1}{2}$$
+
+(la $k$ se cancela: por eso no afecta la pendiente). En decibeles:
 
 $$\Delta L = 10 \log_{10}\left(\frac{S(f_2)}{S(f_1)}\right) = 10 \log_{10}\left(\frac{1}{2}\right) \approx -3{,}01 \text{ dB}$$
 
@@ -80,8 +96,35 @@ o sea **−3 dB por octava**. Como cada octava es el doble de ancha que la anter
 
 Hay dos formas de generarlo, y la API de referencia tiene las dos:
 
-- **Voss-McCartney** (`/pink-noise/voss`): se suman 16 a 20 generadores de ruido blanco; el generador $i$ se renueva cada $2^i$ muestras (cuando cambia el bit $i$ del índice $n$). Los que cambian lento aportan los graves.
+- **Voss-McCartney** (`/pink-noise/voss`): se suman 16 a 20 generadores de ruido blanco; el generador $i$ se renueva cada $2^i$ muestras (cuando cambia el bit $i$ del índice $n$). Los que cambian lento aportan los graves. <a href="#voss-anim" class="voss-toggle" aria-controls="voss-anim" aria-expanded="false">Explicación</a>
 - **Filtrado de ruido blanco** (`/pink-noise`): ruido blanco que pasa por un filtro con $|H(f)| \propto 1/\sqrt{f}$, por ejemplo un IIR de tercer orden (`scipy.signal.lfilter`) o en frecuencia con la FFT: $X_{rosa}(f) = X_{blanco}(f) / \sqrt{f}$.
+
+<div class="voss-anim" id="voss-anim" hidden markdown>
+<div class="voss-anim__vista"></div>
+<div class="voss-anim__expl" markdown>
+
+**Cómo se genera, muestra por muestra**
+
+1. Se arman $G$ **generadores** (16 en la API). Cada uno guarda un valor de ruido blanco: un número al azar, de media 0, todos con la misma varianza.
+2. Para cada muestra $n = 0, 1, 2, \dots$ se escribe $n$ en binario y se miran los **bits que cambiaron** respecto de $n-1$.
+3. El generador $i$ **sortea un valor nuevo solo si cambió el bit $i$**. El bit 0 cambia en cada muestra, el bit 1 cada 2, el bit $i$ cada $2^i$: el generador $i$ **mantiene su valor $2^i$ muestras**.
+4. La muestra de salida es la **suma** de todos: $x[n] = \sum_{i=0}^{G-1} g_i[n]$. Al final se resta la media y se normaliza.
+
+```python
+valores = [rng() for _ in range(G)]
+for n in range(N):
+    for i in range(G):
+        if (n ^ (n - 1)) >> i & 1:   # cambió el bit i
+            valores[i] = rng()
+    x[n] = sum(valores)
+```
+
+**Por qué da ruido rosa.** Un valor que se mantiene $2^i$ muestras es ruido blanco "estirado": su energía queda por debajo de unos $f_s / 2^{i+1}$. Cada generador cubre así una octava más grave que el anterior, y como todos tienen la misma varianza, **cada octava recibe la misma energía**: el espectro cae unos 3 dB por octava. Con más generadores se cubren más octavas hacia los graves.
+
+**La variante de McCartney**, que usa la API de referencia, renueva **un solo generador por muestra** (el del bit 1 de menor peso de $n$) y suma un ruido blanco nuevo en cada muestra. Reparte el trabajo y suaviza el espectro, con el mismo resultado: −3 dB/octava.
+
+</div>
+</div>
 
 <small>Voss, R. F. & Clarke, J. (1978). "1/f noise" in music: Music from 1/f noise. *JASA*, 63(1), 258-263.</small>
 
@@ -92,6 +135,43 @@ Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seg
 <div class="servicio-demo" data-servicio="pink-noise"></div>
 
 ### El código, archivo por archivo
+
+=== "Router"
+
+    El router recibe el pedido, lo valida con el schema (FastAPI lo hace solo, por el tipo del parámetro) y llama al service; con lo que devuelve, responde el WAV. Es el ejemplo completo: el del sweep se escribe igual.
+
+    <span class="ruta-archivo">app/routers/signals.py</span>
+
+    ```python
+    from fastapi import APIRouter
+
+    from app.routers.audio_http import wav_response
+    from app.schemas.signals import PinkNoiseRequest
+    from app.services.pink_noise import generate_pink_noise
+
+    router = APIRouter()
+
+
+    @router.post("/pink-noise")                         # POST /api/v1/signals/pink-noise
+    async def pink_noise(req: PinkNoiseRequest):
+        audio = generate_pink_noise(req.duration, req.sample_rate)
+        return wav_response(audio, req.sample_rate, "pink_noise.wav")
+    ```
+
+=== "Schema"
+
+    Describe el pedido: qué campos vienen y qué valores son válidos. Si algo no cumple, FastAPI responde 422 y el router ni se ejecuta.
+
+    <span class="ruta-archivo">app/schemas/signals.py</span>
+
+    ```python
+    from pydantic import BaseModel, Field
+
+
+    class PinkNoiseRequest(BaseModel):
+        duration: float = Field(gt=0, le=60)            # segundos
+        sample_rate: int = Field(default=44100, ge=8000, le=192000)
+    ```
 
 === "Service"
 
@@ -139,46 +219,21 @@ Generá ruido rosa, escuchalo y mirá su espectro: la curva medida tiene que seg
 
     Es lo mismo que calcula la demo: la densidad espectral con el método de Welch y la pendiente por regresión. En el mismo archivo están `test_pink_noise_duration`, `test_pink_noise_type` y `test_pink_noise_normalized` (largo, tipo y rango de la señal).
 
-=== "Endpoint"
-
-    El schema describe el pedido (y rechaza con 422 lo que no cumple) y el router llama al service y responde el WAV. Es el ejemplo completo: el del sweep se escribe igual.
-
-    <span class="ruta-archivo">app/schemas/signals.py</span>
-
-    ```python
-    from pydantic import BaseModel, Field
-
-
-    class PinkNoiseRequest(BaseModel):
-        duration: float = Field(gt=0, le=60)            # segundos
-        sample_rate: int = Field(default=44100, ge=8000, le=192000)
-    ```
-
-    <span class="ruta-archivo">app/routers/signals.py</span>
-
-    ```python
-    from fastapi import APIRouter
-
-    from app.routers.audio_http import wav_response
-    from app.schemas.signals import PinkNoiseRequest
-    from app.services.pink_noise import generate_pink_noise
-
-    router = APIRouter()
-
-
-    @router.post("/pink-noise")                         # POST /api/v1/signals/pink-noise
-    async def pink_noise(req: PinkNoiseRequest):
-        audio = generate_pink_noise(req.duration, req.sample_rate)
-        return wav_response(audio, req.sample_rate, "pink_noise.wav")
-    ```
-
-    El test es `test_signals_pink_noise_endpoint` en `tests/test_api.py`: pide 1 s y verifica que vuelva un WAV de 44100 muestras.
+    El test del endpoint es `test_signals_pink_noise_endpoint` en `tests/test_api.py`: pide 1 s y verifica que vuelva un WAV de 44100 muestras.
 
 ---
 
 ## Servicio 2 · `generate_sine_sweep_pair(duration, f1, f2, fs)`
 
-Devuelve **dos señales**: el sine sweep, que se reproduce en la sala, y su filtro inverso, que en M2 se usa para recuperar la respuesta al impulso.
+### Para qué sirve
+
+Es la **señal de medición** del TP, y todo lo que sigue sale de ella:
+
+1. El **sweep** se reproduce en la sala y se graba al mismo tiempo (servicio 3, `play_and_record`). Es el paso 3 de [cómo se mide en una sala real](../marco_conceptual.md#8-como-se-mide-en-una-sala-real): 5 repeticiones por punto.
+2. La grabación, convolucionada con el **filtro inverso**, da la respuesta al impulso de la sala (`get_impulse_response`, M2).
+3. De esa respuesta al impulso, separada por bandas de octava (`filter_single_band`, M2), salen las curvas de caída y los parámetros EDT, T20, T30, C80 y D50 (M3).
+
+Por eso el servicio devuelve **el par**: el sweep va a la sala y el filtro inverso se guarda para el cálculo. Frente al ruido rosa, el sweep da más relación señal/ruido y deja la distorsión del parlante separada en el tiempo. En la API lo expone `POST /api/v1/signals/sine-sweep`, que con `inverse` elige el sweep o su filtro inverso.
 
 ### Qué es: el sine sweep logarítmico
 
@@ -191,6 +246,8 @@ Su frecuencia instantánea es
 $$f(t) = f_1 \cdot e^{t \ln(f_2/f_1)/T}$$
 
 que tarda **el mismo tiempo en recorrer cada octava**: igual energía por octava, como el ruido rosa y como los filtros de bandas de la IEC 61260 que van a usar en M2.
+
+<div class="sweep-fig"></div>
 
 ### Qué es: el filtro inverso
 
@@ -211,11 +268,46 @@ y por eso en M2, convolucionando la grabación de la sala con el filtro inverso,
 
 ### Probalo
 
-Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro inverso, y mirá tres cosas: el espectrograma (la energía sigue la curva teórica $f(t)$), la forma del filtro inverso (la amplitud baja hacia el final, en los graves) y la convolución de los dos, que da un impulso.
+Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro inverso, y mirá cuatro cosas: el espectrograma (la energía sigue la curva teórica $f(t)$), la forma del filtro inverso (la amplitud baja hacia el final, en los graves), los espectros (el del sweep cae −3 dB/octava, el del filtro inverso sube +3 dB/octava y su producto queda **plano** entre $f_1$ y $f_2$) y la convolución de los dos, que da un impulso: multiplicar los espectros en frecuencia es convolucionar en el tiempo, y un espectro plano es el de un impulso.
 
 <div class="servicio-demo" data-servicio="sine-sweep"></div>
 
 ### El código, archivo por archivo
+
+=== "Router"
+
+    Un solo endpoint para el par: con `inverse` en `false` devuelve el sweep (lo que se reproduce en la sala) y en `true`, el filtro inverso (lo que se usa en M2 para obtener la RI).
+
+    <span class="ruta-archivo">app/routers/signals.py</span>
+
+    ```python
+    # arriba del archivo: from fastapi import APIRouter, HTTPException
+    #                     from app.services.sine_sweep import generate_sine_sweep_pair
+
+    @router.post("/sine-sweep")                         # POST /api/v1/signals/sine-sweep
+    async def sine_sweep(req: SineSweepRequest):
+        if req.start_freq >= req.end_freq:
+            raise HTTPException(status_code=400, detail="start_freq tiene que ser menor que end_freq")
+        sweep, inverse_filter = generate_sine_sweep_pair(
+            req.duration, req.start_freq, req.end_freq, req.sample_rate
+        )
+        ...  # devolver con wav_response el sweep o el filtro inverso, según req.inverse
+    ```
+
+=== "Schema"
+
+    Describe el pedido del sweep, con `inverse` para elegir qué señal devolver. Si algo no cumple, FastAPI responde 422. Lo que el schema no controla campo por campo, que `start_freq` sea menor que `end_freq`, lo valida el router.
+
+    <span class="ruta-archivo">app/schemas/signals.py</span>
+
+    ```python
+    class SineSweepRequest(BaseModel):
+        duration: float = Field(gt=0, le=60)
+        start_freq: float = Field(default=20, ge=1, le=20000)
+        end_freq: float = Field(default=20000, ge=1, le=22050)
+        sample_rate: int = Field(default=44100, ge=8000, le=192000)
+        inverse: bool = False                           # True: devuelve el filtro inverso
+    ```
 
 === "Service"
 
@@ -281,42 +373,25 @@ Cambiá la duración y el rango de frecuencias, escuchá el sweep y su filtro in
 
     El primero es el espectrograma de la demo; el segundo, la convolución (la demo muestra la misma relación pico/resto). En el mismo archivo están `test_sine_sweep_pair_returns_tuple` y `test_sine_sweep_duration`.
 
-=== "Endpoint"
-
-    Un solo endpoint para el par: con `inverse` en `false` devuelve el sweep (lo que se reproduce en la sala) y en `true`, el filtro inverso (lo que se usa en M2 para obtener la RI).
-
-    <span class="ruta-archivo">app/schemas/signals.py</span>
-
-    ```python
-    class SineSweepRequest(BaseModel):
-        duration: float = Field(gt=0, le=60)
-        start_freq: float = Field(default=20, ge=1, le=20000)
-        end_freq: float = Field(default=20000, ge=1, le=22050)
-        sample_rate: int = Field(default=44100, ge=8000, le=192000)
-        inverse: bool = False                           # True: devuelve el filtro inverso
-    ```
-
-    <span class="ruta-archivo">app/routers/signals.py</span>
-
-    ```python
-    # arriba del archivo: from fastapi import APIRouter, HTTPException
-    #                     from app.services.sine_sweep import generate_sine_sweep_pair
-
-    @router.post("/sine-sweep")                         # POST /api/v1/signals/sine-sweep
-    async def sine_sweep(req: SineSweepRequest):
-        if req.start_freq >= req.end_freq:
-            raise HTTPException(status_code=400, detail="start_freq tiene que ser menor que end_freq")
-        sweep, inverse_filter = generate_sine_sweep_pair(
-            req.duration, req.start_freq, req.end_freq, req.sample_rate
-        )
-        ...  # devolver con wav_response el sweep o el filtro inverso, según req.inverse
-    ```
-
-    El test es `test_signals_sine_sweep_endpoint`: pide los dos y verifica que sean WAV distintos del largo pedido.
+    El test del endpoint es `test_signals_sine_sweep_endpoint` en `tests/test_api.py`: pide los dos y verifica que sean WAV distintos del largo pedido.
 
 ---
 
 ## Servicio 3 · `play_and_record(signal, fs, record_duration)`
+
+### Para qué sirve
+
+Es el tramo de la cadena que pasa por el mundo físico: **reproduce** el sweep por el parlante y **graba** con el micrófono, al mismo tiempo. Lo que devuelve, la grabación $y[n]$, es la entrada de `get_impulse_response` en M2, junto con el filtro inverso del servicio 2. Es el único servicio que no calcula: hace entrada y salida de audio.
+
+!!! warning "Corre en el cliente, no en el servidor"
+    El parlante y el micrófono están donde se mide, no en el servidor. Una API desplegada en la nube (como la de referencia, en Render) no tiene placa de audio: ahí `play_and_record` no tendría qué reproducir ni con qué grabar. Por eso **no tiene endpoint**: se ejecuta en la máquina que mide, del lado del cliente, y a la API se le manda la grabación como WAV.
+
+    Las librerías dependen de qué cliente sea:
+
+    - **Un script o un notebook de Python** en la PC que mide: `sounddevice`, como en esta función (`app/services/audio_io.py`).
+    - **Un navegador** (un frontend): la Web Audio API, con `getUserMedia` para el micrófono, `AudioBufferSourceNode` para reproducir y `MediaRecorder` (o un `AudioWorklet`) para grabar. Así lo hace el frontend de la API de referencia.
+
+    En este TP la función está en el repo para tenerla junto al resto y con su test, y la usan corriendo el código en su propia PC.
 
 ### Qué es
 
@@ -339,10 +414,18 @@ Detalles que, si se olvidan, arruinan la medición:
 
 Este servicio no tiene demo: necesita su placa de audio. La prueba real (parlante + micrófono, puede ser la PC) es parte de la validación de M1.
 
-!!! note "Cómo lo hace la API de referencia"
-    RIR-API no tiene este servicio: en la versión de cátedra la grabación la hace el frontend, en el navegador, con la Web Audio API (`getUserMedia` para el micrófono, `AudioBufferSourceNode` para reproducir, `MediaRecorder` para grabar). Los cuidados son los mismos: frecuencia de muestreo explícita, permisos del micrófono y latencia entre reproducir y grabar. En este TP el servicio vive en el backend y usa `sounddevice`.
+!!! note "En el navegador, los mismos cuidados"
+    Si la grabación la hace un frontend con la Web Audio API, valen los mismos detalles de arriba: frecuencia de muestreo explícita, permisos del micrófono y latencia entre reproducir y grabar.
 
 ### El código, archivo por archivo
+
+=== "Router"
+
+    No tiene router ni endpoint: corre en el cliente, en la máquina que mide (ver *Para qué sirve*). La API recibe la grabación ya hecha como archivo WAV, desde M2.
+
+=== "Schema"
+
+    No tiene schema: no hay un pedido HTTP que validar.
 
 === "Service"
 
@@ -402,10 +485,6 @@ Este servicio no tiene demo: necesita su placa de audio. La prueba real (parlant
     ```
 
     El test **no usa la placa de audio**: reemplaza `sounddevice` por un módulo falso (un *mock*), así corre también en el CI de GitHub, donde no hay parlantes. Por eso el `import sounddevice` va adentro de la función.
-
-=== "Endpoint"
-
-    No tiene endpoint: grabar con la placa de audio del servidor no tiene sentido en una API (el servidor está en un datacenter, no en la sala). La API recibe la grabación ya hecha como archivo, desde M2.
 
 ---
 

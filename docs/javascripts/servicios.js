@@ -33,7 +33,7 @@ function marco(cv, { aspecto, min, max }, leyenda) {
   g.fillStyle = COL.papel; g.fillRect(0, 0, W, H);
   const alto = leyenda ? dibujarLeyenda(g, leyenda, { x0: compacto ? 40 : 56, y0: tt + 6, maxAncho: W - 70, tamano: tt }) : 0;
   const m = { l: compacto ? 40 : 56, r: 12, t: alto + 12, b: compacto ? 34 : 40 };
-  return { g, W, H, tt, m, COL };
+  return { g, W, H, tt, m, COL, compacto };
 }
 function rotulos(k, x, y) {
   const { g, W, H, tt, m, COL } = k;
@@ -134,23 +134,68 @@ function dibujarImpulso(cv, y, fs, centro) {
   const COL = paleta();
   const k = marco(cv, { aspecto: 0.34, min: 200, max: 290 }, [[COL.violeta, 'sweep ∗ filtro inverso (dB respecto del pico)']]);
   const { g, W, H, m, tt } = k;
-  const ventana = 0.05, i0 = Math.max(0, centro - Math.round(ventana * fs)), i1 = Math.min(y.length, centro + Math.round(ventana * fs));
+  const ventana = 0.005, i0 = Math.max(0, centro - Math.round(ventana * fs)), i1 = Math.min(y.length, centro + Math.round(ventana * fs));
   let pico = 1e-12; for (let i = i0; i < i1; i++) pico = Math.max(pico, Math.abs(y[i]));
   const dbMin = -80, xt = (i) => m.l + ((i - i0) / (i1 - i0)) * (W - m.l - m.r), yd = (d) => m.t + (Math.max(dbMin, d) / dbMin) * (H - m.t - m.b);
   g.strokeStyle = COL.grilla; g.fillStyle = COL.eje; g.font = `500 ${tt}px ${FUENTE}`; g.textAlign = 'right';
   for (let d = 0; d >= dbMin; d -= 20) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 5, yd(d) + 4); }
   g.textAlign = 'center';
-  for (let ms = -50; ms <= 50; ms += 25) { const i = centro + Math.round((ms / 1000) * fs); g.beginPath(); g.moveTo(xt(i), m.t); g.lineTo(xt(i), H - m.b); g.stroke(); g.fillText(`${ms}`, xt(i), H - m.b + tt + 3); }
+  for (let ms = -5; ms <= 5; ms += k.compacto ? 2.5 : 1) { const i = centro + Math.round((ms / 1000) * fs); g.beginPath(); g.moveTo(xt(i), m.t); g.lineTo(xt(i), H - m.b); g.stroke(); g.fillText(`${ms}`, xt(i), H - m.b + tt + 3); }
   g.textAlign = 'left';
   const cols = Math.round(W - m.l - m.r), porCol = (i1 - i0) / cols;
   g.strokeStyle = COL.violeta; g.lineWidth = 1.2; g.beginPath();
   for (let c = 0; c < cols; c++) {
-    let v = 0; for (let i = Math.floor(i0 + c * porCol); i < Math.floor(i0 + (c + 1) * porCol) && i < i1; i++) v = Math.max(v, Math.abs(y[i]));
+    const a = Math.floor(i0 + c * porCol), b = Math.max(a + 1, Math.floor(i0 + (c + 1) * porCol));   // ±5 ms: menos muestras que columnas
+    let v = 0; for (let i = a; i < b && i < i1; i++) v = Math.max(v, Math.abs(y[i]));
     const d = 20 * Math.log10(v / pico + 1e-12);
     c === 0 ? g.moveTo(m.l + c, yd(d)) : g.lineTo(m.l + c, yd(d));
   }
   g.stroke();
   rotulos(k, 'Tiempo respecto del pico (ms)', 'Nivel (dB)');
+}
+
+// Espectro de potencia de toda la señal (una FFT con ceros hasta potencia de 2).
+function potencia(x) {
+  let N = 1; while (N < x.length) N *= 2;
+  const re = new Float64Array(N), im = new Float64Array(N); re.set(x);
+  fft(re, im);
+  return Float64Array.from({ length: N / 2 }, (_, k) => re[k] * re[k] + im[k] * im[k]);
+}
+// Sweep (−3 dB/octava), filtro inverso (+3 dB/octava) y su producto (plano entre f1 y f2), en dB respecto
+// de su valor en la frecuencia central sqrt(f1·f2), con eje de frecuencia logarítmico.
+function dibujarEspectros(cv, pSweep, pInv, fs, f1, f2) {
+  const COL = paleta();
+  const k = marco(cv, { aspecto: 0.4, min: 230, max: 330 }, [[COL.violeta, 'Sweep (−3 dB/octava)'], [COL.senal, 'Filtro inverso (+3 dB/octava)'], [COL.tinta, 'Producto: sweep × filtro inverso (plano)']]);
+  const { g, W, H, m, tt } = k;
+  const fmin = 20, fmax = Math.min(20000, fs / 2), dMax = 20, dMin = -20, N = pSweep.length * 2;
+  const cols = Math.round(W - m.l - m.r);
+  const xf = (f) => m.l + (Math.log10(f / fmin) / Math.log10(fmax / fmin)) * cols;
+  const yd = (d) => m.t + ((dMax - Math.max(dMin, Math.min(dMax, d))) / (dMax - dMin)) * (H - m.t - m.b);
+  g.strokeStyle = COL.grilla; g.fillStyle = COL.eje; g.font = `500 ${tt}px ${FUENTE}`; g.textAlign = 'center';
+  for (const f of FRECS) if (f <= fmax) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); g.fillText(rotuloF(f), xf(f), H - m.b + tt + 3); }
+  g.textAlign = 'right';
+  for (let d = dMax; d >= dMin; d -= 10) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d > 0 ? '+' : ''}${d}`, m.l - 5, yd(d) + 4); }
+  g.textAlign = 'left';
+  g.setLineDash([3, 4]); g.strokeStyle = COL.eje;                       // límites del barrido
+  for (const f of [f1, f2]) if (f >= fmin && f <= fmax) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); }
+  g.setLineDash([]);
+  // Potencia promedio de los bins de cada columna (eje logarítmico: muchas más bins por columna en agudos).
+  const porColumna = (p) => Float64Array.from({ length: cols }, (_, c) => {
+    const fa = fmin * Math.pow(fmax / fmin, c / cols), fb = fmin * Math.pow(fmax / fmin, (c + 1) / cols);
+    const a = Math.round((fa / fs) * N), b = Math.max(a + 1, Math.round((fb / fs) * N));
+    let s = 0; for (let i = a; i < b; i++) s += p[Math.min(i, p.length - 1)];
+    return 10 * Math.log10(s / (b - a) + 1e-30);
+  });
+  const ds = porColumna(pSweep), di = porColumna(pInv), dp = ds.map((v, c) => v + di[c]);
+  const cRef = Math.min(cols - 1, Math.max(0, Math.round(xf(Math.sqrt(f1 * f2)) - m.l)));
+  const curva = (d, color, ancho) => {
+    const ref = d[cRef];
+    g.strokeStyle = color; g.lineWidth = ancho; g.beginPath();
+    for (let c = 0; c < cols; c++) { const y = yd(d[c] - ref); c ? g.lineTo(m.l + c, y) : g.moveTo(m.l + c, y); }
+    g.stroke(); g.lineWidth = 1;
+  };
+  curva(ds, COL.violeta, 1.6); curva(di, COL.senal, 1.6); curva(dp, COL.tinta, 2.4);
+  rotulos(k, 'Frecuencia (Hz, escala logarítmica)', 'Nivel (dB)');
 }
 
 const hex = (c) => { const h = c.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
@@ -217,10 +262,11 @@ function demoSweep(el) {
     </div>
     <canvas role="img" aria-label="Espectrograma del sine sweep con la frecuencia instantánea teórica"></canvas>
     <canvas role="img" aria-label="Forma de onda del filtro inverso"></canvas>
+    <canvas role="img" aria-label="Espectros del sweep, del filtro inverso y de su producto"></canvas>
     <canvas role="img" aria-label="Convolución del sweep con su filtro inverso: un impulso"></canvas>
     <p class="servicio-demo__dato" aria-live="polite"></p>
     <details class="servicio-demo__respuesta"><summary>Respuesta de la API (JSON)</summary><pre><code></code></pre></details>`;
-  const [cvEsp, cvInv, cvImp] = el.querySelectorAll('canvas');
+  const [cvEsp, cvInv, cvSpec, cvImp] = el.querySelectorAll('canvas');
   let par = null, y = null, fs = 0;
   function generar() {
     fs = contexto().sampleRate;
@@ -231,6 +277,7 @@ function demoSweep(el) {
     let e = 0, n = 0; for (let i = 0; i < y.length; i += 7) if (Math.abs(i - iPico) > fs * 0.01) { e += y[i] * y[i]; n++; }
     el.querySelector('.servicio-demo__dato').innerHTML = `El pico del impulso queda <strong>${(20 * Math.log10(Math.abs(y[iPico]) / Math.sqrt(e / n))).toFixed(0)} dB</strong> por encima del resto: eso es lo que verifica el test de la convolución.`;
     par.centro = iPico;
+    par.pSweep = potencia(par.sweep); par.pInv = potencia(par.inverseFilter);
     el.querySelector('pre code').textContent = json({
       sine_sweep: { duration: estado.duration, sample_rate: fs, num_samples: par.sweep.length, start_freq: estado.f1, end_freq: estado.f2, is_inverse: false },
       inverse_filter: { duration: estado.duration, sample_rate: fs, num_samples: par.inverseFilter.length, start_freq: estado.f1, end_freq: estado.f2, is_inverse: true, max_amplitude: 0.9 },
@@ -241,6 +288,7 @@ function demoSweep(el) {
     if (!par) return;
     dibujarEspectrograma(cvEsp, par.sweep, fs, (t) => frecuenciaInstantanea(t, estado.duration, estado.f1, estado.f2));
     dibujarOnda(cvInv, par.inverseFilter, fs, paleta().senal, 'Filtro inverso: el sweep invertido en el tiempo; su amplitud baja 6 dB por octava hacia los graves');
+    dibujarEspectros(cvSpec, par.pSweep, par.pInv, fs, estado.f1, estado.f2);
     dibujarImpulso(cvImp, y, fs, par.centro);
   }
   for (const k of ['duration', 'f1', 'f2']) {
