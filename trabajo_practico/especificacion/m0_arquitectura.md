@@ -40,7 +40,7 @@ Una API recibe pedidos y devuelve respuestas. Para que el código no sea un caos
 <div class="capa__icono"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/><circle cx="5" cy="12" r="2"/></svg></div>
 <p class="capa__nombre">Router</p>
 <p class="capa__rol">El <strong>mozo</strong></p>
-<p>Recibe el pedido del cliente, lo lleva adentro y le trae la respuesta.</p>
+<p>Recibe el pedido del cliente, lo hace controlar, se lo pasa a la cocina y le trae la respuesta.</p>
 <p class="capa__no">No cocina.</p>
 <code>app/routers/</code>
 </div>
@@ -79,10 +79,11 @@ Seguí paso a paso qué pasa cuando alguien le pide ruido rosa a la API. Probá 
 </ol>
 <ol class="viaje__pasos" data-caso="valido">
 <li data-actor="cliente" data-sentido="ida"><p>El cliente pide ruido rosa de 2 segundos. Manda un <strong>request</strong> a la dirección <code>POST /api/v1/signals/pink-noise</code> con los datos en JSON:</p><pre><code>{"duration": 2, "sample_rate": 44100}</code></pre></li>
-<li data-actor="router" data-sentido="ida"><p>El <strong>router</strong> recibe el pedido. No calcula nada: primero se lo pasa al schema para que lo controle.</p></li>
-<li data-actor="schema" data-sentido="ida"><p>El <strong>schema</strong> controla la comanda: ¿<code>duration</code> es un número mayor que 0 y como mucho 60? ¿<code>sample_rate</code> es un entero? Todo en orden: el pedido sigue.</p><pre><code>duration    = 2      ✓  (mayor que 0, hasta 60)
+<li data-actor="router" data-sentido="ida"><p>El <strong>router</strong> recibe el pedido. No calcula nada: primero lo controla con el schema.</p></li>
+<li data-actor="schema" data-sentido="ida"><p>El <strong>schema</strong> controla la comanda: ¿<code>duration</code> es un número mayor que 0 y como mucho 60? ¿<code>sample_rate</code> es un entero? Todo en orden: le devuelve al router los datos ya validados.</p><pre><code>duration    = 2      ✓  (mayor que 0, hasta 60)
 sample_rate = 44100  ✓  (entero)</code></pre></li>
-<li data-actor="service" data-sentido="ida"><p>El <strong>service</strong> hace el trabajo: llama a la función de M1, que devuelve un arreglo de NumPy con 2 × 44 100 = 88 200 muestras. No sabe nada de HTTP ni de JSON.</p><pre><code>generate_pink_noise(2, 44100)  →  array([0.12, -0.03, 0.41, ...])</code></pre></li>
+<li data-actor="router" data-sentido="ida"><p>Con los datos validados, el <strong>router</strong> llama al service. El schema no llama a nadie: solo controla.</p><pre><code>audio = generate_pink_noise(req.duration, req.sample_rate)</code></pre></li>
+<li data-actor="service" data-sentido="ida"><p>El <strong>service</strong> hace el trabajo: la función de M1 calcula el ruido y le devuelve al router un arreglo de NumPy con 2 × 44 100 = 88 200 muestras. No sabe nada de HTTP ni de JSON.</p><pre><code>generate_pink_noise(2, 44100)  →  array([0.12, -0.03, 0.41, ...])</code></pre></li>
 <li data-actor="router" data-sentido="vuelta"><p>El router recibe el arreglo y lo convierte en un archivo <strong>WAV</strong>, algo que cualquier cliente puede guardar o reproducir.</p></li>
 <li data-actor="cliente" data-sentido="vuelta"><p>El cliente recibe la <strong>respuesta</strong> con el código <code>200 OK</code> (salió todo bien) y el audio:</p><pre><code>200 OK
 Content-Type: audio/wav
@@ -90,8 +91,8 @@ pink_noise.wav  (2 s · 88 200 muestras)</code></pre></li>
 </ol>
 <ol class="viaje__pasos" data-caso="invalido">
 <li data-actor="cliente" data-sentido="ida"><p>Ahora el cliente se equivoca y pide una duración negativa:</p><pre><code>{"duration": -1, "sample_rate": 44100}</code></pre></li>
-<li data-actor="router" data-sentido="ida"><p>El router recibe el pedido y, como siempre, se lo pasa al schema.</p></li>
-<li data-actor="schema" data-sentido="ida"><p>El schema encuentra el error: <code>duration = -1</code> no es mayor que 0. <strong>El pedido se frena acá.</strong></p><pre><code>duration = -1     ✗  (tiene que ser mayor que 0)</code></pre></li>
+<li data-actor="router" data-sentido="ida"><p>El router recibe el pedido y, como siempre, lo controla con el schema.</p></li>
+<li data-actor="schema" data-sentido="ida"><p>El schema encuentra el error: <code>duration = -1</code> no es mayor que 0. <strong>El pedido se frena acá</strong>: el router no llega a llamar al service.</p><pre><code>duration = -1     ✗  (tiene que ser mayor que 0)</code></pre></li>
 <li data-actor="cliente" data-sentido="vuelta"><p>La API responde <code>422</code> (datos inválidos) con una explicación del error. <strong>El service nunca se ejecutó</strong>: la cocina no recibe comandas mal escritas, y por eso sus funciones no tienen que andar revisando datos.</p><pre><code>{"detail": [{"loc": ["body", "duration"],
              "msg": "Input should be greater than 0"}]}</code></pre></li>
 </ol>
@@ -219,7 +220,7 @@ Con la estructura en su lugar, el diagrama explica **cómo se van a llenar esas 
 
 **Cómo leerlo:**
 
-- **De arriba hacia abajo va el pedido**, de abajo hacia arriba vuelve la respuesta. Cada capa solo habla con la de al lado: el cliente nunca llama a un service directamente.
+- **De arriba hacia abajo va el pedido**, de abajo hacia arriba vuelve la respuesta. El cliente solo habla con los routers. El router valida los datos con su schema y llama al service; el service no sabe nada de HTTP.
 - **Cada caja gris es un archivo** de su carpeta. Adentro, sus endpoints, schemas o funciones.
 - **Los colores son los milestones.** En M0 se dibuja **todo** el plano, aunque solo exista `/health`: el diagrama es el mapa de lo que van a construir, no de lo que ya hicieron.
 
