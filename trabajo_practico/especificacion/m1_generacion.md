@@ -82,6 +82,8 @@ El **ruido rosa** (o ruido $1/f$) tiene una densidad espectral de potencia inver
 
 $$S(f) = \frac{k}{f}$$
 
+donde $k$ es una constante que fija el **nivel** del ruido, no su pendiente: cambiarla sube o baja toda la curva, y en el servicio queda fijada por la normalización entre −1 y 1.
+
 Entre dos frecuencias separadas una octava ($f_2 = 2 f_1$) el nivel cae
 
 $$\Delta L = 10 \log_{10}\left(\frac{S(f_2)}{S(f_1)}\right) = 10 \log_{10}\left(\frac{1}{2}\right) \approx -3{,}01 \text{ dB}$$
