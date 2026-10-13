@@ -350,10 +350,10 @@ El feedback llega en el hilo de ese mensaje. Si algo no les anda, pregunten ante
 En el mismo orden que los pasos:
 
 - [ ] **1.** Repositorio creado, con los docentes (@maxiyommi y @jero-scafati) como colaboradores
-- [ ] **2.** Estructura del template copiada y en `main`
-- [ ] **2.** `uv run uvicorn app.main:app --reload` levanta la API y `/health` responde
-- [ ] **2.** `pytest` termina sin fallas
-- [ ] **2.** README completo: integrantes y roles, instalación que funciona, estructura
+- [ ] **2.1** Estructura del template copiada y en `main`
+- [ ] **2.2** `uv run uvicorn app.main:app --reload` levanta la API y `/health` responde
+- [ ] **2.3** `pytest` termina sin fallas
+- [ ] **2.4** README completo: integrantes y roles, instalación que funciona, estructura
 - [ ] **3.** Diagrama de arquitectura en el README, con todos los archivos de M1, M2 y M3
 - [ ] **4.** Al menos 10 issues con labels y asignaciones
 - [ ] **5.** Branching strategy documentada
