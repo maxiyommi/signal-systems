@@ -438,6 +438,14 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 .md-typeset .servicio-demo button:hover { border-color: var(--md-primary-fg-color); }
 .md-typeset .servicio-demo button[aria-pressed="true"] { background: var(--md-primary-fg-color); border-color: var(--md-primary-fg-color); color: #fff; }
 .md-typeset .servicio-demo__dato { margin: 0.5rem 0 0; font-size: 0.75rem; }
+.md-typeset .servicio-demo button:disabled { opacity: 0.4; cursor: not-allowed; }
+.md-typeset .servicio-demo__bandas { flex-wrap: wrap; }
+.md-typeset .servicio-demo__bandas button { padding: 0.3em 0.7em; font-size: 0.68rem; }
+.md-typeset .servicio-demo__controles .servicio-demo__archivo { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; font-family: inherit; }
+.md-typeset .servicio-demo__archivo input { font-size: 0.7rem; }
+.md-typeset .servicio-demo__tabla { margin: 0.4rem 0; font-size: 0.72rem; }
+.md-typeset .servicio-demo__tabla th, .md-typeset .servicio-demo__tabla td { padding: 0.25rem 0.7rem; }
+.md-typeset .servicio-demo__dato p { margin: 0.3rem 0 0; }
 .md-typeset .servicio-demo__respuesta { margin-top: 0.6rem; font-size: 0.72rem; }
 .md-typeset .servicio-demo__respuesta pre { margin: 0.4rem 0 0; }
 /* Rótulo de carpeta arriba de cada snippet: dónde va el código */
