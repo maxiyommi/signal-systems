@@ -9,12 +9,27 @@ permissions:
   contents: write
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: node --test trabajo_practico/interactivos/_comun/tests/*.test.mjs docs/javascripts/tests/*.test.mjs
+      - run: python -m unittest hooks.tests.test_ruta_tp
+
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install mkdocs-material
-      - run: mkdocs gh-deploy --force
+      # MkDocs 2.0 rompe plugins y overrides: fijar la serie 1.x
+      - run: pip install "mkdocs>=1.6,<2" "mkdocs-material==9.7.*"
+      - run: mkdocs gh-deploy --force --strict
