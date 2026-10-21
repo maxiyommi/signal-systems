@@ -199,9 +199,10 @@ function figCadena(cv) {
     const xt = (t) => m.l + (t / total) * (W - m.l - m.r);
     const yd = (v) => m.t + (Math.max(dbMin, Math.min(0, v)) / dbMin) * (H - m.t - m.b);
     const tPico = iPico / fs;
-    // Zonas: lo que se descarta antes del pico y la ventana que se conserva.
-    g.fillStyle = COL.grilla; g.globalAlpha = 0.45; g.fillRect(xt(0), m.t, xt(tPico) - xt(0), H - m.t - m.b); g.globalAlpha = 1;
-    g.strokeStyle = COL.tinta; g.lineWidth = 1.5; g.strokeRect(xt(tPico), m.t + 1, xt(tPico + recorte) - xt(tPico), H - m.t - m.b - 2); g.lineWidth = 1;
+    // Zonas: lo que se descarta antes del pico y lo que devuelve la función (desde 5 ms antes del pico).
+    const tIni = tPico - 0.005;
+    g.fillStyle = COL.grilla; g.globalAlpha = 0.45; g.fillRect(xt(0), m.t, xt(tIni) - xt(0), H - m.t - m.b); g.globalAlpha = 1;
+    g.strokeStyle = COL.tinta; g.lineWidth = 1.5; g.strokeRect(xt(tIni), m.t + 1, xt(total) - xt(tIni) - 1, H - m.t - m.b - 2); g.lineWidth = 1;
     grillaX(k, 0, total, 0.5, xt, { y0: m.t, y1: H - m.b });
     g.strokeStyle = COL.grilla; g.fillStyle = COL.eje; g.textAlign = 'right';
     for (let v = 0; v >= dbMin; v -= 20) { g.beginPath(); g.moveTo(m.l, yd(v)); g.lineTo(W - m.r, yd(v)); g.stroke(); g.fillText(`${v}`, m.l - 5, yd(v) + 4); }
@@ -210,8 +211,8 @@ function figCadena(cv) {
     curvaDb(k, dH, 0, Math.round(recorte * fs), xt(tPico), xt(tPico + recorte), yd, COL.eje, { ancho: 1.4, guiones: [4, 3] });
     etiqueta(k, 'antes del pico: se descarta', xt(0.15), m.t + 14, { color: COL.tinta });
     etiqueta(k, `pico: argmax(|·|) en t ≈ ${fmt(tPico, 2)} s`, xt(tPico) - 6, yd(-14), { color: COL.tinta, alinear: 'right' });
-    etiqueta(k, `se conserva: ${fmt(recorte, 1)} s desde el pico`, xt(tPico) + 6, yd(-94), { color: COL.tinta });
-    etiqueta(k, 'después: ruido de fondo de la grabación', xt(tPico + recorte) + 6, yd(-62), { color: COL.eje, peso: 500 });
+    etiqueta(k, 'devuelve: desde 5 ms antes del pico hasta el final', xt(tPico) + 6, yd(-94), { color: COL.tinta });
+    etiqueta(k, 'después: ruido de fondo de la grabación (lo maneja M3)', xt(tPico + recorte) + 6, yd(-62), { color: COL.eje, peso: 500 });
     rotulos(k, `Tiempo (s) · la salida completa dura N + M − 1 muestras (${fmt(total, 2)} s)`, 'Nivel (dB)');
   };
 }

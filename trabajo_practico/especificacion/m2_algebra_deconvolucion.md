@@ -276,11 +276,10 @@ def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> n
     # Paso 2: ubicar el pico (es donde "aterriza" el impulso recuperado)
     peak_idx = int(np.argmax(np.abs(ir_full)))
 
-    # Paso 3: recortar desde el pico, descartando la pre-respuesta
-    max_ir_duration = 2.0  # segundos, ajustar según el T60 esperado
-    fs = 44100
-    end = peak_idx + int(max_ir_duration * fs)
-    ir = ir_full[peak_idx:end]
+    # Paso 3: empezar unos 5 ms antes del pico, descartando la pre-respuesta.
+    # La firma no recibe fs: 240 muestras son 5 ms a 48 kHz (5,4 ms a 44,1 kHz).
+    antes = 240
+    ir = ir_full[max(0, peak_idx - antes):]
 
     # Paso 4: normalizar al pico
     ir = ir / np.max(np.abs(ir))
@@ -292,7 +291,7 @@ Así se ve lo que devuelve el paso 1 y qué se queda en los pasos 2 y 3, para un
 
 <figure class="figura-deconv" data-figura="cadena">
 <canvas role="img" aria-label="Salida completa de fftconvolve en dB: tramo previo al pico que se descarta, el pico, la ventana que se conserva y el ruido de fondo después"></canvas>
-<figcaption>La salida completa de fftconvolve, en dB respecto del pico. Antes del pico no hay información de la sala (zona sombreada: se descarta). Desde el pico, la caída coincide con la h(t) de la sala (gris punteado) hasta que la tapa el ruido de fondo de la grabación; la ventana marca lo que se conserva.</figcaption>
+<figcaption>La salida completa de fftconvolve, en dB respecto del pico. Antes del pico no hay información de la sala (zona sombreada: se descarta). Desde el pico, la caída coincide con la h(t) de la sala (gris punteado) hasta que la tapa el ruido de fondo de la grabación; el recuadro marca lo que devuelve la función: desde 5 ms antes del pico hasta el final.</figcaption>
 </figure>
 
 ### Detalles que importan
@@ -301,9 +300,9 @@ Así se ve lo que devuelve el paso 1 y qué se queda en los pasos 2 y 3, para un
 
 2. **`mode="full"`** — devuelve la convolución completa. La longitud es $N + M - 1$, donde $N$ es la longitud de la grabación y $M$ la del filtro. La RI útil está en la mitad de ese arreglo, alrededor del pico.
 
-3. **Ubicar el pico con `argmax(abs(...))`** — el pico es donde el impulso recuperado tiene su máximo. Antes del pico hay "pre-eco" (componentes no causales del filtro inverso), que se descarta.
+3. **Ubicar el pico con `argmax(abs(...))`** — el pico es donde el impulso recuperado tiene su máximo. Antes del pico hay "pre-eco" (componentes no causales del filtro inverso), que se descarta; pero la RI arranca **unos 5 ms antes** del pico, no justo en él: si empieza exactamente en el sonido directo, el filtrado por bandas de M3 (`sosfiltfilt`) deforma el comienzo y el EDT de los graves sale mal.
 
-4. **Recortar a la duración útil** — la RI tiene una cola que decae exponencialmente. Recortar a 2-3 veces el T60 esperado deja todo lo útil y descarta el ruido de fondo.
+4. **El final no se recorta acá** — después de la caída queda el ruido de fondo de la grabación. De eso se ocupa M3: el rango dinámico decide qué tiempos se pueden calcular, y Lundeby (opcional) dice dónde cortar la integral de Schroeder.
 
 5. **Normalizar al final** — `ir = ir / np.max(np.abs(ir))`. Imprescindible para que el output sea homogéneo entre mediciones.
 
