@@ -535,7 +535,7 @@ La implementación:
 
 1. Convolucionar con `scipy.signal.fftconvolve(recording, inverse_filter, mode='full')`: por FFT es órdenes de magnitud más rápido que `np.convolve` para señales de varios segundos.
 2. Ubicar el **pico** (`np.argmax(np.abs(...))`): es la llegada del sonido directo. No cae en la primera muestra: en la práctica $x * x_{inv} \approx \delta(t - T)$, un impulso **corrido la duración del sweep**, así que en la salida completa el pico aparece cerca de $T$ más el tiempo que tarda el sonido en llegar al micrófono. Por eso hay que buscarlo. Antes del pico no hay información de la sala.
-3. **Recortar** para que la RI empiece en el pico o un poco antes, y **normalizar** respecto del pico.
+3. **Recortar** para que la RI empiece **unos 5 ms antes del pico**, y **normalizar** respecto del pico. No justo en el pico: en M3 cada banda se filtra con `sosfiltfilt`, y si la RI arranca exactamente en el sonido directo, el comienzo de la banda se deforma y el EDT de los graves sale absurdo.
 
 > **Material extendido:** [Álgebra de la deconvolución](m2_algebra_deconvolucion.md): la derivación detallada, la comparación con MLS y referencias.
 
@@ -834,7 +834,7 @@ Lo que tiene que estar en el tag `v0.2.0` el 4/11.
 
 Con la RI filtrada por banda y en dB, lo que viene es **medirla**. M3 (entrega el 18 de noviembre) suma:
 
-- **Integral de Schroeder:** $S(t) = \int_t^\infty h^2(\tau)\, d\tau$, la energía que queda desde $t$ en adelante. Convierte la RI ruidosa en una curva monótona (es la que dibuja la demo del servicio 3). En código: `np.cumsum(x[::-1] ** 2)[::-1]`.
+- **Integral de Schroeder:** $E(t) = \int_t^\infty h^2(\tau)\, d\tau$, la energía que queda desde $t$ en adelante. Convierte la RI ruidosa en una curva monótona (es la que dibuja la demo del servicio 3). En código: `np.cumsum((ir**2)[::-1])[::-1]`.
 - **Regresión lineal** sobre esa curva para EDT, T20 y T30, y los parámetros de energía C80 y D50, por banda.
 - **Lundeby** (opcional): el punto donde el decaimiento se mezcla con el ruido de fondo, para cortar la integral ahí.
 - El endpoint que recibe la RI y devuelve los parámetros, la validación, la demo y la presentación oral.
