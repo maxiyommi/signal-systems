@@ -237,6 +237,13 @@ $$
 
 Aplicando la inversa de Fourier a cualquiera de esas igualdades recuperás las propiedades en el tiempo.
 
+!!! warning "¿Cuándo vale?"
+    El teorema de convolución no es gratis: necesita estas condiciones.
+
+    1. **Las transformadas tienen que existir.** El enunciado clásico pide señales absolutamente integrables, $\int |a(t)|\,dt < \infty$, o de energía finita, $\int |a(t)|^2\,dt < \infty$. Con eso la convolución también existe y $\mathcal{F}\{a * b\} = A \cdot B$ vale. Las señales ideales sin transformada clásica (un seno que dura para siempre, el escalón, $\delta$) entran en el sentido de las **distribuciones**: sus transformadas tienen deltas, y la igualdad sigue valiendo mientras el producto esté definido. Lo que no está definido es, por ejemplo, multiplicar dos deltas en la misma frecuencia, que es convolucionar dos senos eternos de la misma frecuencia: esa convolución diverge. **En el TP no hay problema:** el sweep, el filtro inverso, la grabación y la RI duran un tiempo finito y tienen amplitud acotada.
+    2. **El sistema tiene que ser LTI.** Escribir la grabación como $Y(f) = X(f)\,H(f)$ supone que la sala es lineal e invariante (sección 1). Con un sistema no lineal no existe una única $H(f)$: la energía aparece en otras frecuencias (armónicos) y el producto deja de describir la salida. Por eso la distorsión del parlante no se "deconvoluciona": queda separada en el tiempo (sección 3).
+    3. **En la computadora, la DFT da convolución circular.** Con señales muestreadas y la FFT, el producto de dos DFT de $N$ puntos es la transformada de la convolución **circular**: lo que pasa del final vuelve a entrar por el principio. Para obtener la convolución **lineal** hay que rellenar con ceros hasta $N + M - 1$ muestras como mínimo. `scipy.signal.fftconvolve` lo hace solo; si arman la deconvolución a mano con `np.fft`, se tienen que ocupar ustedes, o la cola de la RI aparece "doblada" sobre el comienzo.
+
 ### Aplicado a nuestra cadena
 
 $$
@@ -244,6 +251,12 @@ $$
 $$
 
 Por la propiedad de Farina del sweep, $X(f) \cdot X_{\text{inv}}(f) \approx 1$ en toda la banda útil → $\mathcal{F}\{y * x_{\text{inv}}\} \approx H(f)$ → inversa de Fourier → $\approx h(t)$.
+
+Ese "$\approx 1$" tiene tres letras chicas, y conviene saber cuáles son:
+
+- **Solo entre $f_1$ y $f_2$.** Fuera del rango del sweep, $X(f) \approx 0$ y el producto también: lo que se recupera es $h(t)$ **limitada a la banda** $[f_1, f_2]$, no la $h(t)$ completa. Por eso el sweep tiene que cubrir todas las bandas de octava que se van a analizar en M3.
+- **Salvo una ganancia y un retardo.** Con el filtro inverso tal como sale de M1, el producto es en realidad $c \cdot e^{-j 2\pi f T}$: una constante (por la normalización) y un retardo puro de $T$ segundos. El retardo es lo que pone el pico en $t = T$ en la salida completa (figura de la sección 3), y la constante se va al normalizar la RI al pico.
+- **Con ruido, el ruido también pasa.** Si la grabación es $y = x * h + r$, la cuenta da $H(f) + R(f)\,X_{\text{inv}}(f)$: el ruido de fondo filtrado por el inverso. Es el piso que se ve después de la caída en la figura de la sección 6. Un sweep más largo concentra más energía en el pico y baja ese piso, unos 3 dB cada vez que se duplica la duración.
 
 ---
 
