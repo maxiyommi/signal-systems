@@ -688,10 +688,10 @@ Los tests de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que
 
 <figure class="figura-tp" markdown>
 [![EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte](../img/m3/parametros_por_banda.png)](../img/m3/parametros_por_banda.png)
-<figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** medida en la Usina del Arte (sala sinfónica, Buenos Aires)</figcaption>
+<figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** medida en la Usina del Arte (sala sinfónica, Buenos Aires; posición 4, 1.er piso), calculados con el método de esta página</figcaption>
 </figure>
 
-Esto es lo que devuelve `calculate_parameters_from_ir` para una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de las RI sintéticas de las demos, acá los parámetros **se separan un poco** (unos 0,1 s: ojo con el eje, que no arranca en 0): cuando el EDT es menor que el T30, la caída temprana es más rápida que la tardía (cerca de la fuente, con reflexiones tempranas fuertes o con volúmenes acoplados, que dan doble pendiente); cuando es mayor, la energía temprana es débil (lejos de la fuente). Las diferencias entre bandas son información acústica real de la sala.
+Esto es lo que devuelve `calculate_parameters_from_ir` para una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de las RI sintéticas de las demos, acá los parámetros **se separan**, sobre todo en los graves: en 125 y 250 Hz el EDT queda unos 0,4 s por debajo del T30. Cuando el EDT es menor que el T30, la caída temprana es más rápida que la tardía: pasa cerca de la fuente, con reflexiones tempranas fuertes o con volúmenes acoplados (que dan doble pendiente). Cuando es mayor, la energía temprana es débil (lejos de la fuente). Las diferencias entre bandas y entre parámetros son información acústica real de la sala.
 
 <small>ISO 3382 · el mismo gráfico que van a ver en el [frontend de cátedra](https://rir-api-frontend.onrender.com) cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</small>
 
@@ -703,7 +703,7 @@ No alcanza con que los tests pasen. Hay que demostrar que los números **coincid
 
 <figure class="figura-tp" markdown>
 [![Comparación de T30 por banda entre RIR-API y software de referencia sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
-<figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real) · RIR-API vs. software de referencia: el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
+<figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real, la misma de la figura anterior) · RIR-API con el método de esta página vs. la API de la cátedra (con Lundeby) sobre el mismo archivo, con la tolerancia del criterio de aceptación: el formato que va en el README</figcaption>
 </figure>
 
 Comparen contra al menos **uno** de estos programas:
@@ -716,7 +716,9 @@ Comparen contra al menos **uno** de estos programas:
 Con al menos **2 RI**: una sintética (con su `generate_synthetic_ir`, de T60 conocido) y una real (del [MIT IR Survey](https://mcdermottlab.mit.edu/Reverb/IR_Survey.html), de OpenAIR si vuelve a estar en línea, o una medida por la cátedra), en las bandas de 125, 250, 500, 1000, 2000 y 4000 Hz.
 
 !!! note "Criterio de aceptación"
-    Los tiempos de reverberación (**EDT, T20, T30**) no deben diferir en más de **±0,5 s** respecto de la referencia, y **C80** no más de **±1 dB**.
+    Los tiempos de reverberación (**EDT, T20, T30**) no deben diferir de la referencia en más de **±10 %, o ±0,5 s si eso es menor**, y **C80** no más de **±1 dB**.
+
+    El 10 % es lo que importa en salas chicas: en una sala de 0,5 s, ±0,5 s sería un 100 % de error. El tope de ±0,5 s solo actúa en salas de más de 5 s.
 
     Si su pendiente da la mitad que la de REW, hay un bug: probablemente en el filtrado o en los límites del tramo de Schroeder.
 
