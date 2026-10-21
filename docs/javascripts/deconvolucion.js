@@ -226,7 +226,10 @@ function ensanchar() {
     const cap = fig.querySelector('figcaption');
     fig.style.width = ''; fig.style.marginLeft = ''; if (cap) { cap.style.marginLeft = ''; cap.style.width = ''; }
     const vw = document.documentElement.clientWidth, col = fig.parentElement.getBoundingClientRect();
-    const extra = Math.min(col.left, vw - col.right) - MARGEN;
+    // No pisar la navegación lateral cuando está visible.
+    const nav = document.querySelector('.md-sidebar--primary');
+    const bordeIzq = nav && nav.offsetParent !== null && getComputedStyle(nav).visibility !== 'hidden' ? nav.getBoundingClientRect().right : 0;
+    const extra = Math.min(col.left - bordeIzq, vw - col.right) - MARGEN;
     if (vw < 960 || extra < MARGEN) continue;
     fig.style.width = `${col.width + 2 * extra}px`;
     fig.style.marginLeft = `${-extra}px`;

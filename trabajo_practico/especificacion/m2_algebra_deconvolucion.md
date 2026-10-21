@@ -36,7 +36,7 @@ Leída en voz alta, la integral dice: **cada instante $\tau$ de la entrada dispa
 
 ---
 
-## 2. El sueño: medir $h(t)$ directamente con un impulso
+## 2. El sueño: medir h(t) directamente con un impulso
 
 Como la convolución de cualquier función con un delta es la función misma:
 
