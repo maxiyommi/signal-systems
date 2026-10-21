@@ -569,6 +569,7 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
   transition: opacity 0.2s, border-color 0.2s;
 }
 .md-typeset .arq-chip code { padding: 0; background: none; font-size: 1em; }
+.md-typeset .arq-chip[data-opcional]::after { content: "opcional"; margin-left: 0.35em; font-size: 0.8em; font-style: italic; opacity: 0.7; }
 .md-typeset .arq [data-m="0"] { --color-m: var(--m0); }
 .md-typeset .arq [data-m="1"] { --color-m: var(--m1); }
 .md-typeset .arq [data-m="2"] { --color-m: var(--m2); }

@@ -67,7 +67,7 @@
       codigo: '@router.post("/lundeby", response_model=LundebyResponse)\nasync def lundeby(file: UploadFile) -> LundebyResponse:\n    ...',
     },
     'POST /acoustics/parameters': {
-      archivo: 'app/routers/acoustics.py', que: 'El endpoint principal: recibe la RI y devuelve los parámetros ISO 3382 por banda. Mismo patrón que /filters/single-band de M2; encadena services, no calcula.', spec: M3,
+      archivo: 'app/routers/acoustics.py', que: 'El endpoint principal: recibe la RI y devuelve los parámetros ISO 3382 por banda. Mismo patrón que /filters/single-band de M2: lee el archivo y llama a un solo service (calculate_parameters_from_ir, que recorre las bandas); no calcula.', spec: M3,
       codigo: 'router = APIRouter()   # main.py lo registra con prefix="/api/v1/acoustics"\n\n\n@router.post("/parameters", response_model=BandAnalysisResponse)\nasync def parameters(file: UploadFile = File(...)):\n    with uploaded_file(file) as path:\n        ir, fs = load_audio(path)                   # 422 si no es audio (ver M2)\n    params = calculate_parameters_from_ir(ir, fs)   # todas las bandas, de una vez\n    return BandAnalysisResponse(sample_rate=fs, duration=len(ir) / fs,\n                                center_frequencies=sorted(params["T30"]), parameters=params)',
     },
 
@@ -94,15 +94,15 @@
     },
     SmoothingResponse: {
       archivo: 'app/schemas/utils.py', que: 'Los métodos de suavizado válidos y la respuesta con la envolvente.', spec: M3,
-      codigo: 'class SmoothingMethod(str, Enum):\n    HILBERT = "hilbert"\n    MOVING_AVERAGE = "moving_average"\n\n\nclass SmoothingResponse(BaseModel):\n    method: SmoothingMethod\n    window_ms: float\n    sample_rate: int\n    envelope: list[float]                           # decimada (ej. 1 valor por ms)',
+      codigo: 'class SmoothingMethod(str, Enum):\n    HILBERT = "hilbert"\n    MOVING_AVERAGE = "moving_average"\n\n\nclass SmoothingResponse(BaseModel):\n    method: SmoothingMethod\n    window_ms: float\n    sample_rate: int\n    time_step: float                                # segundos entre dos valores\n    envelope: list[float]                           # decimada',
     },
     SchroederResponse: {
       archivo: 'app/schemas/utils.py', que: 'La respuesta de la curva de caída.', spec: M3,
-      codigo: 'class SchroederResponse(BaseModel):\n    sample_rate: int\n    num_samples: int\n    lundeby_applied: bool = False\n    edc_db: list[float]                             # decimada y sin -inf (JSON no lo admite)',
+      codigo: 'class SchroederResponse(BaseModel):\n    sample_rate: int\n    num_samples: int\n    lundeby_applied: bool = False\n    time_step: float                                # segundos entre dos valores\n    edc_db: list[float]                             # decimada y sin -inf (JSON no lo admite)',
     },
     LundebyResponse: {
       archivo: 'app/schemas/utils.py', que: 'El punto de corte estimado.', spec: M3,
-      codigo: 'class LundebyResponse(BaseModel):\n    crossover_time: float       # segundos\n    crossover_samples: int\n    sample_rate: int',
+      codigo: 'class LundebyResponse(BaseModel):\n    cutoff_index: int                               # muestra del cruce (lo que devuelve apply_lundeby)\n    cutoff_time: float                              # segundos\n    noise_level_db: float',
     },
 
     // ── Services (los mismos stubs del template) ───────────────────────────────────────────

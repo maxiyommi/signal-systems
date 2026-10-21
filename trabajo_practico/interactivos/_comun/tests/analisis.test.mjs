@@ -60,6 +60,16 @@ test('D50 y C80 sobre una caída exponencial exacta coinciden con la fórmula ce
   assert.ok(Math.abs(c80(ir, fs) - esperadoC80) < 0.05, `C80 ${c80(ir, fs)} vs ${esperadoC80}`);
 });
 
+test('sin rango dinámico suficiente el tiempo es null (no un número inventado), y a 8 kHz se saltea la banda de 4 kHz', () => {
+  const fs = 16000, r = rngGauss(9);
+  const ir = riExp(1, fs, 2, 9).map((v) => v + 0.01 * r());   // ruido de fondo ≈ −40 dB: no alcanza para T30
+  const p = calculateParametersFromIr(ir, fs);
+  assert.equal(p.T30[1000], null);
+  assert.ok(p.EDT[1000] > 0.7 && p.EDT[1000] < 1.3, `EDT = ${p.EDT[1000]}`);
+  const q = calculateParametersFromIr(riExp(1, 8000, 2, 3), 8000);
+  assert.ok(!(4000 in q.T30) && 1000 in q.T30);
+});
+
 test('parámetros por banda: T30 en 1 kHz ±10 % con T60 = 2 s; D50 en [0, 100]; C80 > 0 con T60 corto', () => {
   const fs = 16000;
   const p = calculateParametersFromIr(riExp(2, fs, 6, 3), fs);

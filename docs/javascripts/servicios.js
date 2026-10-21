@@ -836,8 +836,10 @@ function demoParametros(el) {
     p = calculateParametersFromIr(h, fs);
     const filas = BANDAS_M3.map((fc) => `<tr><td>${rotuloBanda(fc)}</td><td>${fmt(SALAS[estado.sala].t60[fc], 2)}</td>${['EDT', 'T20', 'T30'].map((c) => `<td>${p[c][fc] ? fmt(p[c][fc], 2) : '—'}</td>`).join('')}<td>${fmt(p.D50[fc], 0)} %</td><td>${fmt(p.C80[fc], 1)} dB</td></tr>`).join('');
     el.querySelector('.servicio-demo__dato').innerHTML = `<table class="servicio-demo__tabla"><thead><tr><th>Banda</th><th>T60 de la sala (s)</th><th>EDT (s)</th><th>T20 (s)</th><th>T30 (s)</th><th>D50</th><th>C80</th></tr></thead><tbody>${filas}</tbody></table><p>En una RI sintética la caída de cada banda es una sola exponencial: T20 y T30 quedan cerca del T60 pedido. El EDT usa solo los primeros 10 dB, y como la RI es ruido varía más de una RI a otra (probá <em>Generar otra</em>). En una sala real los tres se separan por la acústica, no por azar, y esa diferencia es información (ver <em>El output final</em>).</p>`;
-    const r2 = (o) => Object.fromEntries(Object.entries(o).map(([fc, v]) => [fc, v === null ? null : Math.round(v * 100) / 100]));
-    el.querySelector('pre code').textContent = json({ sample_rate: fs, duration: Math.round(dur * 100) / 100, center_frequencies: BANDAS_M3, parameters: { EDT: r2(p.EDT), T20: r2(p.T20), T30: r2(p.T30), D50: r2(p.D50), C80: r2(p.C80) } });
+    // Como lo serializa FastAPI: claves de float como texto ("125.0") y null para lo que no se pudo calcular.
+    const r2 = (o) => Object.fromEntries(Object.entries(o).map(([fc, v]) => [Number(fc).toFixed(1), v === null ? null : Math.round(v * 100) / 100]));
+    const texto = json({ sample_rate: fs, duration: Math.round(dur * 100) / 100, center_frequencies: BANDAS_M3.map((f) => f.toFixed(1)), parameters: { EDT: r2(p.EDT), T10: r2(p.T10), T20: r2(p.T20), T30: r2(p.T30), D50: r2(p.D50), C80: r2(p.C80) } });
+    el.querySelector('pre code').textContent = texto.replace(/"center_frequencies": \[[^\]]*\]/, (s) => s.replace(/"/g, '').replace('center_frequencies:', '"center_frequencies":'));
     dibujar();
   }
   function dibujar() {

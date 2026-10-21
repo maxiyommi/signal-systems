@@ -8,7 +8,7 @@
 
 ## Objetivo
 
-Completar el sistema RIR-API con los **servicios de análisis** (suavizado, integral de Schroeder, regresión lineal y cálculo de parámetros según ISO 3382) y **completar la API REST** que empezaron en M1: el endpoint que recibe una RI y devuelve los parámetros por banda, y dos de utilidades. Al terminar, la API recibe una respuesta al impulso por HTTP, la procesa y devuelve EDT, T20, T30, D50 y C80 por banda de octava, con resultados validados contra software comercial.
+Completar el sistema RIR-API con los **servicios de análisis** (suavizado, integral de Schroeder, regresión lineal y cálculo de parámetros según ISO 3382) y **completar la API REST** que empezaron en M1: el endpoint que recibe una RI y devuelve los parámetros por banda, y dos de utilidades. Al terminar, la API recibe una respuesta al impulso por HTTP, la procesa y devuelve EDT, T20, T30, D50 y C80 por banda de octava, con resultados validados contra software de referencia.
 
 > **Referencia:** la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) muestra endpoints, schemas y respuestas de una implementación completa.
 
@@ -16,7 +16,7 @@ Completar el sistema RIR-API con los **servicios de análisis** (suavizado, inte
 
 ## En el plano de la API
 
-El mismo diagrama de M0, **parado en M3**: se encienden los services de análisis y los endpoints que faltaban (`acoustics.py` y `utils.py`, con sus schemas). Lo de M1 y M2 ya está sólido: la API existe desde hace dos milestones y en M3 se completa. Tocá **Recorrido de un análisis** para seguir un pedido de punta a punta: sube un WAV, pasa por cada capa y vuelve como JSON.
+El mismo diagrama de M0, **parado en M3**: se encienden los services de análisis y los endpoints que faltaban (`acoustics.py` y `utils.py`, con sus schemas). M1 y M2 dejan la base: la API ya genera señales, sintetiza RI y filtra archivos, y en M3 se completa. Tocá **Recorrido de un análisis** para seguir un pedido de punta a punta: sube un WAV, pasa por cada capa y vuelve como JSON.
 
 <div class="arq-marco" data-inicial="3">
 --8<-- "arquitectura.html"
@@ -56,7 +56,7 @@ rir-api/
     └── test_api.py                ← los tests de los tres endpoints                   (M3)
 ```
 
-Como en M1 y M2, el template trae `acoustic_parameters.py` con las firmas y los docstrings, y los tests escritos (en `xfail` hasta que implementen cada función).
+Como en M1 y M2, el template trae `acoustic_parameters.py` con las firmas y los docstrings, y los tests escritos, marcados `xfail` hasta que implementen las funciones (la marca de `tests/test_analisis.py` es una sola, para todo el archivo: los tests que ya pasan aparecen como `XPASS` hasta que la borren).
 
 !!! note "La clave de M3: no reescriben el DSP"
     Envuelven lo que ya tienen. `calculate_parameters_from_ir` encadena `filter_single_band` (M2) con los servicios nuevos, y el router del endpoint principal es casi igual al de `/filters/single-band`: recibe el archivo, lo lee con `load_audio` y llama a **un** service. Lo nuevo es la respuesta: un JSON validado con un schema, en lugar de un WAV.
@@ -81,11 +81,11 @@ Ojo: los parámetros **no** se calculan sobre la envolvente. La integral de Schr
 
 Dos formas de obtener la envolvente, y el template pide las dos:
 
-- **Hilbert** (`method='hilbert'`, la recomendada). Se arma la **señal analítica** $z(t) = x(t) + j\,\hat{x}(t)$, donde $\hat{x}$ es la transformada de Hilbert de $x$ (la misma señal con cada componente corrida 90°), y la envolvente es su módulo:
+- **Hilbert** (`method='hilbert'`, la recomendada). Se arma la **señal analítica** $z(t) = x(t) + j\,\hat{x}(t)$, donde $\hat{x}$ es la transformada de Hilbert de $x$ (la misma señal con cada componente desfasada −90°), y la envolvente es su módulo:
 
     $$A(t) = |z(t)| = \sqrt{x^2(t) + \hat{x}^2(t)}$$
 
-    Para un seno de amplitud variable, $A(t)$ es exactamente esa amplitud. No hay que elegir ningún parámetro. En Python: `np.abs(scipy.signal.hilbert(signal))`.
+    Para un seno de amplitud variable, $A(t)$ es prácticamente esa amplitud (salvo cerca de los bordes de la señal). No hay que elegir ningún parámetro. En Python: `np.abs(scipy.signal.hilbert(signal))`.
 
 - **Media móvil** (`method='moving_average'`). Se promedia la energía en una ventana de $M$ muestras ($M$ = `window_ms` · `fs` / 1000) y se toma la raíz, para volver a amplitud:
 
@@ -149,11 +149,12 @@ La misma RI filtrada en una banda, en dB: cruda, con Hilbert y con media móvil.
     class SmoothingResponse(BaseModel):
         method: SmoothingMethod
         window_ms: float
-        sample_rate: int
-        envelope: list[float]                           # la envolvente (decimada, ej. 1 valor por ms)
+        sample_rate: int                                # la del archivo
+        time_step: float                                # segundos entre dos valores de envelope
+        envelope: list[float]                           # la envolvente, decimada
     ```
 
-    Una RI de 2 s a 48 kHz son 96 000 valores: para el JSON conviene **decimar** (por ejemplo, quedarse con una muestra por milisegundo, `envelope[:: fs // 1000]`).
+    Una RI de 2 s a 48 kHz son 96 000 valores: para el JSON conviene **decimar**, por ejemplo quedarse con una muestra de cada `paso = max(1, round(fs / 1000))` (`envelope[::paso]`, cerca de un valor por milisegundo), y mandar `time_step = paso / fs` para que el cliente pueda armar el eje de tiempo.
 
 === "Service"
 
@@ -255,7 +256,7 @@ Se calcula "de atrás para adelante": se invierte $h^2$, se acumula y se vuelve 
 Dos cuidados:
 
 - **El ruido de fondo.** Después de la caída, la grabación no queda en silencio: queda el ruido. La integral lo suma como si fuera energía de la sala, y la curva se **dobla** hacia arriba antes de terminar. Por eso la curva se **trunca** donde la caída se cruza con el ruido (el método de Lundeby, opcional, estima ese punto) o, como mínimo, se mide solo en el tramo recto.
-- **El final:** en la última muestra $E[N-1]$ es casi cero y el logaritmo se va a $-\infty$. Sumen un `eps` antes del log. Y en la respuesta del endpoint, recorten los valores muy negativos: **JSON no admite `-inf` ni `NaN`**, y FastAPI responde 500 si los encuentra.
+- **El final:** en las últimas muestras $E[n]$ es casi cero (y si el WAV es PCM de 16 bits, la cola se cuantiza a 0 y $E$ vale **exactamente** 0): el logaritmo se va a $-\infty$. Sumen un `eps` antes del log. Y en la respuesta del endpoint, recorten los valores muy negativos (por ejemplo `np.maximum(edc, -150)`): **JSON no admite `-inf` ni `NaN`**. Con `response_model`, Pydantic los convierte en `null` sin avisar (la curva queda con huecos, y un `NaN` se confunde con "no se pudo calcular"); sin `response_model`, FastAPI responde 500.
 
 ### Probalo
 
@@ -283,9 +284,10 @@ Una sala con el T60 y el ruido de fondo que elijas: la energía de la RI, la cur
 
     ```python
     class SchroederResponse(BaseModel):
-        sample_rate: int
-        num_samples: int
+        sample_rate: int                                # la del archivo
+        num_samples: int                                # largo de la RI original
         lundeby_applied: bool = False                   # True si truncaron con apply_lundeby
+        time_step: float                                # segundos entre dos valores de edc_db
         edc_db: list[float]                             # la curva en dB, decimada y sin -inf
     ```
 
@@ -450,7 +452,7 @@ La curva de Schroeder de la banda de 1 kHz de una sala: elegí el parámetro, mi
 
 ### Qué es
 
-Para cada banda (al menos de 125 Hz a 4 kHz, las de la tabla de validación):
+Para cada banda (al menos de 125 Hz a 4 kHz, las de la tabla de validación; las que no entran por debajo de Nyquist, como la de 4 kHz en un archivo a 8 kHz, se saltean):
 
 1. Filtrar la RI en la banda: `filter_single_band` (M2).
 2. Calcular su curva de caída: `apply_schroeder_integral` (servicio 2).
@@ -465,18 +467,26 @@ Para cada banda (al menos de 125 Hz a 4 kHz, las de la tabla de validación):
 
         $$C_{80} = 10 \log_{10}\left(\frac{\sum_{n=0}^{N_{80}-1} h^2[n]}{\sum_{n=N_{80}}^{N-1} h^2[n]}\right), \qquad N_{80} = \lfloor 0{,}080 \cdot f_s \rfloor$$
 
-        Valores típicos: entre −2 y +2 dB para música sinfónica, de +2 a +5 dB para música de cámara y más de +5 dB para la palabra.
+        Rango típico, según la ISO 3382-1: de −5 a +5 dB; en salas sinfónicas, alrededor de −2 a +2 dB. Para la palabra se usan D50 (o C50), no C80.
 
-    Los dos cuentan desde la llegada del sonido directo: por eso la RI tiene que empezar en el pico, como la deja `get_impulse_response` (M2).
+    Los dos cuentan desde la llegada del sonido directo: mídanlos desde el pico de cada banda filtrada.
 
-El resultado es un diccionario `{parametro: {frecuencia_central: valor}}`. Si en una banda la curva no llega al final de un tramo (por ejemplo, el ruido no deja llegar a −35 dB), ese tiempo **no se puede calcular**: devuelvan `None`, nunca un número inventado ni `NaN`.
+El resultado es un diccionario `{parametro: {frecuencia_central: valor}}`.
+
+!!! warning "Cuándo un tiempo no se puede calcular"
+    La curva de Schroeder de la RI completa **siempre** baja hasta el final, haya ruido o no: el ruido la deforma, pero no le impide llegar a −35 dB. Por eso "la curva llega al final del tramo" no sirve como criterio: con ruido de fondo alto daría un T30 de 3 o 10 s para una sala de 1 s. El criterio es el **rango dinámico** de la tabla del servicio 3: estimen el nivel del ruido (por ejemplo, la energía media del último 10 % de la banda) y, si el pico queda menos de $|\text{fin del tramo}| + 10$ dB por encima, ese tiempo **no se puede calcular**: devuelvan `None`, nunca un número inventado ni `NaN`. (Truncar en el cruce con el ruido, con Lundeby, mejora los que sí se pueden calcular.)
+
+    Si su copia del template declara el retorno como `dict[str, dict[float, float]]` (la versión anterior), cámbienlo a `dict[str, dict[float, float | None]]`: con `None` posibles, ese es el tipo correcto.
+
+!!! warning "La RI no tiene que arrancar justo en el directo"
+    Si la RI empieza exactamente en el sonido directo (en la muestra 0), `sosfiltfilt` deforma el comienzo de cada banda y el EDT de los graves sale absurdo (en 125 Hz, 0,05 s para una sala de 1 s). Con unos milisegundos antes del pico se arregla: por eso `get_impulse_response` (M2) recorta **unos 5 ms antes del pico**. Si analizan una RI de un catálogo que arranca en el directo, agreguen esos milisegundos de ceros al principio (`np.concatenate([np.zeros(int(0.005 * fs)), ir])`).
 
 !!! note "Por qué `sosfiltfilt` importa acá"
     El filtro de octava tiene su propia respuesta, más larga en los graves (la banda es angosta), que se suma a la caída de la sala. Con una sola pasada (`sosfilt`) puede inflar los T60 cortos de los graves; `filter_single_band`, con `sosfiltfilt`, reduce ese efecto. Si su T30 en 125 Hz da muy distinto que el de REW, empiecen por ahí.
 
 ### Probalo
 
-Elegí una sala: la API calcula EDT, T20 y T30 por banda (con el T60 que se le pidió a la sala de referencia), D50 y C80. Abajo, la energía de una banda con los primeros 50 y 80 ms marcados: ahí se ve qué cuentan D50 y C80. En el JSON, lo que respondería el endpoint.
+Elegí una sala: la API calcula EDT, T20 y T30 por banda (junto al T60 con que se sintetizó la sala), D50 y C80. Abajo, la energía de una banda con los primeros 50 y 80 ms marcados: ahí se ve qué cuentan D50 y C80. En el JSON, lo que respondería el endpoint.
 
 <div class="servicio-demo" data-servicio="parameters"></div>
 
@@ -540,7 +550,9 @@ Elegí una sala: la API calcula EDT, T20 y T30 por banda (con el T60 que se le p
     <span class="ruta-archivo">app/services/acoustic_parameters.py</span>
 
     ```python
-    def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
+    def calculate_parameters_from_ir(
+        ir: np.ndarray, fs: int
+    ) -> dict[str, dict[float, float | None]]:
         """Calcula los parametros acusticos ISO 3382 por banda de octava.
 
         Parametros: EDT (0 a -10 dB), T10 (-5 a -15 dB), T20 (-5 a -25 dB),
@@ -555,8 +567,9 @@ Elegí una sala: la API calcula EDT, T20 y T30 por banda (con el T60 que se le p
 
         Returns
         -------
-        dict[str, dict[float, float]]
-            ``{parametro: {frecuencia_central: valor}}``.
+        dict[str, dict[float, float | None]]
+            ``{parametro: {frecuencia_central: valor}}``. Un tiempo sin rango
+            dinamico suficiente para su tramo vale ``None``.
             Ejemplo: ``{'T30': {125: 1.5, 250: 1.3, ...}, 'EDT': {...}, 'D50': {...},
             'C80': {...}}``.
 
@@ -662,7 +675,7 @@ Los tests de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que
 
 - Documentación automática en Swagger (`/docs`) y ReDoc (`/redoc`).
 - Validación de entrada con schemas de Pydantic.
-- Errores HTTP con mensajes claros: 422 para pedidos inválidos (archivo que no es audio, parámetros fuera de rango) y nunca un 500 por un caso previsible.
+- Errores HTTP con mensajes claros: 4xx para pedidos inválidos (422 para un archivo que no es audio o parámetros fuera de rango; M1 usa 400 cuando `start_freq` ≥ `end_freq`) y nunca un 500 por un caso previsible, como una banda que no entra por debajo de Nyquist.
 - Los endpoints que reciben audio lo aceptan por `multipart/form-data`; los de generación devuelven WAV.
 - Se levanta con `uvicorn app.main:app --reload`.
 
@@ -678,7 +691,7 @@ Los tests de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que
 <figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** medida en la Usina del Arte (sala sinfónica, Buenos Aires)</figcaption>
 </figure>
 
-Esto es lo que devuelve `calculate_parameters_from_ir` para una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de las RI sintéticas de las demos, donde `EDT ≈ T20 ≈ T30`, acá los parámetros **se separan**: cuando el EDT es menor que el T30 domina la energía temprana (cerca de la fuente o con reflexiones tempranas fuertes); cuando es mayor, la energía temprana es débil (lejos de la fuente o con volúmenes acoplados). Las diferencias entre bandas son información acústica real de la sala.
+Esto es lo que devuelve `calculate_parameters_from_ir` para una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de las RI sintéticas de las demos, acá los parámetros **se separan un poco** (unos 0,1 s: ojo con el eje, que no arranca en 0): cuando el EDT es menor que el T30, la caída temprana es más rápida que la tardía (cerca de la fuente, con reflexiones tempranas fuertes o con volúmenes acoplados, que dan doble pendiente); cuando es mayor, la energía temprana es débil (lejos de la fuente). Las diferencias entre bandas son información acústica real de la sala.
 
 <small>ISO 3382 · el mismo gráfico que van a ver en el [frontend de cátedra](https://rir-api-frontend.onrender.com) cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</small>
 
@@ -689,7 +702,7 @@ Esto es lo que devuelve `calculate_parameters_from_ir` para una **sala real**: l
 No alcanza con que los tests pasen. Hay que demostrar que los números **coinciden con un software profesional** sobre RI reales.
 
 <figure class="figura-tp" markdown>
-[![Comparación de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
+[![Comparación de T30 por banda entre RIR-API y software de referencia sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
 <figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real) · RIR-API vs. software de referencia: el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
 </figure>
 
@@ -725,7 +738,7 @@ Y suban la misma RI a su API y a la [API de cátedra](https://rir-api.onrender.c
 Este cuatrimestre **no hay informe escrito**. En su lugar, el README del repositorio incluye una sección **Validación** con:
 
 - La tabla comparativa RIR-API vs. software de referencia.
-- Al menos 3 gráficas: (1) curva de decaimiento, (2) comparación de filtros, (3) validación con software comercial (ver [Tres gráficas obligatorias](#tres-graficas-obligatorias)).
+- Al menos 3 gráficas: (1) curva de decaimiento, (2) comparación de filtros, (3) validación con software de referencia (ver [Tres gráficas obligatorias](#tres-graficas-obligatorias)).
 - El diagrama de arquitectura actualizado.
 
 Estos mismos resultados se muestran en la presentación oral.
@@ -736,7 +749,7 @@ Estos mismos resultados se muestran en la presentación oral.
 
 Todos los requisitos de M1 y M2 aplican, más:
 
-- **Cobertura de tests:** 80 % en las funciones de análisis y en los tests de API (el nivel "Excelente" del criterio Testing de la rúbrica). En el informe de `pytest --cov=app/services`, miren la fila de `acoustic_parameters.py`.
+- **Cobertura de tests:** más de 80 % en el código de M3 (el nivel "Excelente" del criterio Testing de la rúbrica). Con `uv run pytest --cov=app`, miren las filas de `acoustic_parameters.py`, `routers/acoustics.py` y `routers/utils.py`.
 - **CI en verde** en cada push: lint y tests.
 - **Docstrings completos** en las funciones públicas; Swagger y ReDoc generados solos.
 - **README actualizado** con instrucciones de ejecución de la API y ejemplos `curl`.
@@ -752,7 +765,7 @@ En el Demo Day, mostrar la API *corriendo* no es opcional: es parte central de l
 
 Guion sugerido (≈ 8 min):
 
-1. Levantar la API: `uvicorn app.main:app --reload`
+1. Levantar la API: `uv run uvicorn app.main:app --reload`
 1. Abrir `/docs` (Swagger) y recorrer los endpoints
 1. Subir un WAV real a `/acoustics/parameters`
 1. Mostrar la respuesta JSON con los parámetros por banda
@@ -778,8 +791,8 @@ Son el corazón de la validación en el README y de la presentación oral.
 </figure>
 
 <figure class="figura-tp" markdown>
-[![Validación contra software comercial](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
-<figcaption markdown="span">3 · Validación vs. software comercial</figcaption>
+[![Validación contra software de referencia](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
+<figcaption markdown="span">3 · Validación vs. software de referencia</figcaption>
 </figure>
 
 !!! note "También conviene incluir"
@@ -800,7 +813,7 @@ Son el corazón de la validación en el README y de la presentación oral.
 
 - [ ] Cada función en una rama propia, mergeada vía PR con review de otro integrante
 - [ ] Historial coherente y Conventional Commits
-- [ ] Tag `v1.0.0` y Release en GitHub
+- [ ] Tag `v1.0.0` anotado y empujado al remote, y Release en GitHub
 
 ### Checklist de entrega
 
@@ -809,13 +822,14 @@ Lo que tiene que estar en el tag `v1.0.0` el 18/11.
 - [ ] Las 4 funciones de análisis con sus tests pasando
 - [ ] Endpoints `POST /api/v1/acoustics/parameters`, `/utils/schroeder` y `/utils/smoothing` registrados en `main.py`, con sus schemas
 - [ ] Los endpoints de M1 y M2 siguen andando
-- [ ] `pytest` en verde y cobertura de 80 % en análisis y API
+- [ ] `pytest` en verde y más de 80 % de cobertura en el código de M3 (servicios y routers)
 - [ ] CI de GitHub Actions **verde** en cada push
 - [ ] Swagger (`/docs`) y ReDoc (`/redoc`) funcionando
 - [ ] README con instrucciones de ejecución y ejemplos `curl`
 - [ ] README con la sección **Validación**: 3 gráficas y tabla comparativa
 - [ ] `AI_LOG.md` **en la raíz**, con entradas de M0 a M3
-- [ ] Tag `v1.0.0` en `main`, apuntando al commit final real
+- [ ] Tag `v1.0.0` anotado en `main`, empujado al remote y apuntando al commit final real
+- [ ] Repositorio accesible para @maxiyommi y @jero-scafati (colaboradores)
 - [ ] Release en GitHub con changelog resumido
 - [ ] Demo lista: WAV de prueba + API levantada
 
@@ -867,7 +881,7 @@ Material visual legible al proyectar. Gráficos grandes, con ejes y unidades.
 - [Pydantic: validación de datos](https://docs.pydantic.dev/)
 - [FastAPI TestClient](https://fastapi.tiangolo.com/tutorial/testing/)
 - [ISO 3382-1:2009 - Measurement of room acoustic parameters](https://www.iso.org/standard/40979.html)
-- [Schroeder, M. R. (1965) - New method of measuring reverberation time](https://asa.scitation.org/doi/10.1121/1.1909343)
+- [Schroeder, M. R. (1965) - New method of measuring reverberation time](https://doi.org/10.1121/1.1909343)
 - Lundeby, A., Vigran, T. E., Bietz, H. y Vorländer, M. (1995). "Uncertainties of measurements in room acoustics." *Acustica*, 81(4), 344–355.
 - [scipy.signal.hilbert](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html)
 - [REW - Room EQ Wizard](https://www.roomeqwizard.com/)

@@ -83,7 +83,9 @@ export function c80(ir, fs) {
 
 // calculate_parameters_from_ir(ir, fs) → { EDT: {fc: s}, T10, T20, T30, D50: {fc: %}, C80: {fc: dB} }.
 // Cada banda: filtro de octava (fase cero) → Schroeder → regresión en el tramo de cada parámetro.
-// Un tiempo que no se puede calcular (la curva no llega al final del tramo) queda en null.
+// Un tiempo cuyo tramo no tiene rango dinámico suficiente (ISO 3382-1: el ruido de fondo tiene que
+// quedar al menos 10 dB por debajo del final del tramo) queda en null. Las bandas cuyo borde superior
+// pasa Nyquist se saltean. D50 y C80 se cuentan desde el pico de cada banda (la llegada del directo).
 export function calculateParametersFromIr(ir, fs, bandas = BANDAS_M3) {
   const out = { EDT: {}, T10: {}, T20: {}, T30: {}, D50: {}, C80: {} };
   for (const fc of bandas) {
@@ -91,10 +93,12 @@ export function calculateParametersFromIr(ir, fs, bandas = BANDAS_M3) {
     const banda = filtrarOctava(ir, fs, fc);
     for (const [clave, { desde, hasta }] of Object.entries(RANGOS)) {
       const r = evaluarDecaimiento(banda, fs, { desdeDb: desde, hastaDb: hasta });
-      out[clave][fc] = r.tr ?? null;
+      out[clave][fc] = r.valido ? r.tr : null;
     }
-    out.D50[fc] = d50(banda, fs);
-    out.C80[fc] = c80(banda, fs);
+    let iPico = 0; for (let i = 0; i < banda.length; i++) if (Math.abs(banda[i]) > Math.abs(banda[iPico])) iPico = i;
+    const desdePico = banda.subarray(iPico);
+    out.D50[fc] = d50(desdePico, fs);
+    out.C80[fc] = c80(desdePico, fs);
   }
   return out;
 }
