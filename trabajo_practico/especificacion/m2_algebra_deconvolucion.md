@@ -119,7 +119,7 @@ respecto del pico (negativo: **antes**), así que podés ventanearlo y descartar
 
 <figure class="figura-deconv" data-figura="distorsion">
 <canvas role="img" aria-label="Resultado de deconvolucionar una grabación con distorsión: el pico lineal en cero y los armónicos 2, 3 y 4 como picos más chicos antes del pico"></canvas>
-<figcaption>Un sweep de 2 s (20 Hz a 20 kHz) que pasa por un parlante que satura, deconvolucionado con su filtro inverso. La respuesta lineal queda en 0; los armónicos 2.º, 3.º y 4.º aparecen como picos aparte, antes, justo donde predice Δtₙ (líneas punteadas). Al recortar desde el pico, quedan afuera.</figcaption>
+<figcaption>Un sweep de 2 s (20 Hz a 20 kHz) que pasa por un parlante no lineal, deconvolucionado con su filtro inverso. La respuesta lineal queda en 0; los armónicos 2.º, 3.º y 4.º aparecen como picos aparte, antes, justo donde predice Δtₙ (líneas punteadas). Al recortar desde el pico, quedan afuera.</figcaption>
 </figure>
 
 **Referencia**: Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. [PDF](https://www.angelofarina.it/Public/Papers/134-AES00.PDF)

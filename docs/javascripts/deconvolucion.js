@@ -216,6 +216,23 @@ function figCadena(cv) {
   };
 }
 
+// Las figuras salen de la columna de texto y usan todo el ancho de la ventana (menos un margen);
+// el epígrafe queda alineado con el texto. En pantallas angostas la columna ya ocupa todo.
+const MARGEN = 24;
+function ensanchar() {
+  for (const fig of document.querySelectorAll('figure.figura-deconv')) {
+    const cap = fig.querySelector('figcaption');
+    fig.style.width = ''; fig.style.marginLeft = ''; if (cap) { cap.style.marginLeft = ''; cap.style.width = ''; }
+    const vw = document.documentElement.clientWidth, col = fig.parentElement.getBoundingClientRect();
+    if (vw < 960 || vw - col.width < 4 * MARGEN) continue;
+    fig.style.width = `${vw - 2 * MARGEN}px`;
+    fig.style.marginLeft = `${MARGEN - col.left}px`;
+    if (cap) { cap.style.marginLeft = `${col.left - MARGEN}px`; cap.style.width = `${col.width}px`; }
+  }
+}
+ensanchar();
+window.addEventListener('resize', ensanchar);
+
 const FIGURAS = { convolucion: figConvolucion, apilado: figApilado, distorsion: figDistorsion, cadena: figCadena };
 const montadas = [];
 for (const fig of document.querySelectorAll('figure.figura-deconv[data-figura]')) {
