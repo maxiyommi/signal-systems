@@ -1,6 +1,6 @@
 # El álgebra de la deconvolución vía sweep + filtro inverso
 
-Material complementario de la página del Milestone 2 (RIR-API · Procesamiento de la Respuesta al Impulso). Cubre el fundamento teórico de la función `get_impulse_response(recording, inverse_filter)` que pide la spec.
+Material complementario de [M2 · Procesamiento de la RI](m2_procesamiento.md). Cubre el fundamento teórico de la función `get_impulse_response(recording, inverse_filter)` que pide la consigna.
 
 ---
 
@@ -11,7 +11,7 @@ Para extraer parámetros acústicos con sentido físico, asumimos que la sala se
 - **Lineal** — si reproducís dos señales sumadas, la respuesta es la suma de las respuestas individuales (principio de superposición).
 - **Invariante en el tiempo** — la respuesta no cambia con el momento en que medís (la sala no "se cansa" ni "aprende").
 
-Bajo esa asunción, la sala queda completamente caracterizada por **una única función**: su **respuesta al impulso** $h(t)$.
+Bajo ese supuesto, la sala queda completamente caracterizada por **una única función**: su **respuesta al impulso** $h(t)$.
 
 $h(t)$ es lo que saldría del micrófono si en el instante $t = 0$ explotase un impulso ideal $\delta(t)$ en el parlante. Contiene **toda** la información acústica de la sala: las primeras reflexiones, la cola difusa, los modos resonantes, la absorción por banda.
 
@@ -32,7 +32,7 @@ Leída en voz alta, la integral dice: **cada instante $\tau$ de la entrada dispa
 
 - Linealidad falla cerca del clip (parlante saturado).
 - Invariancia falla si hay movimiento (puertas abriendo, gente caminando) o cambios de temperatura/humedad apreciables durante la medición.
-- En la práctica: nivel moderado, sala vacía, medir rápido. La asunción LTI vale con error < 1 dB en condiciones razonables.
+- En la práctica: nivel moderado, sala vacía, medir rápido. En esas condiciones el supuesto LTI es una muy buena aproximación.
 
 ---
 
@@ -48,7 +48,7 @@ $$
 
 ### Por qué no funciona en la práctica
 
-$\delta(t)$ tiene **amplitud infinita** en $t = 0$ y duración cero. Energía total finita pero potencia instantánea infinita. Los parlantes reales:
+$\delta(t)$ tiene **amplitud infinita** en $t = 0$ y duración cero. Su área vale 1 ($\int \delta(t)\,dt = 1$), pero ni siquiera tiene energía finita: $\int \delta^2(t)\,dt$ diverge. Los parlantes reales:
 
 - No pueden mover la membrana infinitamente rápido (límite de slew rate).
 - Distorsionan groseramente cerca del nivel máximo.
@@ -96,18 +96,18 @@ Todas las frecuencias suman en fase en ese instante → pico angosto y alto. En 
 
 Tres motivos:
 
-1. **Banda finita**: el sweep solo cubre de $f_1$ a $f_2$ (típicamente 20 Hz–20 kHz). Frecuencias fuera de esa banda no se cancelan; aparecen como un pequeño "ruido" en el resultado.
+1. **Banda finita**: el sweep solo cubre de $f_1$ a $f_2$ (típicamente 20 Hz–20 kHz). Fuera de esa banda no hay energía, así que el resultado no es un delta perfecto sino un **delta de banda limitada**: un pulso angosto con pequeñas oscilaciones a los lados.
 2. **Discretización**: estamos trabajando con muestras a $f_s$, no con señales continuas. La FFT tiene su grilla.
-3. **Compensación de amplitud imperfecta**: el filtro inverso compensa la "doble pasada" del sweep log por las bajas frecuencias, pero la corrección numérica no es exacta.
+3. **Compensación de amplitud imperfecta**: el filtro inverso compensa que el sweep logarítmico pasa más tiempo en los graves (su espectro cae −3 dB/octava, como el ruido rosa), pero la corrección numérica no es exacta.
 
-En la práctica el resultado es un impulso con SNR > 90 dB respecto del piso, que para efectos de medición *se comporta como* $\delta$.
+En la práctica, con el sweep de M1 (2 s, 20 Hz a 20 kHz), lo que queda fuera del pico está entre unos 55 dB (a ±10 ms) y 80 dB (a ±0,5 s) por debajo: más que los 60 dB que hacen falta para medir un T60. Para efectos de medición *se comporta como* $\delta$.
 
 ### Por qué Farina (2000) propuso esto
 
 Antes del sweep + filtro inverso, lo estándar era:
 
 - **MLS (Maximum Length Sequence)**: ruido pseudo-aleatorio con autocorrelación ≈ $\delta$. Funciona pero es sensible a no linealidades (la distorsión se reparte en todo el dominio temporal y arruina la cola).
-- **Ruido rosa**: similar problema, peor crest factor.
+- **Ruido interrumpido** (ruido rosa que se corta, el método clásico de la ISO 3382): la caída que se graba es aleatoria, hay que promediar muchas mediciones y no da la RI completa.
 
 La gran ventaja del sweep logarítmico es que **la distorsión armónica queda separada en el tiempo** del impulso principal. Si el parlante distorsiona, el armónico $n$ de cada tono aparece cuando el sweep pasa por $n \cdot f$, que en un sweep logarítmico es siempre el mismo tiempo antes: el armónico $n$-ésimo cae en
 
@@ -183,7 +183,7 @@ Del archivo grabado y del filtro inverso (que tenías guardado), **obtuviste $h(
 
 ## 5. Por qué la convolución es conmutativa y asociativa
 
-Los tres pasos del razonamiento anterior dependen de que podamos reordenar paréntesis. Acá la justificación.
+El paso (iii) del razonamiento anterior depende de que podamos reordenar paréntesis. Acá la justificación.
 
 ### Conmutativa
 
@@ -307,9 +307,9 @@ Así se ve lo que devuelve el paso 1 y qué se queda en los pasos 2 y 3, para un
 
 5. **Normalizar al final** — `ir = ir / np.max(np.abs(ir))`. Imprescindible para que el output sea homogéneo entre mediciones.
 
-### Verificación con la propia spec
+### Verificación con los tests de la consigna
 
-El test 3 de M2 (`test_impulse_response_peak`) usa esta cadena:
+El test de deconvolución de M2 (`test_impulse_response_peak`) usa esta cadena:
 
 1. Armar una RI conocida (en el test: sonido directo + cola exponencial filtrada; también sirve una generada con `generate_synthetic_ir()`).
 2. Generar el sweep + filtro inverso con M1.
@@ -329,10 +329,10 @@ Si el álgebra está bien implementada, la correlación queda > 0.95 fácil. Si 
 
 - **Stan, G.-B., Embrechts, J.-J. & Archambeau, D. (2002).** "Comparison of different impulse response measurement techniques." *Journal of the Audio Engineering Society*, 50(4). — comparación cuantitativa entre sweep, MLS y otros métodos.
 
-- **ISO 3382-1:2009** — Norma internacional para medición de parámetros acústicos de salas. Define cómo procesar la RI una vez recuperada (lo que vienen en M3).
+- **ISO 3382-1:2009** — Norma internacional para medición de parámetros acústicos de salas. Define cómo procesar la RI una vez recuperada (lo que ven en M3).
 
 - **Oppenheim, A. V., Schafer, R. W., & Buck, J. R. (1999).** *Discrete-Time Signal Processing*. Capítulos 2 y 3 — convolución, propiedades, dominio frecuencia. La referencia clásica de DSP.
 
 ---
 
-**Última actualización:** Junio 2026 · Material de cátedra · Señales y Sistemas (UNTREF)
+**Última actualización:** Octubre 2026 · Material de cátedra · Señales y Sistemas (UNTREF)

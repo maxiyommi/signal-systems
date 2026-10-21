@@ -92,7 +92,10 @@ Tres datos salen del **encabezado** del archivo, no de suposiciones:
 - **Canales**: si el archivo es estéreo, se **promedian a mono** (`signal.mean(axis=1)`) y se documenta en el docstring.
 - **Formato**: si el archivo no es un audio, `ValueError` con un mensaje claro (el router lo convierte en un 422). Si no existe, `FileNotFoundError`.
 
-Para leer, `soundfile.read()` (más robusto que `scipy.io.wavfile`, y lee WAV y FLAC).
+Para leer, `soundfile.read()`: lee WAV y FLAC (`scipy.io.wavfile` también sirve, pero solo lee WAV).
+
+!!! warning "`soundfile` no lanza las excepciones que pide la firma"
+    Si el archivo no existe, o existe pero no es un audio, `sf.read` lanza en los dos casos `soundfile.LibsndfileError` (un `RuntimeError`), no `FileNotFoundError` ni `ValueError`. Si la dejan pasar, fallan dos tests de `load_audio` y el endpoint responde 500 en lugar de 422. Dos pasos lo resuelven: verificar antes que el archivo exista (`Path(path).exists()`) y, al leer, capturar `sf.LibsndfileError` para relanzarla como `ValueError` con un mensaje que diga qué archivo falló y por qué.
 
 ### Probalo
 
@@ -138,6 +141,12 @@ Cargá un WAV de tu computadora (o la grabación de ejemplo) y mirá lo que devo
         La senal se devuelve **mono**: si el archivo es estereo (o multicanal) se
         promedian los canales. Se convierte a ``float64`` normalizada entre -1 y 1
         independientemente de la profundidad de bits original (16, 24 o 32 bits).
+        Usar ``soundfile`` (o ``scipy.io.wavfile``).
+
+        Parameters
+        ----------
+        path : str | Path
+            Ruta al archivo de audio a cargar.
 
         Returns
         -------
@@ -151,7 +160,8 @@ Cargá un WAV de tu computadora (o la grabación de ejemplo) y mirá lo que devo
         FileNotFoundError
             Si el archivo especificado no existe.
         ValueError
-            Si el archivo no es un audio valido o el formato no es soportado.
+            Si el archivo no es un audio valido o el formato no es soportado
+            (con un mensaje claro que indique el archivo y el motivo).
         """
         raise NotImplementedError("Implementar en Milestone 2")   # ← acá va su implementación
     ```
@@ -185,7 +195,7 @@ Cargá un WAV de tu computadora (o la grabación de ejemplo) y mirá lo que devo
             load_audio(ruta)
     ```
 
-    Los WAV de prueba se escriben en una carpeta temporal (`tmp_path`). En el mismo archivo están `test_load_audio_wav`, `test_load_audio_file_not_found` y `test_load_audio_normalization` (un PCM de 16 bits a plena escala tiene que llegar a 0,99 o más, sin pasar de 1).
+    Los WAV de prueba se escriben en una carpeta temporal (`tmp_path`). En el mismo archivo están `test_load_audio_wav`, `test_load_audio_file_not_found` y `test_load_audio_normalization` (un PCM de 16 bits a plena escala tiene que llegar a más de 0,99, sin pasar de 1).
 
 ---
 
@@ -219,10 +229,12 @@ $$f_{inf} = \frac{f_c}{\sqrt{2}}, \qquad f_{sup} = f_c \cdot \sqrt{2}$$
 
 Cada banda es el doble de ancha que la anterior: la misma idea que el ruido rosa y el sweep de M1, que reparten la energía por igual entre octavas. La banda de 16 kHz no se puede usar a 44,1 kHz: su borde superior (22,6 kHz) queda por encima de Nyquist (22,05 kHz).
 
+<small>La tabla usa las frecuencias **nominales** ($f_c$ redondeadas: 31,5, 63, 125…) y $\sqrt{2}$, que es lo que pide la consigna. Por eso los bordes no empalman perfecto (la banda 2 termina en 89,1 Hz y la 3 empieza en 88,4 Hz). La IEC 61260-1 define frecuencias medias exactas, $1000 \cdot 10^{3k/10}$ Hz, con las que sí empalman; para este TP la diferencia no cambia ningún resultado.</small>
+
 Dos decisiones de implementación que cambian el resultado:
 
-- **Forma SOS** (secciones de segundo orden): `scipy.signal.butter(..., output='sos')`. La forma `(b, a)` es numéricamente inestable en las bandas graves: a 44,1 kHz y orden 4, para $f_c \le 125$ Hz el filtro devuelve `NaN` o atenúa decenas de dB en la banda de paso.
-- **Fase cero**: `scipy.signal.sosfiltfilt` aplica el filtro hacia adelante y hacia atrás. La fase se cancela, así la caída de cada banda no se corre en el tiempo (con `sosfilt` o `lfilter`, el retardo de grupo infla el T60 de los graves entre 5 y 15 %). El precio: la magnitud se aplica **dos veces**, y en los bordes la atenuación pasa de −3 dB a **−6 dB**.
+- **Forma SOS** (secciones de segundo orden): `scipy.signal.butter(..., output='sos')`. La forma `(b, a)` es numéricamente inestable en las bandas graves: a 44,1 kHz y orden 4, en 31,5 y 63 Hz el filtro devuelve `NaN`, y en 125 Hz quedan polos fuera del círculo unitario y la salida diverge.
+- **Fase cero**: `scipy.signal.sosfiltfilt` aplica el filtro hacia adelante y hacia atrás, y la fase se cancela. Importa porque el filtro tiene su propia respuesta, más larga en los graves (la banda es angosta), que se suma a la caída de la sala: con una sola pasada (`sosfilt` o `lfilter`) puede inflar los T60 cortos de los graves. `sosfiltfilt` reduce ese efecto. El precio: la magnitud se aplica **dos veces**, y en los bordes la atenuación pasa de −3 dB a **−6 dB**.
 
 ### Probalo
 
@@ -259,9 +271,14 @@ Elegí una banda y un orden: arriba, la respuesta en frecuencia con una pasada (
                 signal, fs = load_audio(path)
             except ValueError as e:                     # no es un audio: el pedido está mal
                 raise HTTPException(status_code=422, detail=f"No es un audio válido: {e}")
-        filtered = filter_single_band(signal, fs, center_freq, order)
+        try:
+            filtered = filter_single_band(signal, fs, center_freq, order)
+        except ValueError as e:                         # la banda no entra en el archivo (ej. 16 kHz a 44,1 kHz)
+            raise HTTPException(status_code=422, detail=f"Banda inválida para fs = {fs} Hz: {e}")
         return wav_response(filtered, fs, f"band_{center_freq:g}hz.wav")
     ```
+
+    El segundo `try` cubre un caso que el schema no puede ver: si el borde superior de la banda pasa Nyquist (por ejemplo, 16 kHz en un archivo a 44,1 kHz), `scipy.signal.butter` lanza `ValueError`. Depende de la `fs` del archivo, que recién se conoce después de leerlo.
 
 === "Schema"
 
@@ -289,6 +306,17 @@ Elegí una banda y un orden: arriba, la respuesta en frecuencia con una pasada (
         Aplicarlo con ``scipy.signal.sosfiltfilt`` (fase cero), importante para no
         distorsionar EDT y T60. La forma ``(b, a)`` con ``filtfilt`` es inestable en
         las bandas graves.
+
+        Parameters
+        ----------
+        signal : np.ndarray
+            Senal de entrada (array 1D).
+        fs : int
+            Frecuencia de muestreo en Hz.
+        center_freq : float
+            Frecuencia central de la banda de octava en Hz.
+        order : int, optional
+            Orden del filtro Butterworth (por defecto 4).
 
         Returns
         -------
@@ -333,7 +361,7 @@ Elegí una banda y un orden: arriba, la respuesta en frecuencia con una pasada (
         assert ganancia(2 * fc) < -20
     ```
 
-    El test mide la respuesta del filtro **que implementaron** pasándole un impulso: la FFT de la salida es la respuesta en frecuencia (lo mismo que dibuja la demo). En el mismo archivo están `test_filter_single_band_center_frequency` (un seno en $f_c$ pasa con ±1 dB) y `test_filter_single_band_attenuation` (uno en $4 f_c$ queda 20 dB abajo).
+    El test mide la respuesta del filtro **que implementaron** pasándole un impulso: la FFT de la salida es la respuesta en frecuencia (lo mismo que dibuja la demo). En el mismo archivo están `test_filter_single_band_center_frequency` (un seno en $f_c$ pasa con ±1 dB) y `test_filter_single_band_attenuation` (uno en $4 f_c$ queda más de 20 dB abajo).
 
     El test del endpoint es `test_filters_single_band_endpoint` en `tests/test_api.py`: sube un WAV de ruido y verifica que vuelva otro WAV del mismo largo y la misma `fs`.
 
@@ -367,7 +395,7 @@ Procedimiento:
 3. Normalizar al pico.
 
 !!! tip "Normalizar cada banda por su RMS"
-    Antes de aplicar la envolvente, dividan cada banda filtrada por su RMS. El ruido blanco tiene la misma energía por hertz, así que una banda aguda (miles de Hz de ancho) tiene mucha más energía que una grave (decenas de Hz): sin normalizar, las agudas tapan a las graves en la suma.
+    Antes de aplicar la envolvente, dividan cada banda filtrada por su RMS. El ruido blanco tiene la misma energía por hertz, así que una banda aguda (miles de Hz de ancho) tiene mucha más energía que una grave (decenas de Hz): sin normalizar, las agudas tapan a las graves en la suma. El test de decaimiento usa una sola banda y no lo detecta, pero con varias bandas los T60 de los graves salen mal medidos (lo pueden ver en la tabla de la demo).
 
 ### Probalo
 
@@ -399,9 +427,11 @@ Elegí una sala (cada una con sus T60 por banda): arriba, la RI; abajo, la curva
     ```python
     class SyntheticIRRequest(BaseModel):
         duration: float = Field(gt=0, le=10)
-        t60_values: dict[float, float]                  # {frecuencia_central: T60}, ej. {"1000": 0.8}
+        t60_values: dict[PositiveFloat, PositiveFloat]  # {frecuencia_central: T60}, ej. {"1000": 0.8}
         sample_rate: int = Field(default=44100, ge=8000, le=192000)
     ```
+
+    `PositiveFloat` (de `pydantic`) rechaza con 422 una frecuencia o un T60 que no sean positivos: con `dict[float, float]` pasaría `{"1000": -1}`, y un T60 negativo hace crecer la envolvente en lugar de decaer.
 
     En JSON las claves de un diccionario son siempre texto (`"1000"`); Pydantic las convierte a `float` porque el schema lo dice.
 
@@ -504,7 +534,7 @@ $$\mathcal{F}\{y * x_{inv}\} = X(f)\, H(f)\, X_{inv}(f) = H(f)\, \underbrace{X(f
 La implementación:
 
 1. Convolucionar con `scipy.signal.fftconvolve(recording, inverse_filter, mode='full')`: por FFT es órdenes de magnitud más rápido que `np.convolve` para señales de varios segundos.
-2. Ubicar el **pico** (`np.argmax(np.abs(...))`): es la llegada del sonido directo. Antes del pico no hay información de la sala.
+2. Ubicar el **pico** (`np.argmax(np.abs(...))`): es la llegada del sonido directo. No cae en la primera muestra: en la práctica $x * x_{inv} \approx \delta(t - T)$, un impulso **corrido la duración del sweep**, así que en la salida completa el pico aparece cerca de $T$ más el tiempo que tarda el sonido en llegar al micrófono. Por eso hay que buscarlo. Antes del pico no hay información de la sala.
 3. **Recortar** para que la RI empiece en el pico o un poco antes, y **normalizar** respecto del pico.
 
 > **Material extendido:** [Álgebra de la deconvolución](m2_algebra_deconvolucion.md): la derivación detallada, la comparación con MLS y referencias.
@@ -538,6 +568,13 @@ Una sala simulada con el T60 que elijas: el sweep suena en ella, se graba con ru
         ``h(t) = y(t) * x_inv(t)``, con ``y = recording`` y ``x_inv = inverse_filter``;
         usar ``scipy.signal.fftconvolve`` (``mode='full'``), recortar para que la RI
         comience en el pico (o ligeramente antes) y normalizar respecto del pico.
+
+        Parameters
+        ----------
+        recording : np.ndarray
+            Senal grabada que contiene la respuesta de la sala al sweep.
+        inverse_filter : np.ndarray
+            Filtro inverso del sweep utilizado.
 
         Returns
         -------
@@ -630,6 +667,11 @@ La misma RI (T60 = 1 s, con ruido de fondo) en lineal y en dB. En lineal, despu�
         ``L = 20 * log10(|x| / max(|x|))``. Evitar ``log(0)`` (usar un ``eps`` o
         un piso, por ejemplo -120 dB).
 
+        Parameters
+        ----------
+        signal : np.ndarray
+            Senal de entrada (valores lineales, array 1D).
+
         Returns
         -------
         np.ndarray
@@ -686,7 +728,9 @@ Con los dos routers escritos (el de la RI sintética en el servicio 3 y el del f
          -d '{"duration": 2, "t60_values": {"500": 1.2, "1000": 1.0}}' -o ri_sintetica.wav
     ```
 
-4. **Sacar las marcas `@xfail_m2`** de los tres tests de M2 en `tests/test_api.py` (los dos endpoints y el 422) y verlos pasar.
+4. **Sacar las marcas `xfail`** y ver pasar los tests:
+    - En `tests/test_api.py`, el decorador `@xfail_m2` de los tres tests de M2 (los dos endpoints y el 422).
+    - En `tests/test_procesamiento.py`, la línea `pytestmark = pytest.mark.xfail(...)` de arriba de todo, que marca el archivo entero. Bórrenla cuando pasen los cinco servicios: hasta entonces, los tests que ya andan aparecen como `XPASS` (pasan, pero siguen marcados).
 
 !!! note "Qué queda para M3"
     `get_impulse_response` y `logarithmic_scale_conversion` no tienen endpoint propio: los usa el análisis completo de M3, que recibe la RI y devuelve los parámetros con el mismo patrón que `/filters/single-band`. M3 empieza con cinco endpoints andando: la API se completa, no se empieza.
@@ -719,7 +763,7 @@ Las gráficas y capturas van en `docs/m2/` del repo, enlazadas desde el README, 
 Todos los requisitos de M1 aplican, más:
 
 - **Modularidad:** las funciones de M2 van en `signal_utils.py` y `filter.py`, como en el árbol de arriba. Ninguna importa nada de FastAPI.
-- **Cobertura de tests:** al menos 80 % en las funciones de M2 (`uv run pytest --cov=app/services`).
+- **Cobertura de tests:** al menos 80 % en las funciones de M2 (`uv run pytest --cov=app/services`). El informe sale por archivo e incluye los de M1 y M3: miren las filas de `signal_utils.py` y `filter.py`.
 - **CI en verde** en cada push: lint y tests.
 - **Tag:** al completar el milestone, crear el tag `v0.2.0` en `main`.
 
