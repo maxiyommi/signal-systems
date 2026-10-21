@@ -4,13 +4,13 @@
     - **Presentación de la consigna:** miércoles 28 de octubre 2026
     - **Fecha de entrega:** miércoles 18 de noviembre 2026, junto con la presentación oral (Demo Day)
     - **Tag de versión:** `v1.0.0`
-    - **Evaluación:** **con nota** — Nota del TP = 60% M3 + 40% presentación oral (ver [rubrica](../rubrica.md))
+    - **Evaluación:** **con nota**: Nota del TP = 60 % M3 + 40 % presentación oral (ver [rúbrica](../rubrica.md))
 
 ## Objetivo
 
-Completar el sistema RIR-API implementando las funciones de análisis acústico (suavizado de señal, integral de Schroeder, regresión lineal, cálculo de parámetros acústicos según ISO 3382) y **completando la API REST** que empezaron en M1: el endpoint que recibe una RI y devuelve los parámetros por banda, y dos de utilidades. Al finalizar este milestone, la API debe ser capaz de recibir una respuesta al impulso vía HTTP, procesarla y devolver todos los parámetros acústicos relevantes, con resultados validados contra software comercial.
+Completar el sistema RIR-API con los **servicios de análisis** (suavizado, integral de Schroeder, regresión lineal y cálculo de parámetros según ISO 3382) y **completar la API REST** que empezaron en M1: el endpoint que recibe una RI y devuelve los parámetros por banda, y dos de utilidades. Al terminar, la API recibe una respuesta al impulso por HTTP, la procesa y devuelve EDT, T20, T30, D50 y C80 por banda de octava, con resultados validados contra software comercial.
 
-> **Referencia**: Explorar la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) para entender la estructura de endpoints, schemas y respuestas esperadas.
+> **Referencia:** la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) muestra endpoints, schemas y respuestas de una implementación completa.
 
 ---
 
@@ -24,628 +24,690 @@ El mismo diagrama de M0, **parado en M3**: se encienden los services de análisi
 
 ---
 
-## Qué cambia
+## De la RI a los parámetros
 
-### De funciones a producto
+En M2 obtuvieron la RI de una sala y la separaron por bandas. En M3 la **miden**: de cada banda sale una curva de caída, y de esa curva salen los números que describen la sala. Es el último paso de la cadena del TP y el que convierte la API en un **producto**: un servicio web al que cualquiera le sube una RI y recibe sus parámetros acústicos, con resultados que coinciden con los de un software profesional.
 
-Hasta M2 construyeron los services y una API chica que ya genera señales, sintetiza RIs y filtra un WAV subido. En M3 la API responde **la pregunta de la medición**: le suben una RI y devuelve sus parámetros acústicos por banda. Eso la convierte en un *producto*: un servicio web que cualquiera puede usar por HTTP, con resultados validados contra software comercial.
+M3 son **cuatro servicios**, presentados en el orden en que se encadenan, y cada uno con el mismo formato que M1 y M2:
 
-M3 son cuatro cosas encadenadas:
+1. **Para qué sirve:** qué papel cumple en el análisis y quién usa lo que devuelve.
+2. **Qué es:** el concepto de Señales y Sistemas (y de acústica) detrás.
+3. **Probalo:** calculalo y miralo acá mismo.
+4. **El código, archivo por archivo:** router, schema, service y test.
 
-- **Análisis acústico** — las funciones que faltan para calcular T30/T20/EDT por banda
-- **API REST** — completarla: el endpoint de parámetros y los de utilidades, con errores claros y la documentación de `/docs`
-- **Validación** — comparar contra REW/Aurora sobre RIs reales
-- **Comunicación** — validación en el README + demo en vivo y oral
+Dónde va cada cosa en el repositorio:
 
-!!! note "El objetivo, en una frase"
-    Una API que **recibe una respuesta al impulso vía HTTP, la procesa y devuelve todos los parámetros acústicos relevantes**, con resultados que coinciden con los de un software comercial de referencia.
+```text
+rir-api/
+├── app/
+│   ├── services/
+│   │   └── acoustic_parameters.py ← Servicios 1 a 4 · apply_smoothing, apply_schroeder_integral,
+│   │                                linear_regression, calculate_parameters_from_ir
+│   │                                (+ apply_lundeby, opcional)                       (M3)
+│   ├── schemas/
+│   │   ├── responses.py           ← BandAnalysisResponse                              (M3)
+│   │   └── utils.py               ← SmoothingMethod, SmoothingResponse, SchroederResponse (M3)
+│   ├── routers/
+│   │   ├── acoustics.py           ← POST /api/v1/acoustics/parameters (el principal)  (M3)
+│   │   └── utils.py               ← POST /api/v1/utils/schroeder, /utils/smoothing    (M3)
+│   └── main.py                    ← registrar los routers de acoustics y utils        (M3)
+└── tests/
+    ├── test_analisis.py           ← los tests de los cuatro servicios                 (M3)
+    └── test_api.py                ← los tests de los tres endpoints                   (M3)
+```
 
-    Su propia versión de `rir-api.onrender.com` — la misma API de referencia de la cátedra que vienen comparando desde M0.
+Como en M1 y M2, el template trae `acoustic_parameters.py` con las firmas y los docstrings, y los tests escritos (en `xfail` hasta que implementen cada función).
 
-### Tres capas. Un flujo
+!!! note "La clave de M3: no reescriben el DSP"
+    Envuelven lo que ya tienen. `calculate_parameters_from_ir` encadena `filter_single_band` (M2) con los servicios nuevos, y el router del endpoint principal es casi igual al de `/filters/single-band`: recibe el archivo, lo lee con `load_audio` y llama a **un** service. Lo nuevo es la respuesta: un JSON validado con un schema, en lugar de un WAV.
 
-FastAPI organiza el código en tres capas que ya vienen en el template:
+!!! note "De qué clases viene"
+    **Clase 10 · Procesamiento de la RI:** envolvente de Hilbert, media móvil, integral de Schroeder y regresión lineal por mínimos cuadrados (EDT, T20, T30). Es el fundamento de los servicios 1 a 3; D50 y C80 se explican en el servicio 4.
 
-!!! note "routers/ · schemas/ · services/"
-    **routers** reciben el request HTTP, lo validan con su schema y llaman al service · **schemas** son los modelos Pydantic de entrada/salida · **services** es el DSP puro que ya escribieron (M1+M2).
+---
 
-La clave de M3: **no reescriben el DSP**. Envuelven lo que ya tienen. Un router llama a un service y serializa el resultado con un schema.
+## Servicio 1 · `apply_smoothing(signal, fs, method, window_ms)`
 
-!!! note "Endpoints mínimos: cada milestone expone lo que construye"
-    | Endpoint | Milestone |
-    |---|---|
-    | `GET /health` | M0 |
-    | `POST /api/v1/signals/pink-noise` · `/signals/sine-sweep` | M1 |
-    | `POST /api/v1/signals/synthetic-ir` · `/filters/single-band` | M2 |
-    | `POST /api/v1/acoustics/parameters` | **M3** · el principal |
-    | `POST /api/v1/utils/schroeder` · `/utils/smoothing` | **M3** |
+### Para qué sirve
 
-    Con validación Pydantic, errores HTTP (400/422/500), Swagger en `/docs` y ReDoc en `/redoc` generados automáticamente.
+Una RI filtrada por banda oscila: sube y baja miles de veces por segundo, y así no se ve cómo **decae**. La envolvente es la curva que sigue la amplitud de esa oscilación.
 
-## Conceptos y figuras
+- Para **ver** y **mostrar** el decaimiento: en el README, en la demo y en la presentación (ver [Tres gráficas obligatorias](#tres-graficas-obligatorias)). Una RI cruda "llena" no comunica nada.
+- La expone `POST /api/v1/utils/smoothing`.
 
-Lo que hay que entender antes de implementar, con los gráficos de la implementación de referencia de la cátedra.
+Ojo: los parámetros **no** se calculan sobre la envolvente. La integral de Schroeder (servicio 2) usa la RI filtrada al cuadrado, $h^2$.
 
-### Función 01 · de la RI al decaimiento
+### Qué es
 
-<figure class="figura-tp" markdown>
-[![Respuesta al impulso cruda superpuesta con su envolvente de Hilbert](../img/m3/rir_vs_envolvente.png)](../img/m3/rir_vs_envolvente.png)
-<figcaption markdown="span">RI **sintética** (T60 conocido) · `apply_smoothing` con envolvente de Hilbert · la envolvente revela el decaimiento que el waveform crudo esconde</figcaption>
-</figure>
+Dos formas de obtener la envolvente, y el template pide las dos:
 
-El primer paso del análisis es **suavizar** la RI para ver su decaimiento. La **envolvente de Hilbert** es preferible a la media móvil: no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal.
+- **Hilbert** (`method='hilbert'`, la recomendada). Se arma la **señal analítica** $z(t) = x(t) + j\,\hat{x}(t)$, donde $\hat{x}$ es la transformada de Hilbert de $x$ (la misma señal con cada componente corrida 90°), y la envolvente es su módulo:
 
-$$
-\text{env}(t) = \big|\, h(t) + j\,\mathcal{H}\{h(t)\} \,\big| \qquad \text{(módulo de la señal analítica)}
-$$
+    $$A(t) = |z(t)| = \sqrt{x^2(t) + \hat{x}^2(t)}$$
 
-**Tip de comunicación:** en el README y en la demo, muestren la *envolvente / curva de decaimiento*, nunca el audio crudo. El waveform crudo "lleno" no comunica nada; la envolvente muestra exactamente cómo cae la energía.
+    Para un seno de amplitud variable, $A(t)$ es exactamente esa amplitud. No hay que elegir ningún parámetro. En Python: `np.abs(scipy.signal.hilbert(signal))`.
 
-<small>Especificación (m3_producto_final) §1 — `scipy.signal.hilbert` devuelve la señal analítica; su módulo es la envolvente.</small>
+- **Media móvil** (`method='moving_average'`). Se promedia la energía en una ventana de $M$ muestras ($M$ = `window_ms` · `fs` / 1000) y se toma la raíz, para volver a amplitud:
 
-### Dos miradas a la misma curva
+    $$y[n] = \sqrt{\frac{1}{M} \sum_{k=0}^{M-1} x^2[n-k]}$$
 
-<figure class="figura-tp" markdown>
-[![Curva de Schroeder completa sin truncar: codo del ruido de fondo y desplome final hacia menos infinito](../img/m3/schroeder_completo.png)](../img/m3/schroeder_completo.png)
-<figcaption markdown="span">Completa · sin truncar — el decaimiento entra en el ruido (codo) y, al agotarse la energía, la curva cae a −∞. Por eso NO se integra hasta el final.</figcaption>
-</figure>
+    Es el **valor eficaz local** (RMS). La ventana es un compromiso: corta suaviza poco, larga redondea el comienzo de la caída.
 
-<figure class="figura-tp" markdown>
-[![Curva de Schroeder acotada con las regresiones T20 y T30 sobre el tramo lineal](../img/m3/schroeder_regresiones.png)](../img/m3/schroeder_regresiones.png)
-<figcaption markdown="span">Acotada · sobre el tramo lineal se ajusta la recta (mínimos cuadrados) y se extrapola a −60 dB → T20, T30, EDT.</figcaption>
-</figure>
+Las dos devuelven **amplitud**, no energía: para llevarlas a dB, $20 \log_{10}$ (que es lo que hace `logarithmic_scale_conversion` de M2).
 
-**Integral de Schroeder** · integración inversa de la energía (`np.cumsum(energia[::-1])[::-1]`), en dB normalizada a 0 dB. Sobre el tramo recto, **regresión lineal** → pendiente $m$ → $T_{60} = -60/m$ (con $R^2 > 0.99$).
+### Probalo
 
-$$
-E[n] = \sum_{k=n}^{N-1} h^2[k], \qquad L[n] = 10\,\log_{10}\!\frac{E[n]}{E[0]}, \qquad T_{60} = \frac{-60}{m}
-$$
+La misma RI filtrada en una banda, en dB: cruda, con Hilbert y con media móvil. Mové la ventana de la media móvil y mirá cómo cambia el comienzo de la caída.
 
-<small>Nunca se integra hasta el final (primera figura: la curva se desploma a −∞). Se trunca en el cruce con el ruido —con el método de Lundeby (opcional) o donde la curva deja de ser lineal— y se mide sobre el tramo lineal (segunda figura). RI sintética con T60 conocido · Especificación (m3_producto_final) §2–3 · Schroeder 1965.</small>
+<div class="servicio-demo" data-servicio="smoothing"></div>
 
-### Tres tramos, tres parámetros
+### El código, archivo por archivo
 
-Cada parámetro es una regresión sobre un tramo distinto de la curva de Schroeder. Todos se extrapolan a −60 dB.
+=== "Router"
 
-| Parámetro | Tramo de la curva | Qué mide |
-|---|---|---|
-| **EDT** (Early Decay Time) | 0 a −10 dB | Percepción *subjetiva* de la reverberación. Sensible a las primeras reflexiones. |
-| **T10** | −5 a −15 dB | Tiempo de reverberación con muy poco rango dinámico. |
-| **T20** | −5 a −25 dB | Tiempo de reverberación con menos rango dinámico requerido. Útil con SNR limitado. |
-| **T30** | −5 a −35 dB | **El estándar.** Preferido cuando SNR > 45 dB. Es el que se reporta como T60. |
+    En el router nuevo de utilidades. Recibe un archivo, como `/filters/single-band`, y los parámetros como campos del formulario. Escribirlo es parte de M3.
 
-> **En ningún caso** se mide directamente un decaimiento de 60 dB — no hay rango dinámico para eso en una sala real. Siempre se mide un tramo corto y se **extrapola** con la pendiente. Todo se calcula **por banda de octava**.
+    <span class="ruta-archivo">app/routers/utils.py</span>
 
-### El eje frecuencial · filtrado por bandas
+    ```python
+    from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
-<figure class="figura-tp" markdown>
-[![Respuestá en frecuencia del banco de filtros de octava IEC 61260](../img/m3/filtros_octava.png)](../img/m3/filtros_octava.png)
-<figcaption markdown="span">Banco de filtros Butterworth de octava · IEC 61260 · cada banda cruza a −3 dB en sus flancos</figcaption>
-</figure>
+    from app.routers.audio_http import uploaded_file
+    from app.schemas.utils import SchroederResponse, SmoothingMethod, SmoothingResponse
+    from app.services.acoustic_parameters import apply_schroeder_integral, apply_smoothing
+    from app.services.signal_utils import load_audio
 
-Los parámetros acústicos se calculan **banda por banda**: primero se filtra la RI en cada octava (IEC 61260), y sobre cada banda filtrada se corre el pipeline Schroeder → regresión. Esto ya lo tienen de M2.
+    router = APIRouter()
 
-**Detalle crítico que se arrastra a M3:** usen `sosfiltfilt` (fase cero, forward + backward), nunca `lfilter`. El retardo de grupo de un filtro causal desplaza el inicio del decaimiento y les infla el T60 en graves un 5–15%.
 
-<small>Clase 9 · m3 reutiliza `filter_single_band` de M2 · frecuencias centrales IEC 61260 (125 Hz a 4 kHz para la tabla de validación).</small>
+    @router.post("/smoothing", response_model=SmoothingResponse)   # POST /api/v1/utils/smoothing
+    async def smoothing(
+        file: UploadFile = File(...),
+        method: SmoothingMethod = Form(SmoothingMethod.HILBERT),
+        window_ms: float = Form(10, gt=0, le=100),
+    ):
+        ...  # load_audio (422 si no es audio), apply_smoothing y responder el JSON
+    ```
 
-### El output final
+=== "Schema"
+
+    Un `Enum` limita `method` a los dos valores válidos: si piden otro, FastAPI responde 422 solo.
+
+    <span class="ruta-archivo">app/schemas/utils.py</span>
+
+    ```python
+    from enum import Enum
+
+    from pydantic import BaseModel
+
+
+    class SmoothingMethod(str, Enum):
+        HILBERT = "hilbert"
+        MOVING_AVERAGE = "moving_average"
+
+
+    class SmoothingResponse(BaseModel):
+        method: SmoothingMethod
+        window_ms: float
+        sample_rate: int
+        envelope: list[float]                           # la envolvente (decimada, ej. 1 valor por ms)
+    ```
+
+    Una RI de 2 s a 48 kHz son 96 000 valores: para el JSON conviene **decimar** (por ejemplo, quedarse con una muestra por milisegundo, `envelope[:: fs // 1000]`).
+
+=== "Service"
+
+    <span class="ruta-archivo">app/services/acoustic_parameters.py</span>
+
+    ```python
+    import numpy as np
+
+
+    def apply_smoothing(
+        signal: np.ndarray, fs: int, method: str = "hilbert", window_ms: float = 10
+    ) -> np.ndarray:
+        """Suaviza una senal y devuelve su envolvente en **amplitud**.
+
+        - ``method='hilbert'`` (recomendado): envolvente de Hilbert,
+          ``np.abs(scipy.signal.hilbert(signal))``. Ignora ``window_ms``.
+        - ``method='moving_average'``: media movil de ``window_ms`` milisegundos
+          (``int(window_ms * fs / 1000)`` muestras, al menos 1). Para que la salida
+          quede en amplitud (comparable con Hilbert), devolver la raiz de la media
+          movil de ``signal**2`` (envolvente RMS) o, alternativamente, la media
+          movil de ``|signal|``. Documentar cual se eligio.
+
+        Parameters
+        ----------
+        signal : np.ndarray
+            Senal de entrada (tipicamente una RI filtrada por banda, array 1D).
+        fs : int
+            Frecuencia de muestreo en Hz (para convertir ``window_ms`` a muestras).
+        method : str, optional
+            ``'hilbert'`` (por defecto) o ``'moving_average'``.
+        window_ms : float, optional
+            Largo de la ventana de media movil en milisegundos (por defecto 10 ms).
+
+        Returns
+        -------
+        np.ndarray
+            Envolvente en amplitud (no negativa), de la misma longitud que ``signal``.
+
+        Raises
+        ------
+        ValueError
+            Si ``method`` no es ``'hilbert'`` ni ``'moving_average'``, o si
+            ``window_ms`` no es positivo.
+        """
+        raise NotImplementedError("Implementar en Milestone 3")   # ← acá va su implementación
+    ```
+
+    Mismo nombre y firma que `apply_smoothing` de la API de referencia, que además acepta `'rms'`, `'median'` y `'savgol'`. Acá se piden dos métodos; `'moving_average'` implementado como envolvente RMS equivale al `'rms'` de la referencia.
+
+=== "Tests"
+
+    <span class="ruta-archivo">tests/test_analisis.py</span>
+
+    ```python
+    def test_smoothing_hilbert_envelope(self):
+        """La envolvente de Hilbert es no negativa, suave y sigue la amplitud."""
+        fs = 8000
+        t = np.arange(fs) / fs
+        amplitud = np.exp(-3 * t)
+        x = amplitud * np.sin(2 * np.pi * 500 * t)
+        env = apply_smoothing(x, fs, method="hilbert")
+        assert len(env) == len(x)
+        assert np.all(env >= 0)
+        centro = slice(fs // 10, -fs // 10)  # evitar efectos de borde
+        np.testing.assert_allclose(env[centro], amplitud[centro], rtol=0.05)
+        # Mas suave que la senal original: variaciones muestra a muestra menores.
+        assert np.mean(np.abs(np.diff(env[centro]))) < np.mean(np.abs(np.diff(x[centro])))
+    ```
+
+    Un seno de 500 Hz cuya amplitud cae como $e^{-3t}$: la envolvente tiene que devolver esa amplitud (con 5 % de tolerancia, salvo en los bordes). En el mismo archivo están `test_smoothing_hilbert_default` (sin `method`, se usa Hilbert) y `test_smoothing_moving_average_length`.
+
+    El test del endpoint es `test_utils_smoothing_endpoint` en `tests/test_api.py`: sube una RI y espera un JSON.
+
+---
+
+## Servicio 2 · `apply_schroeder_integral(ir)`
+
+### Para qué sirve
+
+Convierte la RI de una banda en su **curva de caída de energía** (EDC, *energy decay curve*): cuánta energía le queda a la sala desde cada instante en adelante, en dB. Es la curva sobre la que se miden todos los tiempos de reverberación (servicios 3 y 4).
+
+- La usa `calculate_parameters_from_ir`, banda por banda.
+- La expone `POST /api/v1/utils/schroeder`, para graficarla.
+
+### Qué es
+
+La energía que **queda** en la sala a partir del instante $t$:
+
+$$E(t) = \int_t^{\infty} h^2(\tau)\, d\tau \qquad \Rightarrow \qquad E[n] = \sum_{k=n}^{N-1} h^2[k]$$
+
+y en dB, respecto de la energía total (así la curva arranca en 0 dB):
+
+$$L[n] = 10 \log_{10}\left(\frac{E[n]}{E[0]}\right)$$
+
+Se calcula "de atrás para adelante": se invierte $h^2$, se acumula y se vuelve a invertir, `np.cumsum((ir**2)[::-1])[::-1]`.
+
+**Por qué no mirar directamente la RI:** la RI de una banda es ruidosa, y una recta ajustada sobre ella da un resultado distinto en cada medición. Schroeder (1965) demostró que esta integral es igual al **promedio** de infinitas caídas de ruido interrumpido: una sola RI da la curva promediada, lisa y monótona, que antes requería muchísimas mediciones.
+
+Dos cuidados:
+
+- **El ruido de fondo.** Después de la caída, la grabación no queda en silencio: queda el ruido. La integral lo suma como si fuera energía de la sala, y la curva se **dobla** hacia arriba antes de terminar. Por eso la curva se **trunca** donde la caída se cruza con el ruido (el método de Lundeby, opcional, estima ese punto) o, como mínimo, se mide solo en el tramo recto.
+- **El final:** en la última muestra $E[N-1]$ es casi cero y el logaritmo se va a $-\infty$. Sumen un `eps` antes del log. Y en la respuesta del endpoint, recorten los valores muy negativos: **JSON no admite `-inf` ni `NaN`**, y FastAPI responde 500 si los encuentra.
+
+### Probalo
+
+Una sala con el T60 y el ruido de fondo que elijas: la energía de la RI, la curva de Schroeder de toda la RI y la truncada en el cruce con el ruido. Subí el ruido de fondo y mirá cómo se dobla la curva completa y cómo cambia el T30.
+
+<div class="servicio-demo" data-servicio="schroeder"></div>
+
+### El código, archivo por archivo
+
+=== "Router"
+
+    En el mismo router de utilidades que `/smoothing`. Escribirlo es parte de M3.
+
+    <span class="ruta-archivo">app/routers/utils.py</span>
+
+    ```python
+    @router.post("/schroeder", response_model=SchroederResponse)   # POST /api/v1/utils/schroeder
+    async def schroeder(file: UploadFile = File(...)):
+        ...  # load_audio (422 si no es audio), apply_schroeder_integral y responder el JSON
+    ```
+
+=== "Schema"
+
+    <span class="ruta-archivo">app/schemas/utils.py</span>
+
+    ```python
+    class SchroederResponse(BaseModel):
+        sample_rate: int
+        num_samples: int
+        lundeby_applied: bool = False                   # True si truncaron con apply_lundeby
+        edc_db: list[float]                             # la curva en dB, decimada y sin -inf
+    ```
+
+=== "Service"
+
+    <span class="ruta-archivo">app/services/acoustic_parameters.py</span>
+
+    ```python
+    def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
+        """Calcula la integral de Schroeder (Energy Decay Curve) en dB.
+
+        ``E[n] = sum_{k=n}^{N-1} h[k]**2`` (integracion inversa, por ejemplo con
+        ``np.cumsum`` sobre la senal invertida) y ``L[n] = 10*log10(E[n] / E[0])``.
+
+        Parameters
+        ----------
+        ir : np.ndarray
+            Respuesta al impulso (o RI filtrada por banda, array 1D).
+
+        Returns
+        -------
+        np.ndarray
+            Curva de decaimiento en dB, normalizada a 0 dB en la primera muestra,
+            de la misma longitud que ``ir``.
+
+        References
+        ----------
+        .. [1] Schroeder, M. R. (1965). "New method of measuring reverberation
+           time." JASA 37(3), 409-412.
+        """
+        raise NotImplementedError("Implementar en Milestone 3")   # ← acá va su implementación
+    ```
+
+    En la API de referencia la firma es `apply_schroeder_integral(impulse, t, fs, lundeby=False)`: recibe también el vector de tiempo y puede truncar con Lundeby antes de integrar. Acá solo se pide la RI; el truncamiento es el extra opcional `apply_lundeby`.
+
+=== "Tests"
+
+    <span class="ruta-archivo">tests/test_analisis.py</span>
+
+    ```python
+    def test_schroeder_synthetic_ir(self):
+        """Para T60 conocido, la EDC es casi lineal con pendiente -60/T60 dB/s."""
+        fs, t60 = 8000, 1.5
+        ir = _exponential_ir(t60, fs, 3 * t60)
+        edc = apply_schroeder_integral(ir)
+        t = np.arange(len(ir)) / fs
+        tramo = (edc <= -5) & (edc >= -35)
+        slope = np.polyfit(t[tramo], edc[tramo], 1)[0]
+        assert abs(slope - (-60 / t60)) <= 0.1 * (60 / t60)
+    ```
+
+    `_exponential_ir` arma ruido blanco con una caída exponencial de T60 conocido (sin ruido de fondo). Entre −5 y −35 dB la curva tiene que caer a $-60/T_{60}$ dB/s, con 10 % de tolerancia. En el mismo archivo están `test_schroeder_shape` (mismo largo), `test_schroeder_max_zero_db` (arranca en 0 dB y nunca lo supera) y `test_schroeder_decreasing` (siempre baja).
+
+    El test del endpoint es `test_utils_schroeder_endpoint` en `tests/test_api.py`.
+
+---
+
+## Servicio 3 · `linear_regression(x, y)`
+
+### Para qué sirve
+
+Mide la **pendiente** de la curva de Schroeder en un tramo, y de esa pendiente sale cada tiempo de reverberación. Es el último paso antes del número: EDT, T10, T20 y T30 son la misma cuenta sobre tramos distintos (servicio 4).
+
+### Qué es
+
+La recta $y = m x + b$ que minimiza la suma de los errores al cuadrado (mínimos cuadrados):
+
+$$m = \frac{N \sum x_i y_i - \sum x_i \sum y_i}{N \sum x_i^2 - \left(\sum x_i\right)^2}, \qquad b = \frac{\sum y_i - m \sum x_i}{N}$$
+
+y el **coeficiente de determinación**, que dice qué tan bien la recta explica los puntos (1 es perfecto):
+
+$$R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}, \qquad \hat{y}_i = m x_i + b$$
+
+Sobre la curva de Schroeder, $x$ es el tiempo (s), $y$ el nivel (dB) y $m$ queda en dB/s (negativa). El tiempo que tardaría la curva en caer 60 dB es
+
+$$T = \frac{-60}{m}$$
+
+Cada parámetro usa un tramo distinto, siempre **extrapolado** a −60 dB: en una sala real no hay rango dinámico para medir 60 dB de caída.
+
+| Parámetro | Tramo de la curva | Qué dice | Rango dinámico necesario |
+|---|---|---|---|
+| **EDT** (*Early Decay Time*) | 0 a −10 dB | Cómo se percibe la reverberación: pesa la energía temprana | — |
+| **T10** | −5 a −15 dB | Reverberación con muy poco rango dinámico | 25 dB |
+| **T20** | −5 a −25 dB | Reverberación cuando el ruido no deja llegar a −35 dB | 35 dB |
+| **T30** | −5 a −35 dB | **El estándar**: es el que se reporta como T60 | 45 dB |
+
+El rango dinámico es lo que la curva tiene que caer antes de llegar al ruido de fondo: la ISO 3382-1 pide que el ruido quede al menos 10 dB por debajo del final del tramo. Por eso T30 necesita unos 45 dB. Si $R^2$ baja de ~0,99, el tramo no es recto: hay ruido, reflexiones fuertes o un error.
+
+### Probalo
+
+La curva de Schroeder de la banda de 1 kHz de una sala: elegí el parámetro, mirá qué tramo usa, la recta que se ajusta y dónde cruzaría los −60 dB.
+
+<div class="servicio-demo" data-servicio="regression"></div>
+
+### El código, archivo por archivo
+
+=== "Router"
+
+    No tiene endpoint: la usa `calculate_parameters_from_ir`.
+
+=== "Schema"
+
+    No tiene schema: no hay un pedido HTTP que validar.
+
+=== "Service"
+
+    <span class="ruta-archivo">app/services/acoustic_parameters.py</span>
+
+    ```python
+    def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
+        """Calcula la regresion lineal por minimos cuadrados.
+
+        Se recomienda implementarla a mano (formulas de minimos cuadrados) en lugar
+        de ``np.polyfit``, para demostrar comprension del metodo.
+
+        Parameters
+        ----------
+        x : np.ndarray
+            Variable independiente (tipicamente tiempo en segundos).
+        y : np.ndarray
+            Variable dependiente (tipicamente curva de Schroeder en dB).
+
+        Returns
+        -------
+        slope : float
+            Pendiente de la recta ajustada ``m`` (dB/s en el contexto acustico).
+        intercept : float
+            Ordenada al origen ``b`` (dB).
+        r2 : float
+            Coeficiente de determinacion R^2.
+        """
+        raise NotImplementedError("Implementar en Milestone 3")   # ← acá va su implementación
+    ```
+
+    !!! warning "Diferencia con la API de referencia"
+        `linear_regression` de RIR-API recibe los argumentos al revés, `(signal_values, x_values=None)`, y devuelve solo `(m, b)`. Acá el orden es el matemático, `(x, y)`, y se devuelve también $R^2$: `slope, intercept, r2 = linear_regression(x, y)`. Si copian código de la referencia, ojo con el orden.
+
+=== "Tests"
+
+    <span class="ruta-archivo">tests/test_analisis.py</span>
+
+    ```python
+    def test_linear_regression_exact(self):
+        """Para datos perfectamente lineales, R^2 = 1 y se recuperan m y b."""
+        x = np.array([0.0, 1.0, 2.0, 3.0, 4.0])
+        y = 2.0 * x + 1.0
+        slope, intercept, r2 = linear_regression(x, y)
+        assert abs(slope - 2.0) < 1e-10
+        assert abs(intercept - 1.0) < 1e-10
+        assert abs(r2 - 1.0) < 1e-10
+    ```
+
+    En el mismo archivo está `test_linear_regression_slope`: una recta con un poco de ruido, de la que tienen que recuperar pendiente y ordenada con $R^2$ mayor a 0,99.
+
+---
+
+## Servicio 4 · `calculate_parameters_from_ir(ir, fs)`
+
+### Para qué sirve
+
+**Junta todo.** Recibe la RI de banda ancha y devuelve los parámetros ISO 3382 de cada banda de octava. Es lo que responde la pregunta de la medición, y lo que expone el endpoint principal, `POST /api/v1/acoustics/parameters`.
+
+### Qué es
+
+Para cada banda (al menos de 125 Hz a 4 kHz, las de la tabla de validación):
+
+1. Filtrar la RI en la banda: `filter_single_band` (M2).
+2. Calcular su curva de caída: `apply_schroeder_integral` (servicio 2).
+3. Ajustar una recta en el tramo de cada parámetro y extrapolar: `linear_regression` (servicio 3) → **EDT, T10, T20, T30**.
+4. Calcular dos parámetros de **energía**, directamente sobre la RI filtrada:
+
+    - **D50, definición** (%): qué fracción de la energía llega en los primeros 50 ms. Se relaciona con la **inteligibilidad de la palabra**.
+
+        $$D_{50} = \frac{\sum_{n=0}^{N_{50}-1} h^2[n]}{\sum_{n=0}^{N-1} h^2[n]} \times 100\,\%, \qquad N_{50} = \lfloor 0{,}050 \cdot f_s \rfloor$$
+
+    - **C80, claridad** (dB): energía de los primeros 80 ms contra la que llega después. Es el parámetro de la **claridad musical**.
+
+        $$C_{80} = 10 \log_{10}\left(\frac{\sum_{n=0}^{N_{80}-1} h^2[n]}{\sum_{n=N_{80}}^{N-1} h^2[n]}\right), \qquad N_{80} = \lfloor 0{,}080 \cdot f_s \rfloor$$
+
+        Valores típicos: entre −2 y +2 dB para música sinfónica, de +2 a +5 dB para música de cámara y más de +5 dB para la palabra.
+
+    Los dos cuentan desde la llegada del sonido directo: por eso la RI tiene que empezar en el pico, como la deja `get_impulse_response` (M2).
+
+El resultado es un diccionario `{parametro: {frecuencia_central: valor}}`. Si en una banda la curva no llega al final de un tramo (por ejemplo, el ruido no deja llegar a −35 dB), ese tiempo **no se puede calcular**: devuelvan `None`, nunca un número inventado ni `NaN`.
+
+!!! note "Por qué `sosfiltfilt` importa acá"
+    El filtro de octava tiene su propia respuesta, más larga en los graves (la banda es angosta), que se suma a la caída de la sala. Con una sola pasada (`sosfilt`) puede inflar los T60 cortos de los graves; `filter_single_band`, con `sosfiltfilt`, reduce ese efecto. Si su T30 en 125 Hz da muy distinto que el de REW, empiecen por ahí.
+
+### Probalo
+
+Elegí una sala: la API calcula EDT, T20 y T30 por banda (con el T60 que se le pidió a la sala de referencia), D50 y C80. Abajo, la energía de una banda con los primeros 50 y 80 ms marcados: ahí se ve qué cuentan D50 y C80. En el JSON, lo que respondería el endpoint.
+
+<div class="servicio-demo" data-servicio="parameters"></div>
+
+### El código, archivo por archivo
+
+=== "Router"
+
+    El endpoint principal. Es casi igual a `/filters/single-band` de M2: recibe el archivo, lo lee con `load_audio` y llama a **un** service. Lo nuevo es que responde un JSON con un schema.
+
+    <span class="ruta-archivo">app/routers/acoustics.py</span>
+
+    ```python
+    from fastapi import APIRouter, File, HTTPException, UploadFile
+
+    from app.routers.audio_http import uploaded_file
+    from app.schemas.responses import BandAnalysisResponse
+    from app.services.acoustic_parameters import calculate_parameters_from_ir
+    from app.services.signal_utils import load_audio
+
+    router = APIRouter()
+
+
+    @router.post("/parameters", response_model=BandAnalysisResponse)   # POST /api/v1/acoustics/parameters
+    async def parameters(file: UploadFile = File(...)):
+        with uploaded_file(file) as path:
+            try:
+                ir, fs = load_audio(path)
+            except ValueError as e:                     # no es un audio: el pedido está mal
+                raise HTTPException(status_code=422, detail=f"No es un audio válido: {e}")
+        params = calculate_parameters_from_ir(ir, fs)   # todas las bandas, de una vez
+        return BandAnalysisResponse(
+            sample_rate=fs,
+            duration=len(ir) / fs,
+            center_frequencies=sorted(params["T30"]),
+            parameters=params,
+        )
+    ```
+
+    El router no filtra ni calcula: `calculate_parameters_from_ir` ya recorre las bandas adentro.
+
+=== "Schema"
+
+    <span class="ruta-archivo">app/schemas/responses.py</span>
+
+    ```python
+    from pydantic import BaseModel
+
+
+    class BandAnalysisResponse(BaseModel):
+        sample_rate: int
+        duration: float                                 # segundos
+        center_frequencies: list[float]
+        parameters: dict[str, dict[float, float | None]]
+        # {"T30": {125.0: 1.52, 250.0: 1.31, ...}, "EDT": {...}, "D50": {...}, "C80": {...}}
+    ```
+
+    `float | None` deja pasar los tiempos que no se pudieron calcular como `null` en el JSON. En JSON las claves son siempre texto: la respuesta va a decir `"125.0"`.
+
+=== "Service"
+
+    <span class="ruta-archivo">app/services/acoustic_parameters.py</span>
+
+    ```python
+    def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
+        """Calcula los parametros acusticos ISO 3382 por banda de octava.
+
+        Parametros: EDT (0 a -10 dB), T10 (-5 a -15 dB), T20 (-5 a -25 dB),
+        T30 (-5 a -35 dB), D50 (%) y C80 (dB).
+
+        Parameters
+        ----------
+        ir : np.ndarray
+            Respuesta al impulso (array 1D).
+        fs : int
+            Frecuencia de muestreo en Hz.
+
+        Returns
+        -------
+        dict[str, dict[float, float]]
+            ``{parametro: {frecuencia_central: valor}}``.
+            Ejemplo: ``{'T30': {125: 1.5, 250: 1.3, ...}, 'EDT': {...}, 'D50': {...},
+            'C80': {...}}``.
+
+        References
+        ----------
+        .. [1] ISO 3382-1:2009. "Acoustics -- Measurement of room acoustic
+           parameters -- Part 1: Performance spaces."
+        """
+        raise NotImplementedError("Implementar en Milestone 3")   # ← acá va su implementación
+    ```
+
+    `calculate_parameters_from_ir` de la API de referencia calcula los parámetros de **una** señal ya filtrada, y el recorrido por bandas lo hace otra función. Acá la función recibe la RI de banda ancha y devuelve directamente **todas las bandas**.
+
+=== "Tests"
+
+    <span class="ruta-archivo">tests/test_analisis.py</span>
+
+    ```python
+    def test_parameters_synthetic_ir(self):
+        """Con una RI de T60 = 2 s, T30 en 1 kHz queda dentro de +-10 %."""
+        fs, t60 = 44100, 2.0
+        params = calculate_parameters_from_ir(_exponential_ir(t60, fs, 3 * t60), fs)
+        for clave in ("EDT", "T20", "T30", "D50", "C80"):
+            assert clave in params
+        t30 = params["T30"][1000]
+        assert abs(t30 - t60) <= 0.1 * t60, f"T30(1 kHz) = {t30:.2f} s"
+    ```
+
+    Pide las cinco claves y el T30 de 1 kHz dentro del 10 % del T60 conocido: es la tabla de la demo, para una banda. En el mismo archivo están `test_d50_range` (D50 entre 0 y 100 % en todas las bandas) y `test_c80_consistency` (con un T60 corto, C80 positivo en todas las bandas).
+
+    El test del endpoint es `test_acoustics_parameters_endpoint` en `tests/test_api.py`: sube una RI sintética y espera un 200 con un JSON.
+
+---
+
+## Extra opcional · `apply_lundeby(ir, fs)`
+
+No es obligatorio. Si lo implementan, se valora dentro del criterio **Funcionalidad** de la rúbrica (resultados robustos frente al ruido de fondo).
+
+Estima **dónde cortar** la integral de Schroeder: el punto en que la caída de la RI se cruza con el ruido de fondo (la línea vertical de la demo del servicio 2). Devuelve el índice de esa muestra y el nivel del ruido en dB. El algoritmo de Lundeby et al. (1995), en pasos:
+
+1. Promediar la energía de la RI en intervalos cortos (10 a 30 ms) y pasarla a dB.
+2. Estimar el ruido de fondo con el último 10 % de la RI.
+3. Ajustar una recta a la caída, desde el máximo hasta 10 dB por encima del ruido.
+4. Calcular dónde cruza esa recta el nivel del ruido.
+5. Iterar: con el nuevo punto de cruce, reestimar el ruido y la recta, hasta que el cruce no cambie.
+
+Con el punto de cruce, se integra solo hasta ahí (o se corrige la cola) antes de medir.
+
+```python
+def apply_lundeby(ir: np.ndarray, fs: int) -> tuple[int, float]:
+    """Estima el punto de truncamiento de la RI (metodo de Lundeby).
+    ...
+    Returns
+    -------
+    index : int
+        Indice de la muestra donde la RI se cruza con el ruido de fondo.
+    noise_level_db : float
+        Nivel estimado del ruido de fondo en dB.
+    """
+```
+
+En la API de referencia la firma es `apply_lundeby(impulse, max_tries=10, fs=44100)` y devuelve el **tiempo** de cruce en segundos. Si lo exponen, el endpoint opcional es `POST /api/v1/utils/lundeby`.
+
+<small>Lundeby, A., Vigran, T. E., Bietz, H. y Vorländer, M. (1995). "Uncertainties of measurements in room acoustics." *Acustica*, 81(4), 344-355.</small>
+
+---
+
+## Los endpoints de M3
+
+Con los routers escritos, falta **registrarlos** y **probarlos**. Con esto, la API queda completa:
+
+| Endpoint | Milestone |
+|---|---|
+| `GET /health` | M0 |
+| `POST /api/v1/signals/pink-noise` · `/signals/sine-sweep` | M1 |
+| `POST /api/v1/signals/synthetic-ir` · `/filters/single-band` | M2 |
+| `POST /api/v1/acoustics/parameters` | **M3** · el principal |
+| `POST /api/v1/utils/schroeder` · `/utils/smoothing` | **M3** |
+
+1. **Registrar los dos routers nuevos** en `app/main.py` (están en el `TODO (M3)`):
+
+    ```python
+    from app.routers import acoustics, filters, health, signals, utils
+
+    app.include_router(acoustics.router, prefix="/api/v1/acoustics", tags=["acoustics"])
+    app.include_router(utils.router, prefix="/api/v1/utils", tags=["utils"])
+    ```
+
+2. **Probarlo en Swagger:** `uv run uvicorn app.main:app --reload`, abrir `http://localhost:8000/docs`, subir una RI a `POST /api/v1/acoustics/parameters` y mirar el JSON. Prueben subir un archivo que no sea un audio: tiene que volver **422**.
+3. **Probarlo desde la terminal**, para el README:
+
+    ```bash
+    curl -X POST http://localhost:8000/api/v1/acoustics/parameters -F "file=@ri.wav"
+    ```
+
+4. **Sacar las marcas `xfail`** y ver pasar los tests:
+    - En `tests/test_api.py`, el decorador `@xfail_m3` de los tres tests de M3.
+    - En `tests/test_analisis.py`, la línea `pytestmark = pytest.mark.xfail(...)` de arriba de todo, cuando pasen los cuatro servicios.
+
+Los tests de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que seguir pasando: son la red que avisa si algo de M3 rompió lo anterior.
+
+**Requisitos de la API:**
+
+- Documentación automática en Swagger (`/docs`) y ReDoc (`/redoc`).
+- Validación de entrada con schemas de Pydantic.
+- Errores HTTP con mensajes claros: 422 para pedidos inválidos (archivo que no es audio, parámetros fuera de rango) y nunca un 500 por un caso previsible.
+- Los endpoints que reciben audio lo aceptan por `multipart/form-data`; los de generación devuelven WAV.
+- Se levanta con `uvicorn app.main:app --reload`.
+
+!!! note "Opcionales (suman en Funcionalidad)"
+    Los que tiene la API de referencia y no son mínimos: `/utils/lundeby`, `/utils/log-scale`, `/filters/band` (todas las bandas de una vez), `/filters/frequencies` y `/analysis/impulse-response`.
+
+---
+
+## El output final
 
 <figure class="figura-tp" markdown>
 [![EDT, T20 y T30 por banda de octava entre 125 Hz y 4 kHz para la RI real de la Usina del Arte](../img/m3/parametros_por_banda.png)](../img/m3/parametros_por_banda.png)
 <figcaption markdown="span">EDT · T20 · T30 por banda (125 Hz – 4 kHz) · **RI real** medida en la Usina del Arte (sala sinfónica, Buenos Aires)</figcaption>
 </figure>
 
-Este es el **producto final del análisis**: los tres parámetros contra la frecuencia central de cada banda. Es lo que devuelve `calculate_parameters_from_ir` y lo que su API expone en `/api/v1/acoustics/parameters`.
+Esto es lo que devuelve `calculate_parameters_from_ir` para una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de las RI sintéticas de las demos, donde `EDT ≈ T20 ≈ T30`, acá los parámetros **se separan**: cuando el EDT es menor que el T30 domina la energía temprana (cerca de la fuente o con reflexiones tempranas fuertes); cuando es mayor, la energía temprana es débil (lejos de la fuente o con volúmenes acoplados). Las diferencias entre bandas son información acústica real de la sala.
 
-Acá se ve una **sala real**: la Usina del Arte, con T30 ≈ 2 s y la forma de *campana* típica (máximo en medios, caída en graves y agudos por absorción). A diferencia de la RI sintética de las figuras anteriores (donde `EDT ≈ T20 ≈ T30`), acá los parámetros **se separan**: cuando `EDT` es menor que `T30` domina la energía temprana (cerca de la fuente o con reflexiones tempranas fuertes); cuando es mayor, la energía temprana es débil (lejos de la fuente o con volúmenes acoplados). Las diferencias entre bandas son información acústica real de la sala.
+<small>ISO 3382 · el mismo gráfico que van a ver en el [frontend de cátedra](https://rir-api-frontend.onrender.com) cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</small>
 
-<small>ISO 3382 · el mismo gráfico que van a ver en el frontend de cátedra cuando suban su WAV. Sintética = enseñar el método (T60 conocido) · real = validar el producto.</small>
+---
 
-### Validación · lo que separa un TP de un producto
+## Validación
+
+No alcanza con que los tests pasen. Hay que demostrar que los números **coinciden con un software profesional** sobre RI reales.
 
 <figure class="figura-tp" markdown>
 [![Comparación de T30 por banda entre RIR-API y software comercial sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
-<figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real) · RIR-API vs. software de referencia — el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
+<figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real) · RIR-API vs. software de referencia: el formato que va en el README (la serie de referencia acá es ilustrativa)</figcaption>
 </figure>
 
-No alcanza con que los tests pasen. Hay que demostrar que los números **coinciden con un software profesional** sobre RIs reales.
+Comparen contra al menos **uno** de estos programas:
 
-- Al menos **2 RIs**: una sintética y una real (OpenAIR)
-- Comparar contra **REW, ARTA, Aurora o Dirac**
-- Bandas 125, 250, 500, 1000, 2000, 4000 Hz
+- **REW** (Room EQ Wizard), gratuito
+- **ARTA**, versión de evaluación
+- **Aurora** (plugins para Audacity)
+- **Dirac** (Brüel & Kjær)
+
+Con al menos **2 RI**: una sintética (con su `generate_synthetic_ir`, de T60 conocido) y una real (del [MIT IR Survey](https://mcdermottlab.mit.edu/Reverb/IR_Survey.html), de OpenAIR si vuelve a estar en línea, o una medida por la cátedra), en las bandas de 125, 250, 500, 1000, 2000 y 4000 Hz.
 
 !!! note "Criterio de aceptación"
     Los tiempos de reverberación (**EDT, T20, T30**) no deben diferir en más de **±0,5 s** respecto de la referencia, y **C80** no más de **±1 dB**.
 
-    Si su pendiente da la mitad que la de REW, hay un bug — probablemente en el filtrado o en los límites de Schroeder.
+    Si su pendiente da la mitad que la de REW, hay un bug: probablemente en el filtrado o en los límites del tramo de Schroeder.
 
-> **Grupos con validación sólida:** lúzcanla en la presentación. Una tabla RIR-API vs REW banda por banda con diferencias < 0.5 s es lo más convincente que pueden mostrar.
-
-## Funciones a implementar
-
-### 1. `apply_smoothing(signal, fs, method, window_ms)`
-
-**Firma sugerida:**
-```python
-def apply_smoothing(
-    signal: np.ndarray, fs: int, method: str = "hilbert", window_ms: float = 10
-) -> np.ndarray:
-    """
-    Suaviza una senal para reducir fluctuaciones del ruido.
-
-    Parameters
-    ----------
-    signal : np.ndarray
-        Senal de entrada (tipicamente una RI filtrada por banda).
-    fs : int
-        Frecuencia de muestreo en Hz.
-    method : str
-        'hilbert' (por defecto): envolvente de Hilbert.
-        'moving_average': media movil de largo window_ms.
-    window_ms : float
-        Largo de la ventana de media movil en milisegundos (por defecto 10).
-        No se usa con 'hilbert'.
-
-    Returns
-    -------
-    np.ndarray
-        Envolvente de amplitud de la señal (misma unidad que `signal`).
-        Para llevarla a dB usar 20·log10.
-    """
-```
-
-!!! note "Equivalencia con la API de referencia"
-    Mismo nombre y firma que `apply_smoothing` de RIR-API. La de cátedra acepta más métodos (`'hilbert'`, `'rms'`, `'median'`, `'savgol'`); acá se piden dos: `'hilbert'` y `'moving_average'` (esta última equivale al `'rms'` de la referencia si la implementan como envolvente RMS).
-
-**Fundamento matemático:**
-
-**Opción A - Media movil:**
-
-La media movil de una señal $x[n]$ con ventana de tamaño $M$ muestras (con `method='moving_average'`, $M = \text{window\_ms} \cdot f_s / 1000$) es:
-
-$$y[n] = \sqrt{\frac{1}{M} \sum_{k=0}^{M-1} x^2[n-k]}$$
-
-Se promedia la energía ($x^2$) y se toma la raíz: así la salida es una envolvente de **amplitud** (valor eficaz local), comparable con la de Hilbert. Ambas opciones devuelven amplitud; en dB, usar $20\log_{10}$.
-
-**Importante:** `apply_smoothing` se usa para **visualizar** el decaimiento. La integral de Schroeder (función 2) se calcula sobre la **RI** filtrada por banda ($h^2$), no sobre la envolvente.
-
-**Opción B - Envolvente de Hilbert (recomendada):**
-
-La envolvente de Hilbert proporciona la envolvente instantanea de la señal mediante la señal analítica:
-
-$$z(t) = x(t) + j \hat{x}(t)$$
-
-donde $\hat{x}(t)$ es la transformada de Hilbert de $x(t)$, definida como:
-
-$$\hat{x}(t) = \frac{1}{\pi} \text{v.p.} \int_{-\infty}^{\infty} \frac{x(\tau)}{t - \tau} d\tau$$
-
-La envolvente instantanea es:
-
-$$A(t) = |z(t)| = \sqrt{x^2(t) + \hat{x}^2(t)}$$
-
-En Python, se obtiene con `scipy.signal.hilbert`:
-```python
-analitica = scipy.signal.hilbert(signal)
-envolvente = np.abs(analitica)
-```
-
-La envolvente de Hilbert es preferible porque no requiere elegir un tamaño de ventana y preserva mejor la estructura temporal del decaimiento.
-
----
-
-### 2. `apply_schroeder_integral(ir)`
-
-**Firma sugerida:**
-```python
-def apply_schroeder_integral(ir: np.ndarray) -> np.ndarray:
-    """
-    Calcula la integral de Schroeder (integracion inversa).
-
-    Parameters
-    ----------
-    ir : np.ndarray
-        Respuesta al impulso (o RI filtrada por banda).
-
-    Returns
-    -------
-    np.ndarray
-        Curva de decaimiento de Schroeder en dB, normalizada a 0 dB.
-    """
-```
-
-!!! note "Equivalencia con la API de referencia"
-    En RIR-API la firma es `apply_schroeder_integral(impulse, t, fs, lundeby=False)`: recibe también el vector de tiempo y puede truncar con Lundeby antes de integrar. Acá solo se pide la RI; el truncamiento es el extra opcional `apply_lundeby`.
-
-**Fundamento matemático:**
-
-La integral de Schroeder representa la curva de decaimiento de la energía acústica en un recinto. Se obtiene mediante la integración inversa (de atrás hacia adelante) de la energía de la respuesta al impulso:
-
-$$E(t) = \int_{t}^{\infty} h^2(\tau) \, d\tau$$
-
-En la práctica, con señales discretas de duración finita $T$:
-
-$$E[n] = \sum_{k=n}^{N-1} h^2[k]$$
-
-donde $N$ es el número total de muestras.
-
-La curva de decaimiento en dB, normalizada respecto a la energía total:
-
-$$L(t) = 10 \log_{10}\left(\frac{E(t)}{E(0)}\right) = 10 \log_{10}\left(\frac{\sum_{k=n}^{N-1} h^2[k]}{\sum_{k=0}^{N-1} h^2[k]}\right)$$
-
-**Implementación eficiente:**
-
-La integral se calcula eficientemente usando `np.cumsum` sobre la señal invertida:
-
-```python
-energia = ir ** 2
-integral_inversa = np.cumsum(energia[::-1])[::-1]
-integral_db = 10 * np.log10(integral_inversa / integral_inversa[0] + eps)
-```
-
-donde `eps` es un valor pequeño para evitar logaritmo de cero.
-
-**Nota importante:** La calidad de la integral de Schroeder depende fuertemente de que la RI tenga suficiente relación señal a ruido (SNR). Si el ruido de fondo es significativo, la curva de decaimiento se aplana al final en lugar de seguir decayendo. Esto afecta directamente el cálculo de $T_{60}$.
-
-**Referencia:** Schroeder, M. R. (1965). "New method of measuring reverberation time." *Journal of the Acoustical Society of América*, 37(3), 409-412.
-
----
-
-### 3. `linear_regression(x, y)`
-
-**Firma sugerida:**
-```python
-def linear_regression(
-    x: np.ndarray, y: np.ndarray
-) -> tuple[float, float, float]:
-    """
-    Calcula la regresion lineal por minimos cuadrados.
-
-    Parameters
-    ----------
-    x : np.ndarray
-        Variable independiente (tipicamente tiempo en segundos).
-    y : np.ndarray
-        Variable dependiente (tipicamente curva de Schroeder en dB).
-
-    Returns
-    -------
-    tuple[float, float, float]
-        (slope, intercept, r2)
-        pendiente en dB/s, ordenada al origen en dB, coeficiente de determinacion.
-    """
-```
-
-!!! warning "Diferencia con la API de referencia"
-    `linear_regression` de RIR-API recibe los argumentos al revés, `(signal_values, x_values=None)`, y devuelve solo `(m, b)`. Acá el orden es el matemático `(x, y)` y se devuelve también $R^2$: `slope, intercept, r2 = linear_regression(x, y)`. Si copian código de la referencia, ojo con el orden.
-
-**Fundamento matemático:**
-
-La regresión lineal por mínimos cuadrados ajusta una recta $y = mx + b$ minimizando la suma de errores cuadráticos:
-
-$$m = \frac{N \sum x_i y_i - \sum x_i \sum y_i}{N \sum x_i^2 - (\sum x_i)^2}$$
-
-$$b = \frac{\sum y_i - m \sum x_i}{N}$$
-
-El coeficiente de determinación $R^2$ indica la calidad del ajuste:
-
-$$R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$$
-
-donde $\hat{y}_i = m x_i + b$ es el valor predicho e $\bar{y}$ es el promedio de $y$.
-
-**Uso en el contexto acústico:**
-
-La pendiente $m$ de la recta ajustada a la curva de Schroeder se usa para calcular el tiempo de reverberación:
-
-$$T_{60} = \frac{-60}{m}$$
-
-Un $R^2 > 0.99$ indica un decaimiento bien definido. Valores menores sugieren problemas con la medición o la señal.
-
-**Implementación:** Se puede usar `np.polyfit(x, y, 1)` o implementarlo manualmente con las formulas anteriores. Se recomienda la implementación manual para demostrar comprensión del método.
-
----
-
-### 4. `calculate_parameters_from_ir(ir, fs)`
-
-**Firma sugerida:**
-```python
-def calculate_parameters_from_ir(
-    ir: np.ndarray, fs: int
-) -> dict[str, dict[float, float]]:
-    """
-    Calcula los parametros acusticos ISO 3382 por banda de octava.
-
-    Parameters
-    ----------
-    ir : np.ndarray
-        Respuesta al impulso.
-    fs : int
-        Frecuencia de muestreo en Hz.
-
-    Returns
-    -------
-    dict[str, dict[float, float]]
-        Diccionario con parametros acusticos por banda.
-        Estructura: {parametro: {frecuencia_central: valor}}
-        Ejemplo: {'T30': {125: 1.5, 250: 1.3, ...}, 'EDT': {...}, ...}
-    """
-```
-
-!!! note "Equivalencia con la API de referencia"
-    `calculate_parameters_from_ir` de RIR-API calcula los parámetros de **una** señal (ya filtrada; acepta `t_max` y `freq` opcionales) y el recorrido por bandas lo hace otra función. Acá la función recibe la RI de banda ancha y devuelve directamente **todas las bandas** de octava.
-
-**Parámetros a calcular:**
-
-#### a) EDT (Early Decay Time)
-
-El EDT se calcula a partir de la pendiente de la curva de Schroeder entre **0 dB y -10 dB**, extrapolada a -60 dB:
-
-$$\text{EDT} = \frac{-60}{m_{0,-10}}$$
-
-donde $m_{0,-10}$ es la pendiente de la regresión lineal entre los puntos de 0 dB y -10 dB.
-
-El EDT es un indicador de la percepción subjetiva de la reverberación, más relevante para la experiencia auditiva que el $T_{60}$.
-
-#### b) $T_{10}$, $T_{20}$, $T_{30}$ (Tiempos de reverberación)
-
-Se calculan a partir de diferentes rangos de la curva de Schroeder:
-
-- **$T_{10}$**: pendiente entre **-5 dB y -15 dB**, extrapolada a -60 dB:
-  $$T_{10} = \frac{-60}{m_{-5,-15}}$$
-
-- **$T_{20}$**: pendiente entre **-5 dB y -25 dB**, extrapolada a -60 dB:
-  $$T_{20} = \frac{-60}{m_{-5,-25}}$$
-
-- **$T_{30}$**: pendiente entre **-5 dB y -35 dB**, extrapolada a -60 dB:
-  $$T_{30} = \frac{-60}{m_{-5,-35}}$$
-
-La norma ISO 3382 establece que **$T_{30}$ es el parámetro preferido** cuando la relación señal a ruido lo permite (SNR > 45 dB).
-
-#### c) $T_{60}$ (Tiempo de reverberación)
-
-El $T_{60}$ se reporta típicamente como $T_{30}$ (extrapolado) o $T_{20}$ si la SNR es insuficiente para $T_{30}$:
-
-$$T_{60} \approx T_{30} \quad \text{(preferido)}$$
-$$T_{60} \approx T_{20} \quad \text{(alternativa)}$$
-
-En ningún caso se mide directamente el decaimiento de 60 dB, ya que requeriria una SNR impracticable.
-
-#### d) $D_{50}$ (Definición / Deutlichkeit)
-
-La Definición $D_{50}$ es la relación entre la energía en los primeros 50 ms y la energía total:
-
-$$D_{50} = \frac{\int_0^{50\text{ms}} h^2(t) \, dt}{\int_0^{\infty} h^2(t) \, dt} \times 100\%$$
-
-En forma discreta:
-
-$$D_{50} = \frac{\sum_{n=0}^{N_{50}} h^2[n]}{\sum_{n=0}^{N-1} h^2[n]} \times 100\%$$
-
-donde $N_{50} = \lfloor 0.050 \cdot f_s \rfloor$ es el número de muestras correspondiente a 50 ms.
-
-$D_{50}$ es un parámetro relacionado con la **inteligibilidad de la palabra**. Valores altos indican buena claridad del habla.
-
-#### e) $C_{80}$ (Claridad / Clarity)
-
-La Claridad $C_{80}$ es la relación en dB entre la energía temprana (primeros 80 ms) y la energía tardia (después de 80 ms):
-
-$$C_{80} = 10 \log_{10}\left(\frac{\int_0^{80\text{ms}} h^2(t) \, dt}{\int_{80\text{ms}}^{\infty} h^2(t) \, dt}\right) \text{ [dB]}$$
-
-En forma discreta:
-
-$$C_{80} = 10 \log_{10}\left(\frac{\sum_{n=0}^{N_{80}} h^2[n]}{\sum_{n=N_{80}+1}^{N-1} h^2[n]}\right)$$
-
-donde $N_{80} = \lfloor 0.080 \cdot f_s \rfloor$.
-
-$C_{80}$ es un parámetro fundamental para la **calidad musical**. Valores típicos:
-- Música sinfónica: -2 a +2 dB
-- Música de camara: +2 a +5 dB
-- Palabra hablada: > +5 dB
-
----
-
-### 5. API REST - Completar la API
-
-En M1 y M2 la API ya expone la generación de señales y el filtrado. En M3 se agregan los endpoints que responden la pregunta de la medición, con la misma arquitectura de capas: **routers** (endpoints) → **services** (lógica) → **schemas** (validación con Pydantic).
-
-**Estructura de la API:**
-
-```
-app/
-├── main.py                    # Punto de entrada FastAPI + CORS
-├── settings.py                # Configuracion con pydantic-settings
-├── routers/
-│   ├── health.py              # GET /health                          (M0)
-│   ├── audio_http.py          # wav_response, uploaded_file          (template)
-│   ├── signals.py             # POST /api/v1/signals/*               (M1, M2)
-│   ├── filters.py             # POST /api/v1/filters/single-band     (M2)
-│   ├── acoustics.py           # POST /api/v1/acoustics/parameters    (M3)
-│   └── utils.py               # POST /api/v1/utils/*                 (M3)
-├── schemas/
-│   ├── signals.py             # Pedidos de generacion                (M1, M2)
-│   ├── utils.py               # Respuestas de schroeder y smoothing  (M3)
-│   └── responses.py           # HealthResponse, BandAnalysisResponse (M3)
-└── services/
-    ├── audio_io.py            # Reproducción y grabación (M1)
-    ├── pink_noise.py          # Generacion de ruido rosa (M1)
-    ├── sine_sweep.py          # Generacion de sine sweep (M1)
-    ├── filter.py              # Filtros de banda (M2)
-    ├── signal_utils.py        # Utilidades de procesamiento (M2)
-    └── acoustic_parameters.py # Calculo de parametros acusticos (M3)
-```
-
-**Endpoints mínimos requeridos:**
-
-| Grupo | Endpoint | Método | Descripción | Milestone |
-|-------|----------|--------|-------------|-----------|
-| Base | `/health` | GET | Health check | M0 |
-| Signals | `/api/v1/signals/pink-noise` | POST | Genera ruido rosa (WAV) | M1 |
-| Signals | `/api/v1/signals/sine-sweep` | POST | Genera el sweep o su filtro inverso (WAV) | M1 |
-| Signals | `/api/v1/signals/synthetic-ir` | POST | Genera una RI sintética (WAV) | M2 |
-| Filters | `/api/v1/filters/single-band` | POST | Filtra un WAV subido en una banda de octava | M2 |
-| Acoustics | `/api/v1/acoustics/parameters` | POST | Recibe una RI y devuelve EDT, T20, T30, D50 y C80 por banda (JSON) | **M3** |
-| Utils | `/api/v1/utils/schroeder` | POST | Curva de caída de Schroeder de una RI (JSON) | **M3** |
-| Utils | `/api/v1/utils/smoothing` | POST | Envolvente de una señal (JSON) | **M3** |
-
-El endpoint principal, `/acoustics/parameters`, sigue el mismo patrón que `/filters/single-band` de M2: recibe el archivo con `uploaded_file`, lo lee con `load_audio` (422 si no es audio), filtra por bandas y llama a `calculate_parameters_from_ir` en cada una. Lo nuevo es la respuesta: un JSON validado con un schema (`BandAnalysisResponse`) en lugar de un WAV.
-
-!!! note "Opcionales (suman en Funcionalidad)"
-    Los que tiene la API de referencia y no son mínimos: `/utils/lundeby`, `/utils/log-scale`, `/filters/band` (todas las bandas de una vez), `/filters/frequencies` y `/analysis/impulse-response`.
-
-**Requisitos de la API:**
-
-- Documentación automática vía Swagger UI (`/docs`) y ReDoc (`/redoc`).
-- Validación de entrada con schemas Pydantic (tipos, rangos, formatos).
-- Manejo de errores con códigos HTTP apropiados (400, 422, 500).
-- Configuración vía variables de entorno (CORS, límites de archivo, etc.).
-- Los endpoints que reciben audio lo aceptan vía `multipart/form-data` (como `/filters/single-band`).
-- Los endpoints de generación devuelven archivos WAV descargables (como los de M1 y M2).
-- Debe poder ejecutarse con `uvicorn app.main:app --reload`.
-
----
-
-## Función extra (opcional)
-
-No es obligatoria. Si la implementan, se valora dentro del criterio **Funcionalidad** de la rúbrica (resultados robustos frente al ruido de fondo).
-
-### `apply_lundeby(ir, fs)`
-
-```python
-def apply_lundeby(
-    ir: np.ndarray, fs: int
-) -> tuple[int, float]:
-    """
-    Determina el punto de truncamiento de la RI usando el metodo de Lundeby.
-
-    Parameters
-    ----------
-    ir : np.ndarray
-        Respuesta al impulso.
-    fs : int
-        Frecuencia de muestreo en Hz.
-
-    Returns
-    -------
-    tuple[int, float]
-        (index, noise_level_db)
-        Indice de la muestra donde la RI se cruza con el ruido de fondo
-        y el nivel estimado de ruido en dB.
-    """
-```
-
-!!! note "Equivalencia con la API de referencia"
-    En RIR-API la firma es `apply_lundeby(impulse, max_tries=10, fs=44100)` y devuelve solo el **tiempo** de cruce en segundos. Acá `fs` va en segundo lugar y se devuelve el índice de muestra junto con el nivel de ruido.
-
-**Fundamento matemático:**
-
-El método de Lundeby busca iterativamente el punto donde la curva de decaimiento de la RI se encuentra con el nivel de ruido de fondo. Esto permite definir límites de integración más precisos para la integral de Schroeder.
-
-**Algoritmo:**
-
-1. Calcular la curva de decaimiento promediada en intervalos (por ejemplo, intervalos de 10-30 ms).
-2. Estimar el nivel de ruido de fondo como el promedio de los últimos 10% de la señal.
-3. Encontrar el punto de cruce preliminar entre la curva de decaimiento y el nivel de ruido + 10 dB.
-4. Realizar una regresión lineal desde el inicio hasta el punto de cruce.
-5. Iterar: recalcular el nivel de ruido, el punto de cruce y la regresión hasta convergencia.
-6. El punto de truncamiento final es donde la recta de regresión cruza el nivel de ruido.
-
-**Uso:** El punto de truncamiento se usa para corregir la integral de Schroeder. Las muestras después del punto de truncamiento se reemplazan por la extrapolación de la recta de regresión antes de integrar.
-
-**Referencia:** Lundeby, A., et al. (1995). "Uncertainties of measurements in room acoustics." *Acústica*, 81(4), 344-355.
-
----
-
-## Tests requeridos
-
-### Test 1: Suavizado
-
-```python
-def test_smoothing_hilbert_envelope():
-    """La envolvente debe ser no negativa y suave."""
-
-def test_smoothing_moving_average_length():
-    """La salida debe tener la misma longitud que la entrada."""
-```
-
-### Test 2: Integral de Schroeder
-
-```python
-def test_schroeder_max_zero_db():
-    """El primer valor de la integral de Schroeder debe ser 0 dB."""
-
-def test_schroeder_decreasing():
-    """La integral de Schroeder debe ser monotonamente decreciente."""
-
-def test_schroeder_synthetic_ir():
-    """
-    Para una RI sintetizada con T60 conocido,
-    la curva de Schroeder debe ser aproximadamente lineal
-    con pendiente -60/T60 dB/s.
-    """
-```
-
-### Test 3: Regresión lineal
-
-```python
-def test_linear_regression_exact():
-    """Para datos perfectamente lineales, R^2 debe ser 1.0."""
-
-def test_linear_regression_slope():
-    """Verificar pendiente con datos conocidos."""
-```
-
-### Test 4: Parámetros acústicos con RI sintetizada
-
-```python
-def test_parameters_synthetic_ir():
-    """
-    Sintetizar una RI con T60 = 2.0 s, calcular parametros
-    y verificar que T30 esta dentro del +-10% del valor conocido.
-    """
-
-def test_d50_range():
-    """D50 debe estar entre 0% y 100%."""
-
-def test_c80_consistency():
-    """Para una RI con mucha energia temprana, C80 debe ser positivo."""
-```
-
-### Test 5: API endpoints
-
-Están en `tests/test_api.py`, uno por endpoint y marcados por milestone. En M3 sacan las marcas `@xfail_m3`:
-
-```python
-def test_acoustics_parameters_endpoint():
-    """Enviar una RI a /api/v1/acoustics/parameters devuelve los parametros por banda."""
-
-def test_utils_schroeder_endpoint():
-    """/api/v1/utils/schroeder devuelve la curva de caida."""
-
-def test_utils_smoothing_endpoint():
-    """/api/v1/utils/smoothing devuelve la envolvente de la senal."""
-```
-
-Los de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que seguir pasando: son la red que avisa si algo de M3 rompió lo anterior.
-
-**Nota:** Usar `httpx.AsyncClient` o `fastapi.testclient.TestClient` para tests de API.
-
----
-
-## Validación final
-
-### Comparación con software comercial
-
-Los resultados de RIR-API deben compararse con al menos **uno** de los siguientes softwares de referencia:
-
-- **REW (Room EQ Wizard)** - gratuito
-- **ARTA** - versión de evaluación disponible
-- **Aurora Plugins** (para Audacity)
-- **Dirac** (Bruel & Kjaer)
-
-**Criterio de aceptación:**
-
-> Los resultados obtenidos no deben diferir en más de **+-0.5 s** de los arrojados por el software comercial para los tiempos de reverberación ($T_{20}$, $T_{30}$, EDT), y no más de **+-1 dB** para $C_{80}$.
-
-**Tabla de validación requerida** (incluir en el README y mostrar en la presentación oral):
+**Tabla de validación** (va en el README y en la presentación oral):
 
 | Parámetro | Banda (Hz) | RIR-API | Software ref. | Diferencia | Dentro de tolerancia |
 |-----------|-----------|-----------|---------------|------------|---------------------|
@@ -656,33 +718,29 @@ Los resultados de RIR-API deben compararse con al menos **uno** de los siguiente
 | ...       | ...       |           |               |            |                     |
 | C80       | 1000      |           |               |            |                     |
 
-Completar la tabla para al menos las bandas de 125, 250, 500, 1000, 2000 y 4000 Hz, con al menos 2 RIs diferentes (una sintetizada y una real).
+Y suban la misma RI a su API y a la [API de cátedra](https://rir-api.onrender.com/docs): si los números coinciden dentro de las tolerancias, están listos.
 
----
+### Validación y resultados en el README
 
-## Validación y resultados en el README
+Este cuatrimestre **no hay informe escrito**. En su lugar, el README del repositorio incluye una sección **Validación** con:
 
-Este cuatrimestre **no hay informe escrito**. En su lugar, el README del repositorio debe incluir una sección **Validación** con:
-
-- La tabla comparativa RIR-API vs. software de referencia (ver arriba).
-- Al menos 3 gráficas: (1) curva de decaimiento, (2) comparación de filtros, (3) validación con software comercial.
+- La tabla comparativa RIR-API vs. software de referencia.
+- Al menos 3 gráficas: (1) curva de decaimiento, (2) comparación de filtros, (3) validación con software comercial (ver [Tres gráficas obligatorias](#tres-graficas-obligatorias)).
 - El diagrama de arquitectura actualizado.
 
 Estos mismos resultados se muestran en la presentación oral.
 
 ---
 
-
-## Calidad de código (requisitos acumulativos)
+## Calidad de código
 
 Todos los requisitos de M1 y M2 aplican, más:
 
-- **Cobertura de tests**: objetivo 80 % en funciones de análisis y tests de API (es el nivel "Excelente" del criterio Testing de la rúbrica).
-- **CI funcionando**: GitHub Actions ejecutando tests y linting en cada push.
-- **Documentación de API**: Swagger UI y ReDoc generados automáticamente. Docstrings completos en funciones públicas.
-- **README actualizado** con instrucciones de ejecución de la API y ejemplos de uso con `curl`.
-- **Tag `v1.0.0`** en la rama `main` al entregar.
-- **Release en GitHub** con changelog resumido.
+- **Cobertura de tests:** 80 % en las funciones de análisis y en los tests de API (el nivel "Excelente" del criterio Testing de la rúbrica). En el informe de `pytest --cov=app/services`, miren la fila de `acoustic_parameters.py`.
+- **CI en verde** en cada push: lint y tests.
+- **Docstrings completos** en las funciones públicas; Swagger y ReDoc generados solos.
+- **README actualizado** con instrucciones de ejecución de la API y ejemplos `curl`.
+- **Tag `v1.0.0`** en `main` al entregar y un **Release** en GitHub con changelog resumido.
 
 ---
 
@@ -690,9 +748,9 @@ Todos los requisitos de M1 y M2 aplican, más:
 
 ### La demo en vivo
 
-En el Demo Day, mostrar la API *corriendo* no es opcional. Es parte central de la nota de presentación.
+En el Demo Day, mostrar la API *corriendo* no es opcional: es parte central de la nota de la presentación.
 
-Guion sugerido de la demo (≈ 8 min):
+Guion sugerido (≈ 8 min):
 
 1. Levantar la API: `uvicorn app.main:app --reload`
 1. Abrir `/docs` (Swagger) y recorrer los endpoints
@@ -703,15 +761,11 @@ Guion sugerido de la demo (≈ 8 min):
 Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. Durante la demo no depuren código.
 
 !!! note "La referencia de cátedra"
-    Úsenla como **referencia de resultados** (no como contrato de endpoints: los paths que pide esta especificación mandan). Compárense contra ella hasta el final:
-
-    [rir-api.onrender.com/docs](https://rir-api.onrender.com/docs)
-
-    Suban la misma RI a su API y a la de cátedra. Si los números coinciden (dentro de las tolerancias), están listos.
+    Úsenla como **referencia de resultados** (no como contrato de endpoints: los paths que pide esta especificación mandan). Compárense contra ella hasta el final: [rir-api.onrender.com/docs](https://rir-api.onrender.com/docs).
 
 ### Tres gráficas obligatorias
 
-Son el corazón de la validación en el README y de la presentación oral — las mismas que vieron en esta página.
+Son el corazón de la validación en el README y de la presentación oral.
 
 <figure class="figura-tp" markdown>
 [![Curva de decaimiento de Schroeder](../img/m3/schroeder_regresiones.png)](../img/m3/schroeder_regresiones.png)
@@ -734,14 +788,31 @@ Son el corazón de la validación en el README y de la presentación oral — la
 !!! note "Cómo presentarlas"
     Título y ejes rotulados **con unidades** · legibles al proyectar · para la RI mostrar **envolvente/decaimiento**, nunca audio crudo · una idea por figura.
 
-### Lo que tiene que estar el 18 de noviembre
+### Lo que mira el docente
 
-- [ ] Las 4 funciones de análisis + los 3 endpoints de M3 (y los de M1 y M2 andando)
-- [ ] `pytest` en verde · cobertura objetivo 80 % en análisis y API
+**Código**
+
+- [ ] Docstrings NumPy y type hints en las cuatro funciones (y en `apply_lundeby` si la hacen)
+- [ ] `tests/test_analisis.py` y los tests de M3 de `tests/test_api.py` pasando, sin `xfail`
+- [ ] Ninguna función de `services/` importa FastAPI; ningún endpoint responde 500 por un caso previsible
+
+**Git**
+
+- [ ] Cada función en una rama propia, mergeada vía PR con review de otro integrante
+- [ ] Historial coherente y Conventional Commits
+- [ ] Tag `v1.0.0` y Release en GitHub
+
+### Checklist de entrega
+
+Lo que tiene que estar en el tag `v1.0.0` el 18/11.
+
+- [ ] Las 4 funciones de análisis con sus tests pasando
+- [ ] Endpoints `POST /api/v1/acoustics/parameters`, `/utils/schroeder` y `/utils/smoothing` registrados en `main.py`, con sus schemas
+- [ ] Los endpoints de M1 y M2 siguen andando
+- [ ] `pytest` en verde y cobertura de 80 % en análisis y API
 - [ ] CI de GitHub Actions **verde** en cada push
 - [ ] Swagger (`/docs`) y ReDoc (`/redoc`) funcionando
 - [ ] README con instrucciones de ejecución y ejemplos `curl`
-
 - [ ] README con la sección **Validación**: 3 gráficas y tabla comparativa
 - [ ] `AI_LOG.md` **en la raíz**, con entradas de M0 a M3
 - [ ] Tag `v1.0.0` en `main`, apuntando al commit final real
@@ -749,25 +820,25 @@ Son el corazón de la validación en el README y de la presentación oral — la
 - [ ] Demo lista: WAV de prueba + API levantada
 
 !!! warning "CI que engaña"
-    si `ruff` corta antes de `pytest`, los tests nunca corren en CI aunque pasen local. Y si el workflow lintea la carpeta equivocada (`src/` en vez de `app/`), no valida nada. Revisen el YAML.
+    Si `ruff` corta antes de `pytest`, los tests nunca corren en CI aunque pasen local. Y si el workflow lintea la carpeta equivocada (`src/` en vez de `app/`), no valida nada. Revisen el YAML.
 
 ### Errores frecuentes de cohortes anteriores
 
-Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP — todos son de proceso.
+Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP: todos son de proceso.
 
 !!! note "Git y entrega"
     - Los tres tags apuntando al mismo commit de README, no al código
     - Sin tag, o `pyproject.toml` desactualizado
     - Merge a `main` dejado para la hora de cierre
-    - Marcador de conflicto (`>>>>>>>`) commiteado → rompe todos los tests
+    - Marcador de conflicto (`>>>>>>>`) commiteado: rompe todos los tests
 
 !!! note "Código y entorno"
-    - `ModuleNotFoundError: app` en CI → falta `pythonpath = ["."]` en `pyproject.toml`
-    - Cientos de warnings de `ruff` sin resolver → `ruff check --fix` + `ruff format`
+    - `ModuleNotFoundError: app` en CI: falta `pythonpath = ["."]` en `pyproject.toml`
+    - Cientos de warnings de `ruff` sin resolver: `ruff check --fix` + `ruff format`
     - `NotImplementedError` olvidado arriba de la función real
     - Archivos basura versionados (rutas locales, `output.txt`, scripts de prueba)
 
-> **La lección transversal:** lo que rompe las entregas casi nunca es el procesamiento de señales — es Git, CI y prolijidad. Resérvenle tiempo en las semanas previas a la entrega.
+> **La lección transversal:** lo que rompe las entregas casi nunca es el procesamiento de señales: es Git, CI y prolijidad. Resérvenle tiempo en las semanas previas a la entrega.
 
 ### Presentación oral (18/11): 20 minutos + 5 de preguntas
 
@@ -797,6 +868,6 @@ Material visual legible al proyectar. Gráficos grandes, con ejes y unidades.
 - [FastAPI TestClient](https://fastapi.tiangolo.com/tutorial/testing/)
 - [ISO 3382-1:2009 - Measurement of room acoustic parameters](https://www.iso.org/standard/40979.html)
 - [Schroeder, M. R. (1965) - New method of measuring reverberation time](https://asa.scitation.org/doi/10.1121/1.1909343)
-- Lundeby, A., Vigran, T. E., Bietz, H. y Vorländer, M. (1995). "Uncertainties of measurements in room acoustics." *Acta Acústica united with Acústica*, 81(4), 344–355.
+- Lundeby, A., Vigran, T. E., Bietz, H. y Vorländer, M. (1995). "Uncertainties of measurements in room acoustics." *Acustica*, 81(4), 344–355.
 - [scipy.signal.hilbert](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.hilbert.html)
 - [REW - Room EQ Wizard](https://www.roomeqwizard.com/)

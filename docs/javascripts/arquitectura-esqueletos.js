@@ -56,11 +56,11 @@
     },
     'POST /utils/smoothing': {
       archivo: 'app/routers/utils.py', que: 'Devuelve la envolvente de una señal.', spec: M3,
-      codigo: 'router = APIRouter()   # main.py lo registra con prefix="/api/v1/utils"\n\n\n@router.post("/smoothing", response_model=SmoothingResponse)\nasync def smoothing(file: UploadFile, method: SmoothingMethod = SmoothingMethod.HILBERT):\n    ...',
+      codigo: 'router = APIRouter()   # main.py lo registra con prefix="/api/v1/utils"\n\n\n@router.post("/smoothing", response_model=SmoothingResponse)\nasync def smoothing(\n    file: UploadFile = File(...),\n    method: SmoothingMethod = Form(SmoothingMethod.HILBERT),\n    window_ms: float = Form(10, gt=0, le=100),\n):\n    ...  # load_audio (422 si no es audio), apply_smoothing y responder el JSON',
     },
     'POST /utils/schroeder': {
       archivo: 'app/routers/utils.py', que: 'Devuelve la curva de caída (integral de Schroeder).', spec: M3,
-      codigo: '@router.post("/schroeder", response_model=SchroederResponse)\nasync def schroeder(file: UploadFile) -> SchroederResponse:\n    ...',
+      codigo: '@router.post("/schroeder", response_model=SchroederResponse)\nasync def schroeder(file: UploadFile = File(...)):\n    ...  # load_audio (422 si no es audio), apply_schroeder_integral y responder el JSON',
     },
     'POST /utils/lundeby': {
       archivo: 'app/routers/utils.py', que: 'Estima dónde cortar la integral por el ruido de fondo (opcional).', spec: M3,
@@ -68,7 +68,7 @@
     },
     'POST /acoustics/parameters': {
       archivo: 'app/routers/acoustics.py', que: 'El endpoint principal: recibe la RI y devuelve los parámetros ISO 3382 por banda. Mismo patrón que /filters/single-band de M2; encadena services, no calcula.', spec: M3,
-      codigo: 'router = APIRouter()   # main.py lo registra con prefix="/api/v1/acoustics"\n\n\n@router.post("/parameters", response_model=BandAnalysisResponse)\nasync def parameters(file: UploadFile = File(...)) -> BandAnalysisResponse:\n    with uploaded_file(file) as path:\n        ir, fs = load_audio(path)\n    ...  # filtrar por bandas y calculate_parameters_from_ir en cada una\n    return BandAnalysisResponse(...)',
+      codigo: 'router = APIRouter()   # main.py lo registra con prefix="/api/v1/acoustics"\n\n\n@router.post("/parameters", response_model=BandAnalysisResponse)\nasync def parameters(file: UploadFile = File(...)):\n    with uploaded_file(file) as path:\n        ir, fs = load_audio(path)                   # 422 si no es audio (ver M2)\n    params = calculate_parameters_from_ir(ir, fs)   # todas las bandas, de una vez\n    return BandAnalysisResponse(sample_rate=fs, duration=len(ir) / fs,\n                                center_frequencies=sorted(params["T30"]), parameters=params)',
     },
 
     // ── Schemas ─────────────────────────────────────────────────────────────────────────────
@@ -78,7 +78,7 @@
     },
     BandAnalysisResponse: {
       archivo: 'app/schemas/responses.py', que: 'La respuesta del análisis: parámetros por banda.', spec: M3,
-      codigo: 'class BandResult(BaseModel):\n    T30: float | None = None\n    T20: float | None = None\n    EDT: float | None = None\n\n\nclass BandAnalysisResponse(BaseModel):\n    center_frequencies: list[float]\n    band_results: dict[str, BandResult]\n    ...',
+      codigo: 'class BandAnalysisResponse(BaseModel):\n    sample_rate: int\n    duration: float                                 # segundos\n    center_frequencies: list[float]\n    parameters: dict[str, dict[float, float | None]]\n    # {"T30": {125.0: 1.52, ...}, "EDT": {...}, "D50": {...}, "C80": {...}}',
     },
     PinkNoiseRequest: {
       archivo: 'app/schemas/signals.py', que: 'Lo que tiene que venir en el pedido de ruido rosa. Si no cumple, FastAPI responde 422 solo.', spec: M1,
@@ -90,15 +90,15 @@
     },
     SyntheticIRRequest: {
       archivo: 'app/schemas/signals.py', que: 'El pedido de una RI sintética: duración y T60 por banda.', spec: M2,
-      codigo: 'class SyntheticIRRequest(BaseModel):\n    duration: float = Field(..., gt=0, le=10)\n    t60_values: dict[float, float]      # {frecuencia_central: T60}\n    sample_rate: int = Field(default=44100, ge=8000, le=192000)',
+      codigo: 'class SyntheticIRRequest(BaseModel):\n    duration: float = Field(..., gt=0, le=10)\n    t60_values: dict[PositiveFloat, PositiveFloat]  # {frecuencia_central: T60}\n    sample_rate: int = Field(default=44100, ge=8000, le=192000)',
     },
-    SmoothingRequest: {
-      archivo: 'app/schemas/utils.py', que: 'Qué método de suavizado usar.', spec: M3,
-      codigo: 'class SmoothingRequest(BaseModel):\n    method: SmoothingMethod = SmoothingMethod.HILBERT   # hilbert o moving_average\n    window_ms: float = Field(default=10.0, ge=1.0, le=100.0)',
+    SmoothingResponse: {
+      archivo: 'app/schemas/utils.py', que: 'Los métodos de suavizado válidos y la respuesta con la envolvente.', spec: M3,
+      codigo: 'class SmoothingMethod(str, Enum):\n    HILBERT = "hilbert"\n    MOVING_AVERAGE = "moving_average"\n\n\nclass SmoothingResponse(BaseModel):\n    method: SmoothingMethod\n    window_ms: float\n    sample_rate: int\n    envelope: list[float]                           # decimada (ej. 1 valor por ms)',
     },
     SchroederResponse: {
       archivo: 'app/schemas/utils.py', que: 'La respuesta de la curva de caída.', spec: M3,
-      codigo: 'class SchroederResponse(BaseModel):\n    num_samples: int\n    lundeby_applied: bool',
+      codigo: 'class SchroederResponse(BaseModel):\n    sample_rate: int\n    num_samples: int\n    lundeby_applied: bool = False\n    edc_db: list[float]                             # decimada y sin -inf (JSON no lo admite)',
     },
     LundebyResponse: {
       archivo: 'app/schemas/utils.py', que: 'El punto de corte estimado.', spec: M3,

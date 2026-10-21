@@ -1,13 +1,14 @@
-// Demos de los servicios de M1 dentro de la página (generar, escuchar y ver): usan los mismos algoritmos
-// que la API de referencia (trabajo_practico/interactivos/_comun/generacion.js). Se montan en cada
-// <div class="servicio-demo" data-servicio="pink-noise | sine-sweep"> de la especificación.
+// Demos de los servicios de M1, M2 y M3 dentro de la página (generar, escuchar y ver): usan los mismos
+// algoritmos que la API de referencia (trabajo_practico/interactivos/_comun/). Se montan en cada
+// <div class="servicio-demo" data-servicio="..."> de la especificación (ver DEMOS al final).
 const base = new URL('../trabajo_practico/interactivos/_comun/', import.meta.url);
-const [gen, ac, gr, pr] = await Promise.all([
+const [gen, ac, gr, pr, an] = await Promise.all([
   import(new URL('generacion.js', base)), import(new URL('acustica.js', base)), import(new URL('grafico.js', base)),
-  import(new URL('procesamiento.js', base)),
+  import(new URL('procesamiento.js', base)), import(new URL('analisis.js', base)),
 ]);
+const { BANDAS_M3, applySmoothing, tramoYRecta, calculateParametersFromIr, d50, c80 } = an;
 const { generatePinkNoise, generateVossPinkNoise, generateSineSweepPair, frecuenciaInstantanea, convolucionFFT, pendienteDbPorOctava, rngGauss } = gen;
-const { espectroPromedioDb, envolventeMinMax, fft, edcDb, riSintetica, riConRuido } = ac;
+const { espectroPromedioDb, envolventeMinMax, fft, edcDb, riSintetica, riConRuido, puntoDeCorte } = ac;
 const { OCTAVAS, bordesOctava, bandaValida, gananciaOctava, filtrarOctava, generateSyntheticIr, getImpulseResponse, logarithmicScaleConversion, t60Schroeder, correlacionAlineada, leerWav } = pr;
 const { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho, paleta } = gr;
 
@@ -639,8 +640,252 @@ function demoEscalaLog(el) {
   return { iniciar: nueva, redibujar: dibujar };
 }
 
+// ── M3 · análisis ────────────────────────────────────────────────────────────────────────────────
+// RI de una sala de ejemplo con ruido de fondo (dB respecto del pico): la base de las demos de M3.
+function riDeSala(sala, fs, semilla, ruidoDb = -80) {
+  const { t60 } = SALAS[sala];
+  const dur = Math.ceil(Math.max(...Object.values(t60)) * 1.3 * 2) / 2;
+  const h = generateSyntheticIr(dur, t60, fs, rngGauss(semilla));
+  const r = rngGauss(semilla + 101), a = Math.pow(10, ruidoDb / 20) * 0.3;
+  for (let i = 0; i < h.length; i++) h[i] += a * r();
+  return { h, dur };
+}
+const aDb = (x) => logarithmicScaleConversion(x, -140);
+function botonesBanda(bandas, actual) {
+  return `<div class="servicio-demo__grupo" role="group" aria-label="Banda de octava">${bandas.map((fc) => `<button type="button" data-fc="${fc}" aria-pressed="${fc === actual}">${rotuloBanda(fc)}</button>`).join('')}</div>`;
+}
+function enlazarBandas(el, estado, alCambiar) {
+  el.querySelectorAll('[data-fc]').forEach((b) => b.addEventListener('click', () => {
+    estado.fc = Number(b.dataset.fc); el.querySelectorAll('[data-fc]').forEach((o) => o.setAttribute('aria-pressed', String(o === b))); alCambiar();
+  }));
+}
+
+// Servicio 1 · apply_smoothing: la RI de una banda en dB, cruda, con Hilbert y con media móvil.
+function demoSuavizado(el) {
+  const estado = { fc: 1000, window: 10 };
+  el.innerHTML = `
+    ${cabecera('service', 'apply_smoothing(signal, fs, method, window_ms)')}
+    <div class="servicio-demo__controles">
+      ${botonesBanda([125, 1000, 4000], estado.fc)}
+      ${rango('window', 'window_ms (media móvil)', 1, 50, 1, estado.window)}
+    </div>
+    <canvas role="img" aria-label="RI de una banda en dB: cruda, envolvente de Hilbert y media móvil"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>`;
+  const [cv] = el.querySelectorAll('canvas');
+  let fs = 0, base = null, banda = null, hil = null, mm = null;
+  const dur = 1.2;
+  function calcular() {
+    fs = contexto().sampleRate;
+    base ??= riDeSala('aula', fs, 7).h;
+    banda = filtrarOctava(base, fs, estado.fc);
+    hil = applySmoothing(banda, fs, 'hilbert');
+    suavizar();
+  }
+  function suavizar() {
+    mm = applySmoothing(banda, fs, 'moving_average', estado.window);
+    el.querySelector('.servicio-demo__dato').innerHTML = `La señal cruda (franja gris) oscila entre picos y ceros, que en dB se van muy abajo: así no se ve cómo cae. La envolvente de Hilbert sigue la amplitud instante a instante, sin elegir nada; como la RI de una sala es ruido, la envolvente también fluctúa. La media móvil de ${estado.window} ms promedia esas fluctuaciones y queda más lisa, pero con ventanas largas redondea el comienzo de la caída (probá 50 ms).`;
+    dibujar();
+  }
+  function dibujar() {
+    if (!mm) return;
+    const COL = paleta();
+    const k = marco(cv, { aspecto: 0.4, min: 250, max: 340 }, [[COL.tenue, `RI filtrada en ${rotuloBanda(estado.fc)} (|h|, de cada pico a cada cero)`], [COL.violeta, 'method="hilbert"'], [COL.senal, `method="moving_average", window_ms=${estado.window}`]]);
+    const esc = grillaTiempoDb(k, dur, -80, 20);
+    // La señal cruda como franja: de su mínimo a su máximo en cada columna.
+    const crudo = aDb(banda), cols = Math.round(k.W - k.m.l - k.m.r), porCol = (dur * fs) / cols;
+    k.g.fillStyle = COL.tenue; k.g.globalAlpha = 0.45;
+    for (let c = 0; c < cols; c++) {
+      let mn = Infinity, mx = -Infinity;
+      for (let i = Math.floor(c * porCol); i < Math.floor((c + 1) * porCol) && i < crudo.length; i++) { mn = Math.min(mn, crudo[i]); mx = Math.max(mx, crudo[i]); }
+      if (mx > -Infinity) k.g.fillRect(k.m.l + c, esc.yd(mx), 1, Math.max(1, esc.yd(mn) - esc.yd(mx)));
+    }
+    k.g.globalAlpha = 1;
+    curvaDb(k, aDb(hil), fs, dur, esc, COL.violeta, { ancho: 1.6, envolvente: false });
+    curvaDb(k, aDb(mm), fs, dur, esc, COL.senal, { ancho: 2, envolvente: false });
+    rotulos(k, 'Tiempo (s)', 'Nivel (dB, 20·log10)');
+  }
+  enlazarBandas(el, estado, calcular);
+  const inp = el.querySelector('[data-p="window"]'), out = el.querySelector('[data-o="window"]');
+  inp.addEventListener('input', () => { estado.window = Number(inp.value); out.textContent = `${estado.window} ms`; suavizar(); });
+  out.textContent = `${estado.window} ms`;
+  alCambiarAncho(cv, dibujar);
+  return { iniciar: calcular, redibujar: dibujar };
+}
+
+// Servicio 2 · apply_schroeder_integral: la curva de caída, con y sin truncar en el ruido de fondo.
+function demoSchroeder(el) {
+  const estado = { t60: 1, ruido: -45 };   // con este ruido la curva completa ya se dobla antes de −35 dB
+  el.innerHTML = `
+    ${cabecera('service', 'apply_schroeder_integral(ir)')}
+    <div class="servicio-demo__controles">
+      ${rango('t60', 'T60 de la sala', 0.3, 2.5, 0.1, estado.t60)}
+      ${rango('ruido', 'ruido de fondo', -90, -30, 5, estado.ruido)}
+    </div>
+    <canvas role="img" aria-label="Energía de la RI en dB y curvas de Schroeder completa y truncada"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>`;
+  const [cv] = el.querySelectorAll('canvas');
+  let fs = 0, h = null, completa = null, truncada = null, corte = 0, dur = 0;
+  function calcular() {
+    fs = contexto().sampleRate;
+    dur = Math.max(1.5, 2 * estado.t60);
+    const r = rngGauss(13);
+    h = riConRuido({ fs, t60: estado.t60, duracion: dur, pisoDb: estado.ruido, rng: () => 0.3 * r() });
+    completa = edcDb(h);
+    corte = puntoDeCorte(h, fs);
+    truncada = edcDb(h.subarray(0, corte));
+    const t30 = (edc) => tramoYRecta(edc, fs, -5, -35)?.tr;
+    const [a, b] = [t30(completa), t30(truncada)];
+    const txt = (v) => (v ? `<strong>${fmt(v, 2)} s</strong>` : '<strong>—</strong> (no llega a −35 dB)');
+    el.querySelector('.servicio-demo__dato').innerHTML = `T30 con la curva completa: ${txt(a)} · truncada en el cruce con el ruido (${fmt(corte / fs, 2)} s): ${txt(b)} · T60 de la sala: <strong>${fmt(estado.t60, 1)} s</strong>. Sin truncar, el ruido del final suma energía que la sala no tiene: la curva se "dobla" hacia arriba y después cae a pique, y el T30 sale mal. Bajá el ruido de fondo a −80 dB: con suficiente rango dinámico, las dos curvas coinciden.`;
+    dibujar();
+  }
+  function dibujar() {
+    if (!h) return;
+    const COL = paleta();
+    const k = marco(cv, { aspecto: 0.42, min: 260, max: 350 }, [[COL.grilla, 'energía h²(t) (dB)'], [COL.violeta, 'Schroeder sobre toda la RI'], [COL.senal, 'Schroeder truncada en el cruce con el ruido'], [COL.eje, 'caída real: −60 dB en T60']]);
+    const esc = grillaTiempoDb(k, dur, -100, 20);
+    curvaDb(k, aDb(h), fs, dur, esc, COL.grilla, { ancho: 1 });
+    k.g.setLineDash([5, 4]); k.g.strokeStyle = COL.eje; k.g.lineWidth = 1.5; k.g.beginPath(); k.g.moveTo(esc.xt(0), esc.yd(0)); k.g.lineTo(esc.xt(Math.min(dur, (100 / 60) * estado.t60)), esc.yd(-100 * Math.min(1, (dur * 60) / (100 * estado.t60)))); k.g.stroke(); k.g.setLineDash([]); k.g.lineWidth = 1;
+    curvaDb(k, completa, fs, dur, esc, COL.violeta, { ancho: 2.2, envolvente: false });
+    curvaDb(k, truncada, fs, dur, esc, COL.senal, { ancho: 2.2, envolvente: false, guiones: [7, 4] });
+    k.g.setLineDash([3, 4]); k.g.strokeStyle = COL.tinta; k.g.beginPath(); k.g.moveTo(esc.xt(corte / fs), k.m.t); k.g.lineTo(esc.xt(corte / fs), k.H - k.m.b); k.g.stroke(); k.g.setLineDash([]);
+    k.g.font = `600 ${k.tt}px ${FUENTE}`; k.g.fillStyle = COL.tinta; k.g.fillText('cruce con el ruido', esc.xt(corte / fs) + 5, k.m.t + 14);
+    rotulos(k, 'Tiempo (s)', 'Nivel (dB)');
+  }
+  for (const c of ['t60', 'ruido']) {
+    const inp = el.querySelector(`[data-p="${c}"]`), out = el.querySelector(`[data-o="${c}"]`);
+    const mostrar = () => { out.textContent = c === 'ruido' ? `${estado[c]} dB` : `${fmt(estado[c])} s`; };
+    inp.addEventListener('input', () => { estado[c] = Number(inp.value); mostrar(); });
+    inp.addEventListener('change', calcular); mostrar();
+  }
+  alCambiarAncho(cv, dibujar);
+  return { iniciar: calcular, redibujar: dibujar };
+}
+
+// Servicio 3 · linear_regression: la recta de cada tramo sobre la curva de Schroeder y su extrapolación.
+const TRAMOS = { EDT: [0, -10], T10: [-5, -15], T20: [-5, -25], T30: [-5, -35] };
+function demoRegresion(el) {
+  const estado = { tramo: 'T30' };
+  el.innerHTML = `
+    ${cabecera('service', 'linear_regression(x, y)')}
+    <div class="servicio-demo__controles">
+      <div class="servicio-demo__grupo" role="group" aria-label="Parámetro">${Object.keys(TRAMOS).map((t) => `<button type="button" data-tramo="${t}" aria-pressed="${t === estado.tramo}">${t}</button>`).join('')}</div>
+    </div>
+    <canvas role="img" aria-label="Curva de Schroeder con la recta de regresión del tramo elegido extrapolada a −60 dB"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>
+    <details class="servicio-demo__respuesta"><summary>Lo que devuelve (Python)</summary><pre><code></code></pre></details>`;
+  const [cv] = el.querySelectorAll('canvas');
+  let fs = 0, edc = null, r = null;
+  const dur = 1.6;
+  function calcular() {
+    fs = contexto().sampleRate;
+    if (!edc) edc = edcDb(filtrarOctava(riDeSala('aula', fs, 21).h, fs, 1000));
+    const [desde, hasta] = TRAMOS[estado.tramo];
+    r = tramoYRecta(edc, fs, desde, hasta);
+    el.querySelector('.servicio-demo__dato').innerHTML = r
+      ? `Tramo de ${desde} a ${hasta} dB · pendiente <strong>m = ${fmt(r.slope, 1)} dB/s</strong> · <strong>R² = ${fmt(r.r2, 4)}</strong> · ${estado.tramo} = −60 / m = <strong>${fmt(r.tr, 2)} s</strong>. La recta se mide en un tramo corto y se <em>extrapola</em> hasta −60 dB: nunca se mide una caída de 60 dB entera.`
+      : 'La curva no llega al final del tramo.';
+    el.querySelector('pre code').textContent = r ? `slope, intercept, r2 = linear_regression(t[tramo], edc[tramo])\n# slope = ${r.slope.toFixed(2)}   intercept = ${r.intercept.toFixed(2)}   r2 = ${r.r2.toFixed(4)}\n${estado.tramo.padEnd(3)} = -60 / slope = ${r.tr.toFixed(3)} s` : '';
+    dibujar();
+  }
+  function dibujar() {
+    if (!edc) return;
+    const COL = paleta();
+    const k = marco(cv, { aspecto: 0.42, min: 260, max: 350 }, [[COL.violeta, 'Schroeder (banda de 1 kHz)'], [COL.senal, `tramo de ${estado.tramo}`], [COL.tinta, 'recta extrapolada a −60 dB']]);
+    const esc = grillaTiempoDb(k, dur, -70, 10);
+    curvaDb(k, edc, fs, dur, esc, COL.violeta, { ancho: 1.6, envolvente: false });
+    if (!r) return;
+    const { g } = k;
+    g.strokeStyle = COL.grilla; g.setLineDash([2, 3]); g.beginPath(); g.moveTo(k.m.l, esc.yd(-60)); g.lineTo(k.W - k.m.r, esc.yd(-60)); g.stroke(); g.setLineDash([]);
+    g.strokeStyle = COL.senal; g.lineWidth = 6; g.globalAlpha = 0.7; g.beginPath(); g.moveTo(esc.xt(r.t0), esc.yd(r.slope * r.t0 + r.intercept)); g.lineTo(esc.xt(r.t1), esc.yd(r.slope * r.t1 + r.intercept)); g.stroke(); g.globalAlpha = 1; g.lineWidth = 1;
+    const t60 = (-60 - r.intercept) / r.slope;
+    g.strokeStyle = COL.tinta; g.lineWidth = 1.6; g.setLineDash([6, 4]); g.beginPath(); g.moveTo(esc.xt(0), esc.yd(r.intercept)); g.lineTo(esc.xt(Math.min(dur, t60)), esc.yd(r.slope * Math.min(dur, t60) + r.intercept)); g.stroke(); g.setLineDash([]); g.lineWidth = 1;
+    if (t60 <= dur) {
+      g.fillStyle = COL.tinta; g.beginPath(); g.arc(esc.xt(t60), esc.yd(-60), 5, 0, 2 * Math.PI); g.fill();
+      g.font = `600 ${k.tt}px ${FUENTE}`; g.textAlign = 'center'; g.fillText(`−60 dB en ${fmt(t60, 2)} s`, esc.xt(t60), esc.yd(-60) - 10); g.textAlign = 'left';
+    }
+    rotulos(k, 'Tiempo (s)', 'Nivel (dB)');
+  }
+  el.querySelectorAll('[data-tramo]').forEach((b) => b.addEventListener('click', () => {
+    estado.tramo = b.dataset.tramo; el.querySelectorAll('[data-tramo]').forEach((o) => o.setAttribute('aria-pressed', String(o === b))); calcular();
+  }));
+  alCambiarAncho(cv, dibujar);
+  return { iniciar: calcular, redibujar: dibujar };
+}
+
+// Servicio 4 · calculate_parameters_from_ir: EDT/T20/T30 por banda, D50 y C80, y la respuesta JSON.
+function demoParametros(el) {
+  const estado = { sala: 'aula', fc: 1000 };
+  el.innerHTML = `
+    ${cabecera('POST', '/api/v1/acoustics/parameters')}
+    <div class="servicio-demo__controles">
+      <div class="servicio-demo__grupo" role="group" aria-label="Sala">${Object.entries(SALAS).map(([c, s]) => `<button type="button" data-sala="${c}" aria-pressed="${c === estado.sala}">${s.nombre}</button>`).join('')}</div>
+      <button type="button" data-accion="generar">Generar otra</button>
+      <button type="button" data-accion="escuchar">Escuchar la RI</button>
+    </div>
+    <canvas role="img" aria-label="EDT, T20 y T30 por banda de octava junto con el T60 de la sala"></canvas>
+    <div class="servicio-demo__controles">${botonesBanda(BANDAS_M3, estado.fc)}</div>
+    <canvas role="img" aria-label="Energía de la RI de una banda en dB con los primeros 50 y 80 ms marcados"></canvas>
+    <div class="servicio-demo__dato" aria-live="polite"></div>
+    <details class="servicio-demo__respuesta"><summary>Respuesta de la API (JSON)</summary><pre><code></code></pre></details>`;
+  const [cvT, cvE] = el.querySelectorAll('canvas');
+  let fs = 0, h = null, dur = 0, p = null, semilla = 31;
+  function calcular() {
+    fs = contexto().sampleRate;
+    ({ h, dur } = riDeSala(estado.sala, fs, semilla++));
+    p = calculateParametersFromIr(h, fs);
+    const filas = BANDAS_M3.map((fc) => `<tr><td>${rotuloBanda(fc)}</td><td>${fmt(SALAS[estado.sala].t60[fc], 2)}</td>${['EDT', 'T20', 'T30'].map((c) => `<td>${p[c][fc] ? fmt(p[c][fc], 2) : '—'}</td>`).join('')}<td>${fmt(p.D50[fc], 0)} %</td><td>${fmt(p.C80[fc], 1)} dB</td></tr>`).join('');
+    el.querySelector('.servicio-demo__dato').innerHTML = `<table class="servicio-demo__tabla"><thead><tr><th>Banda</th><th>T60 de la sala (s)</th><th>EDT (s)</th><th>T20 (s)</th><th>T30 (s)</th><th>D50</th><th>C80</th></tr></thead><tbody>${filas}</tbody></table><p>En una RI sintética la caída de cada banda es una sola exponencial: T20 y T30 quedan cerca del T60 pedido. El EDT usa solo los primeros 10 dB, y como la RI es ruido varía más de una RI a otra (probá <em>Generar otra</em>). En una sala real los tres se separan por la acústica, no por azar, y esa diferencia es información (ver <em>El output final</em>).</p>`;
+    const r2 = (o) => Object.fromEntries(Object.entries(o).map(([fc, v]) => [fc, v === null ? null : Math.round(v * 100) / 100]));
+    el.querySelector('pre code').textContent = json({ sample_rate: fs, duration: Math.round(dur * 100) / 100, center_frequencies: BANDAS_M3, parameters: { EDT: r2(p.EDT), T20: r2(p.T20), T30: r2(p.T30), D50: r2(p.D50), C80: r2(p.C80) } });
+    dibujar();
+  }
+  function dibujar() {
+    if (!p) return;
+    const COL = paleta();
+    // Tiempos por banda (una sola unidad: segundos).
+    let k = marco(cvT, { aspecto: 0.36, min: 230, max: 320 }, [[COL.violeta, 'EDT'], [COL.senal, 'T20'], [COL.tinta, 'T30'], [COL.eje, 'T60 de la sala']]);
+    const { g, W, H, m, tt } = k, n = BANDAS_M3.length;
+    const tMax = Math.ceil(Math.max(...Object.values(SALAS[estado.sala].t60)) * 1.25 * 2) / 2;
+    const xb = (i) => m.l + ((i + 0.5) / n) * (W - m.l - m.r), ys = (v) => H - m.b - (v / tMax) * (H - m.t - m.b);
+    g.strokeStyle = COL.grilla; g.fillStyle = COL.eje; g.font = `500 ${tt}px ${FUENTE}`; g.textAlign = 'right';
+    const paso = tMax > 3 ? 1 : 0.5;
+    for (let v = 0; v <= tMax + 1e-9; v += paso) { g.beginPath(); g.moveTo(m.l, ys(v)); g.lineTo(W - m.r, ys(v)); g.stroke(); g.fillText(fmt(v, 1), m.l - 5, ys(v) + 4); }
+    g.textAlign = 'center'; BANDAS_M3.forEach((fc, i) => g.fillText(rotuloBanda(fc), xb(i), H - m.b + tt + 3)); g.textAlign = 'left';
+    const serie = (valores, color, ancho, guiones) => {
+      g.strokeStyle = color; g.fillStyle = color; g.lineWidth = ancho; g.setLineDash(guiones || []); g.beginPath();
+      let emp = false; BANDAS_M3.forEach((fc, i) => { const v = valores[fc]; if (v == null) { emp = false; return; } emp ? g.lineTo(xb(i), ys(v)) : g.moveTo(xb(i), ys(v)); emp = true; });
+      g.stroke(); g.setLineDash([]); g.lineWidth = 1;
+      if (!guiones) BANDAS_M3.forEach((fc, i) => { const v = valores[fc]; if (v != null) { g.beginPath(); g.arc(xb(i), ys(v), 4.5, 0, 2 * Math.PI); g.fill(); } });
+    };
+    serie(SALAS[estado.sala].t60, COL.eje, 1.5, [5, 4]);
+    serie(p.EDT, COL.violeta, 2); serie(p.T20, COL.senal, 2); serie(p.T30, COL.tinta, 2);
+    rotulos(k, 'Banda de octava', 'Tiempo (s)');
+    // Energía de una banda con los primeros 50 y 80 ms marcados.
+    const banda = filtrarOctava(h, fs, estado.fc);
+    k = marco(cvE, { aspecto: 0.3, min: 200, max: 280 }, [[COL.violeta, `h²(t) en ${rotuloBanda(estado.fc)} (dB)`], [COL.senal, 'primeros 50 ms (D50)'], [COL.tinta, 'primeros 80 ms (C80)']]);
+    const durE = 0.4, esc = grillaTiempoDb(k, durE, -60, 20);
+    k.g.fillStyle = COL.senal; k.g.globalAlpha = 0.18; k.g.fillRect(esc.xt(0), k.m.t, esc.xt(0.05) - esc.xt(0), k.H - k.m.t - k.m.b);
+    k.g.fillStyle = COL.tinta; k.g.globalAlpha = 0.08; k.g.fillRect(esc.xt(0), k.m.t, esc.xt(0.08) - esc.xt(0), k.H - k.m.t - k.m.b); k.g.globalAlpha = 1;
+    for (const [t, c] of [[0.05, COL.senal], [0.08, COL.tinta]]) { k.g.strokeStyle = c; k.g.setLineDash([4, 3]); k.g.beginPath(); k.g.moveTo(esc.xt(t), k.m.t); k.g.lineTo(esc.xt(t), k.H - k.m.b); k.g.stroke(); k.g.setLineDash([]); }
+    curvaDb(k, aDb(banda), fs, durE, esc, COL.violeta, { ancho: 1.2 });
+    k.g.font = `600 ${k.tt}px ${FUENTE}`; k.g.fillStyle = COL.tinta;
+    k.g.fillText(`D50 = ${fmt(d50(banda, fs), 0)} % · C80 = ${fmt(c80(banda, fs), 1)} dB`, esc.xt(0.1), k.m.t + 14);
+    rotulos(k, 'Tiempo (s)', 'Nivel (dB)');
+  }
+  el.querySelectorAll('[data-sala]').forEach((b) => b.addEventListener('click', () => {
+    estado.sala = b.dataset.sala; el.querySelectorAll('[data-sala]').forEach((o) => o.setAttribute('aria-pressed', String(o === b))); calcular();
+  }));
+  enlazarBandas(el, estado, dibujar);
+  el.querySelector('[data-accion="generar"]').addEventListener('click', calcular);
+  botonEscuchar(el.querySelector('[data-accion="escuchar"]'), () => h, () => fs);
+  alCambiarAncho(cvT, dibujar);
+  return { iniciar: calcular, redibujar: dibujar };
+}
+
 const DEMOS = {
   'pink-noise': demoRuidoRosa, 'sine-sweep': demoSweep,
+  smoothing: demoSuavizado, schroeder: demoSchroeder, regression: demoRegresion, parameters: demoParametros,
   'load-audio': demoCargarAudio, 'filter-single-band': demoFiltroOctava, 'synthetic-ir': demoRiSintetica,
   'impulse-response': demoRespuestaImpulso, 'log-scale': demoEscalaLog,
 };
