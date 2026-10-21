@@ -216,22 +216,26 @@ function figCadena(cv) {
   };
 }
 
-// Las figuras salen de la columna de texto y usan todo el ancho de la ventana (menos un margen);
-// el epígrafe queda alineado con el texto. En pantallas angostas la columna ya ocupa todo.
+// Las figuras salen de la columna de texto lo mismo hacia los dos lados (lo que permita el lado con
+// menos espacio, menos un margen), así quedan centradas respecto del texto; el epígrafe queda
+// alineado con el texto. En pantallas angostas la columna ya ocupa todo y no se tocan.
 const MARGEN = 24;
 function ensanchar() {
   for (const fig of document.querySelectorAll('figure.figura-deconv')) {
     const cap = fig.querySelector('figcaption');
     fig.style.width = ''; fig.style.marginLeft = ''; if (cap) { cap.style.marginLeft = ''; cap.style.width = ''; }
     const vw = document.documentElement.clientWidth, col = fig.parentElement.getBoundingClientRect();
-    if (vw < 960 || vw - col.width < 4 * MARGEN) continue;
-    fig.style.width = `${vw - 2 * MARGEN}px`;
-    fig.style.marginLeft = `${MARGEN - col.left}px`;
-    if (cap) { cap.style.marginLeft = `${col.left - MARGEN}px`; cap.style.width = `${col.width}px`; }
+    const extra = Math.min(col.left, vw - col.right) - MARGEN;
+    if (vw < 960 || extra < MARGEN) continue;
+    fig.style.width = `${col.width + 2 * extra}px`;
+    fig.style.marginLeft = `${-extra}px`;
+    if (cap) { cap.style.marginLeft = `${extra}px`; cap.style.width = `${col.width}px`; }
   }
 }
 ensanchar();
 window.addEventListener('resize', ensanchar);
+// La columna puede moverse después de cargar (fuentes, barras laterales, MathJax): se recalcula.
+new ResizeObserver(ensanchar).observe(document.querySelector('.md-content') || document.body);
 
 const FIGURAS = { convolucion: figConvolucion, apilado: figApilado, distorsion: figDistorsion, cadena: figCadena };
 const montadas = [];
