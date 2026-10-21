@@ -92,6 +92,10 @@ export function logarithmicScaleConversion(x, pisoDb = -Infinity) {
 // T60 extrapolado de la pendiente de Schroeder entre −5 y −25 dB (T20): lo mismo que mide el test.
 export const t60Schroeder = (ri, fs) => tiempoReverberacion(edcDb(ri), fs, { desdeDb: -5, hastaDb: -25 });
 
+// Retardo del armónico n respecto del pico lineal tras deconvolucionar un sweep logarítmico
+// (Farina 2000): Δt_n = −T · ln(n) / ln(f2/f1). Negativo: los armónicos aparecen antes del pico.
+export const retardoArmonico = (n, duration, f1, f2) => (-duration * Math.log(n)) / Math.log(f2 / f1);
+
 // Correlación de Pearson entre la RI recuperada y la original, alineadas por correlación cruzada
 // (el procedimiento de test_impulse_response_peak).
 export function correlacionAlineada(recuperada, original) {

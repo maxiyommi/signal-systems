@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   OCTAVAS, bordesOctava, bandaValida, gananciaOctava, filtrarOctava, generateSyntheticIr,
-  getImpulseResponse, logarithmicScaleConversion, t60Schroeder, correlacionAlineada, leerWav,
+  getImpulseResponse, logarithmicScaleConversion, t60Schroeder, correlacionAlineada, leerWav, retardoArmonico,
 } from '../procesamiento.js';
 import { generateSineSweepPair, convolucionFFT, rngGauss } from '../generacion.js';
 
@@ -73,7 +73,21 @@ test('getImpulseResponse: recupera una RI conocida (correlación > 0,9, como tes
   assert.ok(cTotal > 0.9 || c > 0.9, `correlación = ${cTotal.toFixed(3)} / ${c.toFixed(3)}`);
 });
 
-test('logarithmicScaleConversion: máximo 0 dB, mitad −6 dB, cero sin −inf', () => {
+test('retardoArmonico: con distorsión, el armónico n aparece en −T·ln(n)/ln(f2/f1) antes del pico', () => {
+  const fs = 16000, T = 2, f1 = 50, f2 = 7000;
+  assert.ok(Math.abs(retardoArmonico(2, T, f1, f2) + (T * Math.LN2) / Math.log(f2 / f1)) < 1e-12);
+  const { sweep, inverseFilter } = generateSineSweepPair(T, f1, f2, fs);
+  const distorsionado = sweep.map((v) => v + 0.3 * v * v);          // 2.º armónico (y continua)
+  const y = convolucionFFT(distorsionado, inverseFilter);
+  let iPico = 0; for (let i = 0; i < y.length; i++) if (Math.abs(y[i]) > Math.abs(y[iPico])) iPico = i;
+  const i2 = iPico + Math.round(retardoArmonico(2, T, f1, f2) * fs), r = Math.round(0.003 * fs);
+  let maxCerca = 0, maxLejos = 0;
+  for (let i = i2 - r; i <= i2 + r; i++) maxCerca = Math.max(maxCerca, Math.abs(y[i]));
+  for (let i = iPico - Math.round(0.1 * fs) - r; i <= iPico - Math.round(0.1 * fs) + r; i++) maxLejos = Math.max(maxLejos, Math.abs(y[i]));
+  assert.ok(maxCerca > 10 * maxLejos, `armónico ${maxCerca} vs fondo ${maxLejos}`);
+});
+
+test('logarithmicScaleConversion:máximo 0 dB, mitad −6 dB, cero sin −inf', () => {
   const y = logarithmicScaleConversion(Float32Array.from([0.1, 1, 0.5, 0]), -120);
   assert.equal(y[1], 0);
   assert.ok(Math.abs(y[2] + 6.02) < 0.01);

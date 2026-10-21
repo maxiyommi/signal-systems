@@ -21,6 +21,13 @@ $$
 y(t) = (x * h)(t) = \int_{-\infty}^{\infty} x(\tau)\, h(t - \tau)\, d\tau
 $$
 
+Leída en voz alta, la integral dice: **cada instante $\tau$ de la entrada dispara una copia de $h$**, corrida hasta $\tau$ y escalada por $x(\tau)$, y la salida es la suma de todas esas copias. Con una entrada de tres impulsos se ve directo:
+
+<figure class="figura-deconv" data-figura="convolucion">
+<canvas role="img" aria-label="Convolución: una entrada de tres impulsos, la respuesta al impulso de la sala y la salida como suma de tres copias de h corridas y escaladas"></canvas>
+<figcaption>Cada impulso de x(t) produce una copia de h(t) en su instante y con su amplitud (fila "copias"); donde las copias se pisan, se suman, y el resultado es y(t). Una señal cualquiera es una sucesión de impulsos, por eso conocer h(t) alcanza para predecir la salida de cualquier entrada. Acá h(t) es una oscilación amortiguada para que se distingan las copias; la de una sala es mucho más larga y densa, pero la regla es la misma.</figcaption>
+</figure>
+
 ### Notas de validez
 
 - Linealidad falla cerca del clip (parlante saturado).
@@ -45,7 +52,7 @@ $\delta(t)$ tiene **amplitud infinita** en $t = 0$ y duración cero. Energía to
 
 - No pueden mover la membrana infinitamente rápido (límite de slew rate).
 - Distorsionan groseramente cerca del nivel máximo.
-- Tienen su propia respuestá en frecuencia (no plana, especialmente en graves).
+- Tienen su propia respuesta en frecuencia (no plana, especialmente en graves).
 
 ### Lo más cercano: la palmada
 
@@ -76,9 +83,14 @@ $$
 
 Pensá el sweep como **una colección de tonos puros**, cada uno apareciendo en un instante distinto: la frecuencia $f$ pasa por el sweep cuando $t = T \cdot \log(f/f_1) / \log(f_2/f_1)$.
 
-Cuando convolucionás con el filtro inverso (que es el sweep invertido + corregido en amplitud), **cada frecuencia se "apila" en $t = 0$**: el tono de $f$ Hz que aparecía en $t_f$ del sweep ahora cae exactamente en $t = 0$ del resultado, porque el inverso tiene esa misma frecuencia en el instante $T - t_f$.
+Cuando convolucionás con el filtro inverso (que es el sweep invertido + corregido en amplitud), **cada frecuencia se "apila" en el mismo instante**: el tono de $f$ Hz aparece en $t_f$ del sweep y en $T - t_f$ del inverso, así que en el resultado llega en $t_f + (T - t_f) = T$. Ese instante no depende de $f$: es el mismo para todas.
 
-Todas las frecuencias suman en fase en $t = 0$ → pico angosto y alto.
+<figure class="figura-deconv" data-figura="apilado">
+<canvas role="img" aria-label="Frecuencia instantánea del sweep (sube), del filtro inverso (baja) y de su convolución (una línea vertical en t igual a T)"></canvas>
+<figcaption>Frecuencia instantánea del sweep (sube) y del filtro inverso (baja), con el eje de frecuencia logarítmico. Cada frecuencia, por ejemplo 100 Hz, 1 kHz y 10 kHz, suma sus dos instantes y llega a T: en la convolución quedan todas alineadas en una línea vertical, que es un impulso.</figcaption>
+</figure>
+
+Todas las frecuencias suman en fase en ese instante → pico angosto y alto. En la salida completa de la convolución el pico cae en $t = T$; al recortar desde el pico (sección 6), ese instante pasa a ser el $t = 0$ de la RI.
 
 ### Por qué es "≈" y no "="
 
@@ -97,7 +109,18 @@ Antes del sweep + filtro inverso, lo estándar era:
 - **MLS (Maximum Length Sequence)**: ruido pseudo-aleatorio con autocorrelación ≈ $\delta$. Funciona pero es sensible a no linealidades (la distorsión se reparte en todo el dominio temporal y arruina la cola).
 - **Ruido rosa**: similar problema, peor crest factor.
 
-La gran ventaja del sweep logarítmico es que **la distorsión armónica queda separada en el tiempo** del impulso principal. El armónico $n$-ésimo aparece a un tiempo $\Delta t_n < 0$ (negativo) respecto del pico, así que podés ventanearlo y descartarlo. Resultado: medición **lineal** aunque tu cadena tenga distorsión.
+La gran ventaja del sweep logarítmico es que **la distorsión armónica queda separada en el tiempo** del impulso principal. Si el parlante distorsiona, el armónico $n$ de cada tono aparece cuando el sweep pasa por $n \cdot f$, que en un sweep logarítmico es siempre el mismo tiempo antes: el armónico $n$-ésimo cae en
+
+$$
+\Delta t_n = -\frac{T \ln(n)}{\ln(f_2/f_1)}
+$$
+
+respecto del pico (negativo: **antes**), así que podés ventanearlo y descartarlo. Resultado: medición **lineal** aunque tu cadena tenga distorsión.
+
+<figure class="figura-deconv" data-figura="distorsion">
+<canvas role="img" aria-label="Resultado de deconvolucionar una grabación con distorsión: el pico lineal en cero y los armónicos 2, 3 y 4 como picos más chicos antes del pico"></canvas>
+<figcaption>Un sweep de 2 s (20 Hz a 20 kHz) que pasa por un parlante que satura, deconvolucionado con su filtro inverso. La respuesta lineal queda en 0; los armónicos 2.º, 3.º y 4.º aparecen como picos aparte, antes, justo donde predice Δtₙ (líneas punteadas). Al recortar desde el pico, quedan afuera.</figcaption>
+</figure>
 
 **Referencia**: Farina, A. (2000). "Simultaneous measurement of impulse response and distortion with a swept-sine technique." 108th AES Convention. [PDF](https://www.angelofarina.it/Public/Papers/134-AES00.PDF)
 
@@ -251,6 +274,13 @@ def get_impulse_response(recording: np.ndarray, inverse_filter: np.ndarray) -> n
 
     return ir
 ```
+
+Así se ve lo que devuelve el paso 1 y qué se queda en los pasos 2 y 3, para una sala de T60 = 0,6 s medida con un sweep de 2 s:
+
+<figure class="figura-deconv" data-figura="cadena">
+<canvas role="img" aria-label="Salida completa de fftconvolve en dB: tramo previo al pico que se descarta, el pico, la ventana que se conserva y el ruido de fondo después"></canvas>
+<figcaption>La salida completa de fftconvolve, en dB respecto del pico. Antes del pico no hay información de la sala (zona sombreada: se descarta). Desde el pico, la caída coincide con la h(t) de la sala (gris punteado) hasta que la tapa el ruido de fondo de la grabación; la ventana marca lo que se conserva.</figcaption>
+</figure>
 
 ### Detalles que importan
 
