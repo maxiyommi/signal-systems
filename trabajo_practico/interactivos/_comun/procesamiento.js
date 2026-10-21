@@ -69,9 +69,10 @@ export function generateSyntheticIr(duration, t60Values, fs, rng = rngGauss(1234
   return normalizarPico(h);
 }
 
-// get_impulse_response: grabación ∗ filtro inverso (fftconvolve), recorte un poco antes del pico
+// get_impulse_response: grabación ∗ filtro inverso (fftconvolve), recorte 5 ms antes del pico (si la RI
+// arranca justo en el directo, el filtrado de fase cero de M3 deforma el comienzo y rompe el EDT)
 // y normalización al pico.
-export function getImpulseResponse(recording, inverseFilter, fs, { antesMs = 1 } = {}) {
+export function getImpulseResponse(recording, inverseFilter, fs, { antesMs = 5 } = {}) {
   const y = convolucionFFT(recording, inverseFilter);
   let iPico = 0; for (let i = 0; i < y.length; i++) if (Math.abs(y[i]) > Math.abs(y[iPico])) iPico = i;
   const desde = Math.max(0, iPico - Math.round((antesMs / 1000) * fs));
