@@ -76,6 +76,16 @@ Es la **puerta de entrada** de todo audio que llega a la API: la grabación del 
 
 Leer un archivo de audio es pasar de **enteros** a **números reales**. Un WAV de 16 bits guarda cada muestra como un entero entre −32768 y 32767; uno de 24 bits, entre −8 388 608 y 8 388 607. `load_audio` los lleva siempre a `float64` entre −1 y 1, así el resto del procesamiento no depende de cómo se grabó.
 
+Cómo se hace: se divide cada muestra por el **fondo de escala** del formato, $2^{N-1}$ para $N$ bits (32 768 en 16 bits, 8 388 608 en 24 bits). Así, el máximo que puede guardar el archivo pasa a valer 1, y una muestra de 16 384 en 16 bits pasa a valer 0,5, igual que 4 194 304 en 24 bits: **el mismo nivel queda con el mismo número**, se haya grabado como se haya grabado. Los WAV en punto flotante ya vienen en esa escala. `soundfile.read()` hace esta cuenta solo (devuelve `float64` por defecto).
+
+Por qué importa:
+
+- **El código de M2 y M3 se escribe una sola vez.** Filtros, umbrales en dB, la comparación con un piso de −120 dB: todo trabaja sobre la misma escala, sin `if` por formato.
+- **`float64` y no enteros:** filtrar, convolucionar y sumar millones de muestras con enteros desborda o redondea; con `float64` (16 cifras significativas) el error numérico queda muy por debajo del ruido de cualquier grabación.
+
+!!! warning "Escalar no es normalizar al pico"
+    Dividir por el fondo de escala **conserva el nivel**: una grabación tomada con poco nivel queda chica (por ejemplo, con picos de 0,1), y eso es información, no un error. `load_audio` no la estira hasta 1. El test lo verifica: un estéreo con canales de 0,5 y 0,1 tiene que dar exactamente 0,3 en mono; si normalizan al pico, da 1 y el test falla. Normalizar al pico, cuando haga falta, es trabajo de otras funciones (por ejemplo, `get_impulse_response` normaliza la RI al pico).
+
 Tres datos salen del **encabezado** del archivo, no de suposiciones:
 
 - **`fs`**: las RI de los catálogos vienen a 44,1, 48 o 96 kHz. Si la asumen, todos los tiempos (y el T60) salen escalados.
