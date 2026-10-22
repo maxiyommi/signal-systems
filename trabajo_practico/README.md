@@ -71,6 +71,8 @@ La API crece con el TP: **cada milestone expone como endpoints lo que construye*
 | `logarithmic_scale_conversion(signal)` | Conversión a escala logarítmica normalizada (dB). |
 | **Endpoints** | `POST /api/v1/signals/synthetic-ir` (WAV) y `POST /api/v1/filters/single-band` (recibe un WAV subido). |
 
+Para entender por qué funciona `get_impulse_response`: [El álgebra de la deconvolución vía sweep + filtro inverso](especificacion/m2_algebra_deconvolucion.md) (material extendido, con figuras): la sala como sistema LTI, por qué el sweep y su filtro inverso dan un impulso, la cadena paso a paso y cuándo vale el teorema de convolución.
+
 ### M3 · Producto final: la API completa (entrega 18/11)
 | Componente | Descripción |
 |------------|-------------|
@@ -191,4 +193,5 @@ Cada grupo mantiene un archivo **`AI_LOG.md`** en la raíz del repositorio que d
 
 ### Material de la cátedra
 - [Ruta del TP y marco conceptual](ruta.md)
+- [El álgebra de la deconvolución vía sweep + filtro inverso](especificacion/m2_algebra_deconvolucion.md): material extendido de M2
 - [Carpeta con material de apoyo (Drive)](https://drive.google.com/drive/folders/1unNETr7js3hWZtuxa7-5uV9wns9KdTdT?usp=share_link)

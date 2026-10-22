@@ -2,11 +2,13 @@
 // que la API de referencia (trabajo_practico/interactivos/_comun/generacion.js). Se montan en cada
 // <div class="servicio-demo" data-servicio="pink-noise | sine-sweep"> de la especificación.
 const base = new URL('../trabajo_practico/interactivos/_comun/', import.meta.url);
-const [gen, ac, gr] = await Promise.all([
+const [gen, ac, gr, pr] = await Promise.all([
   import(new URL('generacion.js', base)), import(new URL('acustica.js', base)), import(new URL('grafico.js', base)),
+  import(new URL('procesamiento.js', base)),
 ]);
-const { generatePinkNoise, generateVossPinkNoise, generateSineSweepPair, frecuenciaInstantanea, convolucionFFT, pendienteDbPorOctava } = gen;
-const { espectroPromedioDb, envolventeMinMax, fft } = ac;
+const { generatePinkNoise, generateVossPinkNoise, generateSineSweepPair, frecuenciaInstantanea, convolucionFFT, pendienteDbPorOctava, rngGauss } = gen;
+const { espectroPromedioDb, envolventeMinMax, fft, edcDb, riSintetica, riConRuido } = ac;
+const { OCTAVAS, bordesOctava, bandaValida, gananciaOctava, filtrarOctava, generateSyntheticIr, getImpulseResponse, logarithmicScaleConversion, t60Schroeder, correlacionAlineada, leerWav } = pr;
 const { FUENTE, prepararCanvas, dibujarLeyenda, alCambiarAncho, paleta } = gr;
 
 // ── Audio: una sola señal sonando en toda la página ─────────────────────────────────────────────
@@ -308,7 +310,340 @@ function demoSweep(el) {
   return { iniciar: generar, redibujar: dibujar };
 }
 
-const DEMOS = { 'pink-noise': demoRuidoRosa, 'sine-sweep': demoSweep };
+// ── M2 · procesamiento ───────────────────────────────────────────────────────────────────────────
+const fmt = (v, d = 1) => v.toFixed(d).replace('.', ',');
+const rotuloBanda = (fc) => (fc >= 1000 ? `${fmt(fc / 1000, fc % 1000 ? 1 : 0)} kHz` : `${fmt(fc, fc % 1 ? 1 : 0)} Hz`);
+const COLORES_BANDA = ['#f472b6', '#fb923c', '#fbbf24', '#a3e635', '#34d399', '#22d3ee', '#60a5fa', '#818cf8', '#c084fc', '#e879f9'];
+const colorBanda = (fc) => COLORES_BANDA[Math.max(0, OCTAVAS.indexOf(Number(fc)))];
+
+// Grilla de tiempo (s) y de nivel (dB); devuelve las funciones de escala.
+function grillaTiempoDb(k, dur, dbMin, pasoDb = 10) {
+  const { g, W, H, m, tt, COL } = k;
+  const xt = (t) => m.l + (t / dur) * (W - m.l - m.r);
+  const yd = (d) => m.t + (Math.max(dbMin, Math.min(0, d)) / dbMin) * (H - m.t - m.b);
+  g.strokeStyle = COL.grilla; g.fillStyle = COL.eje; g.font = `500 ${tt}px ${FUENTE}`; g.textAlign = 'center';
+  const paso = dur > 4 ? 1 : dur > 1.5 ? 0.5 : dur > 0.6 ? 0.2 : 0.1;
+  for (let t = 0; t <= dur + 1e-9; t += paso) { g.beginPath(); g.moveTo(xt(t), m.t); g.lineTo(xt(t), H - m.b); g.stroke(); g.fillText(fmt(t, paso < 0.5 ? 1 : paso < 1 ? 1 : 0), xt(t), H - m.b + tt + 3); }
+  g.textAlign = 'right';
+  for (let d = 0; d >= dbMin; d -= pasoDb) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 5, yd(d) + 4); }
+  g.textAlign = 'left';
+  return { xt, yd };
+}
+// Curva en dB dibujada por columnas: el máximo de cada columna (envolvente) o una muestra (curvas suaves).
+function curvaDb(k, d, fs, dur, esc, color, { ancho = 1.4, envolvente = true, guiones = null } = {}) {
+  const { g, W, m } = k, cols = Math.round(W - m.l - m.r), porCol = (dur * fs) / cols;
+  g.strokeStyle = color; g.lineWidth = ancho; if (guiones) g.setLineDash(guiones); g.beginPath();
+  let empezado = false;
+  for (let c = 0; c < cols; c++) {
+    const a = Math.floor(c * porCol); if (a >= d.length) break;
+    let v = d[a];
+    if (envolvente) for (let i = a + 1; i < Math.min(d.length, Math.floor((c + 1) * porCol)); i++) v = Math.max(v, d[i]);
+    empezado ? g.lineTo(m.l + c, esc.yd(v)) : g.moveTo(m.l + c, esc.yd(v)); empezado = true;
+  }
+  g.stroke(); g.setLineDash([]); g.lineWidth = 1;
+}
+function botonEscuchar(b, obtener, fs) {
+  const texto = b.textContent;
+  b.addEventListener('click', () => {
+    if (sonando) { detener(); if (b.dataset.sonando) return; }
+    const x = obtener(); if (!x) return;
+    b.dataset.sonando = '1'; b.textContent = 'Detener';
+    reproducir(x, fs(), () => { delete b.dataset.sonando; b.textContent = texto; });
+  });
+}
+const cabecera = (verbo, ruta, nota = 'Mismo modelo que la especificación, calculado en tu navegador.') =>
+  `<div class="servicio-demo__cabecera"><span class="servicio-demo__verbo">${verbo}</span><code>${ruta}</code><span class="servicio-demo__nota">${nota}</span></div>`;
+
+// Servicio 1 · load_audio: leer un WAV propio (o el de ejemplo) como lo haría el service.
+function demoCargarAudio(el) {
+  el.innerHTML = `
+    ${cabecera('service', 'load_audio(path)', 'El archivo se lee en tu navegador: no se sube a ningún lado.')}
+    <div class="servicio-demo__controles">
+      <label class="servicio-demo__archivo">Elegí un WAV <input type="file" accept=".wav,audio/wav,audio/x-wav"></label>
+      <button type="button" data-accion="ejemplo">Usar la grabación de ejemplo</button>
+      <button type="button" data-accion="escuchar">Escuchar</button>
+    </div>
+    <canvas role="img" aria-label="Forma de onda del audio cargado, en mono"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>`;
+  const [cv] = el.querySelectorAll('canvas'), dato = el.querySelector('.servicio-demo__dato');
+  let r = null, nombre = '';
+  function cargar(buffer, n) {
+    nombre = n;
+    try { r = leerWav(buffer); } catch (e) { r = null; dato.innerHTML = `<strong>ValueError</strong>: <code>${n}</code>: ${e.message}. Es lo que tiene que lanzar <code>load_audio</code> (y el router lo convierte en un 422).`; dibujar(); return; }
+    const pico = r.signal.reduce((a, v) => Math.max(a, Math.abs(v)), 0);
+    dato.innerHTML = `<code>signal, fs = load_audio("${n}")</code> → <strong>fs = ${r.fs} Hz</strong> (del encabezado) · ${r.canales === 1 ? 'mono' : `${r.canales} canales → <strong>mono</strong> (promedio)`} · ${r.flotante ? 'float' : 'PCM'} ${r.bits} bits → <strong>float64 en [−1, 1]</strong> · ${fmt(r.signal.length / r.fs, 2)} s (${r.signal.length} muestras) · pico ${fmt(pico, 2)}.`;
+    dibujar();
+  }
+  function dibujar() {
+    if (!r) { const k = marco(cv, { aspecto: 0.16, min: 110, max: 150 }); k.g.fillStyle = k.COL.tenue; k.g.font = `500 ${k.tt}px ${FUENTE}`; k.g.fillText('Sin audio cargado', k.m.l, k.H / 2); return; }
+    dibujarOnda(cv, Float32Array.from(r.signal), r.fs, paleta().violeta, `${nombre} · mono · fs = ${r.fs} Hz`);
+  }
+  el.querySelector('input[type="file"]').addEventListener('change', async (e) => { const f = e.target.files[0]; if (f) cargar(await f.arrayBuffer(), f.name); });
+  const ejemplo = async () => cargar(await (await fetch(new URL('../trabajo_practico/audio/m2/grabacion_recinto.wav', import.meta.url))).arrayBuffer(), 'grabacion_recinto.wav');
+  el.querySelector('[data-accion="ejemplo"]').addEventListener('click', ejemplo);
+  botonEscuchar(el.querySelector('[data-accion="escuchar"]'), () => r && Float32Array.from(r.signal), () => r.fs);
+  alCambiarAncho(cv, dibujar);
+  return { iniciar: ejemplo, redibujar: dibujar };
+}
+
+// Servicio 2 · filter_single_band: respuesta en frecuencia (una y dos pasadas) y el filtro aplicado a ruido rosa.
+function demoFiltroOctava(el) {
+  const estado = { fc: 1000, order: 4 };
+  el.innerHTML = `
+    ${cabecera('POST', '/api/v1/filters/single-band')}
+    <div class="servicio-demo__controles">
+      <div class="servicio-demo__grupo servicio-demo__bandas" role="group" aria-label="Banda de octava">${OCTAVAS.map((fc) => `<button type="button" data-fc="${fc}" aria-pressed="${fc === estado.fc}">${rotuloBanda(fc)}</button>`).join('')}</div>
+      ${rango('order', 'order', 1, 8, 1, estado.order)}
+      <button type="button" data-escuchar="entrada">Escuchar el ruido rosa</button>
+      <button type="button" data-escuchar="salida">Escuchar la banda</button>
+    </div>
+    <canvas role="img" aria-label="Respuesta en frecuencia del filtro de octava con una y con dos pasadas"></canvas>
+    <canvas role="img" aria-label="Espectro del ruido rosa antes y después del filtro"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>
+    <details class="servicio-demo__respuesta"><summary>Pedido (multipart/form-data)</summary><pre><code></code></pre></details>`;
+  const [cvH, cvP] = el.querySelectorAll('canvas');
+  let fs = 0, x = null, y = null;
+  function calcular() {
+    fs = contexto().sampleRate;
+    x ??= generatePinkNoise(3, fs, rngGauss(21));
+    el.querySelectorAll('[data-fc]').forEach((b) => { b.disabled = !bandaValida(Number(b.dataset.fc), fs); });
+    if (!bandaValida(estado.fc, fs)) estado.fc = 8000;
+    y = filtrarOctava(x, fs, estado.fc, estado.order);
+    const [f1, f2] = bordesOctava(estado.fc), g = (f) => 20 * Math.log10(gananciaOctava(f, estado.fc, fs, estado.order));
+    el.querySelector('.servicio-demo__dato').innerHTML = `Bordes ${fmt(f1, 0)} y ${fmt(f2, 0)} Hz: <strong>${fmt(g(f1))} dB</strong> con una pasada y <strong>${fmt(2 * g(f1))} dB</strong> con <code>sosfiltfilt</code> (dos pasadas). A una octava de fc: ${fmt(2 * g(estado.fc / 2), 0)} y ${fmt(2 * g(2 * estado.fc), 0)} dB. El test pide 0 dB en fc, entre −2 y −7 dB en los bordes y menos de −20 dB a una octava.`;
+    el.querySelector('pre code').textContent = `file=@ruido_rosa.wav\ncenter_freq=${estado.fc}\norder=${estado.order}`;
+    dibujar();
+  }
+  function ejeFrec(k) {
+    const { g, W, H, m, tt, COL } = k, fmin = 20, fmax = Math.min(20000, fs / 2);
+    const xf = (f) => m.l + (Math.log10(f / fmin) / Math.log10(fmax / fmin)) * (W - m.l - m.r);
+    g.strokeStyle = COL.grilla; g.fillStyle = COL.eje; g.font = `500 ${tt}px ${FUENTE}`; g.textAlign = 'center';
+    for (const f of FRECS) if (f <= fmax) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); g.fillText(rotuloF(f), xf(f), H - m.b + tt + 3); }
+    g.textAlign = 'left';
+    return { xf, fmin, fmax };
+  }
+  function dibujar() {
+    if (!y) return;
+    const COL = paleta(), dbMin = -60;
+    // Respuesta en frecuencia: el banco completo de fondo, la banda elegida con una y con dos pasadas.
+    let k = marco(cvH, { aspecto: 0.4, min: 230, max: 330 }, [[COL.tenue, 'Una pasada (sosfilt): −3 dB en los bordes'], [COL.violeta, 'Dos pasadas (sosfiltfilt): −6 dB en los bordes'], [COL.grilla, 'Las otras bandas']]);
+    const { xf, fmin, fmax } = ejeFrec(k), { g, W, H, m, tt } = k;
+    const yd = (d) => m.t + (Math.max(dbMin, Math.min(0, d)) / dbMin) * (H - m.t - m.b);
+    g.textAlign = 'right'; g.fillStyle = COL.eje; g.strokeStyle = COL.grilla;
+    for (let d = 0; d >= dbMin; d -= 10) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); g.fillText(`${d}`, m.l - 5, yd(d) + 4); }
+    g.textAlign = 'left';
+    const cols = Math.round(W - m.l - m.r), fCol = (c) => fmin * Math.pow(fmax / fmin, c / cols);
+    const curva = (fc, potencia, color, ancho, guiones) => {
+      g.strokeStyle = color; g.lineWidth = ancho; g.setLineDash(guiones || []); g.beginPath();
+      for (let c = 0; c <= cols; c++) { const d = potencia * 20 * Math.log10(gananciaOctava(fCol(c), fc, fs, estado.order) + 1e-12); c ? g.lineTo(m.l + c, yd(d)) : g.moveTo(m.l + c, yd(d)); }
+      g.stroke(); g.setLineDash([]); g.lineWidth = 1;
+    };
+    for (const fc of OCTAVAS) if (fc !== estado.fc && bandaValida(fc, fs)) curva(fc, 2, COL.grilla, 1.2);
+    g.setLineDash([3, 4]); g.strokeStyle = COL.eje;
+    for (const f of bordesOctava(estado.fc)) { g.beginPath(); g.moveTo(xf(f), m.t); g.lineTo(xf(f), H - m.b); g.stroke(); }
+    for (const d of [-3, -6]) { g.beginPath(); g.moveTo(m.l, yd(d)); g.lineTo(W - m.r, yd(d)); g.stroke(); }
+    g.setLineDash([]);
+    curva(estado.fc, 1, COL.tenue, 1.6, [6, 4]); curva(estado.fc, 2, COL.violeta, 2.2);
+    g.font = `600 ${tt}px ${FUENTE}`; g.fillStyle = COL.eje;
+    g.fillText('f_inf', xf(bordesOctava(estado.fc)[0]) + 3, H - m.b - 6); g.fillText('f_sup', xf(bordesOctava(estado.fc)[1]) + 3, H - m.b - 6);
+    rotulos(k, 'Frecuencia (Hz, escala logarítmica)', 'Ganancia (dB)');
+    // Espectro del ruido rosa antes y después.
+    k = marco(cvP, { aspecto: 0.34, min: 200, max: 290 }, [[COL.senal, 'Ruido rosa (entrada)'], [COL.violeta, `filter_single_band(signal, fs, ${estado.fc}, order=${estado.order})`]]);
+    const e2 = ejeFrec(k), yd2 = (d) => k.m.t + (Math.max(-80, Math.min(0, d)) / -80) * (k.H - k.m.t - k.m.b);
+    k.g.textAlign = 'right'; k.g.fillStyle = COL.eje; k.g.strokeStyle = COL.grilla; k.g.font = `500 ${k.tt}px ${FUENTE}`;
+    for (let d = 0; d >= -80; d -= 20) { k.g.beginPath(); k.g.moveTo(k.m.l, yd2(d)); k.g.lineTo(k.W - k.m.r, yd2(d)); k.g.stroke(); k.g.fillText(`${d}`, k.m.l - 5, yd2(d) + 4); }
+    k.g.textAlign = 'left';
+    // espectroPromedioDb normaliza cada espectro a su máximo: se le devuelve la escala absoluta por
+    // Parseval (energía de la señal / suma del espectro normalizado), así entrada y salida se comparan.
+    const absoluto = (e, s) => {
+      let energia = 0; for (const v of s) energia += v * v;
+      let suma = 0; for (const d of e.db) suma += Math.pow(10, d / 10);
+      return 10 * Math.log10(energia / suma);
+    };
+    const ex = espectroPromedioDb(x, fs, 4096), ey = espectroPromedioDb(y, fs, 4096);
+    const ox = absoluto(ex, x), oy = absoluto(ey, y);
+    let ref = -Infinity; for (const v of ex.db) ref = Math.max(ref, v + ox);
+    for (const [e, o, color] of [[ex, ox, COL.senal], [ey, oy, COL.violeta]]) {
+      k.g.strokeStyle = color; k.g.lineWidth = 1.5; k.g.beginPath(); let emp = false;
+      for (let i = 1; i < e.frecuencias.length; i++) { const f = e.frecuencias[i]; if (f < e2.fmin || f > e2.fmax) continue; const yy = yd2(e.db[i] + o - ref); emp ? k.g.lineTo(e2.xf(f), yy) : k.g.moveTo(e2.xf(f), yy); emp = true; }
+      k.g.stroke();
+    }
+    rotulos(k, 'Frecuencia (Hz, escala logarítmica)', 'Nivel (dB)');
+  }
+  el.querySelectorAll('[data-fc]').forEach((b) => b.addEventListener('click', () => {
+    estado.fc = Number(b.dataset.fc); el.querySelectorAll('[data-fc]').forEach((o) => o.setAttribute('aria-pressed', String(o === b))); calcular();
+  }));
+  const inp = el.querySelector('[data-p="order"]'), out = el.querySelector('[data-o="order"]');
+  inp.addEventListener('input', () => { estado.order = Number(inp.value); out.textContent = estado.order; });
+  inp.addEventListener('change', calcular); out.textContent = estado.order;
+  el.querySelectorAll('[data-escuchar]').forEach((b) => botonEscuchar(b, () => (b.dataset.escuchar === 'entrada' ? x : y), () => fs));
+  alCambiarAncho(cvH, dibujar);
+  return { iniciar: calcular, redibujar: dibujar };
+}
+
+// Servicio 3 · generate_synthetic_ir: la RI, su caída por banda (Schroeder) y el T60 medido contra el pedido.
+const SALAS = {
+  seca: { nombre: 'Estudio seco', t60: { 125: 0.6, 250: 0.5, 500: 0.45, 1000: 0.4, 2000: 0.35, 4000: 0.3 } },
+  aula: { nombre: 'Aula', t60: { 125: 1.4, 250: 1.2, 500: 1.0, 1000: 0.9, 2000: 0.8, 4000: 0.6 } },
+  iglesia: { nombre: 'Iglesia', t60: { 125: 3.6, 250: 3.4, 500: 3.0, 1000: 2.6, 2000: 2.0, 4000: 1.4 } },
+};
+function demoRiSintetica(el) {
+  const estado = { sala: 'aula' };
+  el.innerHTML = `
+    ${cabecera('POST', '/api/v1/signals/synthetic-ir')}
+    <div class="servicio-demo__controles">
+      <div class="servicio-demo__grupo" role="group" aria-label="T60 por banda">${Object.entries(SALAS).map(([c, s]) => `<button type="button" data-sala="${c}" aria-pressed="${c === estado.sala}">${s.nombre}</button>`).join('')}</div>
+      <button type="button" data-accion="generar">Generar otra</button>
+      <button type="button" data-accion="escuchar">Escuchar la RI</button>
+    </div>
+    <canvas role="img" aria-label="Respuesta al impulso sintética"></canvas>
+    <canvas role="img" aria-label="Curvas de caída por banda (Schroeder) y la caída pedida"></canvas>
+    <div class="servicio-demo__dato" aria-live="polite"></div>
+    <details class="servicio-demo__respuesta"><summary>Pedido (JSON)</summary><pre><code></code></pre></details>`;
+  const [cvOnda, cvCaida] = el.querySelectorAll('canvas');
+  let fs = 0, h = null, curvas = [], dur = 0, semilla = 5;
+  function generar() {
+    fs = contexto().sampleRate;
+    const { t60 } = SALAS[estado.sala];
+    dur = Math.ceil(Math.max(...Object.values(t60)) * 1.3 * 2) / 2;
+    h = generateSyntheticIr(dur, t60, fs, rngGauss(semilla++));
+    curvas = Object.entries(t60).map(([fc, objetivo]) => {
+      const banda = filtrarOctava(h, fs, Number(fc));
+      return { fc: Number(fc), objetivo, medido: t60Schroeder(banda, fs), edc: edcDb(banda) };
+    });
+    const filas = curvas.map((c) => {
+      const d = c.medido ? (100 * (c.medido - c.objetivo)) / c.objetivo : NaN;
+      return `<tr><td>${rotuloBanda(c.fc)}</td><td>${fmt(c.objetivo, 2)} s</td><td>${c.medido ? fmt(c.medido, 2) : '—'} s</td><td>${Number.isNaN(d) ? '—' : `${Math.round(d) === 0 ? '' : d > 0 ? '+' : '−'}${fmt(Math.abs(d), 0)} %${Math.abs(d) <= 10 ? ' ✓' : ''}`}</td></tr>`;
+    }).join('');
+    el.querySelector('.servicio-demo__dato').innerHTML = `<table class="servicio-demo__tabla"><thead><tr><th>Banda</th><th>T60 pedido</th><th>T60 medido (T20, Schroeder)</th><th>Diferencia</th></tr></thead><tbody>${filas}</tbody></table><p>Es lo que hace <code>test_synthetic_ir_decay</code>: filtra la RI en la banda, calcula la curva de Schroeder y mide la pendiente entre −5 y −25 dB (✓: dentro del 10 %). Generá otra varias veces: la RI es ruido, y el T60 medido varía. Varía más en los graves y con T60 cortos, donde entran pocas oscilaciones en ese tramo. Por eso el test mide en 1 kHz con T60 = 2 s.</p>`;
+    el.querySelector('pre code').textContent = json({ duration: dur, t60_values: Object.fromEntries(Object.entries(t60).map(([k, v]) => [String(k), v])), sample_rate: fs });
+    dibujar();
+  }
+  function dibujar() {
+    if (!h) return;
+    const COL = paleta();
+    dibujarOnda(cvOnda, h, fs, COL.violeta, `generate_synthetic_ir(${dur}, t60_values, ${fs})`);
+    const k = marco(cvCaida, { aspecto: 0.42, min: 240, max: 340 }, curvas.map((c) => [colorBanda(c.fc), rotuloBanda(c.fc)]).concat([[COL.eje, 'Caída pedida (−60 dB en T60)']]));
+    const esc = grillaTiempoDb(k, dur, -70);
+    for (const c of curvas) {
+      k.g.setLineDash([4, 4]); k.g.strokeStyle = colorBanda(c.fc); k.g.globalAlpha = 0.6; k.g.beginPath();
+      k.g.moveTo(esc.xt(0), esc.yd(0)); k.g.lineTo(esc.xt(Math.min(dur, (c.objetivo * 70) / 60)), esc.yd((-60 * Math.min(dur, (c.objetivo * 70) / 60)) / c.objetivo)); k.g.stroke();
+      k.g.setLineDash([]); k.g.globalAlpha = 1;
+      curvaDb(k, c.edc, fs, dur, esc, colorBanda(c.fc), { ancho: 1.8, envolvente: false });
+    }
+    rotulos(k, 'Tiempo (s)', 'Energía restante (dB)');
+  }
+  el.querySelectorAll('[data-sala]').forEach((b) => b.addEventListener('click', () => {
+    estado.sala = b.dataset.sala; el.querySelectorAll('[data-sala]').forEach((o) => o.setAttribute('aria-pressed', String(o === b))); generar();
+  }));
+  el.querySelector('[data-accion="generar"]').addEventListener('click', generar);
+  botonEscuchar(el.querySelector('[data-accion="escuchar"]'), () => h, () => fs);
+  alCambiarAncho(cvCaida, dibujar);
+  return { iniciar: generar, redibujar: dibujar };
+}
+
+// Servicio 4 · get_impulse_response: sala simulada, grabación con ruido de fondo y RI recuperada.
+function demoRespuestaImpulso(el) {
+  const estado = { t60: 0.8, duration: 2, ruido: -60 };
+  el.innerHTML = `
+    ${cabecera('service', 'get_impulse_response(recording, inverse_filter)')}
+    <div class="servicio-demo__controles">
+      ${rango('t60', 'T60 de la sala', 0.2, 2.5, 0.1, estado.t60)}
+      ${rango('duration', 'duración del sweep', 1, 5, 0.5, estado.duration)}
+      ${rango('ruido', 'ruido de fondo', -90, -20, 5, estado.ruido)}
+      <button type="button" data-escuchar="sweep">Escuchar el sweep</button>
+      <button type="button" data-escuchar="grabacion">Escuchar la grabación</button>
+      <button type="button" data-escuchar="ri">Escuchar la RI recuperada</button>
+    </div>
+    <canvas role="img" aria-label="Grabación simulada del sweep en la sala"></canvas>
+    <canvas role="img" aria-label="RI original y RI recuperada por deconvolución, en dB"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>`;
+  const [cvRec, cvRi] = el.querySelectorAll('canvas');
+  let fs = 0, par = null, h = null, rec = null, ri = null, durRi = 0;
+  function calcular() {
+    fs = contexto().sampleRate;
+    durRi = Math.min(3, estado.t60 * 1.2 + 0.1);
+    h = riSintetica({ fs, t60: estado.t60, duracion: durRi, rng: (() => { const r = rngGauss(17); return () => 0.3 * r(); })() });
+    par = generateSineSweepPair(estado.duration, 20, Math.min(20000, fs / 2 - 1000), fs);
+    const r = rngGauss(29), seco = convolucionFFT(par.sweep, h);
+    let pico = 0; for (const v of seco) pico = Math.max(pico, Math.abs(v));
+    const a = pico * Math.pow(10, estado.ruido / 20);
+    rec = Float32Array.from(seco, (v) => v + a * r());
+    let m = 0; for (const v of rec) m = Math.max(m, Math.abs(v));
+    for (let i = 0; i < rec.length; i++) rec[i] = (rec[i] / m) * 0.9;
+    ri = getImpulseResponse(rec, par.inverseFilter, fs).subarray(0, h.length);
+    const c = correlacionAlineada(ri, h);
+    el.querySelector('.servicio-demo__dato').innerHTML = `Correlación entre la RI recuperada y la de la sala: <strong>${fmt(c, 3)}</strong> (el test pide más de 0,9). Subí el ruido de fondo o acortá el sweep: el piso de la RI recuperada sube. Cada vez que se duplica la duración del sweep, el piso baja unos 3 dB.`;
+    dibujar();
+  }
+  function dibujar() {
+    if (!ri) return;
+    const COL = paleta();
+    dibujarOnda(cvRec, rec, fs, COL.senal, 'recording: el sweep, sonando en la sala (y = x ∗ h + ruido)');
+    const k = marco(cvRi, { aspecto: 0.38, min: 220, max: 320 }, [[COL.eje, 'RI de la sala, h (la que no conocemos)'], [COL.violeta, 'get_impulse_response(recording, inverse_filter)']]);
+    const esc = grillaTiempoDb(k, durRi, -100, 20);
+    curvaDb(k, logarithmicScaleConversion(h, -100), fs, durRi, esc, COL.eje, { ancho: 1.4 });
+    curvaDb(k, logarithmicScaleConversion(ri, -100), fs, durRi, esc, COL.violeta, { ancho: 1.2 });
+    rotulos(k, 'Tiempo desde el pico (s)', 'Nivel (dB)');
+  }
+  for (const c of ['t60', 'duration', 'ruido']) {
+    const inp = el.querySelector(`[data-p="${c}"]`), out = el.querySelector(`[data-o="${c}"]`);
+    const mostrar = () => { out.textContent = c === 'ruido' ? `${estado[c]} dB` : `${fmt(estado[c])} s`; };
+    inp.addEventListener('input', () => { estado[c] = Number(inp.value); mostrar(); });
+    inp.addEventListener('change', calcular); mostrar();
+  }
+  el.querySelectorAll('[data-escuchar]').forEach((b) => botonEscuchar(b, () => ({ sweep: par?.sweep, grabacion: rec, ri })[b.dataset.escuchar], () => fs));
+  alCambiarAncho(cvRi, dibujar);
+  return { iniciar: calcular, redibujar: dibujar };
+}
+
+// Servicio 5 · logarithmic_scale_conversion: la misma RI en lineal y en dB.
+function demoEscalaLog(el) {
+  const estado = { piso: -120 };
+  el.innerHTML = `
+    ${cabecera('service', 'logarithmic_scale_conversion(signal)')}
+    <div class="servicio-demo__controles">
+      ${rango('piso', 'piso (opcional)', -140, -40, 10, estado.piso)}
+      <button type="button" data-accion="nueva">Otra RI</button>
+    </div>
+    <canvas role="img" aria-label="Respuesta al impulso en escala lineal"></canvas>
+    <canvas role="img" aria-label="La misma respuesta al impulso en dB"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>`;
+  const [cvLin, cvDb] = el.querySelectorAll('canvas');
+  let fs = 0, h = null, semilla = 3;
+  const dur = 1.6, t60 = 1, pisoRuido = -75;
+  function nueva() {
+    fs = contexto().sampleRate;
+    const r = rngGauss(semilla++);
+    h = riConRuido({ fs, t60, duracion: dur, pisoDb: pisoRuido, rng: () => 0.5 * r() });
+    let pico = 0; for (const v of h) pico = Math.max(pico, Math.abs(v));
+    let i1 = 0; for (let i = 0; i < h.length; i++) if (Math.abs(h[i]) > 0.01 * pico) i1 = i;
+    el.querySelector('.servicio-demo__dato').innerHTML = `En lineal, después de los ${fmt((i1 / fs) * 1000, 0)} ms la RI ya está por debajo del 1 % del pico: parece que no pasa nada. En dB se ve la caída como una <strong>recta</strong> (−60 dB en T60 = ${fmt(t60)} s) hasta el ruido de fondo, cerca de ${pisoRuido} dB.`;
+    dibujar();
+  }
+  function dibujar() {
+    if (!h) return;
+    const COL = paleta();
+    dibujarOnda(cvLin, h, fs, COL.senal, 'signal (lineal)');
+    const k = marco(cvDb, { aspecto: 0.34, min: 200, max: 290 }, [[COL.violeta, `logarithmic_scale_conversion(signal) · piso ${estado.piso} dB`], [COL.eje, 'Caída de 60 dB en T60']]);
+    const dbMin = Math.min(-80, estado.piso - 10), esc = grillaTiempoDb(k, dur, dbMin, 20);
+    curvaDb(k, logarithmicScaleConversion(h, estado.piso), fs, dur, esc, COL.violeta, { ancho: 1.1 });
+    k.g.setLineDash([5, 4]); k.g.strokeStyle = COL.eje; k.g.lineWidth = 1.5; k.g.beginPath(); k.g.moveTo(esc.xt(0), esc.yd(0)); k.g.lineTo(esc.xt(t60), esc.yd(-60)); k.g.stroke(); k.g.setLineDash([]); k.g.lineWidth = 1;
+    rotulos(k, 'Tiempo (s)', 'Nivel (dB)');
+  }
+  const inp = el.querySelector('[data-p="piso"]'), out = el.querySelector('[data-o="piso"]');
+  inp.addEventListener('input', () => { estado.piso = Number(inp.value); out.textContent = `${estado.piso} dB`; dibujar(); });
+  out.textContent = `${estado.piso} dB`;
+  el.querySelector('[data-accion="nueva"]').addEventListener('click', nueva);
+  alCambiarAncho(cvDb, dibujar);
+  return { iniciar: nueva, redibujar: dibujar };
+}
+
+const DEMOS = {
+  'pink-noise': demoRuidoRosa, 'sine-sweep': demoSweep,
+  'load-audio': demoCargarAudio, 'filter-single-band': demoFiltroOctava, 'synthetic-ir': demoRiSintetica,
+  'impulse-response': demoRespuestaImpulso, 'log-scale': demoEscalaLog,
+};
 const montadas = [];
 for (const el of document.querySelectorAll('.servicio-demo[data-servicio]')) {
   const crear = DEMOS[el.dataset.servicio];

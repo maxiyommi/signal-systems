@@ -20,6 +20,12 @@ Algunas ideas se entienden mejor escuchando y manipulando. Se abren en una pesta
 - [La sala: directo, reflexiones y cola](interactivos/sala.html){target=_blank rel=noopener}: simulación 3D por fuentes imagen, ecograma y auralización.
 - [De la curva de caída a T30](interactivos/caida.html){target=_blank rel=noopener}: integral de Schroeder, regresión y el efecto del ruido de fondo.
 
+## Material complementario
+
+Lecturas para profundizar un paso de la ruta. No son entregables: sirven para entender por qué funciona lo que implementan.
+
+- [El álgebra de la deconvolución vía sweep + filtro inverso](especificacion/m2_algebra_deconvolucion.md) (acompaña a M2): la sala como sistema LTI, por qué el sweep convolucionado con su filtro inverso da un impulso (y dónde queda la distorsión), la cadena de la medición paso a paso, cuándo vale el teorema de convolución y cómo se implementa `get_impulse_response`.
+
 ## Dónde consultar
 
 - **Dudas**: en el canal de [Slack](https://senalesysistemas.slack.com), en hilos (ver las [reglas](../reglas_slack.md)).
