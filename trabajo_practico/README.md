@@ -24,7 +24,7 @@ Al completar este trabajo práctico, cada estudiante habrá trabajado:
 - **Comunicación técnica**: documentar el proceso y presentar resultados de forma profesional.
 
 !!! warning "Criterio de validación"
-    Los tiempos de reverberación (EDT, T20, T30) no deben diferir en más de **±0,5 s** de los que arroja un software de referencia (por ejemplo REW) o de los valores con los que se sintetizó la RI; C80, no más de **±1 dB**. El detalle está en la [especificación de M3](especificacion/m3_producto_final.md).
+    Los tiempos de reverberación (EDT, T20, T30) no deben diferir en más de **±10 %, o ±0,5 s si eso es menor**, de los que arroja un software de referencia (por ejemplo REW) o de los valores con los que se sintetizó la RI; C80, no más de **±1 dB**. El detalle está en la [especificación de M3](especificacion/m3_producto_final.md).
 
 ---
 
