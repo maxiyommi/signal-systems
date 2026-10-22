@@ -220,7 +220,7 @@
       const lista = ordenRecorrido([...arq.querySelectorAll('[data-paso]')].map((el) => ({ paso: Number(el.dataset.paso), texto: el.dataset.explica })));
       pasos.innerHTML = lista.map((p) => `<li>${p.texto}</li>`).join('');
       pasos.hidden = false;
-      leyenda.innerHTML = 'El recorrido de un análisis: la línea <strong class="arq-ida">violeta</strong> es la ida del pedido (pasos 1 a 8) y la <strong class="arq-vuelta">ámbar</strong>, la vuelta con la respuesta (pasos 9 y 10).';
+      leyenda.innerHTML = 'El recorrido de un análisis: la línea <strong class="arq-ida">violeta</strong> es la ida del pedido (pasos 1 a 7) y la <strong class="arq-vuelta">ámbar</strong>, la vuelta con la respuesta (pasos 8 y 9).';
       conPaquete = true;
       encender(ordenRecorrido([...arq.querySelectorAll('[data-paso]')].map((el) => ({ paso: Number(el.dataset.paso), el }))).map((x) => x.el));
       actual = 3;

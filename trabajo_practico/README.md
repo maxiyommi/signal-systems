@@ -24,7 +24,7 @@ Al completar este trabajo práctico, cada estudiante habrá trabajado:
 - **Comunicación técnica**: documentar el proceso y presentar resultados de forma profesional.
 
 !!! warning "Criterio de validación"
-    Los tiempos de reverberación (EDT, T20, T30) no deben diferir en más de **±0,5 s** de los que arroja un software de referencia (por ejemplo REW) o de los valores con los que se sintetizó la RI; C80, no más de **±1 dB**. El detalle está en la [especificación de M3](especificacion/m3_producto_final.md).
+    Los tiempos de reverberación (EDT, T20, T30) no deben diferir en más de **±10 %, o ±0,5 s si eso es menor**, de los que arroja un software de referencia (por ejemplo REW) o de los valores con los que se sintetizó la RI; C80, no más de **±1 dB**. El detalle está en la [especificación de M3](especificacion/m3_producto_final.md).
 
 ---
 
@@ -70,6 +70,8 @@ La API crece con el TP: **cada milestone expone como endpoints lo que construye*
 | `filter_single_band(signal, fs, center_freq, order)` | Filtro de banda de octava según IEC 61260 (Butterworth). |
 | `logarithmic_scale_conversion(signal)` | Conversión a escala logarítmica normalizada (dB). |
 | **Endpoints** | `POST /api/v1/signals/synthetic-ir` (WAV) y `POST /api/v1/filters/single-band` (recibe un WAV subido). |
+
+Para entender por qué funciona `get_impulse_response`: [El álgebra de la deconvolución vía sweep + filtro inverso](especificacion/m2_algebra_deconvolucion.md) (material extendido, con figuras): la sala como sistema LTI, por qué el sweep y su filtro inverso dan un impulso, la cadena paso a paso y cuándo vale el teorema de convolución.
 
 ### M3 · Producto final: la API completa (entrega 18/11)
 | Componente | Descripción |
@@ -191,4 +193,5 @@ Cada grupo mantiene un archivo **`AI_LOG.md`** en la raíz del repositorio que d
 
 ### Material de la cátedra
 - [Ruta del TP y marco conceptual](ruta.md)
+- [El álgebra de la deconvolución vía sweep + filtro inverso](especificacion/m2_algebra_deconvolucion.md): material extendido de M2
 - [Carpeta con material de apoyo (Drive)](https://drive.google.com/drive/folders/1unNETr7js3hWZtuxa7-5uV9wns9KdTdT?usp=share_link)

@@ -19,7 +19,7 @@
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
 
   const T = 1, F1 = 2, F2 = 32;                          // escala didáctica: 4 octavas en 1 s
-  const css = (v, def) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || def;
+  const css = (v, def) => getComputedStyle(document.body || document.documentElement).getPropertyValue(v).trim() || def;
 
   function montar(fig) {
     fig.innerHTML = `

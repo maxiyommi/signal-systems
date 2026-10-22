@@ -10,7 +10,7 @@ const OSCURO = { papel: '#161b22', tinta: '#c9d1d9', violeta: '#818cf8', senal: 
   grilla: '#30363d', eje: '#8b949e', tenue: '#6e7681', mal: '#f85149' };
 const VARIABLES = { papel: '--g-fondo', tinta: '--g-tinta', violeta: '--g-violeta', senal: '--g-senal',
   grilla: '--g-grilla', eje: '--g-eje', tenue: '--g-tenue', mal: '--g-mal' };
-export function paleta(estilo = getComputedStyle(document.documentElement)) {
+export function paleta(estilo = getComputedStyle(document.body || document.documentElement)) {   // el sitio pone el tema en <body>; los interactivos, en <html> (lo hereda <body>)
   const p = {};
   for (const [nombre, variable] of Object.entries(VARIABLES)) p[nombre] = estilo.getPropertyValue(variable).trim() || OSCURO[nombre];
   return p;

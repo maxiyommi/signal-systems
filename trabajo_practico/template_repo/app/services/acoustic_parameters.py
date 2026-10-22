@@ -94,7 +94,9 @@ def linear_regression(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float
     raise NotImplementedError("Implementar en Milestone 3")
 
 
-def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[float, float]]:
+def calculate_parameters_from_ir(
+    ir: np.ndarray, fs: int
+) -> dict[str, dict[float, float | None]]:
     """Calcula los parametros acusticos ISO 3382 por banda de octava.
 
     Parametros: EDT (0 a -10 dB), T10 (-5 a -15 dB), T20 (-5 a -25 dB),
@@ -109,8 +111,9 @@ def calculate_parameters_from_ir(ir: np.ndarray, fs: int) -> dict[str, dict[floa
 
     Returns
     -------
-    dict[str, dict[float, float]]
-        ``{parametro: {frecuencia_central: valor}}``.
+    dict[str, dict[float, float | None]]
+        ``{parametro: {frecuencia_central: valor}}``. Un tiempo sin rango
+        dinamico suficiente para su tramo vale ``None``.
         Ejemplo: ``{'T30': {125: 1.5, 250: 1.3, ...}, 'EDT': {...}, 'D50': {...},
         'C80': {...}}``.
 

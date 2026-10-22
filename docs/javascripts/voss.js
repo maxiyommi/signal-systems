@@ -27,7 +27,7 @@
   if (typeof document === 'undefined') return;           // en los tests no hay DOM
 
   const G = 4, N = 64, VENTANA = 32, PASO_MS = 420;
-  const css = (v, def) => getComputedStyle(document.documentElement).getPropertyValue(v).trim() || def;
+  const css = (v, def) => getComputedStyle(document.body || document.documentElement).getPropertyValue(v).trim() || def;
 
   function montar(panel, link) {
     const vista = panel.querySelector('.voss-anim__vista') || panel;
