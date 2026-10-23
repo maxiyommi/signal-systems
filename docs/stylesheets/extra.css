@@ -686,3 +686,11 @@ body.modo-presentacion.agenda-abierta .md-typeset ol.ruta-tp__pasos { grid-templ
 }
 .md-typeset .sweep-fig__controles button[aria-pressed="true"] { border-color: var(--md-primary-fg-color); background: var(--md-primary-fg-color); color: var(--md-primary-bg-color); }
 .md-typeset .sweep-fig__texto { margin: 0.5rem 0 0; font-size: 0.75rem; color: var(--md-default-fg-color--light); }
+
+/* Extras · videos de 3Blue1Brown: miniatura a 16:9 (recorta las franjas negras de hqdefault) */
+.grid.cards.videos-3b1b img.miniatura {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 0.2rem;
+}
