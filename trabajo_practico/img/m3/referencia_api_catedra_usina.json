@@ -1,0 +1,31 @@
+{
+  "fuente": "POST https://rir-api.onrender.com/api/v1/analysis/impulse-response/by-bands?bandwidth=octave&lundeby=true",
+  "archivo": "ir_posic4-1erpiso_-_sfdc.wav (OpenAIR, Usina del Arte)",
+  "fecha": "2026-10-21",
+  "parameters": {
+    "EDT": {
+      "125": 1.53,
+      "250": 1.975,
+      "500": 2.078,
+      "1000": 2.15,
+      "2000": 1.886,
+      "4000": 1.538
+    },
+    "T20": {
+      "125": 1.503,
+      "250": 1.999,
+      "500": 2.066,
+      "1000": 2.184,
+      "2000": 1.872,
+      "4000": 1.516
+    },
+    "T30": {
+      "125": 1.598,
+      "250": 2.001,
+      "500": 2.099,
+      "1000": 2.153,
+      "2000": 1.902,
+      "4000": 1.543
+    }
+  }
+}

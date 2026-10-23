@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" data-pizarra="interactivo">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Curva de caída y T30 — TP Señales y Sistemas (UNTREF)</title>
+  <link rel="icon" href="../../LogoPractica.png">
+  <script src="_comun/tema.js"></script>
+  <link rel="stylesheet" href="_comun/interactivo.css">
+  <!-- Modo presentación y pizarra: los mismos archivos que usa el sitio -->
+  <link rel="stylesheet" href="../../stylesheets/presentacion.css">
+  <script src="../../javascripts/presentacion.js" defer></script>
+  <script src="../../javascripts/pizarra.js" defer></script>
+  <script src="../../javascripts/enlaces.js" defer></script>
+</head>
+<body>
+<header class="barra-sitio">
+  <a class="barra-sitio__marca" href="../../"><img src="../../LogoPractica.png" alt=""><span>Señales y Sistemas — UNTREF</span></a>
+  <a class="barra-sitio__volver" href="../marco_conceptual/">Volver al marco conceptual</a>
+</header>
+<main class="interactivo">
+  <header class="encabezado">
+    <h1>De la curva de caída a T30</h1>
+    <p>Integral de Schroeder, tramo de evaluación y recta de regresión sobre una RI sintética. Cambiá el T60 de la sala y el ruido de fondo, elegí qué parámetro calcular y dónde cortar la integral, y mirá cuánto se aparta el resultado del T60 real y cuándo deja de ser válido según la ISO 3382.</p>
+  </header>
+  <div class="curva"></div>
+  <p class="credito">Criterio del piso de ruido según NTi Audio (nti-audio.com). Curva calculada en el navegador.</p>
+</main>
+<script type="module">
+  import { crearCaida } from './escenas/caida.js';
+  import { montar } from './_comun/pagina.js';
+  montar(crearCaida(document.querySelector('main')));
+</script>
+</body>
+</html>
