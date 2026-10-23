@@ -76,6 +76,10 @@ EXTRAS_CONFIG: list[dict] = [
 
 EXTRAS_DOCS_SUBDIR = "extras"
 
+# Contenido que se agrega al final del índice de Extras (docs/extras/index.md se
+# regenera en cada build, así que las secciones fijas viven acá).
+EXTRAS_INDEX_APPENDIX = "material_extra/videos_3b1b.md"
+
 
 def on_config(config: dict) -> dict:
     """Inyecta la sección 'Extras' al nav de MkDocs."""
@@ -134,6 +138,11 @@ def _write_extras_index(extras_dir: str) -> None:
         lines.append(
             f"- **[{extra['title']}]({extra['id']}/index.md)** — {extra['description']}\n"
         )
+    if os.path.exists(EXTRAS_INDEX_APPENDIX):
+        with open(EXTRAS_INDEX_APPENDIX, encoding="utf-8") as f:
+            lines.append("\n" + f.read())
+    else:
+        log.warning(f"[extras_nav] No se encontró '{EXTRAS_INDEX_APPENDIX}'.")
     _write_if_changed(os.path.join(extras_dir, "index.md"), "".join(lines))
 
 
