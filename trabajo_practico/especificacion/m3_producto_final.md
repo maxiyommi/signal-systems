@@ -10,7 +10,7 @@
 
 Completar el sistema RIR-API con los **servicios de análisis** (suavizado, integral de Schroeder, regresión lineal y cálculo de parámetros según ISO 3382) y **completar la API REST** que empezaron en M1: el endpoint que recibe una RI y devuelve los parámetros por banda, y dos de utilidades. Al terminar, la API recibe una respuesta al impulso por HTTP, la procesa y devuelve EDT, T20, T30, D50 y C80 por banda de octava, con resultados validados contra software de referencia.
 
-> **Referencia:** la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) muestra endpoints, schemas y respuestas de una implementación completa.
+> **Referencia:** la [documentación interactiva de la API de la cátedra](https://rir-api.onrender.com/docs) muestra endpoints, schemas y respuestas de una implementación completa. Úsenla como **referencia de resultados**, no como contrato: los nombres, paths y firmas que pide esta especificación mandan, y las diferencias están señaladas en cada servicio.
 
 ---
 
@@ -81,36 +81,26 @@ En M3 aparecen todas estas palabras, a veces en la misma oración. Cada una nomb
 Tres reglas para no mezclarlas:
 
 - **El nivel no es otra magnitud: es una forma de escribir un cociente.** Siempre tiene una referencia, y "−45 dB" sin decir "respecto de qué" no significa nada. En esta página, 0 dB es el pico de la caída, o la energía total $E[0]$ en la curva de Schroeder.
-- **10·log para energía y potencia, 20·log para amplitud y RMS.** Así, el mismo cambio da los mismos dB: la amplitud a la mitad es la energía a un cuarto, y las dos cuentas dan −6 dB. Dónde va cada uno en el TP, más abajo: [10·log o 20·log, función por función](#10log-o-20log-funcion-por-funcion).
+- **10·log para energía y potencia, 20·log para amplitud y RMS.** Así, el mismo cambio da los mismos dB: la amplitud a la mitad es la energía a un cuarto, y las dos cuentas dan −6 dB.
 - **La energía se acumula y la potencia se promedia.** La energía de una señal crece con su duración; la potencia, no. Por eso la RI, que se apaga, se describe por su **energía**, y el ruido de fondo, que no se apaga, por su **potencia**.
 
-Dónde aparece cada una en M3:
-
-| En la página | Es |
-|---|---|
-| La envolvente (servicio 1) | amplitud, pasada a dB con 20·log |
-| La media móvil de $h^2$ (servicio 1) | potencia local; su raíz es la envolvente RMS |
-| La curva de Schroeder (servicio 2) | nivel de la energía que queda, respecto de la energía total |
-| T60 | lo que tarda la energía que queda en caer a una millonésima: −60 dB |
-| D50 (servicio 4) | cociente de energías, en %, sin dB |
-| C80 (servicio 4) | nivel de un cociente de energías, en dB |
-| "Ruido de fondo a −45 dB" | nivel de la potencia del ruido respecto de la potencia en el pico de la caída |
-
-#### 10·log o 20·log, función por función
+#### Dónde aparece cada una, y qué logaritmo lleva
 
 La pregunta es siempre la misma: **¿lo que entra al logaritmo es una amplitud o ya está al cuadrado?** Si es amplitud ($h$, $|H|$, la envolvente), va 20·log. Si ya está al cuadrado ($h^2$, sus sumas, sus promedios, sus cocientes), va 10·log.
 
-| Dónde | Qué entra al log | Log | Quién lo aplica |
+| Dónde | Qué es | Log | Quién lo aplica |
 |---|---|---|---|
 | M1 · pendiente del ruido rosa (test) | densidad espectral de potencia | 10·log | el test |
-| M2 · respuesta del filtro de octava | ganancia $\lvert H(f) \rvert$ | 20·log | el gráfico |
-| M2 · `logarithmic_scale_conversion(signal)` | la RI $h$ o una envolvente | 20·log | **la función**: hace $20 \log_{10}(\lvert x \rvert / \max \lvert x \rvert)$ |
-| M3 · envolvente en dB (servicio 1) | la envolvente, en amplitud | 20·log | `logarithmic_scale_conversion` |
-| M3 · curva de Schroeder (servicio 2) | $E[n]/E[0]$, energía | 10·log | **`apply_schroeder_integral`**, adentro |
-| M3 · C80 (servicio 4) | cociente de energías | 10·log | `calculate_parameters_from_ir` |
-| M3 · D50 (servicio 4) | cociente de energías | ninguno: es un % | — |
-| M3 · Lundeby: bloques y ruido de fondo | potencia media | 10·log | `apply_lundeby` |
-| M3 · rango dinámico | dos niveles que ya están en dB | ninguno: **se restan** | — |
+| M2 · respuesta del filtro de octava | ganancia $\lvert H(f) \rvert$, amplitud | 20·log | el gráfico |
+| M2 · `logarithmic_scale_conversion(signal)` | la RI $h$ o una envolvente, amplitud | 20·log | **la función**: $20 \log_{10}(\lvert x \rvert / \max \lvert x \rvert)$ |
+| Servicio 1 · envolvente | amplitud (la media móvil de $h^2$ es potencia local; su raíz, la envolvente RMS) | 20·log | `logarithmic_scale_conversion` |
+| Servicio 2 · curva de Schroeder | energía que queda, respecto de la total | 10·log | **`apply_schroeder_integral`**, adentro |
+| Servicio 4 · C80 | cociente de energías | 10·log | `calculate_parameters_from_ir` |
+| Servicio 4 · D50 | cociente de energías | ninguno: es un % | — |
+| Lundeby · bloques y ruido de fondo | potencia media | 10·log | `apply_lundeby` |
+| Rango dinámico, "ruido a −45 dB" | diferencia entre dos niveles de potencia | ninguno: **se restan** | — |
+
+El T60, en estos términos, es lo que tarda la energía que queda en caer a una millonésima de la total: −60 dB.
 
 Los errores que aparecen, y cómo se notan:
 
@@ -473,7 +463,7 @@ Mide la **pendiente** de la curva de Schroeder en un tramo, y de esa pendiente s
 
 ### Qué es
 
-La recta $y = m x + b$ que minimiza la suma de los errores al cuadrado (mínimos cuadrados):
+La recta $y = m x + b$ que mejor describe un tramo de la curva de Schroeder: $x$ es el tiempo (s), $y$ el nivel (dB) y la pendiente $m$ queda en dB/s (negativa). Se calcula por mínimos cuadrados:
 
 $$m = \frac{N \sum x_i y_i - \sum x_i \sum y_i}{N \sum x_i^2 - \left(\sum x_i\right)^2}, \qquad b = \frac{\sum y_i - m \sum x_i}{N}$$
 
@@ -483,14 +473,14 @@ $$R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}, \qquad \hat
 
 **Qué minimiza.** Para cada punto, el **residuo** $e_i = y_i - \hat{y}_i$ es la distancia vertical entre el punto y la recta. Mínimos cuadrados elige la $m$ y la $b$ que hacen mínima $\sum e_i^2$. Se elevan al cuadrado para que los residuos positivos y negativos no se cancelen, y para que un punto muy lejos pese más que varios cerca. Las fórmulas de arriba salen de igualar a cero las derivadas de esa suma respecto de $m$ y de $b$: no hay que iterar, es una cuenta cerrada.
 
-**Cómo leer $R^2$.** Compara lo que la recta deja sin explicar ($\sum e_i^2$) con cuánto varían los puntos en total. Sobre una curva de Schroeder sana, los residuos son de alrededor de 1 dB en un tramo de 30 dB, y $R^2$ queda por encima de 0,99. Si el tramo incluye la parte doblada por el ruido de fondo, la recta ya no describe los puntos: $R^2$ cae y el tiempo sale inflado. Por eso conviene calcularlo siempre, aunque el endpoint no lo devuelva.
+**Cómo leer $R^2$.** Compara lo que la recta deja sin explicar ($\sum e_i^2$) con cuánto varían los puntos en total. Sobre una curva de Schroeder sana, los residuos son de alrededor de 1 dB en un tramo de 30 dB, y $R^2$ queda por encima de 0,99. Si baja de ~0,99, el tramo no es recto: incluye la parte doblada por el ruido de fondo, una reflexión fuerte o un error, y el tiempo sale mal. Por eso conviene calcularlo siempre, aunque el endpoint no lo devuelva.
 
 <figure class="figura-tp" markdown>
 [![A la izquierda, los puntos del tramo del T30 con la recta ajustada y sus residuos debajo; a la derecha, la recta del T30 sobre una curva sana y sobre una doblada por el ruido, con su R²](../img/m3/regresion_minimos_cuadrados.png)](../img/m3/regresion_minimos_cuadrados.png)
 <figcaption markdown="span">Regresión sobre el tramo del T30 · izquierda: la recta y sus residuos (±1 dB), con $R^2$ = 0,995 y T30 = 1,00 s · derecha: con ruido de fondo a −45 dB el tramo deja de ser recto, $R^2$ cae a 0,75 y el T30 sale 3,39 s</figcaption>
 </figure>
 
-Sobre la curva de Schroeder, $x$ es el tiempo (s), $y$ el nivel (dB) y $m$ queda en dB/s (negativa). El tiempo que tardaría la curva en caer 60 dB es
+El tiempo que tardaría la curva en caer 60 dB es
 
 $$T = \frac{-60}{m}$$
 
@@ -498,12 +488,12 @@ Cada parámetro usa un tramo distinto, siempre **extrapolado** a −60 dB: en un
 
 | Parámetro | Tramo de la curva | Qué dice | Rango dinámico necesario |
 |---|---|---|---|
-| **EDT** (*Early Decay Time*) | 0 a −10 dB | Cómo se percibe la reverberación: pesa la energía temprana | — |
+| **EDT** (*Early Decay Time*) | 0 a −10 dB | Cómo se percibe la reverberación: pesa la energía temprana | 20 dB |
 | **T10** | −5 a −15 dB | Reverberación con muy poco rango dinámico | 25 dB |
 | **T20** | −5 a −25 dB | Reverberación cuando el ruido no deja llegar a −35 dB | 35 dB |
 | **T30** | −5 a −35 dB | **El estándar**: es el que se reporta como T60 | 45 dB |
 
-El rango dinámico es lo que la curva tiene que caer antes de llegar al ruido de fondo: la ISO 3382-1 pide que el ruido quede al menos 10 dB por debajo del final del tramo. Por eso T30 necesita unos 45 dB. Si $R^2$ baja de ~0,99, el tramo no es recto: hay ruido, reflexiones fuertes o un error.
+El rango dinámico es lo que la curva tiene que caer antes de llegar al ruido de fondo: la ISO 3382-1 pide que el ruido quede al menos 10 dB por debajo del final del tramo. Por eso T30 necesita unos 45 dB.
 
 ### Probalo
 
@@ -590,15 +580,15 @@ Para cada banda (al menos de 125 Hz a 4 kHz, las de la tabla de validación; las
 
     - **D50, definición** (%): qué fracción de la energía llega en los primeros 50 ms. Se relaciona con la **inteligibilidad de la palabra**.
 
-        $$D_{50} = \frac{\sum_{n=0}^{N_{50}-1} h^2[n]}{\sum_{n=0}^{N-1} h^2[n]} \times 100\,\%, \qquad N_{50} = \lfloor 0{,}050 \cdot f_s \rfloor$$
+        $$D_{50} = \frac{\sum_{n=n_0}^{n_0+N_{50}-1} h^2[n]}{\sum_{n=n_0}^{N-1} h^2[n]} \times 100\,\%, \qquad N_{50} = \lfloor 0{,}050 \cdot f_s \rfloor$$
 
     - **C80, claridad** (dB): energía de los primeros 80 ms contra la que llega después. Es el parámetro de la **claridad musical**.
 
-        $$C_{80} = 10 \log_{10}\left(\frac{\sum_{n=0}^{N_{80}-1} h^2[n]}{\sum_{n=N_{80}}^{N-1} h^2[n]}\right), \qquad N_{80} = \lfloor 0{,}080 \cdot f_s \rfloor$$
+        $$C_{80} = 10 \log_{10}\left(\frac{\sum_{n=n_0}^{n_0+N_{80}-1} h^2[n]}{\sum_{n=n_0+N_{80}}^{N-1} h^2[n]}\right), \qquad N_{80} = \lfloor 0{,}080 \cdot f_s \rfloor$$
 
         Rango típico, según la ISO 3382-1: de −5 a +5 dB; en salas sinfónicas, alrededor de −2 a +2 dB. Para la palabra se usan D50 (o C50), no C80.
 
-    Los dos cuentan desde la llegada del sonido directo: mídanlos desde el pico de cada banda filtrada.
+    Los dos cuentan desde la llegada del sonido directo: $n_0$ es el pico de cada banda filtrada, `np.argmax(np.abs(banda))`.
 
 El resultado es un diccionario `{parametro: {frecuencia_central: valor}}`.
 
@@ -813,7 +803,7 @@ Los tests de M1 y M2 (generación, filtro, 422 por archivo inválido) tienen que
 - Se levanta con `uvicorn app.main:app --reload`.
 
 !!! note "Opcionales (suman en Funcionalidad)"
-    Los que tiene la API de referencia y no son mínimos: `/utils/lundeby`, `/utils/log-scale`, `/filters/band` (todas las bandas de una vez), `/filters/frequencies` y `/analysis/impulse-response`.
+    Los que tiene la API de referencia y no son mínimos: `/utils/lundeby`, `/utils/log-scale`, `/filters/band` (todas las bandas de una vez), `/filters/frequencies` y `/analysis/impulse-response`. También el **deploy** de la API (por ejemplo en Render, como la de cátedra), que se ve en el taller del 4/11.
 
 ---
 
@@ -836,7 +826,7 @@ No alcanza con que los tests pasen. Hay que demostrar que los números **coincid
 
 <figure class="figura-tp" markdown>
 [![Comparación de T30 por banda entre RIR-API y software de referencia sobre la RI real de la Usina del Arte](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
-<figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real, la misma de la figura anterior) · RIR-API con el método de esta página vs. la API de la cátedra (con Lundeby) sobre el mismo archivo, con la tolerancia del criterio de aceptación: el formato que va en el README</figcaption>
+<figcaption markdown="span">T30 por banda · **Usina del Arte** (RI real, la misma de la figura anterior) · RIR-API con el método de esta página vs. la API de la cátedra (con Lundeby), con la tolerancia del criterio de aceptación. Es el formato de la gráfica 3 del README, pero allí la referencia tiene que ser un **software profesional** (REW, ARTA…), no la API de cátedra</figcaption>
 </figure>
 
 Comparen contra al menos **uno** de estos programas:
@@ -853,7 +843,7 @@ Con al menos **2 RI**: una sintética (con su `generate_synthetic_ir`, de T60 co
 
     El 10 % es lo que importa en salas chicas: en una sala de 0,5 s, ±0,5 s sería un 100 % de error. El tope de ±0,5 s solo actúa en salas de más de 5 s.
 
-    Si su pendiente da la mitad que la de REW, hay un bug: probablemente en el filtrado o en los límites del tramo de Schroeder.
+    Si sus tiempos dan la mitad o el doble que los de REW, casi seguro es el logaritmo: 20·log sobre energía o 10·log sobre amplitud (ver [Dónde aparece cada una, y qué logaritmo lleva](#donde-aparece-cada-una-y-que-logaritmo-lleva)). Si la diferencia es solo en los graves, revisen el filtrado.
 
 **Tabla de validación** (va en el README y en la presentación oral):
 
@@ -882,34 +872,18 @@ Estos mismos resultados se muestran en la presentación oral.
 
 ## Calidad de código
 
-Todos los requisitos de M1 y M2 aplican, más:
+Todos los requisitos de M1 y M2 aplican, más lo que mira el docente en el código y en Git:
 
 - **Cobertura de tests:** más de 80 % en el código de M3 (el nivel "Excelente" del criterio Testing de la rúbrica). Con `uv run pytest --cov=app`, miren las filas de `acoustic_parameters.py`, `routers/acoustics.py` y `routers/utils.py`.
-- **CI en verde** en cada push: lint y tests.
-- **Docstrings completos** en las funciones públicas; Swagger y ReDoc generados solos.
-- **README actualizado** con instrucciones de ejecución de la API y ejemplos `curl`.
-- **Tag `v1.0.0`** en `main` al entregar y un **Release** en GitHub con changelog resumido.
+- **Docstrings NumPy y type hints** en las funciones públicas (y en `apply_lundeby` si la hacen); Swagger y ReDoc se generan solos a partir de ellos.
+- **Capas separadas:** ninguna función de `services/` importa FastAPI, y ningún endpoint responde 500 por un caso previsible.
+- **Git:** cada función en una rama propia, mergeada vía PR con review de otro integrante; historial coherente y Conventional Commits.
+
+CI, README, tag y Release están en el [checklist de entrega](#checklist-de-entrega).
 
 ---
 
 ## Guía de entrega
-
-### La demo en vivo
-
-En el Demo Day, mostrar la API *corriendo* no es opcional: es parte central de la nota de la presentación.
-
-Guion sugerido (≈ 8 min):
-
-1. Levantar la API: `uv run uvicorn app.main:app --reload`
-1. Abrir `/docs` (Swagger) y recorrer los endpoints
-1. Subir un WAV real a `/acoustics/parameters`
-1. Mostrar la respuesta JSON con los parámetros por banda
-1. Un `curl` desde la terminal para el mismo endpoint
-
-Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. Durante la demo no depuren código.
-
-!!! note "La referencia de cátedra"
-    Úsenla como **referencia de resultados** (no como contrato de endpoints: los paths que pide esta especificación mandan). Compárense contra ella hasta el final: [rir-api.onrender.com/docs](https://rir-api.onrender.com/docs).
 
 ### Tres gráficas obligatorias
 
@@ -925,10 +899,7 @@ Son el corazón de la validación en el README y de la presentación oral.
 <figcaption markdown="span">2 · Comparación de filtros por banda</figcaption>
 </figure>
 
-<figure class="figura-tp" markdown>
-[![Validación contra software de referencia](../img/m3/validacion_comercial.png)](../img/m3/validacion_comercial.png)
-<figcaption markdown="span">3 · Validación vs. software de referencia</figcaption>
-</figure>
+**3 · Validación vs. software de referencia:** con el formato de la [figura de Validación](#validacion), y REW, ARTA u otro programa como referencia.
 
 !!! note "También conviene incluir"
     Diagrama de arquitectura del software · RI vs. envolvente · parámetros por banda · tabla comparativa RIR-API vs. referencia.
@@ -936,25 +907,11 @@ Son el corazón de la validación en el README y de la presentación oral.
 !!! note "Cómo presentarlas"
     Título y ejes rotulados **con unidades** · legibles al proyectar · para la RI mostrar **envolvente/decaimiento**, nunca audio crudo · una idea por figura.
 
-### Lo que mira el docente
-
-**Código**
-
-- [ ] Docstrings NumPy y type hints en las cuatro funciones (y en `apply_lundeby` si la hacen)
-- [ ] `tests/test_analisis.py` y los tests de M3 de `tests/test_api.py` pasando, sin `xfail`
-- [ ] Ninguna función de `services/` importa FastAPI; ningún endpoint responde 500 por un caso previsible
-
-**Git**
-
-- [ ] Cada función en una rama propia, mergeada vía PR con review de otro integrante
-- [ ] Historial coherente y Conventional Commits
-- [ ] Tag `v1.0.0` anotado y empujado al remote, y Release en GitHub
-
 ### Checklist de entrega
 
 Lo que tiene que estar en el tag `v1.0.0` el 18/11.
 
-- [ ] Las 4 funciones de análisis con sus tests pasando
+- [ ] Las 4 funciones de análisis con sus tests pasando, sin `xfail`
 - [ ] Endpoints `POST /api/v1/acoustics/parameters`, `/utils/schroeder` y `/utils/smoothing` registrados en `main.py`, con sus schemas
 - [ ] Los endpoints de M1 y M2 siguen andando
 - [ ] `pytest` en verde y más de 80 % de cobertura en el código de M3 (servicios y routers)
@@ -963,9 +920,8 @@ Lo que tiene que estar en el tag `v1.0.0` el 18/11.
 - [ ] README con instrucciones de ejecución y ejemplos `curl`
 - [ ] README con la sección **Validación**: 3 gráficas y tabla comparativa
 - [ ] `AI_LOG.md` **en la raíz**, con entradas de M0 a M3
-- [ ] Tag `v1.0.0` anotado en `main`, empujado al remote y apuntando al commit final real
+- [ ] Tag `v1.0.0` anotado en `main`, empujado al remote y apuntando al commit final real, con su Release en GitHub (changelog resumido)
 - [ ] Repositorio accesible para @maxiyommi y @jero-scafati (colaboradores)
-- [ ] Release en GitHub con changelog resumido
 - [ ] Demo lista: WAV de prueba + API levantada
 
 !!! warning "CI que engaña"
@@ -991,7 +947,7 @@ Los tropiezos más comunes de las entregas anteriores. Ninguno es de DSP: todos 
 
 ### Presentación oral (18/11): 20 minutos + 5 de preguntas
 
-Es **virtual**, en la sesión del miércoles 18/11, con **demo en vivo obligatoria** de la API (Swagger UI o requests). La evaluación de la oral (40 % de la nota del TP) está en la [rúbrica](../rubrica.md).
+Es **virtual**, en la sesión del miércoles 18/11. La evaluación de la oral (40 % de la nota del TP) está en la [rúbrica](../rubrica.md).
 
 | Parte | Tiempo | Contenido |
 |---|---|---|
@@ -1001,6 +957,16 @@ Es **virtual**, en la sesión del miércoles 18/11, con **demo en vivo obligator
 | **Reflexiones** | 3 min | dificultades, aprendizajes |
 
 Material visual legible al proyectar. Gráficos grandes, con ejes y unidades.
+
+**La demo en vivo es obligatoria**: mostrar la API *corriendo* es parte central de la nota. Guion sugerido para los 8 minutos:
+
+1. Levantar la API: `uv run uvicorn app.main:app --reload`
+1. Abrir `/docs` (Swagger) y recorrer los endpoints
+1. Subir un WAV real a `/acoustics/parameters`
+1. Mostrar la respuesta JSON con los parámetros por banda
+1. Un `curl` desde la terminal para el mismo endpoint
+
+Tengan un WAV de prueba listo y la API ya levantada antes de arrancar. Durante la demo no depuren código.
 
 !!! note "Pregunta obligatoria"
     Cada grupo tiene que estar preparado para responder:
