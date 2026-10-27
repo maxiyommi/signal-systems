@@ -103,4 +103,53 @@ export function calculateParametersFromIr(ir, fs, bandas = BANDAS_M3) {
   return out;
 }
 
+// Energía media en bloques consecutivos de `bloqueS` segundos, en dB (el paso 1 de Lundeby).
+export function energiaPorBloques(x, fs, bloqueS) {
+  const largo = Math.max(1, Math.round(bloqueS * fs));
+  const t = [], db = [];
+  for (let i = 0; i + largo <= x.length; i += largo) {
+    let e = 0;
+    for (let k = i; k < i + largo; k++) e += x[k] * x[k];
+    t.push((i + largo / 2) / fs); db.push(10 * Math.log10(e / largo + 1e-20));
+  }
+  return { t, db };
+}
+
+// apply_lundeby(ir, fs): punto donde la caída de la RI se cruza con el ruido de fondo (Lundeby et al.,
+// 1995), con los pasos de la especificación. Devuelve el índice de corte, el nivel del ruido y cada
+// iteración ({ bloqueS, t, db, ruido, desdeRuido, iMax, iFin, slope, intercept, tCruce }) para mostrarla.
+// 1. energía en bloques (10 ms la primera vez); 2. ruido en el último 10 % (después, desde 10 dB por
+// debajo del cruce anterior); 3. recta desde el máximo hasta 10 dB por encima del ruido; 4. cruce de la
+// recta con el ruido; 5. repetir con bloques de ~1/5 de lo que tarda en caer 10 dB (entre 10 y 30 ms)
+// hasta que el cruce se mueva menos de `tolS`.
+export function lundeby(ir, fs, { maxIter = 6, tolS = 0.005 } = {}) {
+  const dur = ir.length / fs;
+  const iteraciones = [];
+  let bloqueS = 0.01, tCruce = null;
+  for (let k = 0; k < maxIter; k++) {
+    const { t, db } = energiaPorBloques(ir, fs, bloqueS);
+    // Ruido: la primera vez, el último 10 %; después, desde 10 dB por debajo del cruce (al menos el 10 %).
+    let desdeRuido = 0.9 * dur;
+    if (tCruce !== null) desdeRuido = Math.min(0.9 * dur, tCruce + 10 / Math.abs(iteraciones[k - 1].slope));
+    let s = 0, n = 0;
+    for (let i = Math.floor(desdeRuido * fs); i < ir.length; i++) { s += ir[i] * ir[i]; n++; }
+    const ruido = 10 * Math.log10(s / Math.max(1, n) + 1e-20);
+    const iMax = db.indexOf(Math.max(...db));
+    let iFin = db.findIndex((d, i) => i > iMax && d <= ruido + 10);
+    if (iFin < 0) iFin = db.length - 1;
+    if (iFin - iMax < 3) break;                         // no hay caída medible por encima del ruido
+    const { slope, intercept } = linearRegression(t.slice(iMax, iFin), db.slice(iMax, iFin));
+    if (!(slope < 0)) break;
+    const nuevo = Math.min(dur, Math.max(0, (ruido - intercept) / slope));
+    iteraciones.push({ bloqueS, t, db, ruido, desdeRuido, iMax, iFin, slope, intercept, tCruce: nuevo });
+    const convergio = tCruce !== null && Math.abs(nuevo - tCruce) < tolS;
+    tCruce = nuevo;
+    if (convergio) break;
+    bloqueS = Math.min(0.03, Math.max(0.01, 10 / Math.abs(slope) / 5));
+  }
+  const ultima = iteraciones[iteraciones.length - 1];
+  if (!ultima) return { index: ir.length, noiseLevelDb: null, iteraciones };
+  return { index: Math.max(2, Math.min(ir.length, Math.round(ultima.tCruce * fs))), noiseLevelDb: ultima.ruido, iteraciones };
+}
+
 export { edcDb as applySchroederIntegral };

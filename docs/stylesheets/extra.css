@@ -447,6 +447,10 @@ body.modo-presentacion .md-typeset .figura-tp img { max-height: 70vh; width: aut
 .md-typeset .servicio-demo__tabla th, .md-typeset .servicio-demo__tabla td { padding: 0.25rem 0.7rem; }
 .md-typeset .servicio-demo__dato p { margin: 0.3rem 0 0; }
 .md-typeset .servicio-demo__respuesta { margin-top: 0.6rem; font-size: 0.72rem; }
+/* Pasos de una demo animada (apply_lundeby): el actual, resaltado */
+.md-typeset ol.servicio-demo__pasos { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.6rem 0 0; padding: 0; list-style: none; }
+.md-typeset ol.servicio-demo__pasos li { margin: 0; padding: 0.15rem 0.55rem; border: 1px solid var(--md-default-fg-color--lighter); border-radius: 1rem; font-size: 0.66rem; color: var(--md-default-fg-color--light); }
+.md-typeset ol.servicio-demo__pasos li[aria-current] { background: var(--md-primary-fg-color); border-color: var(--md-primary-fg-color); color: #fff; font-weight: 700; }
 .md-typeset .servicio-demo__respuesta pre { margin: 0.4rem 0 0; }
 /* Rótulo de carpeta arriba de cada snippet: dónde va el código */
 .md-typeset .ruta-archivo { display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.8rem 0 -0.4rem; padding: 0.15rem 0.6rem; border-radius: 0.4rem 0.4rem 0 0; font: 600 0.68rem var(--md-code-font-family); background: var(--md-code-bg-color); color: var(--md-default-fg-color--light); }

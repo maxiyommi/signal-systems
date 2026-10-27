@@ -686,6 +686,10 @@ Estima **dónde cortar** la integral de Schroeder: el punto en que la caída de 
 
 Con el punto de cruce, se integra solo hasta ahí (o se corrige la cola) antes de medir.
 
+**Miralo paso a paso.** La animación recorre los cinco pasos sobre la energía de una RI con ruido de fondo, iteración por iteración, y al final compara la curva de Schroeder truncada en el cruce con la de toda la RI. Pausala y avanzá con las flechas para leer cada paso. Subí el ruido de fondo y mirá cómo el cruce se adelanta.
+
+<div class="servicio-demo" data-servicio="lundeby"></div>
+
 ```python
 def apply_lundeby(ir: np.ndarray, fs: int) -> tuple[int, float]:
     """Estima el punto de truncamiento de la RI (metodo de Lundeby).

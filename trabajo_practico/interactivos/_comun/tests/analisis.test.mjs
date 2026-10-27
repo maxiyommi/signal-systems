@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   envolventeHilbert, mediaMovilRms, applySmoothing, linearRegression, tramoYRecta, d50, c80,
-  calculateParametersFromIr, applySchroederIntegral,
+  calculateParametersFromIr, applySchroederIntegral, lundeby,
 } from '../analisis.js';
 import { rngGauss } from '../generacion.js';
 
@@ -79,4 +79,46 @@ test('parámetros por banda: T30 en 1 kHz ±10 % con T60 = 2 s; D50 en [0, 100];
   for (const v of Object.values(q.D50)) assert.ok(v >= 0 && v <= 100);
   const c = calculateParametersFromIr(riExp(0.3, fs, 1, 7), fs);
   for (const v of Object.values(c.C80)) assert.ok(v > 0, `C80 = ${v}`);
+});
+
+// ── apply_lundeby ────────────────────────────────────────────────────────────────────────────────
+// RI exponencial (ruido gaussiano) + ruido de fondo `pisoDb` por debajo de su nivel inicial: la caída
+// (−60 dB en t60) se cruza con el ruido en t = −pisoDb · t60 / 60.
+const riConPiso = (t60, fs, dur, pisoDb, semilla = 3) => {
+  const r = rngGauss(semilla), a = Math.pow(10, pisoDb / 20);
+  return Float32Array.from({ length: Math.round(dur * fs) }, (_, i) =>
+    r() * Math.exp((-3 * Math.LN10 * i) / fs / t60) + a * r());
+};
+
+test('lundeby: el cruce cae donde la caída llega al ruido y el T30 truncado recupera el T60', () => {
+  const fs = 8000;
+  for (const [t60, piso] of [[1, -45], [0.5, -40], [1.5, -50]]) {
+    const ir = riConPiso(t60, fs, 3 * t60, piso);
+    const { index, noiseLevelDb, iteraciones } = lundeby(ir, fs);
+    const esperado = (-piso * t60) / 60;
+    assert.ok(Math.abs(index / fs - esperado) < 0.12 * esperado, `T60 ${t60}: cruce ${index / fs} vs ${esperado}`);
+    assert.ok(Math.abs(noiseLevelDb - piso) < 1.5, `ruido ${noiseLevelDb} vs ${piso}`);
+    const tr = tramoYRecta(applySchroederIntegral(ir.subarray(0, index)), fs, -5, -35)?.tr;
+    assert.ok(tr && Math.abs(tr - t60) < 0.1 * t60, `T30 truncado ${tr} vs ${t60}`);
+    assert.ok(iteraciones.length >= 2);
+  }
+});
+
+test('lundeby: itera hasta que el cruce deja de moverse, con bloques de 10 a 30 ms', () => {
+  const fs = 8000;
+  const { iteraciones } = lundeby(riConPiso(1, fs, 3, -45), fs, { maxIter: 10, tolS: 0.005 });
+  assert.ok(iteraciones.length < 10, 'converge antes del máximo de iteraciones');
+  const [a, b] = iteraciones.slice(-2);
+  assert.ok(Math.abs(a.tCruce - b.tCruce) < 0.005);
+  assert.equal(iteraciones[0].bloqueS, 0.01);
+  for (const it of iteraciones) assert.ok(it.bloqueS >= 0.01 && it.bloqueS <= 0.03);
+  for (const it of iteraciones.slice(1)) assert.ok(it.desdeRuido > it.tCruce - 0.2, 'el ruido se estima después del cruce');
+});
+
+test('lundeby: sin caída medible no inventa un corte', () => {
+  const fs = 8000, r = rngGauss(9);
+  const ruido = Float32Array.from({ length: fs }, () => r());
+  const { index, noiseLevelDb } = lundeby(ruido, fs);
+  assert.equal(index, ruido.length);
+  assert.equal(noiseLevelDb, null);
 });

@@ -6,7 +6,7 @@ const [gen, ac, gr, pr, an] = await Promise.all([
   import(new URL('generacion.js', base)), import(new URL('acustica.js', base)), import(new URL('grafico.js', base)),
   import(new URL('procesamiento.js', base)), import(new URL('analisis.js', base)),
 ]);
-const { BANDAS_M3, applySmoothing, tramoYRecta, calculateParametersFromIr, d50, c80 } = an;
+const { BANDAS_M3, applySmoothing, tramoYRecta, calculateParametersFromIr, d50, c80, lundeby, energiaPorBloques } = an;
 const { generatePinkNoise, generateVossPinkNoise, generateSineSweepPair, frecuenciaInstantanea, convolucionFFT, pendienteDbPorOctava, rngGauss } = gen;
 const { espectroPromedioDb, envolventeMinMax, fft, edcDb, riSintetica, riConRuido, puntoDeCorte } = ac;
 const { OCTAVAS, bordesOctava, bandaValida, gananciaOctava, filtrarOctava, generateSyntheticIr, getImpulseResponse, logarithmicScaleConversion, t60Schroeder, correlacionAlineada, leerWav } = pr;
@@ -885,9 +885,164 @@ function demoParametros(el) {
   return { iniciar: calcular, redibujar: dibujar };
 }
 
+// Extra opcional · apply_lundeby: el procedimiento animado, etapa por etapa y en cada iteración.
+const PASOS_LUNDEBY = ['Energía en bloques', 'Ruido de fondo', 'Recta de la caída', 'Cruce con el ruido', 'Iterar', 'Resultado'];
+function demoLundeby(el) {
+  const estado = { t60: 1, ruido: -45 };
+  el.innerHTML = `
+    ${cabecera('service', 'apply_lundeby(ir, fs)', 'Animación del algoritmo, calculado en tu navegador.')}
+    <div class="servicio-demo__controles">
+      <div class="servicio-demo__grupo" role="group" aria-label="Animación">
+        <button type="button" data-accion="play">Pausa</button>
+        <button type="button" data-accion="atras" aria-label="Paso anterior">◀</button>
+        <button type="button" data-accion="adelante" aria-label="Paso siguiente">▶</button>
+        <button type="button" data-accion="reiniciar">Reiniciar</button>
+      </div>
+      ${rango('t60', 'T60 de la sala', 0.5, 2, 0.1, estado.t60)}
+      ${rango('ruido', 'ruido de fondo', -65, -30, 5, estado.ruido)}
+    </div>
+    <ol class="servicio-demo__pasos">${PASOS_LUNDEBY.map((p, i) => `<li data-paso="${i}">${i < 5 ? `${i + 1}. ` : ''}${p}</li>`).join('')}</ol>
+    <canvas role="img" aria-label="Algoritmo de Lundeby sobre la energía de una RI con ruido de fondo"></canvas>
+    <p class="servicio-demo__dato" aria-live="polite"></p>`;
+  const [cv] = el.querySelectorAll('canvas');
+  const botonPlay = el.querySelector('[data-accion="play"]');
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ANIM = 1400, PAUSA = 2600;                    // ms de animación y de lectura por fotograma
+  let fs = 0, h = null, dur = 0, res = null, fondo = null, ref = 0, cuadros = [], completa = null, truncada = null;
+  let cuadro = 0, p = 1, tocando = false, raf = 0, t0 = 0;
+
+  function calcular() {
+    fs = contexto().sampleRate;
+    dur = Math.max(1.5, 2 * estado.t60);
+    const r = rngGauss(13);
+    h = riConRuido({ fs, t60: estado.t60, duracion: dur, pisoDb: estado.ruido, rng: () => 0.3 * r() });
+    res = lundeby(h, fs);
+    ref = Math.max(...(res.iteraciones[0]?.db ?? [0]));  // 0 dB = el bloque más alto de la primera pasada
+    fondo = energiaPorBloques(h, fs, 0.002);
+    completa = edcDb(h); truncada = edcDb(h.subarray(0, res.index));
+    // Fotogramas: las cuatro etapas de cada iteración (la 5 es "iterar") y el resultado.
+    cuadros = [];
+    res.iteraciones.forEach((it, k) => ['bloques', 'ruido', 'recta', 'cruce'].forEach((etapa) => cuadros.push({ k, etapa })));
+    cuadros.push({ k: res.iteraciones.length - 1, etapa: 'resultado' });
+    ir(0); reproducir(true);
+  }
+  const dbRel = (d) => d - ref;
+  function texto({ k, etapa }) {
+    const it = res.iteraciones[k], ant = res.iteraciones[k - 1], n = res.iteraciones.length;
+    const iter = `<strong>Iteración ${k + 1} de ${n}.</strong> `;
+    if (etapa === 'bloques') return iter + (k === 0
+      ? 'Se promedia la energía de la RI en bloques de <strong>10 ms</strong> y se pasa a dB: la caída queda como una escalera, sin la oscilación de cada muestra.'
+      : `Se vuelve a promediar con bloques de <strong>${fmt(it.bloqueS * 1000, 0)} ms</strong>, más o menos un quinto de lo que la recta anterior tardaba en caer 10 dB: con bloques más largos la escalera fluctúa menos.`);
+    if (etapa === 'ruido') return iter + (k === 0
+      ? `El ruido de fondo se estima con el <strong>último 10 %</strong> de la RI, donde se supone que la sala ya se apagó: <strong>${fmt(dbRel(it.ruido))} dB</strong>.`
+      : `Ahora el ruido se estima desde <strong>10 dB por debajo del cruce anterior</strong> (${fmt(it.desdeRuido, 2)} s) hasta el final: más muestras de ruido puro. Nivel: <strong>${fmt(dbRel(it.ruido))} dB</strong>.`);
+    if (etapa === 'recta') return iter + `Regresión lineal sobre los bloques que van <strong>desde el máximo hasta 10 dB por encima del ruido</strong> (resaltados): ahí la caída de la sala domina. Pendiente: <strong>${fmt(it.slope)} dB/s</strong> (T ≈ ${fmt(-60 / it.slope, 2)} s).`;
+    if (etapa === 'cruce') return iter + `La recta se prolonga hasta el nivel del ruido: se cruzan en <strong>${fmt(it.tCruce, 3)} s</strong>.` + (ant
+      ? ` El cruce anterior estaba en ${fmt(ant.tCruce, 3)} s: se movió ${fmt(Math.abs(it.tCruce - ant.tCruce) * 1000, 0)} ms. ${k === n - 1 ? '<strong>Ya no cambia: convergió.</strong>' : 'Todavía cambia: se repite.'}`
+      : ' Con ese punto se repiten los pasos (paso 5) hasta que el cruce deje de moverse.');
+    const t30 = (edc) => tramoYRecta(edc, fs, -5, -35)?.tr;
+    const [a, b] = [t30(completa), t30(truncada)];
+    const v = (x) => (x ? `<strong>${fmt(x, 2)} s</strong>` : '<strong>—</strong>');
+    return `<strong>Resultado:</strong> <code>index</code> = ${res.index} (${fmt(res.index / fs, 3)} s) y <code>noise_level_db</code> = ${fmt(dbRel(res.noiseLevelDb))} dB. La integral de Schroeder hasta ese punto da T30 = ${v(b)}; sobre toda la RI, ${v(a)}. T60 de la sala: <strong>${fmt(estado.t60, 1)} s</strong>.`;
+  }
+  function dibujar() {
+    if (!res) return;
+    const COL = paleta(), c = cuadros[cuadro], it = res.iteraciones[c.k];
+    const etapas = ['bloques', 'ruido', 'recta', 'cruce'], e = c.etapa === 'resultado' ? 4 : etapas.indexOf(c.etapa);
+    const ley = c.etapa === 'resultado'
+      ? [[COL.tenue, 'energía (2 ms)'], [COL.violeta, 'Schroeder sobre toda la RI'], [COL.senal, 'Schroeder hasta el cruce']]
+      : [[COL.tenue, 'energía (2 ms)'], [COL.violeta, `bloques de ${fmt(it.bloqueS * 1000, 0)} ms`], [COL.mal, 'ruido de fondo'], [COL.senal, 'recta de la caída']];
+    const k = marco(cv, { aspecto: 0.45, min: 270, max: 380 }, ley);
+    const esc = grillaTiempoDb(k, dur, -80, 10), g = k.g;
+    const linea = (x0, y0, x1, y1) => { g.beginPath(); g.moveTo(esc.xt(x0), esc.yd(y0)); g.lineTo(esc.xt(x1), esc.yd(y1)); g.stroke(); };
+    // Fondo: la energía en ventanas de 2 ms.
+    g.strokeStyle = COL.tenue; g.globalAlpha = 0.5; g.beginPath();
+    fondo.t.forEach((t, i) => (i ? g.lineTo : g.moveTo).call(g, esc.xt(t), esc.yd(dbRel(fondo.db[i])))); g.stroke(); g.globalAlpha = 1;
+    // Cruces de las iteraciones anteriores, tenues.
+    for (let j = 0; j < c.k; j++) { g.setLineDash([2, 4]); g.strokeStyle = COL.eje; linea(res.iteraciones[j].tCruce, 0, res.iteraciones[j].tCruce, -80); g.setLineDash([]); }
+    if (c.etapa === 'resultado') {
+      curvaDb(k, completa, fs, dur, esc, COL.violeta, { ancho: 2.2, envolvente: false });
+      const tr = Float32Array.from({ length: Math.round(res.index * Math.min(1, p)) }, (_, i) => truncada[i]);
+      curvaDb(k, tr, fs, dur, esc, COL.senal, { ancho: 2.6, envolvente: false });
+      g.setLineDash([4, 4]); g.strokeStyle = COL.tinta; linea(res.index / fs, 0, res.index / fs, -80); g.setLineDash([]);
+    } else {
+      // 1 · Bloques (escalera), que aparecen de izquierda a derecha en su etapa.
+      const nVis = e === 0 ? Math.ceil(it.t.length * p) : it.t.length, mitad = it.bloqueS / 2;
+      g.lineWidth = 2;
+      for (let i = 0; i < nVis; i++) {
+        const resaltado = e >= 2 && i >= it.iMax && i < it.iFin;
+        g.strokeStyle = COL.violeta; g.globalAlpha = e >= 2 && !resaltado ? 0.35 : 1;
+        linea(it.t[i] - mitad, dbRel(it.db[i]), it.t[i] + mitad, dbRel(it.db[i]));
+      }
+      g.globalAlpha = 1; g.lineWidth = 1;
+      // 2 · Ruido: la zona donde se estima y su nivel, que crece desde la derecha.
+      if (e >= 1) {
+        const pr = e === 1 ? p : 1, nr = dbRel(it.ruido);
+        g.fillStyle = COL.mal; g.globalAlpha = 0.1 * pr; g.fillRect(esc.xt(it.desdeRuido), k.m.t, esc.xt(dur) - esc.xt(it.desdeRuido), k.H - k.m.t - k.m.b); g.globalAlpha = 1;
+        g.strokeStyle = COL.mal; g.lineWidth = 2; linea(dur - pr * dur, nr, dur, nr); g.lineWidth = 1;
+        g.font = `600 ${k.tt}px ${FUENTE}`; g.fillStyle = COL.mal; g.textAlign = 'right';
+        g.fillText(`ruido ${fmt(nr)} dB`, esc.xt(dur) - 4, esc.yd(nr) - 6);
+        if (e >= 2) { g.setLineDash([5, 4]); g.strokeStyle = COL.mal; g.globalAlpha = 0.7; linea(0, nr + 10, dur, nr + 10); g.setLineDash([]); g.globalAlpha = 1; g.fillText('ruido + 10 dB', esc.xt(dur) - 4, esc.yd(nr + 10) - 6); }
+        g.textAlign = 'left';
+      }
+      // 3 · La recta, que se dibuja sobre el tramo; 4 · su prolongación hasta el ruido.
+      const recta = (t) => dbRel(it.slope * t + it.intercept);
+      const ta = it.t[it.iMax], tb = it.t[Math.max(it.iMax, it.iFin - 1)];
+      if (e >= 2) { g.strokeStyle = COL.senal; g.lineWidth = 3; const fin = e === 2 ? ta + (tb - ta) * p : tb; linea(ta, recta(ta), fin, recta(fin)); g.lineWidth = 1; }
+      if (e >= 3) {
+        const fin = e === 3 ? tb + (it.tCruce - tb) * p : it.tCruce;
+        g.strokeStyle = COL.senal; g.lineWidth = 2; g.setLineDash([6, 4]); linea(tb, recta(tb), fin, recta(fin)); g.setLineDash([]); g.lineWidth = 1;
+        if (e > 3 || p >= 1) {
+          g.strokeStyle = COL.tinta; g.setLineDash([3, 4]); linea(it.tCruce, 0, it.tCruce, -80); g.setLineDash([]);
+          g.beginPath(); g.arc(esc.xt(it.tCruce), esc.yd(dbRel(it.ruido)), 5, 0, 2 * Math.PI); g.fillStyle = COL.tinta; g.fill();
+          g.font = `600 ${k.tt}px ${FUENTE}`; g.fillText(`cruce: ${fmt(it.tCruce, 3)} s`, esc.xt(it.tCruce) + 7, k.m.t + 14);
+        }
+      }
+    }
+    rotulos(k, 'Tiempo (s)', 'Nivel (dB)');
+  }
+  function ir(n) {
+    cuadro = Math.max(0, Math.min(cuadros.length - 1, n)); p = quieto ? 1 : 0; t0 = performance.now();
+    const c = cuadros[cuadro], paso = c.etapa === 'resultado' ? 5 : ['bloques', 'ruido', 'recta', 'cruce'].indexOf(c.etapa);
+    el.querySelectorAll('[data-paso]').forEach((li) => {
+      const i = Number(li.dataset.paso);
+      li.toggleAttribute('aria-current', i === paso || (c.etapa === 'bloques' && c.k > 0 && i === 4));
+    });
+    el.querySelector('.servicio-demo__dato').innerHTML = texto(c);
+    dibujar();
+  }
+  function cuadroAnimado(ahora) {
+    const t = ahora - t0;
+    p = quieto ? 1 : Math.min(1, t / ANIM);
+    dibujar();
+    if (t >= ANIM + PAUSA) { if (cuadro === cuadros.length - 1) { reproducir(false); return; } ir(cuadro + 1); }
+    raf = requestAnimationFrame(cuadroAnimado);
+  }
+  function reproducir(si) {
+    tocando = si; cancelAnimationFrame(raf);
+    botonPlay.textContent = si ? 'Pausa' : 'Reproducir';
+    if (si) { t0 = performance.now() - p * ANIM; raf = requestAnimationFrame(cuadroAnimado); }
+  }
+  botonPlay.addEventListener('click', () => {
+    if (!tocando && cuadro === cuadros.length - 1) ir(0);
+    reproducir(!tocando);
+  });
+  el.querySelector('[data-accion="atras"]').addEventListener('click', () => { reproducir(false); ir(cuadro - 1); p = 1; dibujar(); });
+  el.querySelector('[data-accion="adelante"]').addEventListener('click', () => { reproducir(false); ir(cuadro + 1); p = 1; dibujar(); });
+  el.querySelector('[data-accion="reiniciar"]').addEventListener('click', () => { ir(0); reproducir(true); });
+  for (const c of ['t60', 'ruido']) {
+    const inp = el.querySelector(`[data-p="${c}"]`), out = el.querySelector(`[data-o="${c}"]`);
+    const mostrar = () => { out.textContent = c === 'ruido' ? `${estado[c]} dB` : `${fmt(estado[c])} s`; };
+    inp.addEventListener('input', () => { estado[c] = Number(inp.value); mostrar(); });
+    inp.addEventListener('change', calcular); mostrar();
+  }
+  alCambiarAncho(cv, dibujar);
+  return { iniciar: calcular, redibujar: dibujar };
+}
+
 const DEMOS = {
   'pink-noise': demoRuidoRosa, 'sine-sweep': demoSweep,
-  smoothing: demoSuavizado, schroeder: demoSchroeder, regression: demoRegresion, parameters: demoParametros,
+  smoothing: demoSuavizado, schroeder: demoSchroeder, regression: demoRegresion, parameters: demoParametros, lundeby: demoLundeby,
   'load-audio': demoCargarAudio, 'filter-single-band': demoFiltroOctava, 'synthetic-ir': demoRiSintetica,
   'impulse-response': demoRespuestaImpulso, 'log-scale': demoEscalaLog,
 };
