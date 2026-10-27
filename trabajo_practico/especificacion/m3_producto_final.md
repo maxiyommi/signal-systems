@@ -251,12 +251,54 @@ $$L[n] = 10 \log_{10}\left(\frac{E[n]}{E[0]}\right)$$
 
 Se calcula "de atrás para adelante": se invierte $h^2$, se acumula y se vuelve a invertir, `np.cumsum((ir**2)[::-1])[::-1]`.
 
-**Por qué no mirar directamente la RI:** la RI de una banda es ruidosa, y una recta ajustada sobre ella da un resultado distinto en cada medición. Schroeder (1965) demostró que esta integral es igual al **promedio** de infinitas caídas de ruido interrumpido: una sola RI da la curva promediada, lisa y monótona, que antes requería muchísimas mediciones.
+#### Paso a paso
 
-Dos cuidados:
+Los tres pasos sobre la misma RI, con el mismo instante $t_0$ marcado en los tres paneles:
 
-- **El ruido de fondo.** Después de la caída, la grabación no queda en silencio: queda el ruido. La integral lo suma como si fuera energía de la sala, y la curva se **dobla** hacia arriba antes de terminar. Por eso la curva se **trunca** donde la caída se cruza con el ruido (el método de Lundeby, opcional, estima ese punto) o, como mínimo, se mide solo en el tramo recto.
-- **El final:** en las últimas muestras $E[n]$ es casi cero (y si el WAV es PCM de 16 bits, la cola se cuantiza a 0 y $E$ vale **exactamente** 0): el logaritmo se va a $-\infty$. Sumen un `eps` antes del log. Y en la respuesta del endpoint, recorten los valores muy negativos (por ejemplo `np.maximum(edc, -150)`): **JSON no admite `-inf` ni `NaN`**. Con `response_model`, Pydantic los convierte en `null` sin avisar (la curva queda con huecos, y un `NaN` se confunde con "no se pudo calcular"); sin `response_model`, FastAPI responde 500.
+1. **$h^2(t)$**, la energía instantánea de la RI de una banda.
+2. **$E(t)$**, el área de $h^2$ desde $t$ hasta el final: lo que le queda a la sala. Arranca en el total, $E(0)$, y solo puede bajar, porque a medida que $t$ avanza queda menos área por sumar.
+3. **$L(t)$**, ese cociente en dB. Si la caída de la sala es exponencial (lo que predice la teoría estadística de salas), en dB es una **recta**, y su pendiente da el tiempo de reverberación: $-60$ dB en $T_{60}$.
+
+<figure class="figura-tp" markdown>
+[![Tres paneles: la energía h² con el área desde t0 sombreada, la energía que queda E(t) normalizada y la curva L(t) en dB, que es una recta](../img/m3/schroeder_paso_a_paso.png)](../img/m3/schroeder_paso_a_paso.png)
+<figcaption markdown="span">De $h^2$ a la curva de caída · el área sombreada a la derecha de $t_0$ (panel 1) es el valor de $E(t_0)$ (panel 2), y en dB es un punto de la recta (panel 3)</figcaption>
+</figure>
+
+#### Por qué integrar y no mirar directamente la RI
+
+La RI de una banda es, en la práctica, **ruido que decae**: su energía tiembla decenas de dB de una muestra a la siguiente. Promediar en ventanas cortas (lo que hace la media móvil del servicio 1) ayuda, pero la curva sigue con picos y valles, y una recta ajustada sobre ella depende de dónde caigan. La integral, en cambio, es **lisa y monótona**: cada punto suma toda la energía que viene después, y las fluctuaciones se compensan.
+
+<figure class="figura-tp" markdown>
+[![Energía de la RI en dB, energía promediada en 10 ms y curva de Schroeder sobre la caída ideal](../img/m3/schroeder_energia_vs_edc.png)](../img/m3/schroeder_energia_vs_edc.png)
+<figcaption markdown="span">La misma RI de tres formas · la energía instantánea (gris) y la promediada en 10 ms (ámbar) fluctúan alrededor de la caída ideal; la curva de Schroeder (azul) la sigue sin temblar</figcaption>
+</figure>
+
+No es solo un suavizado práctico: Schroeder (1965) demostró que esta integral es **exactamente** el promedio de infinitas caídas de **ruido interrumpido**, el método clásico de medición (excitar la sala con ruido, cortarlo y registrar cómo decae). Cada caída de ruido interrumpido sale distinta, y la norma pide promediar muchas. Con la RI alcanza con una sola medición: se integra y se obtiene esa curva promedio.
+
+<figure class="figura-tp" markdown>
+[![Ocho caídas de ruido interrumpido en gris, el promedio de doscientas y la integral de Schroeder de una sola RI superpuestos](../img/m3/schroeder_promedio.png)](../img/m3/schroeder_promedio.png)
+<figcaption markdown="span">El teorema de Schroeder, simulado · cada curva gris es una medición con ruido interrumpido; el promedio de 200 (ámbar) coincide con la integral de **una** RI (azul punteada)</figcaption>
+</figure>
+
+#### Dos cuidados
+
+**El ruido de fondo.** Después de la caída, la grabación no queda en silencio: queda el ruido (del ambiente, del micrófono, del preamplificador). La integral lo suma como si fuera energía de la sala, y la curva se **dobla**: en vez de seguir cayendo, se aplana y recién cae a pique al final del archivo. Si el tramo de medición cae sobre la parte doblada, el tiempo de reverberación sale inflado, y no por poco: en la figura, con el ruido a −45 dB, el T30 de una sala de 1 s da **más de 3 s**.
+
+La solución es **truncar** la integral donde la caída se cruza con el ruido (el método de Lundeby, opcional, estima ese punto) o, como mínimo, medir solo en el tramo recto y verificar el rango dinámico (ver [Cuándo un tiempo no se puede calcular](#servicio-4-calculate_parameters_from_irir-fs)).
+
+<figure class="figura-tp" markdown>
+[![A la izquierda, la energía de una RI que cae hasta el ruido de fondo a −45 dB; a la derecha, curvas de Schroeder con ruido a −80, −60 y −45 dB y la truncada en el cruce](../img/m3/schroeder_ruido_fondo.png)](../img/m3/schroeder_ruido_fondo.png)
+<figcaption markdown="span">Ruido de fondo · con −80 y −60 dB el tramo del T30 (−5 a −35 dB) queda en la parte recta y da 1,00 s; con −45 dB la curva se dobla dentro del tramo y da 3,39 s; truncada en el cruce con el ruido (0,69 s), 0,99 s</figcaption>
+</figure>
+
+**El final de la curva.** En las últimas muestras $E[n]$ es casi cero (y si el WAV es PCM de 16 bits, la cola se cuantiza a 0 y $E$ vale **exactamente** 0): el logaritmo se va a $-\infty$. Sumen un `eps` antes del log. Y en la respuesta del endpoint, recorten los valores muy negativos (por ejemplo `np.maximum(edc, -150)`): **JSON no admite `-inf` ni `NaN`**. Con `response_model`, Pydantic los convierte en `null` sin avisar (la curva queda con huecos, y un `NaN` se confunde con "no se pudo calcular"); sin `response_model`, FastAPI responde 500.
+
+<figure class="figura-tp" markdown>
+[![Curva de Schroeder de una RI guardada en 16 bits: cae en escalones al final y queda un hueco donde la energía vale cero; con eps y recorte queda en −150 dB](../img/m3/schroeder_final.png)](../img/m3/schroeder_final.png)
+<figcaption markdown="span">Las últimas muestras · al cuantizar a 16 bits la cola queda en 0: sin cuidado, la curva tiene un hueco de $-\infty$ (azul); con `eps` y `np.maximum(edc, -150)`, es finita en todo el largo (ámbar)</figcaption>
+</figure>
+
+<small>Las figuras de este servicio usan una RI sintética de la octava de 1 kHz con T60 = 1 s; se regeneran con `trabajo_practico/img/m3/generar_figuras_schroeder.py`.</small>
 
 ### Probalo
 
