@@ -81,7 +81,7 @@ En M3 aparecen todas estas palabras, a veces en la misma oración. Cada una nomb
 Tres reglas para no mezclarlas:
 
 - **El nivel no es otra magnitud: es una forma de escribir un cociente.** Siempre tiene una referencia, y "−45 dB" sin decir "respecto de qué" no significa nada. En esta página, 0 dB es el pico de la caída, o la energía total $E[0]$ en la curva de Schroeder.
-- **10·log para energía y potencia, 20·log para amplitud y RMS.** Así, el mismo cambio da los mismos dB: la amplitud a la mitad es la energía a un cuarto, y las dos cuentas dan −6 dB.
+- **10·log para energía y potencia, 20·log para amplitud y RMS.** Así, el mismo cambio da los mismos dB: la amplitud a la mitad es la energía a un cuarto, y las dos cuentas dan −6 dB. Dónde va cada uno en el TP, más abajo: [10·log o 20·log, función por función](#10log-o-20log-funcion-por-funcion).
 - **La energía se acumula y la potencia se promedia.** La energía de una señal crece con su duración; la potencia, no. Por eso la RI, que se apaga, se describe por su **energía**, y el ruido de fondo, que no se apaga, por su **potencia**.
 
 Dónde aparece cada una en M3:
@@ -95,6 +95,31 @@ Dónde aparece cada una en M3:
 | D50 (servicio 4) | cociente de energías, en %, sin dB |
 | C80 (servicio 4) | nivel de un cociente de energías, en dB |
 | "Ruido de fondo a −45 dB" | nivel de la potencia del ruido respecto de la potencia en el pico de la caída |
+
+#### 10·log o 20·log, función por función
+
+La pregunta es siempre la misma: **¿lo que entra al logaritmo es una amplitud o ya está al cuadrado?** Si es amplitud ($h$, $|H|$, la envolvente), va 20·log. Si ya está al cuadrado ($h^2$, sus sumas, sus promedios, sus cocientes), va 10·log.
+
+| Dónde | Qué entra al log | Log | Quién lo aplica |
+|---|---|---|---|
+| M1 · pendiente del ruido rosa (test) | densidad espectral de potencia | 10·log | el test |
+| M2 · respuesta del filtro de octava | ganancia $\lvert H(f) \rvert$ | 20·log | el gráfico |
+| M2 · `logarithmic_scale_conversion(signal)` | la RI $h$ o una envolvente | 20·log | **la función**: hace $20 \log_{10}(\lvert x \rvert / \max \lvert x \rvert)$ |
+| M3 · envolvente en dB (servicio 1) | la envolvente, en amplitud | 20·log | `logarithmic_scale_conversion` |
+| M3 · curva de Schroeder (servicio 2) | $E[n]/E[0]$, energía | 10·log | **`apply_schroeder_integral`**, adentro |
+| M3 · C80 (servicio 4) | cociente de energías | 10·log | `calculate_parameters_from_ir` |
+| M3 · D50 (servicio 4) | cociente de energías | ninguno: es un % | — |
+| M3 · Lundeby: bloques y ruido de fondo | potencia media | 10·log | `apply_lundeby` |
+| M3 · rango dinámico | dos niveles que ya están en dB | ninguno: **se restan** | — |
+
+Los errores que aparecen, y cómo se notan:
+
+- **20·log sobre energía**, por ejemplo `logarithmic_scale_conversion(h**2)` o sobre la suma de Schroeder. Los dB salen al doble, la curva cae el doble de rápido y **los tiempos de reverberación salen a la mitad**: una sala de 1 s da un T30 de 0,50 s.
+- **10·log sobre amplitud**, por ejemplo sobre la envolvente de Hilbert sin elevarla al cuadrado. Los dB salen a la mitad y **los tiempos salen al doble**: 2,00 s para la misma sala.
+- **Dos veces el log.** Pasar la curva de Schroeder, que `apply_schroeder_integral` ya devuelve en dB, por `logarithmic_scale_conversion`. El resultado no tiene sentido físico.
+- **Promediar en dB.** El promedio de los niveles no es el nivel del promedio: para estimar el ruido de fondo, promediar $10 \log_{10} h^2$ muestra a muestra da un nivel 5,5 dB más bajo que $10 \log_{10}$ del promedio de $h^2$.
+
+La regla que evita los cuatro: **todas las cuentas (sumas, promedios, cocientes, integrales) se hacen en lineal, y se pasa a dB una sola vez, al final**, con el logaritmo que corresponde a lo que entra.
 
 ---
 
