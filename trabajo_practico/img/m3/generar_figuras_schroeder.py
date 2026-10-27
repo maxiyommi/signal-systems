@@ -170,7 +170,7 @@ def figura_energia_vs_edc() -> None:
             label=f"Caída ideal: −60 dB en {coma(T60, 1)} s")
     ax.set_ylim(-90, 3)
     ax.set_xlim(0, 1.5)
-    estilo(ax, "Por qué integrar: la energía tiembla, la curva de Schroeder no",
+    estilo(ax, "Por qué integrar: la energía fluctúa, la curva de Schroeder no",
            "Tiempo [s]", "Nivel [dB]")
     ax.legend(fontsize=13, frameon=False, loc="upper right")
     guardar(fig, "schroeder_energia_vs_edc.png",
@@ -278,7 +278,79 @@ def figura_final() -> None:
     guardar(fig, "schroeder_final.png", NOTA + " · RI guardada en PCM de 16 bits, sin ruido de fondo")
 
 
+def regresion(x: np.ndarray, y: np.ndarray) -> tuple[float, float, float]:
+    """Mínimos cuadrados con las fórmulas de la página (lo que pide linear_regression)."""
+    n = len(x)
+    m = (n * np.sum(x * y) - np.sum(x) * np.sum(y)) / (n * np.sum(x ** 2) - np.sum(x) ** 2)
+    b = (np.sum(y) - m * np.sum(x)) / n
+    r2 = 1 - np.sum((y - (m * x + b)) ** 2) / np.sum((y - np.mean(y)) ** 2)
+    return m, b, r2
+
+
+def figura_regresion() -> None:
+    """Qué minimiza la regresión (residuos) y cómo R² avisa que el tramo no es recto."""
+    fig = plt.figure(figsize=(16, 7.2), dpi=100, facecolor=FONDO)
+    grilla = fig.add_gridspec(2, 2, height_ratios=[2.2, 1], width_ratios=[1, 1.1], hspace=0.08)
+
+    h = ri_sintetica(duracion=2.0)
+    edc = schroeder(h)
+    t = np.arange(len(h)) / FS
+    tramo = (edc <= -5) & (edc >= -35)
+    x, y = t[tramo], edc[tramo]
+    m, b, r2 = regresion(x, y)
+    paso = int(0.02 * FS)  # un punto cada 20 ms, para que se vean
+    xs, ys = x[::paso], y[::paso]
+
+    ax = fig.add_subplot(grilla[0, 0])
+    ax.plot(t, edc, color=GRIS, linewidth=1.4, label="Curva de Schroeder")
+    ax.plot(xs, ys, "o", color=AZUL, markersize=6, label="Puntos del tramo (xᵢ, yᵢ)")
+    ax.plot(x, m * x + b, color=AMBAR, linewidth=2.4, label="Recta ŷ = m·x + b")
+    ax.set_xlim(0, 0.75)
+    ax.set_ylim(-45, 3)
+    ax.tick_params(labelbottom=False)
+    estilo(ax, "Qué minimiza: la suma de los residuos al cuadrado", "", "Nivel [dB]", 16)
+    ax.legend(fontsize=12, frameon=False, loc="upper right")
+    ax.text(0.02, -40, f"m = {coma(m, 1).replace('-', '−')} dB/s · R² = {coma(r2, 4)}"
+            f" · T30 = −60 / m = {coma(-60 / m)} s", fontsize=13, color=TINTA)
+
+    ax = fig.add_subplot(grilla[1, 0])
+    res = ys - (m * xs + b)
+    ax.vlines(xs, 0, res, color=AZUL, linewidth=1.6)
+    ax.plot(xs, res, "o", color=AZUL, markersize=5)
+    ax.axhline(0, color=AMBAR, linewidth=2)
+    ax.set_xlim(0, 0.75)
+    estilo(ax, "", "Tiempo [s]", "Residuo [dB]", 16)
+    tope = 1.6 * np.max(np.abs(res))
+    ax.set_ylim(-tope, tope)
+    ax.text(0.02, 0.92 * tope, "residuo eᵢ = yᵢ − ŷᵢ: la distancia vertical a la recta", va="top",
+            fontsize=12, color=EJE)
+
+    ax = fig.add_subplot(grilla[:, 1])
+    for nivel, color in ((-80, AZUL), (-45, ROJO)):
+        h = ri_sintetica(ruido_db=nivel)
+        edc = schroeder(h)
+        t = np.arange(len(h)) / FS
+        tramo = (edc <= -5) & (edc >= -35)
+        m, b, r2 = regresion(t[tramo], edc[tramo])
+        ax.plot(t, edc, color=color, linewidth=2.2, alpha=0.5)
+        ax.plot(t[tramo], m * t[tramo] + b, color=color, linewidth=2.6, linestyle="--",
+                label=f"Ruido a −{-nivel} dB · R² = {coma(r2, 3)} · T30 = {coma(-60 / m)} s")
+    ax.axhline(-5, color=EJE, linestyle=":", linewidth=1)
+    ax.axhline(-35, color=EJE, linestyle=":", linewidth=1)
+    ax.text(0.02, -36, "tramo del T30: de −5 a −35 dB", va="top", fontsize=12, color=EJE)
+    ax.set_ylim(-60, 3)
+    estilo(ax, "R² avisa: el tramo no es recto", "Tiempo [s]", "Nivel [dB]", 16)
+    ax.legend(fontsize=12, frameon=False, loc="upper right")
+
+    fig.text(0.012, 0.015, NOTA + " · curvas en trazo fino, rectas ajustadas en el tramo del T30 en trazo grueso",
+             fontsize=11, color=EJE)
+    fig.subplots_adjust(left=0.06, right=0.985, top=0.93, bottom=0.12, wspace=0.18)
+    fig.savefig(AQUI / "regresion_minimos_cuadrados.png", facecolor=FONDO)
+    plt.close(fig)
+
+
 def main() -> None:
+    figura_regresion()
     figura_paso_a_paso()
     figura_energia_vs_edc()
     figura_promedio()

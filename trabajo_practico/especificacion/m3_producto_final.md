@@ -266,11 +266,16 @@ Los tres pasos sobre la misma RI, con el mismo instante $t_0$ marcado en los tre
 
 #### Por qué integrar y no mirar directamente la RI
 
-La RI de una banda es, en la práctica, **ruido que decae**: su energía tiembla decenas de dB de una muestra a la siguiente. Promediar en ventanas cortas (lo que hace la media móvil del servicio 1) ayuda, pero la curva sigue con picos y valles, y una recta ajustada sobre ella depende de dónde caigan. La integral, en cambio, es **lisa y monótona**: cada punto suma toda la energía que viene después, y las fluctuaciones se compensan.
+La RI de una banda es, en la práctica, **ruido que decae**: una oscilación a la frecuencia de la banda (unos mil ciclos por segundo en la de 1 kHz) cuya amplitud varía al azar, porque es la suma de miles de reflexiones que llegan con fases distintas. Eso tiene dos consecuencias en $h^2$ medida en dB:
+
+- **La oscilación:** $h$ pasa por cero dos veces por ciclo, y en cada cero $10 \log_{10} h^2$ se hunde hacia $-\infty$. Entre muestras separadas por medio milisegundo el nivel puede cambiar 30 o 40 dB: es la franja gris de la figura.
+- **La amplitud al azar:** aunque se quite la oscilación promediando en ventanas de 10 ms (curva ámbar, lo que hace la media móvil del servicio 1), quedan picos y valles de varios dB alrededor de la caída.
+
+Una recta ajustada sobre cualquiera de las dos depende de dónde caigan esos picos. La integral, en cambio, es **lisa y monótona**: cada punto suma toda la energía que viene después, y las fluctuaciones se compensan.
 
 <figure class="figura-tp" markdown>
 [![Energía de la RI en dB, energía promediada en 10 ms y curva de Schroeder sobre la caída ideal](../img/m3/schroeder_energia_vs_edc.png)](../img/m3/schroeder_energia_vs_edc.png)
-<figcaption markdown="span">La misma RI de tres formas · la energía instantánea (gris) y la promediada en 10 ms (ámbar) fluctúan alrededor de la caída ideal; la curva de Schroeder (azul) la sigue sin temblar</figcaption>
+<figcaption markdown="span">La misma RI de tres formas · la energía instantánea (gris) y la promediada en 10 ms (ámbar) fluctúan alrededor de la caída ideal; la curva de Schroeder (azul) la sigue sin fluctuar</figcaption>
 </figure>
 
 No es solo un suavizado práctico: Schroeder (1965) demostró que esta integral es **exactamente** el promedio de infinitas caídas de **ruido interrumpido**, el método clásico de medición (excitar la sala con ruido, cortarlo y registrar cómo decae). Cada caída de ruido interrumpido sale distinta, y la norma pide promediar muchas. Con la RI alcanza con una sola medición: se integra y se obtiene esa curva promedio.
@@ -279,6 +284,18 @@ No es solo un suavizado práctico: Schroeder (1965) demostró que esta integral 
 [![Ocho caídas de ruido interrumpido en gris, el promedio de doscientas y la integral de Schroeder de una sola RI superpuestos](../img/m3/schroeder_promedio.png)](../img/m3/schroeder_promedio.png)
 <figcaption markdown="span">El teorema de Schroeder, simulado · cada curva gris es una medición con ruido interrumpido; el promedio de 200 (ámbar) coincide con la integral de **una** RI (azul punteada)</figcaption>
 </figure>
+
+!!! question "¿Hace falta suavizar antes de integrar?"
+    **No: alcanza con Schroeder sobre $h^2$**, que es lo que indica la ISO 3382-1. La integral ya es un promedio, así que suavizar antes no mejora los tiempos de reverberación, y la media móvil empeora el EDT: redondea el comienzo de la caída, justo los primeros 10 dB sobre los que se mide. Medido sobre RI sintéticas (tres por sala):
+
+    | Antes de integrar | T30 · sala de 1 s | EDT · sala de 0,3 s |
+    |---|---|---|
+    | Nada: $h^2$ directo | 1,00 – 1,02 s | 0,28 – 0,32 s |
+    | Envolvente de Hilbert al cuadrado | igual | igual |
+    | Media móvil de 10 ms | igual | 0,31 – 0,33 s |
+    | Media móvil de 50 ms | igual | **0,48 – 0,53 s** |
+
+    La dispersión entre RI (EDT de 0,28 a 0,32 s para la misma sala) es propia de cada medición, y suavizar no la reduce. El suavizado tiene otros usos: **mostrar** la caída (servicio 1) y, dentro de Lundeby, promediar la energía en intervalos de 10 a 30 ms para estimar el nivel del ruido y el punto de cruce.
 
 #### Dos cuidados
 
@@ -402,6 +419,15 @@ $$m = \frac{N \sum x_i y_i - \sum x_i \sum y_i}{N \sum x_i^2 - \left(\sum x_i\ri
 y el **coeficiente de determinación**, que dice qué tan bien la recta explica los puntos (1 es perfecto):
 
 $$R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}, \qquad \hat{y}_i = m x_i + b$$
+
+**Qué minimiza.** Para cada punto, el **residuo** $e_i = y_i - \hat{y}_i$ es la distancia vertical entre el punto y la recta. Mínimos cuadrados elige la $m$ y la $b$ que hacen mínima $\sum e_i^2$. Se elevan al cuadrado para que los residuos positivos y negativos no se cancelen, y para que un punto muy lejos pese más que varios cerca. Las fórmulas de arriba salen de igualar a cero las derivadas de esa suma respecto de $m$ y de $b$: no hay que iterar, es una cuenta cerrada.
+
+**Cómo leer $R^2$.** Compara lo que la recta deja sin explicar ($\sum e_i^2$) con cuánto varían los puntos en total. Sobre una curva de Schroeder sana, los residuos son de alrededor de 1 dB en un tramo de 30 dB, y $R^2$ queda por encima de 0,99. Si el tramo incluye la parte doblada por el ruido de fondo, la recta ya no describe los puntos: $R^2$ cae y el tiempo sale inflado. Por eso conviene calcularlo siempre, aunque el endpoint no lo devuelva.
+
+<figure class="figura-tp" markdown>
+[![A la izquierda, los puntos del tramo del T30 con la recta ajustada y sus residuos debajo; a la derecha, la recta del T30 sobre una curva sana y sobre una doblada por el ruido, con su R²](../img/m3/regresion_minimos_cuadrados.png)](../img/m3/regresion_minimos_cuadrados.png)
+<figcaption markdown="span">Regresión sobre el tramo del T30 · izquierda: la recta y sus residuos (±1 dB), con $R^2$ = 0,995 y T30 = 1,00 s · derecha: con ruido de fondo a −45 dB el tramo deja de ser recto, $R^2$ cae a 0,75 y el T30 sale 3,39 s</figcaption>
+</figure>
 
 Sobre la curva de Schroeder, $x$ es el tiempo (s), $y$ el nivel (dB) y $m$ queda en dB/s (negativa). El tiempo que tardaría la curva en caer 60 dB es
 
