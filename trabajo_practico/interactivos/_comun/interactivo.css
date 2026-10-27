@@ -1,0 +1,225 @@
+/* Páginas interactivas del TP (escucha a ciegas, sala, curva de caída). Se abren en una pestaña
+   aparte desde el sitio y comparten su estilo: misma paleta, tipografía y componentes que la landing.
+   El tema (oscuro por defecto, claro si se eligió en el sitio) lo fija _comun/tema.js en <html data-tema>. */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&display=swap");
+
+:root, [data-tema="oscuro"] {
+  --fondo: #0d1117; --superficie: #161b22; --borde: #30363d;
+  --texto: #c9d1d9; --texto-tenue: #8b949e; --texto-muy-tenue: #6e7681;
+  --primario: #4f8ff7; --acento: #818cf8; --enlace: #58a6ff;
+  /* gráficos (los lee grafico.js → paleta()) */
+  --g-fondo: #161b22; --g-tinta: #c9d1d9; --g-violeta: #818cf8; --g-senal: #fbbf24;
+  --g-grilla: #30363d; --g-eje: #8b949e; --g-tenue: #6e7681; --g-mal: #f85149;
+  color-scheme: dark;
+}
+[data-tema="claro"] {
+  --fondo: #ffffff; --superficie: #f6f8fa; --borde: #d0d7de;
+  --texto: #1f2328; --texto-tenue: #59636e; --texto-muy-tenue: #8c959f;
+  --primario: #1e40af; --acento: #6d28d9; --enlace: #1e40af;
+  --g-fondo: #f6f8fa; --g-tinta: #1f2328; --g-violeta: #6d28d9; --g-senal: #d97706;
+  --g-grilla: #d8dee4; --g-eje: #59636e; --g-tenue: #8c959f; --g-mal: #cf222e;
+  color-scheme: light;
+}
+/* Nombres de Material para que el botón de presentación y la pizarra (presentacion.css) se vean igual que en el sitio */
+:root {
+  --md-default-bg-color: var(--superficie); --md-default-fg-color: var(--texto);
+  --md-primary-fg-color: var(--primario); --md-primary-bg-color: #fff; --md-accent-fg-color: var(--acento);
+  --f-texto: "Roboto", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--fondo); color: var(--texto); font: 400 16px/1.5 var(--f-texto); }
+a { color: var(--enlace); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--primario); outline-offset: 3px; }
+
+/* Barra superior, como la del sitio */
+.barra-sitio {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.55rem 1.2rem; background: var(--fondo); border-bottom: 1px solid var(--borde);
+}
+.barra-sitio__marca { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; color: var(--texto); }
+.barra-sitio__marca img { width: 1.9rem; height: 1.9rem; }
+.barra-sitio__volver { font-size: 0.85rem; font-weight: 500; }
+
+main.interactivo { max-width: none; margin: 0; padding: 1.6rem clamp(1rem, 3vw, 2.5rem) 2.4rem; }   /* todo el ancho disponible */
+.encabezado h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.4rem 0; }
+.encabezado p { margin: 0 0 1.2rem 0; color: var(--texto-tenue); }
+
+/* Tarjetas: mismo tratamiento que las de la landing (superficie, borde fino, esquinas redondeadas) */
+.escena, .graficos canvas, .sala .ecograma, .curva canvas {
+  display: block; width: 100%; background: var(--superficie); border: 1px solid var(--borde); border-radius: 0.6rem;
+}
+.escena { position: relative; overflow: hidden; }
+.escena canvas { display: block; width: 100%; height: 100%; }
+.graficos canvas, .sala .ecograma, .curva canvas { height: auto; margin-bottom: 0.5em; }
+.sala-escena { aspect-ratio: 16 / 10; max-height: 86vh; min-height: 560px; }
+
+/* Controles: botones redondeados como los de "Arrancá por acá" de la landing */
+.controles { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em 0.6em; margin: 0.7em 0; font-size: 0.92rem; }
+.controles button {
+  font: 500 1em var(--f-texto); color: var(--texto); background: var(--superficie);
+  border: 1px solid var(--borde); border-radius: 2rem; padding: 0.45em 1em; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.controles button:hover { border-color: var(--primario); }
+.controles button[aria-pressed="true"] { background: var(--primario); border-color: var(--primario); color: #fff; }
+.controles button:disabled { opacity: 0.45; cursor: default; }
+.controles label { display: flex; align-items: center; gap: 0.5em; color: var(--texto-tenue); font-weight: 500; }
+.controles input[type="range"] { accent-color: var(--primario); width: 12em; max-width: 45vw; }
+.controles output { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--texto); }
+.small { font-size: 0.85rem; color: var(--texto-tenue); }
+.credito { font-size: 0.78rem; color: var(--texto-tenue); margin-top: 1rem; }
+
+/* escenas */
+.escucha-fila { margin-bottom: 1em; }
+.escucha-fila .controles strong { min-width: 5em; }
+.sala .t60, .curva .resultado { font-weight: 700; }
+
+@media (max-width: 600px) {
+  html, body { font-size: 15px; }
+  .barra-sitio { padding: 0.5rem 0.8rem; }
+  .barra-sitio__marca span { display: none; }
+  main.interactivo { padding: 1rem 0.7rem 1.4rem; }
+  .encabezado h1 { font-size: 1.5rem; }
+  .sala-escena { aspect-ratio: 4 / 3; min-height: 0; }
+  .controles { gap: 0.4em 0.5em; font-size: 0.88rem; }
+  .controles label { flex-wrap: wrap; }
+  .controles input[type="range"] { width: 100%; max-width: none; }
+  .escucha-fila .controles strong { min-width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .controles button { transition: none; } }
+
+/* Panel de parámetros: grupos de controles en tarjetas, como las de la landing */
+.parametros { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.8rem; margin: 1rem 0; }
+.parametros fieldset {
+  margin: 0; padding: 0.7rem 0.9rem 0.8rem; min-width: 0;
+  background: var(--superficie); border: 1px solid var(--borde); border-radius: 0.6rem;
+  display: flex; flex-direction: column; gap: 0.55rem;
+}
+.parametros legend { padding: 0 0.3rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.02em; color: var(--texto-tenue); }
+.parametros label { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.2rem 0.6rem; font-size: 0.9rem; color: var(--texto); }
+.parametros label input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--primario); }
+.parametros label output { grid-row: 1; grid-column: 2; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--texto); }
+.parametros label.casilla { display: flex; gap: 0.5rem; }
+.parametros label.casilla input { accent-color: var(--primario); width: 1.05rem; height: 1.05rem; }
+.parametros [hidden] { display: none !important; }
+.parametros .small { margin: 0; }
+.segmentado { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.segmentado button, .boton-chico {
+  font: 500 0.85rem var(--f-texto); color: var(--texto); background: var(--fondo);
+  border: 1px solid var(--borde); border-radius: 2rem; padding: 0.35em 0.85em; cursor: pointer;
+}
+.segmentado button:hover, .boton-chico:hover { border-color: var(--primario); }
+.segmentado button[aria-pressed="true"] { background: var(--primario); border-color: var(--primario); color: #fff; }
+.boton-chico { align-self: flex-start; }
+
+/* Resultados */
+.resultados { margin-top: 0.4rem; }
+.resultados .resultado { margin: 0 0 0.3rem; font-size: 1.05rem; }
+.resultados .mal, .tabla-resultados .mal { color: var(--g-mal); }
+.tabla-resultados .ok { color: #3fb950; }
+[data-tema="claro"] .tabla-resultados .ok { color: #1a7f37; }
+.tabla-resultados { border-collapse: collapse; width: 100%; margin-top: 0.6rem; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+.tabla-resultados th, .tabla-resultados td { padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--borde); text-align: left; }
+.tabla-resultados thead th { font-size: 0.75rem; color: var(--texto-tenue); font-weight: 700; }
+.tabla-resultados tr.actual { background: var(--superficie); }
+.tabla-resultados tr.actual th { color: var(--acento); }
+.curva canvas { cursor: default; }
+
+/* Secciones adicionales dentro de un interactivo (p. ej. la convolución en vivo) */
+.seccion-extra { margin-top: 2.2rem; padding-top: 1.4rem; border-top: 1px solid var(--borde); }
+.seccion-extra h2 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 0.3rem; }
+.convolucion canvas { display: block; width: 100%; height: auto; margin-bottom: 0.5em; background: var(--superficie); border: 1px solid var(--borde); border-radius: 0.6rem; }
+.controles button[data-escuchar][aria-pressed="true"] { background: var(--primario); border-color: var(--primario); color: #fff; }
+code { font-size: 0.9em; padding: 0.05em 0.3em; border-radius: 0.25rem; background: var(--superficie); border: 1px solid var(--borde); }
+
+/* "Para pensar": como las admonitions de pregunta del sitio. En modo presentación, de a una y más grandes. */
+.para-pensar {
+  margin: 1.6rem 0 1rem; padding: 0.9rem 1.1rem; border: 1px solid var(--borde); border-left: 4px solid #34d399;
+  border-radius: 0.6rem; background: var(--superficie);
+}
+[data-tema="claro"] .para-pensar { border-left-color: #059669; }
+.para-pensar h2 { margin: 0 0 0.5rem; font-size: 1rem; font-weight: 800; color: #34d399; }
+[data-tema="claro"] .para-pensar h2 { color: #059669; }
+.para-pensar ol { margin: 0; padding-left: 1.3rem; }
+.para-pensar li { margin: 0.35rem 0; }
+.para-pensar__nav { display: flex; align-items: center; gap: 0.8rem; margin-top: 0.8rem; }
+.para-pensar__nav[hidden] { display: none; }
+.para-pensar__nav span { font-size: 0.85rem; color: var(--texto-tenue); }
+.para-pensar__nav button {
+  font: 500 0.9rem var(--f-texto); color: var(--texto); background: var(--fondo); cursor: pointer;
+  border: 1px solid var(--borde); border-radius: 2rem; padding: 0.4em 1em;
+}
+.para-pensar__nav button:hover:not(:disabled) { border-color: var(--primario); }
+.para-pensar__nav button:disabled { opacity: 0.4; cursor: default; }
+.modo-presentacion .para-pensar li { font-size: 1.35rem; line-height: 1.45; margin: 0.6rem 0; }
+.modo-presentacion .para-pensar li.ultima { color: var(--texto); font-weight: 700; }
+.modo-presentacion .para-pensar li:not(.ultima) { color: var(--texto-tenue); }
+
+/* Simuladores (la sala, la curva de caída…): controles flotando sobre la escena (vidrio), sin tapar el centro de la escena */
+.sala-simulacion, .sim { position: relative; margin-bottom: 0.6rem; }
+.sala-capas, .sim-capas {
+  position: absolute; inset: 0; padding: 0.6rem; pointer-events: none;
+  display: grid; grid-template-columns: minmax(0, auto) 1fr; grid-template-rows: auto minmax(0, 1fr) auto; gap: 0.6rem;
+}
+.sala-flotante, .sim-flotante {
+  pointer-events: auto; border: 1px solid var(--borde); border-radius: 0.7rem; padding: 0.5rem 0.6rem;
+  background: color-mix(in srgb, var(--superficie) 78%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(140%); backdrop-filter: blur(10px) saturate(140%);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+.sala-flotante--arriba, .sim-flotante--arriba { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; justify-self: start; }
+.sala-flotante--abajo, .sim-flotante--abajo { grid-column: 1 / -1; grid-row: 3; display: flex; flex-direction: column; gap: 0.2rem; padding-bottom: 0.2rem; }
+.sala-lecturas, .sim-lecturas { display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem; align-items: baseline; font-size: 0.82rem; }
+.sala-lecturas .datos, .sim-lecturas .datos { margin: 0; }
+.sala-flotante--abajo .ecograma, .sim-flotante--abajo .ecograma { background: transparent; border: 0; margin: 0; }
+.sala-panel, .sim-panel { grid-row: 2; align-self: start; max-height: 100%; overflow: auto; width: 16rem; padding: 0.45rem; }
+.sala-panel[data-abierto="false"], .sim-panel[data-abierto="false"] { width: auto; }
+.sala-panel[data-abierto="false"] .sala-panel__cuerpo, .sim-panel[data-abierto="false"] .sim-panel__cuerpo { display: none; }
+.sala-panel__plegar, .sim-panel__plegar {
+  width: 100%; font: 600 0.8rem var(--f-texto); color: var(--texto); background: transparent; border: 0; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; padding: 0.2rem 0.3rem;
+}
+.sala-panel__plegar::after, .sim-panel__plegar::after { content: "‹"; font-size: 1.1rem; line-height: 1; transition: transform 0.2s; }
+.sala-panel[data-abierto="false"] .sala-panel__plegar::after, .sim-panel[data-abierto="false"] .sim-panel__plegar::after { transform: rotate(180deg); }
+.sala-panel .parametros, .sim-panel .parametros { grid-template-columns: 1fr; gap: 0.5rem; margin: 0.4rem 0 0; }
+.sala-panel .parametros fieldset, .sim-panel .parametros fieldset { padding: 0.5rem 0.6rem; background: transparent; }
+.sala-panel .parametros label, .sim-panel .parametros label { font-size: 0.82rem; }
+.sala-simulacion .segmentado button, .sim .segmentado button { font-size: 0.8rem; padding: 0.3em 0.8em; }
+/* En el celular los controles no entran encima: pasan debajo de la escena */
+@media (max-width: 700px) {
+  .sala-capas, .sim-capas { position: static; display: flex; flex-direction: column; padding: 0.5rem 0 0; }
+  .sala-flotante, .sim-flotante { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--superficie); box-shadow: none; }
+  .sala-panel, .sim-panel { width: auto; max-height: none; }
+}
+@media (prefers-reduced-motion: reduce) { .sala-panel__plegar::after, .sim-panel__plegar::after { transition: none; } }
+
+/* La curva de caída como simulador: el gráfico es la escena */
+.sim > canvas { display: block; width: 100%; border-radius: 0.6rem; background: var(--superficie); border: 1px solid var(--borde); }
+.sim--caida .sim-flotante--abajo { justify-self: stretch; }
+.sim .resultados { margin: 0; }
+.sim .resultados .resultado { font-size: 0.9rem; margin: 0 0 0.35rem; }
+.chips-param { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip-param {
+  display: inline-flex; gap: 0.35rem; align-items: baseline; padding: 0.2rem 0.55rem; border-radius: 1rem;
+  font-size: 0.78rem; font-variant-numeric: tabular-nums; border: 1px solid var(--borde); background: var(--fondo);
+}
+.chip-param.ok { border-color: color-mix(in srgb, #3fb950 55%, var(--borde)); }
+.chip-param.mal { border-color: color-mix(in srgb, var(--g-mal) 55%, var(--borde)); color: var(--g-mal); }
+.chip-param.actual { box-shadow: 0 0 0 2px var(--acento); }
+
+/* Escucha: barra de controles pegada arriba del área (queda visible al bajar por las filas) */
+.sim-escenario { position: relative; margin: 0.4rem 0 1rem; }
+.sim-barra { position: sticky; top: 3.6rem; z-index: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-bottom: 0.8rem; }
+.sim-barra [hidden] { display: none !important; }
+.sim-barra__rango { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--texto-tenue); }
+.sim-barra__rango input { accent-color: var(--primario); width: 10rem; }
+.sim-barra__rango output { font-weight: 700; color: var(--texto); font-variant-numeric: tabular-nums; }
+html.en-presentacion .sim-barra { top: 0.6rem; }
+/* Convolución: dos gráficos como escenario, con los controles encima */
+.sim-lienzos { display: flex; flex-direction: column; gap: 0; border-radius: 0.6rem; overflow: hidden; border: 1px solid var(--borde); background: var(--superficie); }
+.sim-lienzos canvas { display: block; width: 100%; border: 0 !important; border-radius: 0 !important; margin: 0 !important; }
+@media (max-width: 700px) { .sim-barra { position: static; } .sim-barra__rango input { width: 100%; } }
+.sim-barra__nota { margin: 0; color: var(--texto-tenue); }
