@@ -742,7 +742,7 @@ function demoSchroeder(el) {
   function dibujar() {
     if (!h) return;
     const COL = paleta();
-    const k = marco(cv, { aspecto: 0.42, min: 260, max: 350 }, [[COL.grilla, 'energía h²(t) (dB)'], [COL.violeta, 'Schroeder sobre toda la RI'], [COL.senal, 'Schroeder truncada en el cruce con el ruido'], [COL.eje, 'caída real: −60 dB en T60']]);
+    const k = marco(cv, { aspecto: 0.42, min: 260, max: 350 }, [[COL.grilla, 'energía instantánea h²(t) (dB)'], [COL.violeta, 'Schroeder sobre toda la RI'], [COL.senal, 'Schroeder truncada en el cruce con el ruido'], [COL.eje, 'caída real: −60 dB en T60']]);
     const esc = grillaTiempoDb(k, dur, -100, 20);
     curvaDb(k, aDb(h), fs, dur, esc, COL.grilla, { ancho: 1 });
     k.g.setLineDash([5, 4]); k.g.strokeStyle = COL.eje; k.g.lineWidth = 1.5; k.g.beginPath(); k.g.moveTo(esc.xt(0), esc.yd(0)); k.g.lineTo(esc.xt(Math.min(dur, (100 / 60) * estado.t60)), esc.yd(-100 * Math.min(1, (dur * 60) / (100 * estado.t60)))); k.g.stroke(); k.g.setLineDash([]); k.g.lineWidth = 1;
@@ -931,7 +931,7 @@ function demoLundeby(el) {
     const it = res.iteraciones[k], ant = res.iteraciones[k - 1], n = res.iteraciones.length;
     const iter = `<strong>Iteración ${k + 1} de ${n}.</strong> `;
     if (etapa === 'bloques') return iter + (k === 0
-      ? 'Se promedia la energía de la RI en bloques de <strong>10 ms</strong> y se pasa a dB: la caída queda como una escalera, sin la oscilación de cada muestra.'
+      ? 'Se promedia la energía de la RI en bloques de <strong>10 ms</strong> (es decir, la potencia media de cada bloque) y se pasa a dB: la caída queda como una escalera, sin la oscilación de cada muestra.'
       : `Se vuelve a promediar con bloques de <strong>${fmt(it.bloqueS * 1000, 0)} ms</strong>, más o menos un quinto de lo que la recta anterior tardaba en caer 10 dB: con bloques más largos la escalera fluctúa menos.`);
     if (etapa === 'ruido') return iter + (k === 0
       ? `El ruido de fondo se estima con el <strong>último 10 %</strong> de la RI, donde se supone que la sala ya se apagó: <strong>${fmt(dbRel(it.ruido))} dB</strong>.`
@@ -950,8 +950,8 @@ function demoLundeby(el) {
     const COL = paleta(), c = cuadros[cuadro], it = res.iteraciones[c.k];
     const etapas = ['bloques', 'ruido', 'recta', 'cruce'], e = c.etapa === 'resultado' ? 4 : etapas.indexOf(c.etapa);
     const ley = c.etapa === 'resultado'
-      ? [[COL.tenue, 'energía (2 ms)'], [COL.violeta, 'Schroeder sobre toda la RI'], [COL.senal, 'Schroeder hasta el cruce']]
-      : [[COL.tenue, 'energía (2 ms)'], [COL.violeta, `bloques de ${fmt(it.bloqueS * 1000, 0)} ms`], [COL.mal, 'ruido de fondo'], [COL.senal, 'recta de la caída']];
+      ? [[COL.tenue, 'potencia media (2 ms)'], [COL.violeta, 'Schroeder sobre toda la RI'], [COL.senal, 'Schroeder hasta el cruce']]
+      : [[COL.tenue, 'potencia media (2 ms)'], [COL.violeta, `bloques de ${fmt(it.bloqueS * 1000, 0)} ms`], [COL.mal, 'ruido de fondo'], [COL.senal, 'recta de la caída']];
     const k = marco(cv, { aspecto: 0.45, min: 270, max: 380 }, ley);
     const esc = grillaTiempoDb(k, dur, -80, 10), g = k.g;
     const linea = (x0, y0, x1, y1) => { g.beginPath(); g.moveTo(esc.xt(x0), esc.yd(y0)); g.lineTo(esc.xt(x1), esc.yd(y1)); g.stroke(); };

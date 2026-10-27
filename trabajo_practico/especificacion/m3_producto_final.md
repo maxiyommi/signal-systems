@@ -64,6 +64,38 @@ Como en M1 y M2, el template trae `acoustic_parameters.py` con las firmas y los 
 !!! note "De qué clases viene"
     **Clase 10 · Procesamiento de la RI:** envolvente de Hilbert, media móvil, integral de Schroeder y regresión lineal por mínimos cuadrados (EDT, T20, T30). Es el fundamento de los servicios 1 a 3; D50 y C80 se explican en el servicio 4.
 
+### Amplitud, energía, potencia y nivel: no son sinónimos
+
+En M3 aparecen todas estas palabras, a veces en la misma oración. Cada una nombra una cuenta distinta sobre la RI $h[n]$:
+
+| Magnitud | Qué es | Cuenta | Unidad |
+|---|---|---|---|
+| **Amplitud** | El valor de la señal en cada muestra. Puede ser negativa. | $h[n]$ | Pa, o sin unidad en un WAV |
+| **Energía instantánea** | La energía de una sola muestra. Nunca es negativa. | $h^2[n]$ | amplitud² |
+| **Energía total** | Toda la energía de la RI. | $E = \sum_n h^2[n]$ | amplitud²·muestra (÷ $f_s$: amplitud²·s) |
+| **Energía que queda** | La energía desde $n$ hasta el final: la integral de Schroeder. | $E[n] = \sum_{k \ge n} h^2[k]$ | igual que la total |
+| **Potencia** (media) | Energía por unidad de tiempo: el promedio de $h^2$ en una ventana. | $P = \frac{1}{M}\sum h^2$ | amplitud² |
+| **Valor eficaz** (RMS) | La raíz de la potencia: vuelve a unidades de amplitud. | $\sqrt{P}$ | amplitud |
+| **Nivel** | Cualquiera de las anteriores en dB, respecto de una referencia. | $10 \log_{10}\frac{E}{E_\text{ref}}$ · $10 \log_{10}\frac{P}{P_\text{ref}}$ · $20 \log_{10}\frac{A}{A_\text{ref}}$ | dB |
+
+Tres reglas para no mezclarlas:
+
+- **El nivel no es otra magnitud: es una forma de escribir un cociente.** Siempre tiene una referencia, y "−45 dB" sin decir "respecto de qué" no significa nada. En esta página, 0 dB es el pico de la caída, o la energía total $E[0]$ en la curva de Schroeder.
+- **10·log para energía y potencia, 20·log para amplitud y RMS.** Así, el mismo cambio da los mismos dB: la amplitud a la mitad es la energía a un cuarto, y las dos cuentas dan −6 dB.
+- **La energía se acumula y la potencia se promedia.** La energía de una señal crece con su duración; la potencia, no. Por eso la RI, que se apaga, se describe por su **energía**, y el ruido de fondo, que no se apaga, por su **potencia**.
+
+Dónde aparece cada una en M3:
+
+| En la página | Es |
+|---|---|
+| La envolvente (servicio 1) | amplitud, pasada a dB con 20·log |
+| La media móvil de $h^2$ (servicio 1) | potencia local; su raíz es la envolvente RMS |
+| La curva de Schroeder (servicio 2) | nivel de la energía que queda, respecto de la energía total |
+| T60 | lo que tarda la energía que queda en caer a una millonésima: −60 dB |
+| D50 (servicio 4) | cociente de energías, en %, sin dB |
+| C80 (servicio 4) | nivel de un cociente de energías, en dB |
+| "Ruido de fondo a −45 dB" | nivel de la potencia del ruido respecto de la potencia en el pico de la caída |
+
 ---
 
 ## Servicio 1 · `apply_smoothing(signal, fs, method, window_ms)`
@@ -275,7 +307,7 @@ Una recta ajustada sobre cualquiera de las dos depende de dónde caigan esos pic
 
 <figure class="figura-tp" markdown>
 [![Energía de la RI en dB, energía promediada en 10 ms y curva de Schroeder sobre la caída ideal](../img/m3/schroeder_energia_vs_edc.png)](../img/m3/schroeder_energia_vs_edc.png)
-<figcaption markdown="span">La misma RI de tres formas · la energía instantánea (gris) y la promediada en 10 ms (ámbar) fluctúan alrededor de la caída ideal; la curva de Schroeder (azul) la sigue sin fluctuar</figcaption>
+<figcaption markdown="span">La misma RI de tres formas · la energía instantánea (gris) y la potencia media en 10 ms (ámbar) fluctúan alrededor de la caída ideal; la curva de Schroeder (azul) la sigue sin fluctuar</figcaption>
 </figure>
 
 No es solo un suavizado práctico: Schroeder (1965) demostró que esta integral es **exactamente** el promedio de infinitas caídas de **ruido interrumpido**, el método clásico de medición (excitar la sala con ruido, cortarlo y registrar cómo decae). Cada caída de ruido interrumpido sale distinta, y la norma pide promediar muchas. Con la RI alcanza con una sola medición: se integra y se obtiene esa curva promedio.
@@ -295,7 +327,11 @@ No es solo un suavizado práctico: Schroeder (1965) demostró que esta integral 
     | Media móvil de 10 ms | igual | 0,31 – 0,33 s |
     | Media móvil de 50 ms | igual | **0,48 – 0,53 s** |
 
-    La dispersión entre RI (EDT de 0,28 a 0,32 s para la misma sala) es propia de cada medición, y suavizar no la reduce. El suavizado tiene otros usos: **mostrar** la caída (servicio 1) y, dentro de Lundeby, promediar la energía en intervalos de 10 a 30 ms para estimar el nivel del ruido y el punto de cruce.
+    La dispersión entre RI (EDT de 0,28 a 0,32 s para la misma sala) es propia de cada medición, y suavizar no la reduce.
+
+    **Tampoco hace falta para D50 y C80** (servicio 4). Ya son sumas de $h^2$ en ventanas fijas, de 0 a 50 ms y de 0 a 80 ms. Suavizar antes corre energía de un lado al otro de esos límites y los sesga. En una sala de 2 s, con una media móvil de 10 ms, el C80 pasa de −0,3 a −1,4 dB (fuera de la tolerancia de ±1 dB) y el D50, de 34 % a 29 %.
+
+    El suavizado sirve para otra cosa: **mostrar** la caída (servicio 1) y, dentro de Lundeby, promediar la energía en intervalos de 10 a 30 ms para estimar el nivel del ruido y el punto de cruce. Ningún parámetro se calcula sobre una señal suavizada.
 
 #### Dos cuidados
 
@@ -304,7 +340,7 @@ No es solo un suavizado práctico: Schroeder (1965) demostró que esta integral 
 La solución es **truncar** la integral donde la caída se cruza con el ruido (el método de Lundeby, opcional, estima ese punto) o, como mínimo, medir solo en el tramo recto y verificar el rango dinámico (ver [Cuándo un tiempo no se puede calcular](#servicio-4-calculate_parameters_from_irir-fs)).
 
 <figure class="figura-tp" markdown>
-[![A la izquierda, la energía de una RI que cae hasta el ruido de fondo a −45 dB; a la derecha, curvas de Schroeder con ruido a −80, −60 y −45 dB y la truncada en el cruce](../img/m3/schroeder_ruido_fondo.png)](../img/m3/schroeder_ruido_fondo.png)
+[![A la izquierda, la potencia media de una RI que cae hasta el ruido de fondo a −45 dB; a la derecha, curvas de Schroeder con ruido a −80, −60 y −45 dB y la truncada en el cruce](../img/m3/schroeder_ruido_fondo.png)](../img/m3/schroeder_ruido_fondo.png)
 <figcaption markdown="span">Ruido de fondo · con −80 y −60 dB el tramo del T30 (−5 a −35 dB) queda en la parte recta y da 1,00 s; con −45 dB la curva se dobla dentro del tramo y da 3,39 s; truncada en el cruce con el ruido (0,69 s), 0,99 s</figcaption>
 </figure>
 
@@ -678,7 +714,7 @@ No es obligatorio. Si lo implementan, se valora dentro del criterio **Funcionali
 
 Estima **dónde cortar** la integral de Schroeder: el punto en que la caída de la RI se cruza con el ruido de fondo (la línea vertical de la demo del servicio 2). Devuelve el índice de esa muestra y el nivel del ruido en dB. El algoritmo de Lundeby et al. (1995), en pasos:
 
-1. Promediar la energía de la RI en intervalos cortos (10 a 30 ms) y pasarla a dB.
+1. Promediar la energía de la RI en intervalos cortos (10 a 30 ms), es decir, calcular la potencia media de cada intervalo, y pasarla a dB.
 2. Estimar el ruido de fondo con el último 10 % de la RI.
 3. Ajustar una recta a la caída, desde el máximo hasta 10 dB por encima del ruido.
 4. Calcular dónde cruza esa recta el nivel del ruido.

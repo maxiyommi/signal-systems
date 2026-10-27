@@ -41,8 +41,8 @@ def ri_sintetica(t60: float = T60, duracion: float = 2.0, ruido_db: float | None
                  seed: int = 0) -> np.ndarray:
     """RI de una banda de octava: caída exponencial de T60 dado y, opcional, ruido de fondo.
 
-    ``ruido_db`` es el nivel del ruido de fondo respecto del pico de la energía de la banda
-    promediada en 10 ms (el mismo promedio con que se grafica).
+    ``ruido_db`` es el nivel de la potencia del ruido de fondo respecto de la potencia en el pico de la
+    caída (promedio de h² en 10 ms, el mismo con que se grafica).
     """
     rng = np.random.default_rng(seed)
     n = int(duracion * FS)
@@ -163,8 +163,8 @@ def figura_energia_vs_edc() -> None:
     h = ri_sintetica(duracion=1.5)
     t = np.arange(len(h)) / FS
     fig, ax = plt.subplots(figsize=(14, 6.4), dpi=100, facecolor=FONDO)
-    ax.plot(t, energia_db(h), color=GRIS, linewidth=0.5, label="Energía h²(t) [dB]")
-    ax.plot(t, energia_db(h, 10), color=AMBAR, linewidth=1.6, label="Energía promediada en 10 ms [dB]")
+    ax.plot(t, energia_db(h), color=GRIS, linewidth=0.5, label="Energía instantánea h²(t) [dB]")
+    ax.plot(t, energia_db(h, 10), color=AMBAR, linewidth=1.6, label="Potencia media en 10 ms [dB]")
     ax.plot(t, schroeder(h), color=AZUL, linewidth=3, label="Curva de Schroeder L(t)")
     ax.plot(t, -60 / T60 * (t - 0.005), color=TINTA, linestyle="--", linewidth=1.4,
             label=f"Caída ideal: −60 dB en {coma(T60, 1)} s")
@@ -219,7 +219,7 @@ def figura_ruido_de_fondo() -> None:
     ax = axs[0]
     h = ri_sintetica(ruido_db=-45)
     t = np.arange(len(h)) / FS
-    ax.plot(t, energia_db(h, 10), color=ROJO, linewidth=1.4, label="Energía (10 ms) con ruido a −45 dB")
+    ax.plot(t, energia_db(h, 10), color=ROJO, linewidth=1.4, label="Potencia media (10 ms) con ruido a −45 dB")
     ax.axhline(-45, color=TINTA, linestyle=":", linewidth=1.4)
     ax.text(1.95, -50, "ruido de fondo (−45 dB)", ha="right", va="top", fontsize=13, color=TINTA)
     ax.plot(t, -60 / T60 * (t - 0.005), color=TINTA, linestyle="--", linewidth=1.2, label="Caída de la sala")
@@ -248,7 +248,7 @@ def figura_ruido_de_fondo() -> None:
            "Nivel [dB]", 16)
     ax.legend(fontsize=12, frameon=False, loc="upper right")
     guardar(fig, "schroeder_ruido_fondo.png",
-            NOTA + " · nivel de ruido respecto del pico de energía de la banda · 2 s de grabación")
+            NOTA + " · nivel de la potencia del ruido respecto de la potencia en el pico (10 ms) · 2 s de grabación")
 
 
 def figura_final() -> None:
